@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gboxt.Common.DataEntity", "DataEntity\Gboxt.Common.DataEntity.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gboxt.Common.ModelBase", "ModelBase\Gboxt.Common.ModelBase.csproj", "{6AC7FF64-8103-428C-987D-F7B527201F89}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entity", "Entity", "{F2563A12-18F3-4BA7-BDF5-1A995F715518}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC7FF64-8103-428C-987D-F7B527201F89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC7FF64-8103-428C-987D-F7B527201F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC7FF64-8103-428C-987D-F7B527201F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC7FF64-8103-428C-987D-F7B527201F89}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{6AC7FF64-8103-428C-987D-F7B527201F89} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+	EndGlobalSection
+EndGlobal
