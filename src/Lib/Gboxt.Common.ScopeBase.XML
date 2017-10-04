@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.ScopeBase</name>
+    </assembly>
+    <members>
+        <member name="T:Agebull.Common.AtomLockScope">
+            <summary>
+              表示内部原子操作(不可重入)范围
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.AtomLockScope.AtomLock">
+            <summary>
+              锁对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.CreateLock(System.Object,System.String)">
+            <summary>
+              构造
+            </summary>
+            <param name="al"> 对象 </param>
+            <param name="name"> 对象锁的名字 </param>
+            <returns> 锁定范围，如果之前已锁定则为空 </returns>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.IsLock(Agebull.Common.IAtomLock,System.String)">
+            <summary>
+              是否已锁定
+            </summary>
+            <param name="al"> 对象 </param>
+            <param name="name"> 对象锁的名字 </param>
+            <returns> 锁定范围，如果之前已锁定则为空 </returns>
+            <remarks>
+              名称是大小写敏感的
+            </remarks>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.IsLocked(System.Object,System.String)">
+            <summary>
+              是否已锁定
+            </summary>
+            <param name="al"> 对象 </param>
+            <param name="name"> 对象锁的名字 </param>
+            <returns> 锁定范围，如果之前已锁定则为空 </returns>
+            <remarks>
+              名称是大小写敏感的
+            </remarks>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.CreateLock(Agebull.Common.IAtomLock)">
+            <summary>
+              构造
+            </summary>
+            <param name="al"> 对象 </param>
+            <returns> 锁定范围，如果之前已锁定则为空 </returns>
+            <remarks>
+              名称是大小写敏感的
+            </remarks>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.CreateLock(Agebull.Common.IAtomLock,System.String,System.String[])">
+            <summary>
+              构造
+            </summary>
+            <param name="al"> 对象 </param>
+            <param name="name"> 对象锁的名字 </param>
+            <param name="elimination"> 排斥的名称，即如果有这些名称的锁定将不能再次锁定 </param>
+            <returns> 锁定范围，如果之前已锁定则为空 </returns>
+            <remarks>
+              名称是大小写敏感的
+            </remarks>
+        </member>
+        <member name="F:Agebull.Common.AtomLockScope.AtomLocks">
+            <summary>
+              锁定表
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.AtomLockScope.LockName">
+            <summary>
+              当前范围作用的对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.#ctor">
+            <summary>
+              构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AtomLockScope.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="T:Agebull.Common.IAtomLock">
+            <summary>
+              表示一个原子锁对象
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.IAtomLock.IsAtomLock">
+            <summary>
+              正在被锁定,应该用AtomLockNames是否为空来表示，或自行处理
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.IAtomLock.AtomLockNames">
+            <summary>
+              正在被锁定名字集合
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Frame.ThreadLockScope">
+            <summary>
+            线程锁范围
+            </summary>
+            <remarks>
+            利用Monitor在线程内可重复锁定一个对象和排斥其它线程使用这个对象的特点设计的锁范围
+            在线程内可以多次锁定这个对象而不出错,而其它线程却需要等待锁定对象的线程结束范围后方可使用这个对象,
+            用于保证锁定对象单元操作时的稳定性(不被意外地修改)
+            注意:锁定的对象不能是值类型,因为值类型是被复制而不是被引用,这会导致锁定失败
+            </remarks>
+        </member>
+        <member name="F:Agebull.Common.Frame.ThreadLockScope._lockObject">
+            <summary>
+            锁定对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Frame.ThreadLockScope.Scope(System.Object)">
+            <summary>
+            构造
+            </summary>
+            <param name="lockObject">要锁定的一或多个对象</param>
+        </member>
+        <member name="F:Agebull.Common.Frame.ThreadLockScope.isLocked">
+            <summary>
+            是否正确锁定
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Frame.ThreadLockScope.#ctor(System.Object)">
+            <summary>
+            构造
+            </summary>
+            <param name="lockObject">要锁定的一或多个对象</param>
+        </member>
+        <member name="M:Agebull.Common.Frame.ThreadLockScope.OnDispose">
+            <summary>
+            清理资源
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Base.ScopeBase">
+            <summary>
+              范围对象的基类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Base.ScopeBase.RecordFailedStack">
+            <summary>
+              记录失败的调用堆栈
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Base.ScopeBase.OnDispose">
+            <summary>
+            清理资源
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.Base.ScopeBase._isDisposed">
+            <summary>
+            防止多次析构
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Base.ScopeBase.Dispose">
+            <summary>
+              析构
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Base.SucceedScopeBase">
+            <summary>
+              要求成功结果的范围对象的基类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Base.SucceedScopeBase.Succeed">
+            <summary>
+              操作是否成功,并以此为标记在析构时提交或放弃事务
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Base.SucceedScopeBase.Succeed2">
+            <summary>
+              操作是否成功,并以此为标记在析构时提交或放弃事务
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.ScopeGroup">
+            <summary>
+            有效范围组
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.ScopeGroup.CreateScope(System.IDisposable[])">
+            <summary>
+            构造，此时改变上下文，析构时自动还原
+            </summary>
+            <param name="scopes"></param>
+        </member>
+        <member name="M:Agebull.Common.ScopeGroup.#ctor(System.IDisposable[])">
+            <summary>
+            构造，此时改变上下文，析构时自动还原
+            </summary>
+            <param name="scopes"></param>
+        </member>
+        <member name="M:Agebull.Common.ScopeGroup.OnDispose">
+            <summary>
+            执行析构的事情
+            </summary>
+        </member>
+    </members>
+</doc>

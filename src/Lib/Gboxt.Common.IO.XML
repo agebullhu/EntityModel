@@ -1,0 +1,383 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.IO</name>
+    </assembly>
+    <members>
+        <member name="T:Agebull.Common.Help.CSVConvert">
+            <summary>
+            CSV文件转换对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Help.CSVConvert.Import``1(System.String,System.Action{``0,System.String,System.String})">
+            <summary>
+            导入数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="setValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Help.CSVConvert.Split(System.String)">
+            <summary>
+            CSV内容分解
+            </summary>
+            <param name="values">CSV内容</param>
+            <returns>分解后的分行列的文本</returns>
+        </member>
+        <member name="M:Agebull.Common.Help.CSVConvert.ImportFile(System.String)">
+            <summary>
+            导入文件
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Help.CSVConvert.Export``1(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String})">
+            <summary>
+            导出
+            </summary>
+            <param name="heads"></param>
+            <param name="datas"></param>
+            <param name="rFunc"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.FileType">
+            <summary>
+              文件类型
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.None">
+            <summary>
+              其它文件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Image">
+            <summary>
+              图像
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Audio">
+            <summary>
+              音频
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Vedio">
+            <summary>
+              视频
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Doc">
+            <summary>
+              WORD文档
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Xls">
+            <summary>
+              EXCEL文档
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.PPT">
+            <summary>
+              PPT文档
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.PDF">
+            <summary>
+              PDF文档
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.WPS">
+            <summary>
+            WPS文件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.TEXT">
+            <summary>
+            文本文件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.HTML">
+            <summary>
+            网页
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.EXE">
+            <summary>
+            应用程序
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.ZIP">
+            <summary>
+            压缩文件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.CHM">
+            <summary>
+            帮助文件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.CODE">
+            <summary>
+            程序代码
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.FileType.Data">
+            <summary>
+            数据文件
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.IOHelper">
+            <summary>
+              文件或文件夹操作帮助类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.DeleteDirectory(System.String,System.Boolean)">
+            <summary>
+              删除或清除一个目录下的所有文件和目录
+            </summary>
+            <param name="directory"> </param>
+            <param name="delete"> 清除目录下的内容而不删除目录 </param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.CheckPath(System.String,System.String[])">
+            <summary>
+              检查一个路径是否存在,不存在则建立之
+            </summary>
+            <param name="root"> 根 </param>
+            <param name="floders"> 路径,不可以用\的组合 </param>
+            <returns> 组合成的路径 </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.CheckPaths(System.String,System.String)">
+            <summary>
+              检查一个路径是否存在,不存在则建立之
+            </summary>
+            <param name="root"> 根 </param>
+            <param name="floder"> 路径,可以用\的组合 </param>
+            <returns> 组合成的路径 </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.WriteFile(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+              写文件
+            </summary>
+            <param name="path"> 路径(如果不存在会被创建 </param>
+            <param name="name"> 文件名 </param>
+            <param name="txt"> 要写入的文本 </param>
+            <param name="alwaysWrite"> 是否总是写入,如果先否并且文件存在将不修改文件 </param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.WriteFile(System.String,System.String,System.Boolean)">
+            <summary>
+              写文件
+            </summary>
+            <param name="fullName"> 路径(如果不存在会被创建 </param>
+            <param name="txt"> 要写入的文本 </param>
+            <param name="alwaysWrite"> 是否总是写入,如果先否并且文件存在将不修改文件 </param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.Save``1(``0,System.String)">
+            <summary>
+              保存对象
+            </summary>
+            <typeparam name="T"> 对象类型 </typeparam>
+            <param name="t"> 对象 </param>
+            <param name="fullName"> 文件名 </param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.TryLoad``1(System.String)">
+            <summary>
+              载入对象
+            </summary>
+            <typeparam name="T"> 对象类型 </typeparam>
+            <param name="fileName"> 文件名 </param>
+            <returns> 对象 </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.XMLSerializer(System.Object)">
+            <summary>
+              序列化到XML
+            </summary>
+            <param name="args"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.XMLSerializer``1(``0)">
+            <summary>
+              序列化到XML
+            </summary>
+            <param name="args"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.XMLSerializer``1(System.IO.Stream,``0)">
+            <summary>
+              序列化到XML
+            </summary>
+            <param name="ms"> </param>
+            <param name="args"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.XMLDeSerializer``1(System.IO.Stream)">
+            <summary>
+              从XML反序列化
+            </summary>
+            <param name="ms"> </param>
+            <returns> T </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.XMLDeSerializer``1(System.String)">
+            <summary>
+              从XML反序列化
+            </summary>
+            <param name="args"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.ReadBinary(System.String)">
+            <summary>
+              读取一个文件的二进制数据
+            </summary>
+            <param name="filename"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.ReadString(System.String)">
+            <summary>
+              读取一个文件的文本数据
+            </summary>
+            <param name="filename"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.SaveImage(System.Drawing.Image,System.String)">
+            <summary>
+                保存对应图像
+            </summary>
+            <param name="img">图像</param>
+            <param name="file">文件全名(包括路径)</param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.LoadImage(System.String)">
+            <summary>
+                载入对应的图像
+            </summary>
+            <param name="file">文件全名(包括路径)</param>
+            <returns>读出的图像(可能为空)</returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.ToFileName(System.String[])">
+            <summary>
+            将名称合并为合乎要求的文件名
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetAllField(System.String,System.String)">
+            <summary>
+              得到一个路径下所有文件名
+            </summary>
+            <param name="path"> </param>
+            <param name="ext"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetAllFiles(System.String,System.String)">
+            <summary>
+              得到一个路径下所有文件名
+            </summary>
+            <param name="path"> </param>
+            <param name="ext"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetAllFiles(System.Collections.Generic.List{System.String},System.String,System.String)">
+            <summary>
+              得到一个路径下所有文件名
+            </summary>
+            <param name="fields"> </param>
+            <param name="path"> </param>
+            <param name="ext"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.CopyPath(System.String,System.String,System.String,System.Boolean,System.Boolean,System.String[])">
+            <summary>
+              路径复制
+            </summary>
+            <param name="srcPath"> 源路径 </param>
+            <param name="destPath"> 目的路径 </param>
+            <param name="ext"> 包括的扩展名 </param>
+            <param name="child"> 是否包括子文件 </param>
+            <param name="replace"> 是否替换已存在的文件 </param>
+            <param name="excludes"> 排除列表 </param>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetEncoding(System.String)">
+            <summary>
+              取得一个文本文件的编码方式。如果无法在文件头部找到有效的前导符，Encoding.Default将被返回。
+            </summary>
+            <param name="fileName"> 文件名。 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetEncoding(System.IO.Stream)">
+            <summary>
+              取得一个文本文件流的编码方式。
+            </summary>
+            <param name="stream"> 文本文件流。 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetEncoding(System.String,System.Text.Encoding)">
+            <summary>
+              取得一个文本文件的编码方式。
+            </summary>
+            <param name="fileName"> 文件名。 </param>
+            <param name="defaultEncoding"> 默认编码方式。当该方法无法从文件的头部取得有效的前导符时，将返回该编码方式。 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.IOHelper.GetEncoding(System.IO.Stream,System.Text.Encoding)">
+            <summary>
+              取得一个文本文件流的编码方式。
+            </summary>
+            <param name="stream"> 文本文件流。 </param>
+            <param name="defaultEncoding"> 默认编码方式。当该方法无法从文件的头部取得有效的前导符时，将返回该编码方式。 </param>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.Xml.XmlHelper">
+            <summary>
+              XML 文件解析的操作包装
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.MoveXmlTo(System.Xml.XmlReader,System.String,System.String[])">
+            <summary>
+              移动读取器到一个位置
+            </summary>
+            <param name="xr"> 读取器 </param>
+            <param name="parfriend"> </param>
+            <param name="path"> 路径 </param>
+            <returns> 成功或失败 </returns>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.MoveXmlTo(System.Xml.XmlReader,System.String[])">
+            <summary>
+              移动读取器到一个位置
+            </summary>
+            <param name="xr"> 读取器 </param>
+            <param name="path"> 路径 </param>
+            <returns> 成功或失败 </returns>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.ReadXmlText(System.Xml.XmlReader)">
+            <summary>
+              读取当前位位置的文本(已做TRIM处理)
+            </summary>
+            <param name="xr"> 读取器 </param>
+            <returns> 文本 </returns>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.ReadXmlAttrib(System.Xml.XmlReader,System.String)">
+            <summary>
+              读取当前位位置的一个属性的值
+            </summary>
+            <param name="xr"> 读取器 </param>
+            <param name="attName"> 属性名 </param>
+            <returns> 属性值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.Write(System.Xml.XmlDocument,System.Xml.XmlNode,System.String,System.Object)">
+            <summary>
+              读取当前位位置的一个属性的值
+            </summary>
+            <param name="doc"> 读取器 </param>
+            <param name="par"> 属性节点($SG$) </param>
+            <param name="name"> 属性名($SG$) </param>
+            <param name="value"> 属性值($SG$) </param>
+            <returns> 属性值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Xml.XmlHelper.BuildXml(System.String,System.String[])">
+            <summary>
+              生成XML
+            </summary>
+            <param name="rootName"> </param>
+            <param name="nodes"> </param>
+            <returns> </returns>
+        </member>
+    </members>
+</doc>

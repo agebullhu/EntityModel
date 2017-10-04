@@ -1,0 +1,999 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.Reflection</name>
+    </assembly>
+    <members>
+        <member name="T:System.EnumExtend">
+            <summary>
+            枚举静态扩展
+            </summary>
+        </member>
+        <member name="M:System.EnumExtend.Equals(System.Enum,System.Enum[])">
+            <summary>
+              包括枚举的全部值吗
+            </summary>
+            <param name="source"> </param>
+            <param name="values"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.EnumExtend.EqualsSome(System.Enum,System.Enum[])">
+            <summary>
+              包括枚举的全部值吗
+            </summary>
+            <param name="source"> </param>
+            <param name="values"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.EnumExtend.HasFlags(System.Enum,System.Enum[])">
+            <summary>
+              包括枚举的全部值吗
+            </summary>
+            <param name="source"> </param>
+            <param name="values"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.EnumExtend.HasSomeFlags(System.Enum,System.Enum[])">
+            <summary>
+              包含枚举的一或多个值吗
+            </summary>
+            <param name="source"> </param>
+            <param name="values"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.ReflectionExtend">
+            <summary>
+              表示一个字段的重要程度与分类扩展属性
+            </summary>
+        </member>
+        <member name="M:System.ReflectionExtend.GetFieldDescription(System.Type,System.String)">
+            <summary>
+              找到一个字段的显示文字
+            </summary>
+        </member>
+        <member name="M:System.ReflectionExtend.GetPropertyDescription(System.Type,System.String)">
+            <summary>
+              找到一个字段的显示文字
+            </summary>
+        </member>
+        <member name="M:System.ReflectionExtend.GetDescription(System.Reflection.MemberInfo)">
+            <summary>
+            得到一个类型中的SupperPropert特性
+            </summary>
+            <param name="field">字段</param>
+            <returns>找到则返回对象的SupperPropert特性,一个默认的对象</returns>
+        </member>
+        <member name="M:System.ReflectionExtend.CreateObject(System.Type)">
+            <summary>
+              生成一个类型的实例
+            </summary>
+            <param name="type"> 类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:System.ReflectionExtend.HaseFun(System.Type,System.String)">
+            <summary>
+            有否方法
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="fun"></param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:System.ReflectionExtend.TryParse``1(System.Type,System.Object)">
+            <summary>
+            从文本构造(调用TryParse)
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="value"></param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:System.ReflectionExtend.Generate(System.Type)">
+            <summary>
+              生成一个类型的实例
+            </summary>
+            <param name="type"> 类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:System.ReflectionExtend.Generate``1(System.Type)">
+            <summary>
+              生成一个类型的实例
+            </summary>
+            <param name="type"> 类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:System.ReflectionExtend.HaseMethod(System.Type,System.String)">
+            <summary>
+            包括指定方法吗
+            </summary>
+            <param name="type"></param>
+            <param name="fun"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ReflectionExtend.GetGenericParameter(System.Type)">
+            <summary>
+            得到泛型参数
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ReflectionExtend.HaseAttribute(System.Type,System.Type)">
+            <summary>
+            得到一个类型是否有对   民性属应对错
+            </summary>
+            <param name="type">类型</param>
+            <param name="attribute">属性对象 </param>
+            <returns>找到则返回对象的SupperPropert特性,一个默认的对象</returns>
+        </member>
+        <member name="M:System.ReflectionExtend.IsBaseType(System.Type)">
+            <summary>
+            是否基本类型
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="F:System.ReflectionExtend.BaseTypes">
+            <summary>
+            所有基础类型
+            </summary>
+        </member>
+        <member name="M:System.ReflectionExtend.IsSupperInterface(System.Type,System.Type)">
+            <summary>
+            确定类型是否实现或继承指定接口
+            </summary>
+            <param name="type">要确定的类型</param>
+            <param name="faces">实现或继承的接口</param>
+            <returns>true表达实现了这个接口</returns>
+        </member>
+        <member name="M:System.ReflectionExtend.GetAttribute``1(System.Type)">
+            <summary>
+            得到数据类型的接口
+            </summary>
+            <param name="type">要确定的类型</param>
+            <returns>true表达实现了这个接口</returns>
+        </member>
+        <member name="M:System.ReflectionExtend.GetAttribute``1(System.Reflection.MemberInfo)">
+            <summary>
+            得到数据类型的接口
+            </summary>
+            <param name="field">要确定的类型</param>
+            <returns>true表达实现了这个接口</returns>
+        </member>
+        <member name="M:System.ReflectionExtend.GetAttribute2``1(System.Reflection.MemberInfo)">
+            <summary>
+            得到数据类型的接口
+            </summary>
+            <param name="field">要确定的类型</param>
+            <returns>true表达实现了这个接口</returns>
+        </member>
+        <member name="T:System.TypeExtend">
+            <summary>
+            类型扩展
+            </summary>
+        </member>
+        <member name="M:System.TypeExtend.GetTypeName(System.Object)">
+            <summary>
+              得到对象的可读类型名字
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.TypeExtend.GetTypeNameSpace(System.Object)">
+            <summary>
+              得到对象的可读类型名字
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.TypeExtend.GetName(System.Linq.Expressions.Expression{System.Delegate})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetName``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetName(System.Linq.Expressions.MemberExpression)">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetFunc``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetFunc``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetValue(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetValue``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.TypeExtend.GetValue``2(System.Linq.Expressions.Expression{System.Func{``0,``1}},``0)">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <param name="arg"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.Reflection.EnumHelper">
+            <summary>
+              枚举的帮助类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.GetCaption``1(``0)">
+            <summary>
+              得到枚举中文表示的值
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.KeyValue``1(System.Boolean)">
+            <summary>
+              得到枚举以中文表示的值
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.GetEnumFields(System.Type,System.Boolean)">
+            <summary>
+              得到枚举以中文表示的值
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.GetEnumInfomation(System.Type)">
+            <summary>
+              得到枚举以中文表示的值
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.GetEnumInfomation(System.String)">
+            <summary>
+              得到枚举以中文表示的值
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="F:Agebull.Common.Reflection.EnumHelper.EnumInfomationMaps">
+            <summary>
+              枚举以中文表示的值的字典，以防止每次都需要做反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.BindMenu``1(System.Windows.Forms.ToolStripMenuItem,System.Action{System.Object,System.EventArgs})">
+            <summary>
+              直接将枚举绑定到下拉列表
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumHelper.BindComboBox``1(System.Windows.Forms.ComboBox)">
+            <summary>
+              直接将枚举绑定到下拉列表
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.Reflection.IEnumInfomation">
+            <summary>
+              表示一个枚举的值文本对应表节点
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.IEnumInfomation.Caption">
+            <summary>
+              文本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.IEnumInfomation.Value">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.IEnumInfomation.LValue">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Reflection.EnumInfomation">
+            <summary>
+              表示一个枚举的值文本对应表节点
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation.Caption">
+            <summary>
+              文本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation.Value">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation.LValue">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumInfomation.ToString">
+            <summary>
+              到文本
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.Reflection.EnumInfomation`1">
+            <summary>
+              表示一个枚举的值文本对应表节点
+            </summary>
+            <typeparam name="T"> 枚举 </typeparam>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation`1.Caption">
+            <summary>
+              文本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation`1.Value">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation`1.LValue">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.EnumInfomation`1.Agebull#Common#Reflection#IEnumInfomation#Value">
+            <summary>
+              内容
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.EnumInfomation`1.ToString">
+            <summary>
+              到文本
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.Reflection.ITypeInfomation">
+            <summary>
+              类型信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.ID">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.ClassID">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.FullName">
+            <summary>
+              全名(包括命名空间)
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.GenericArguments">
+            <summary>
+              泛型参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.TypeName">
+            <summary>
+              短名(不包括命名空间)
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.NameSpace">
+            <summary>
+              命令空间
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ITypeInfomation.Type">
+            <summary>
+              原始类型
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Reflection.ReflectionHelper">
+            <summary>
+                反射的实例类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Compile(System.String,System.String,System.String)">
+            <summary>
+                动态编译
+            </summary>
+            <param name="path"> 代码所在的路径 </param>
+            <param name="dllPaht"> 编译结果所在的位置 </param>
+            <param name="dllName"> 不包括扩展名的名字,通常是根命名空间 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Compile(System.String,System.CodeDom.Compiler.CompilerParameters)">
+            <summary>
+                动态编译
+            </summary>
+            <param name="path"> 代码所在的路径 </param>
+            <param name="paras"> 编译参数 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.LoadAndInvoke(System.String,System.String,System.String,System.Object[])">
+            <summary>
+                载入动态编译的结果并运行一个缺省的静态方法
+            </summary>
+            <param name="path"> 编译结果路径 </param>
+            <param name="typeName"> 要运行的类型的全名 </param>
+            <param name="staticMethod"> 要运行的静态方法 </param>
+            <param name="args"> 要运行的静态方法的参数 </param>
+        </member>
+        <member name="F:Agebull.Common.Reflection.ReflectionHelper.loadedAssemblies">
+            <summary>
+                已装入的程序集合
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.LoadAssembly(System.String)">
+            <summary>
+                装入程序集并准备进行方法调用
+            </summary>
+            <param name="path"> 路径 </param>
+            <returns> 已装入的程序集 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.CreateObject(System.String)">
+            <summary>
+                生成一个类型的实例
+            </summary>
+            <param name="typeName"> 类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.CreateObject(System.Type)">
+            <summary>
+                生成一个类型的实例
+            </summary>
+            <param name="type"> 类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.CreateGenericObject(System.Reflection.Assembly,System.Type,System.Type[])">
+            <summary>
+                生成一个泛型类型的实例
+            </summary>
+            <param name="assembly"> 泛型所在的程序集(极其重要) </param>
+            <param name="generic"> 空的泛型 </param>
+            <param name="genericArguments"> 严格对应好的泛型的参数类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.CreateGenericObject(System.Type,System.Type[])">
+            <summary>
+                生成一个泛型类型的实例
+            </summary>
+            <param name="generic"> 空的泛型 </param>
+            <param name="genericArguments"> 严格对应好的泛型的参数类型 </param>
+            <returns> 类型的实例 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.InvokeStaticMethod(System.Type,System.String)">
+            <summary>
+                运行一个对象的静态方法
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 方法名 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.InvokeStaticMethod(System.Type,System.String,System.Object[])">
+            <summary>
+                运行一个对象的静态方法
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 方法名 </param>
+            <param name="args"> 方法运行的参数 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.InvokeMethod(System.Type,System.String,System.Object,System.Object[])">
+            <summary>
+                运行一个对象的方法
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 方法名 </param>
+            <param name="obj"> 类的实例 </param>
+            <param name="args"> 方法运行的参数 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetProperty(System.Type,System.String,System.Object)">
+            <summary>
+                得到一个对象的属性
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 属性名 </param>
+            <param name="obj"> 类的实例,不能为空 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.TryGetProperty(System.Type,System.String,System.Object)">
+            <summary>
+                得到一个对象的属性
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 属性名 </param>
+            <param name="obj"> 类的实例,不能为空 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.SetProperty(System.Type,System.String,System.Object,System.Object)">
+            <summary>
+                配置一个对象的属性
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 属性名 </param>
+            <param name="obj"> 类的实例,不能为空 </param>
+            <param name="arg"> 要配置的值 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.SetProperty(Agebull.Common.Reflection.SetTypePropertyArgs)">
+            <summary>
+                配置一个对象的属性
+            </summary>
+            <param name="args"> 要配置的值 </param>
+            <returns> 返回值 </returns>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ReflectionHelper.ThisType">
+            <summary>
+                类型
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ReflectionHelper.ThisObject">
+            <summary>
+                实例
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.#ctor(System.Type)">
+            <summary>
+                用类型来构造
+            </summary>
+            <param name="type"> 类型 </param>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.#ctor">
+            <summary>
+                构造
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.ReflectionHelper.Item(System.String)">
+            <summary>
+                读取或配置类型实例的属性
+            </summary>
+            <param name="property"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Invoke(System.String,System.Object[])">
+            <summary>
+                运行有参方法
+            </summary>
+            <param name="name"> 方法名 </param>
+            <param name="args"> 参数 </param>
+            <returns> 返回结果 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Invoke(System.String)">
+            <summary>
+                运行无参方法
+            </summary>
+            <param name="name"> 方法名 </param>
+            <returns> 返回结果 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.TryParse(System.Type,System.String)">
+            <summary>
+                运行值类型的TryParse方法,以进行文本到对象的转化
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="value"> 文本值 </param>
+            <returns> 转换是否成功 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Invoke(System.Reflection.MethodInfo,System.Object,System.Object[])">
+            <summary>
+                通过MethodInfo对象来运行方法
+            </summary>
+            <param name="mi"> MethodInfo对象 </param>
+            <param name="obj"> 对象实例 </param>
+            <param name="args"> 参数 </param>
+            <returns> 方法的返回值 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Deserialize(System.Type,System.String)">
+            <summary>
+                对值与类 类型进行到实例的反序列化
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="value"> 文本值 </param>
+            <returns> 反序列化后的类实例 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.BuilderArg(System.Type,System.String)">
+            <summary>
+                构造反射调用时的参数
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="value"> 文本参数值 </param>
+            <returns> 构造好的参数 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.IsStatic(System.Type)">
+            <summary>
+                构造反射调用时的参数
+            </summary>
+            <param name="type"> 类型 </param>
+            <returns> 构造好的参数 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.IsNullableType(Agebull.Common.Reflection.ITypeInfomation)">
+            <summary>
+                是否空的值类型
+            </summary>
+            <param name="info"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetKnowTypes(System.Type)">
+            <summary>
+                得到一个基类的所有已知类型
+            </summary>
+            <param name="type"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.HaseSubclass(System.Collections.Generic.IEnumerable{System.Type},System.Type)">
+            <summary>
+                检查一个类有无被继承
+            </summary>
+            <param name="knows"> </param>
+            <param name="type"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.ToResult(System.Type,System.Object)">
+            <summary>
+                将返回的对象序列化为可直接写到XML文件的XML文本
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="value"> 返回值 </param>
+            <returns> 序列化后的文本 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Execuest(System.Object,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+                根据对象实例运行它的方法并返回
+            </summary>
+            <param name="obj"> 对象实例 </param>
+            <param name="name"> 方法名 </param>
+            <param name="args"> 名称=值格式的参数表 </param>
+            <returns> 返回值 </returns>
+            <exception cref="T:System.ArgumentException">
+                <code>调用的参数有错误</code>
+                <code>调用的方法时发生内部错误</code>
+                <code>调用的方法不存在</code>
+            </exception>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Serialize(System.Object)">
+            <summary>
+            </summary>
+            <param name="o"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.SerializeToSoap(System.Object)">
+            <summary>
+                以SOAP方式序列化
+            </summary>
+            <param name="o"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.Deserialize(System.String)">
+            <summary>
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.BuildKnowType(System.Type,System.String)">
+            <summary>
+                生成一个类的已知类型代码
+            </summary>
+            <param name="type"> 类 </param>
+            <param name="format"> 格式化代码 </param>
+            <returns> 代码 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeFullName(System.Type)">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeName(System.Object)">
+            <summary>
+                得到对象的可读类型名字
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeName(System.Type)">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeName2(System.Type,System.Boolean)">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <param name="isFull"></param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeNameInner(System.Type,System.Boolean)">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <param name="isFull"></param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeNameSpace(System.Object)">
+            <summary>
+                得到对象的可读类型名字
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeNameSpace(System.Type)">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeNameSpace(System.Type,System.Collections.Generic.List{System.String})">
+            <summary>
+                得到类型的可读名字
+            </summary>
+            <param name="type"> </param>
+            <param name="sps"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeInfomation``1(System.Type,``0)">
+            <summary>
+                得到类型的可读信息
+            </summary>
+            <param name="type">类型</param>
+            <param name="root"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeInfomation``1(System.Type,System.Func{``0})">
+            <summary>
+                得到类型的可读信息
+            </summary>
+            <param name="type">类型</param>
+            <param name="creater">对象构造器 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.BuildAllClassCopyCode(System.Type)">
+            <summary>
+                生成一个类及派生类的复制代码
+            </summary>
+            <param name="type"> 类 </param>
+            <returns> 代码 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.BuildClassCopyCode(System.Type,System.Type)">
+            <summary>
+                生成一个类的复制代码
+            </summary>
+            <param name="type"> 派生类 </param>
+            <param name="baseType"> 基类 </param>
+            <returns> 代码 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.ReadExctption(System.Exception,System.String)">
+            <summary>
+                读取并格式化异常信息
+            </summary>
+            <param name="err"> 异常 </param>
+            <param name="ti"> 缩进 </param>
+            <returns> 格式化后的文本 </returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetThisHead(System.String)">
+            <summary>
+            取得this属性的正确名称
+            </summary>
+            <param name="name">名称</param>
+            <returns>his属性的正确名称</returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetTypeShowName(System.String)">
+            <summary>
+            取得短名称
+            </summary>
+            <param name="name">名称</param>
+            <returns>短名称</returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.CheckTypeString(System.String)">
+            <summary>
+            检查文字的类型名称
+            </summary>
+            <param name="type">类型</param>
+            <returns>类型名称</returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.SerializeException(System.Exception,System.String)">
+            <summary>
+                序列化异常到XML
+            </summary>
+            <param name="err"> 异常 </param>
+            <returns> 序列化后的XML </returns>
+            <param name="rootMessage"> 错误标题 </param>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.SerializeException(System.Exception,System.Xml.Linq.XElement)">
+            <summary>
+                序列化异常(内部递归)
+            </summary>
+            <param name="err"> 异常 </param>
+            <param name="par"> 上级节点 </param>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetName(System.Linq.Expressions.Expression{System.Delegate})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetName``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetName(System.Linq.Expressions.MemberExpression)">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetFunc``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetFunc``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetValue(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetValue``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.GetValue``2(System.Linq.Expressions.Expression{System.Func{``0,``1}},``0)">
+            <summary>
+                取得方法委托
+            </summary>
+            <param name="expression"></param>
+            <param name="arg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.InvokeStaticMethodByExpression(System.Reflection.Assembly,System.String,System.String)">
+            <summary>
+                运行一个对象的静态方法(非反射执行)
+            </summary>
+            <param name="assembly">程序集</param>
+            <param name="typeName"> 类型名称 </param>
+            <param name="methodName"> 方法名 </param>
+            <remarks>
+                感谢博客园大牛鹤冲天,相关文章:http://www.cnblogs.com/ldp615/archive/2013/03/31/2991304.html
+            </remarks>
+        </member>
+        <member name="M:Agebull.Common.Reflection.ReflectionHelper.InvokeStaticMethodByExpression(System.Type,System.String)">
+            <summary>
+                运行一个对象的静态方法(非反射执行)
+            </summary>
+            <param name="type"> 类型 </param>
+            <param name="name"> 方法名 </param>
+            <remarks>
+                感谢博客园大牛鹤冲天,相关文章:http://www.cnblogs.com/ldp615/archive/2013/03/31/2991304.html
+            </remarks>
+        </member>
+        <member name="T:Agebull.Common.Reflection.SetTypePropertyArgs`2">
+            <summary>
+              表示为一个类型实例配置值的参数
+            </summary>
+            <typeparam name="A"> </typeparam>
+            <typeparam name="B"> </typeparam>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs`2.Object">
+            <summary>
+              实例对象
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs`2.Property">
+            <summary>
+              属性
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs`2.Value">
+            <summary>
+              值
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.SetTypePropertyArgs`2.SetProperty(`1)">
+            <summary>
+              配置值
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:Agebull.Common.Reflection.SetTypePropertyArgs`2.SetProperty">
+            <summary>
+              配置值
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Reflection.SetTypePropertyArgs">
+            <summary>
+              表示为一个类型实例配置值的参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs.Type">
+            <summary>
+              类型
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs.Object">
+            <summary>
+              实例对象
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs.Property">
+            <summary>
+              属性
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Reflection.SetTypePropertyArgs.Value">
+            <summary>
+              值
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Reflection.SetTypePropertyArgs.SetProperty(System.Object)">
+            <summary>
+              配置值
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:Agebull.Common.Reflection.SetTypePropertyArgs.SetProperty">
+            <summary>
+              配置值
+            </summary>
+        </member>
+    </members>
+</doc>

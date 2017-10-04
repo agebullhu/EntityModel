@@ -1,0 +1,432 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.Exception</name>
+    </assembly>
+    <members>
+        <member name="T:Agebull.Common.AccountException">
+            <summary>
+              表示用户登录方面的异常
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AccountException.#ctor(System.String)">
+            <summary>
+              构造
+            </summary>
+            <param name="msg"> </param>
+        </member>
+        <member name="T:Agebull.Common.AgebullBugException">
+            <summary>
+              老牛软件使用的代码异常类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.String)">
+            <summary>
+              消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.String,System.Object[])">
+            <summary>
+              消息构造
+            </summary>
+            <param name="message"> 格式化基 </param>
+            <param name="args"> 格式化参数 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.String,System.Exception)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内联消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.Type,System.String,System.String)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.String,System.String,System.String)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBugException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+              序列化构造
+            </summary>
+            <param name="info"> 序列化对象 </param>
+            <param name="context"> 数据流上下文 </param>
+        </member>
+        <member name="T:Agebull.Common.AgebullException">
+            <summary>
+              老牛软件使用的异常基类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullException.FormatException(System.Exception)">
+            <summary>
+              格式化异常
+            </summary>
+            <param name="err"> 异常 </param>
+            <returns> 文本 </returns>
+        </member>
+        <member name="M:Agebull.Common.AgebullException.#ctor">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullException.#ctor(System.String)">
+            <summary>
+              消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullException.#ctor(System.String,System.Exception)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内联消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+              序列化构造
+            </summary>
+            <param name="info"> 序列化对象 </param>
+            <param name="context"> 数据流上下文 </param>
+        </member>
+        <member name="T:Agebull.Common.ExceptionHelper">
+            <summary>
+              异常辅助类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.GetMessage(System.Exception)">
+            <summary>
+              得到一个异常的用户消息
+            </summary>
+            <param name="ex"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Func{System.Boolean},System.String,System.Object[])">
+            <summary>
+            抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message">消息</param>
+            <param name="args">格式化参数</param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Func{System.Boolean},System.String)">
+            <summary>
+            抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message">消息</param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Func{System.Boolean},System.Type,System.String,System.String)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Func{System.Boolean},System.String,System.String,System.String)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Func{System.Boolean},System.String,System.Exception)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内部异常 </param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Boolean,System.String,System.Object[])">
+            <summary>
+            抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message">消息</param>
+            <param name="args">格式化参数</param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Boolean,System.String)">
+            <summary>
+            抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message">消息</param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Boolean,System.Type,System.String,System.String)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.String,System.String,System.String)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="type"> 类型 </param>
+            <param name="function"> 方法或属性 </param>
+        </member>
+        <member name="M:Agebull.Common.ExceptionHelper.ThrowBugException(System.Boolean,System.String,System.Exception)">
+            <summary>
+              抛出BUG异常
+            </summary>
+            <param name="condition">条件</param>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内部异常 </param>
+        </member>
+        <member name="T:Agebull.Common.ExceptionInfo">
+            <summary>
+              远程返回的异常的信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.ExceptionInfo.RootMessage">
+            <summary>
+              主要信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.ExceptionInfo.Item">
+            <summary>
+              节点
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.ExceptionInfo.BriefMessage">
+            <summary>
+              简要信息,已做简单的HTML格式化
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.ExceptionInfo.ErrorCode">
+            <summary>
+              平台提供的错误代码--可能为空
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.ExceptionInfo.DeserializeException(System.String)">
+            <summary>
+              反序列化异常
+            </summary>
+            <param name="message"> 消息 </param>
+            <returns> 序列化后的XML </returns>
+        </member>
+        <member name="M:Agebull.Common.ExceptionInfo.#ctor(System.String)">
+            <summary>
+              反序列化异常
+            </summary>
+            <param name="message"> 消息 </param>
+            <returns> 序列化后的XML </returns>
+        </member>
+        <member name="M:Agebull.Common.ExceptionInfo.DeserializeException(System.Xml.XmlNode)">
+            <summary>
+              反序列化异常(内部递归)
+            </summary>
+            <param name="par"> 上级节点 </param>
+        </member>
+        <member name="T:Agebull.Common.RemoteExceptionInfoItem">
+            <summary>
+              远程返回的异常的信息节点
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.Item">
+            <summary>
+              子节点
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.Type">
+            <summary>
+              异常类型
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.Message">
+            <summary>
+              异常的消息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.Source">
+            <summary>
+              异常的消息源
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.StackTrace">
+            <summary>
+              异常的栈跟踪
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.Reason">
+            <summary>
+              平台异常的信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.ErrorCode">
+            <summary>
+              平台异常的错误代码
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.RemoteExceptionInfoItem.ErrorMessage">
+            <summary>
+              平台异常的其它错误信息
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.AgebullBusinessException">
+            <summary>
+              老牛软件使用的业务逻辑异常类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullBusinessException.#ctor">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullBusinessException.#ctor(System.String)">
+            <summary>
+              消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBusinessException.#ctor(System.String,System.Exception)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内联消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullBusinessException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+              序列化构造
+            </summary>
+            <param name="info"> 序列化对象 </param>
+            <param name="context"> 数据流上下文 </param>
+        </member>
+        <member name="T:Agebull.Common.SystemErrorType">
+            <summary>
+              系统错误类型
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.OSError">
+            <summary>
+              操作系统错误
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.DataBaseError">
+            <summary>
+              数据库错误
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.MemoryError">
+            <summary>
+              内存错误
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.DiskError">
+            <summary>
+              磁盘错误
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.NetError">
+            <summary>
+              网络错误
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.SystemErrorType.UnknowError">
+            <summary>
+              未知错误
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.AgebullSystemException">
+            <summary>
+              老牛软件使用的系统(操作系统,.NET,IIS,数据库等)异常类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.AgebullSystemException.InnerMessage">
+            <summary>
+              内容的详细信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.AgebullSystemException.Extend">
+            <summary>
+              扩展信息
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.String)">
+            <summary>
+              消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.Exception)">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.AgebullSystemException.ErrorType">
+            <summary>
+              错误类型
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.Data.Common.DbException)">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.String,System.Exception)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内联消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.String,Agebull.Common.SystemErrorType,System.String,System.Exception)">
+            <summary>
+              内联消息构造
+            </summary>
+            <param name="message"> 消息 </param>
+            <param name="innerException"> 内联消息 </param>
+            <param name="errtype"> 异常类型 </param>
+            <param name="innermessage"> 内部扩展消息 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+              序列化构造
+            </summary>
+            <param name="info"> 序列化对象 </param>
+            <param name="context"> 数据流上下文 </param>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.OnAgebullDatabaseException(System.Data.SqlClient.SqlException)">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.SqlExceptionLevel(System.Data.SqlClient.SqlException)">
+            <summary>
+              基本构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.AgebullSystemException.OnAgebullDatabaseException(System.Data.Common.DbException)">
+            <summary>
+            </summary>
+            <param name="serr"> </param>
+            <returns> </returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,1253 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.Extend</name>
+    </assembly>
+    <members>
+        <member name="T:Agebull.Common.ByteHelper">
+            <summary>
+              对于BYTE型的扩展
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.UInt64)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="i"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.Int32)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="i"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.Int16)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="i"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.UInt16)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="number"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToShort(System.Byte[])">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="number"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToUshort(System.Byte[])">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="number"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToInt(System.Byte[])">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="number"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToUshort(System.Byte[],System.Int32)">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="b"> </param>
+            <param name="idx"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToInt(System.Byte[],System.Int32)">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="b"> </param>
+            <param name="idx"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.Int32,System.Byte[],System.Int32)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="i"> </param>
+            <param name="b"> </param>
+            <param name="idx"> </param>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToByte(System.UInt16,System.Byte[],System.Int32)">
+            <summary>
+              转换为BYTE
+            </summary>
+            <param name="i"> </param>
+            <param name="b"> </param>
+            <param name="idx"> </param>
+        </member>
+        <member name="M:Agebull.Common.ByteHelper.ToNumber(System.Byte[])">
+            <summary>
+              转换为为数字
+            </summary>
+            <param name="b"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.DataModel.NameValue`2">
+            <summary>
+                名称内容对象
+            </summary>
+            <typeparam name="TName"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="F:Agebull.Common.DataModel.NameValue`2.name">
+            <summary>
+                名称
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.NameValue`2.value">
+            <summary>
+                值
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.NameValue`1">
+            <summary>
+                名称内容对象
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.NameValue">
+            <summary>
+                名称内容对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NameValue.#ctor">
+            <summary>
+                构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NameValue.#ctor(System.String,System.Object)">
+            <summary>
+                构造
+            </summary>
+            <param name="n"></param>
+            <param name="v"></param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.NameValue2">
+            <summary>
+                名称内容对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NameValue2.#ctor">
+            <summary>
+                构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NameValue2.#ctor(System.String,System.Object)">
+            <summary>
+                构造
+            </summary>
+            <param name="n"></param>
+            <param name="v"></param>
+        </member>
+        <member name="T:Agebull.Common.Base.TypeHelper">
+            <summary>
+              实体的帮助类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.FormatDateTime(System.Object,System.String)">
+            <summary>
+              格式化时间
+            </summary>
+            <param name="value"> </param>
+            <param name="fmt"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.FormatDecimal(System.Object,System.Int32)">
+            <summary>
+              格式化实数
+            </summary>
+            <param name="value"> </param>
+            <param name="f"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.FormatDecimal(System.Decimal,System.Int32)">
+            <summary>
+              格式化实数
+            </summary>
+            <param name="value"> </param>
+            <param name="f"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToString(System.String)">
+            <summary>
+              文本到文本
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToInt64(System.String)">
+            <summary>
+              文本到long
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToInt32(System.String)">
+            <summary>
+              文本到int
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToInt16(System.String)">
+            <summary>
+              文本到short
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToByte(System.String)">
+            <summary>
+              文本到byte
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToDecimal(System.String)">
+            <summary>
+              文本到decimal
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToDouble(System.String)">
+            <summary>
+              文本到double
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToFloat(System.String)">
+            <summary>
+              文本到float
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToDateTime(System.String)">
+            <summary>
+              文本到float
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToChar(System.String)">
+            <summary>
+              文本到char
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToBoolean(System.String)">
+            <summary>
+              文本到布尔
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToGuid(System.String)">
+            <summary>
+              文本到
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.NullableString``1(System.Object)">
+            <summary>
+              可空值到文本
+            </summary>
+            <typeparam name="T"> </typeparam>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableInt64(System.String)">
+            <summary>
+              文本到long
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableInt32(System.String)">
+            <summary>
+              文本到int
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableInt16(System.String)">
+            <summary>
+              文本到short
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableByte(System.String)">
+            <summary>
+              文本到byte
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableDecimal(System.String)">
+            <summary>
+              文本到decimal
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableDouble(System.String)">
+            <summary>
+              文本到double
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableFloat(System.String)">
+            <summary>
+              文本到float
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableDateTime(System.String)">
+            <summary>
+              文本到float
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableChar(System.String)">
+            <summary>
+              文本到char
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableBoolean(System.String)">
+            <summary>
+              文本到布尔
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToNullableGuid(System.String)">
+            <summary>
+              文本到
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToString(System.Object)">
+            <summary>
+              文本到string
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToFloat(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableFloat(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToDouble(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableDouble(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToDate(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableDate(System.Object)">
+            <summary>
+              文本到日期
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 日期 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToDecimal(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableDecimal(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToLong(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableLong(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToInt(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableInt(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToGuid(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableGuid(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToBool(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.ValueToNullableBool(System.Object)">
+            <summary>
+              文本到数字
+            </summary>
+            <param name="value"> 文本 </param>
+            <returns> 数字 </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.DictionaryString(System.Collections.IDictionary)">
+            <summary>
+              显示集合的所有文本
+            </summary>
+            <param name="d"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToIds(System.String)">
+            <summary>
+              以逗号分开的文本串变为数字列表
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringToIntList(System.String)">
+            <summary>
+              以逗号分开的文本串变为数字列表
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringIds(System.Collections.Generic.List{System.Int64})">
+            <summary>
+              将ID变为一个以逗号分开的文本串
+            </summary>
+            <param name="ids"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringIds(System.Collections.Generic.List{System.Int32})">
+            <summary>
+              将ID变为一个以逗号分开的文本串
+            </summary>
+            <param name="ids"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.StringList(System.Collections.Generic.List{System.String})">
+            <summary>
+              将ID变为一个以逗号分开的文本串
+            </summary>
+            <param name="ids"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.IsNull(System.Object)">
+            <summary>
+              数据是不是空
+            </summary>
+            <param name="a"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.IsNull2(System.Object)">
+            <summary>
+              数据是不是空
+            </summary>
+            <param name="a"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.GetString(System.Object,System.String)">
+            <summary>
+              取得值
+            </summary>
+            <param name="value"> </param>
+            <param name="def"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.GetValue``1(System.Object,``0)">
+            <summary>
+              取得值
+            </summary>
+            <param name="value"> </param>
+            <param name="def"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.GetValue``1(System.Object,System.Func{System.Object,``0},``0)">
+            <summary>
+              取得值
+            </summary>
+            <param name="value"> </param>
+            <param name="convert"> </param>
+            <param name="def"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.IsEquals(System.Object,System.Object,System.Boolean@,System.Boolean@)">
+            <summary>
+              数据是不是相等
+            </summary>
+            <param name="a"> </param>
+            <param name="b"> </param>
+            <param name="aNull"> </param>
+            <param name="bNull"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.IsEquals(System.Object,System.Object)">
+            <summary>
+              数据是不是相等
+            </summary>
+            <param name="a"> </param>
+            <param name="b"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.EditStringToDate(System.String,System.Object@)">
+            <summary>
+              编辑文本转为日期
+            </summary>
+            <param name="str"> </param>
+            <param name="rv"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.EditStringToDateTime(System.String,System.Object@)">
+            <summary>
+              编辑文本转为日期
+            </summary>
+            <param name="str"> </param>
+            <param name="rv"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.EditStringToTime(System.String,System.Object@)">
+            <summary>
+              编辑文本转为日期
+            </summary>
+            <param name="str"> </param>
+            <param name="rv"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.IsFlag(System.Int64)">
+            <summary>
+              检测一个数是否有多个位
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.CallNgen(System.String)">
+            <summary>
+            调用ngen.exe并执行文件的本机代码编译
+            </summary>
+            <param name="file"></param>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.Install(System.String)">
+            <summary>
+            调用ngen.exe安装文件的本机代码编译版本
+            </summary>
+            <param name="file"></param>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.Uninstall(System.String)">
+            <summary>
+            调用ngen.exe反安装文件的本机代码编译版本
+            </summary>
+            <param name="file"></param>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.GetConvert``1">
+            <summary>
+                得到强类型转换器
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Base.TypeHelper.GetStringConvert``1">
+            <summary>
+                得到强类型转换器
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Linq.EnumerableHelper">
+            <summary>
+              集合的扩展
+            </summary>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.SafeAdd``1(System.Collections.Generic.IDictionary{System.String,``0},System.String,``0)">
+            <summary>
+              安全加入(如已存在则改名加入)
+            </summary>
+            <param name="dictionary"> 集合本身 </param>
+            <param name="k"> 格式化代码 </param>
+            <param name="v"> 值 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddFormat(System.Collections.Generic.IList{System.String},System.String,System.Object[])">
+            <summary>
+              加入格式化文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmt"> 格式化代码 </param>
+            <param name="args"> 格式化参数 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ParseToList``1(System.Collections.Generic.IEnumerable{System.String},System.Func{System.String,``0})">
+            <summary>
+              从 System.Collections.Generic.IEnumerable到List(并做到不为空和使用原来的对象)
+            </summary>
+            <param name="source"> </param>
+            <param name="parse"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.IEnumerable)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.IEnumerable,System.Char)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="sp"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.StrLenght(System.String)">
+            <summary>
+            文字长度
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToSql(System.Collections.Generic.IEnumerable{System.String},System.String,System.Char,System.Int32)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="sp"> </param>
+            <param name="maxCol"> </param>
+            <param name="empty"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString``1(System.Collections.Generic.List{``0},System.Char)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="sp"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.SelectFormat``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+              转换到文本列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="wh"> 条件 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.SelectFormat``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+              转换到文本列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.SelectFormat``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+              转换到文本列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="valueFunc"> 取值的方法 </param>
+            <param name="wh"> 条件 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.SelectFormat``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String)">
+            <summary>
+              转换到文本列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="valueFunc"> 取值的方法 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddRangeFormat``1(System.Collections.Generic.List{System.String},System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String)">
+            <summary>
+              加入格式化文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="valueFunc"> 取值的方法 </param>
+            <param name="friend"> 要加入的集合 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddRangeFormat``1(System.Collections.Generic.List{System.String},System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+              加入一批格式化文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="friend"> 要加入的集合 </param>
+            <param name="wh"> 条件 </param>
+            <param name="valueFunc"> 取值的方法 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddRangeFormat``1(System.Collections.Generic.List{System.String},System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+              加入格式化文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="friend"> 要加入的集合 </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddRangeFormat``1(System.Collections.Generic.List{System.String},System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+              加入格式化文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="friend"> 要加入的集合 </param>
+            <param name="wh"> </param>
+            <param name="fm"> 格式化代码(有且只能有{0}) </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddByNotNull(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+              连接到文本(null和空白不加入且会消除空白)
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.DistinctBy(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+              得到唯一文件列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="empty">空文本 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.IEnumerable,System.String,System.Boolean)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="sp"> </param>
+            <param name="spToHead"></param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Link(System.Collections.Generic.List{System.String},System.String,System.String,System.String)">
+            <summary>
+              连接到文本(无值返回空)
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="toString"> </param>
+            <param name="sp"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString2``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="toString"> </param>
+            <param name="sp"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.Generic.IEnumerable{System.String},System.Func{System.String,System.String},System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="toString"> </param>
+            <param name="sp"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ListToString(System.Collections.IEnumerable,System.String,System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmString"> 格式化的文本 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.IEnumerable,System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ListToString(System.Collections.IEnumerable,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ListToString(System.Collections.IEnumerable,System.Func{System.Object,System.String},System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmt"> 格式化方法</param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkByFormat2``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmt"> 格式方法 </param>
+            <param name="empty"> 为空时显示 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkByFormat``1(System.Collections.Generic.IEnumerable{``0},System.String,System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmt"> 格式方法 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkByFormat``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.String},System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmt"> 格式方法 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToSql(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+              连接到SQL文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkToString(System.Collections.Generic.Dictionary{System.String,System.String},System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.LinkByFormat2(System.Collections.IEnumerable,System.String,System.String,System.String,System.String)">
+            <summary>
+              连接到文本
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="fmString"> 格式化的文本 </param>
+            <param name="head"> 前缀 </param>
+            <param name="sp"> 中间的连接字串 </param>
+            <param name="food"> 后缀 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddRange``1(System.Collections.ObjectModel.ObservableCollection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            向ObservableCollection加入一批数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="range"></param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddOnce``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            不重复加入
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="range"></param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddOnce``1(System.Collections.Generic.ICollection{``0},``0[])">
+            <summary>
+            不重复加入
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="range"></param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ToList2``1(System.Collections.IEnumerable)">
+            <summary>
+              从 System.Collections.Generic.IEnumerable到List(并做到不为空和使用原来的对象)
+            </summary>
+            <param name="source"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ToObservableCollection``1(System.Collections.IEnumerable)">
+            <summary>
+              从 System.Collections.Generic.IEnumerable到List(并做到不为空和使用原来的对象)
+            </summary>
+            <param name="source"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Select2``1(System.Collections.IEnumerable,System.Func{System.Object,``0})">
+            <summary>
+              从 System.Collections.Generic.IEnumerable到List(并做到不为空和使用原来的对象)
+            </summary>
+            <param name="source"> </param>
+            <param name="convert"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Select3``2(System.Collections.IEnumerable,System.Func{``1,``0})">
+            <summary>
+              从 System.Collections.Generic.IEnumerable到List(并做到不为空和使用原来的对象)
+            </summary>
+            <param name="source"> </param>
+            <param name="convert"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ForEach(System.Collections.IEnumerable,System.Action{System.Object},System.Boolean)">
+            <summary>
+              遍历
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="action"> 化方法</param>
+            <param name="keepNull"> 跳过空值 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Foreach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0},System.Boolean)">
+            <summary>
+              遍历
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="action"> 化方法</param>
+            <param name="keepNull"> 跳过空值 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.ToList``1(System.Collections.IEnumerable,System.Func{System.Object,``0},System.Boolean)">
+            <summary>
+              到列表
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="action"> 化方法</param>
+            <param name="keepNull"> 跳过空值 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Foreach``2(System.Collections.Generic.IEnumerable{``1},System.Func{System.Object,``0},System.Boolean)">
+            <summary>
+              遍历
+            </summary>
+            <param name="em"> 集合本身 </param>
+            <param name="action"> 化方法</param>
+            <param name="keepNull"> 跳过空值 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddOnce(System.Collections.Generic.IList{System.String},System.String)">
+            <summary>
+                如果数组中没有相同的,就增加它
+            </summary>
+            <param name="em"></param>
+            <param name="value">内容</param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddOnce``1(System.Collections.Generic.IDictionary{System.String,``0},System.String,``0)">
+            <summary>
+                如果字典中没有就增加它
+            </summary>
+            <param name="dictionary">字典</param>
+            <param name="key">键</param>
+            <param name="value">内容</param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.AddOrSwitch``1(System.Collections.Generic.IDictionary{System.String,``0},System.String,``0)">
+            <summary>
+                如果字典中没有就增加它,有就替换它
+            </summary>
+            <param name="dictionary">字典</param>
+            <param name="key">键</param>
+            <param name="value">内容</param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.OnlyAdd``1(System.Collections.Generic.IDictionary{System.String,``0},System.String,``0)">
+            <summary>
+                如果字典中没有就增加它
+            </summary>
+            <param name="dictionary">字典</param>
+            <param name="key">键</param>
+            <param name="value">内容</param>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Merge``1(System.Collections.Generic.Dictionary{System.String,``0}[])">
+            <summary>
+                合并(后一个如果有和前一个同键的,会覆盖它)
+            </summary>
+            <param name="paras"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.EnumerableHelper.Splice(System.String,System.String,System.Object[])">
+            <summary>
+            拼接文本
+            </summary>
+            <param name="head">起头文本</param>
+            <param name="splice">连接的中间文本</param>
+            <param name="args">被连接的内容(如果为空,不拼接)</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Linq.FixStack`1">
+            <summary>
+              表示一个栈底为固定值的栈
+            </summary>
+            <typeparam name="T"> </typeparam>
+        </member>
+        <member name="M:System.Linq.FixStack`1.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:System.Linq.FixStack`1.Clear">
+            <summary>
+            清栈
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.StackCount">
+            <summary>
+            栈深
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.Stack">
+            <summary>
+            栈内值
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.Current">
+            <summary>
+              当前
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.IsEmpty">
+            <summary>
+             栈是否为空
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.FixValue">
+            <summary>
+              固定
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack`1.FixStackBottom">
+            <summary>
+              栈底为固定值,即保证最后栈中总有一个值
+            </summary>
+            <remarks>
+              当调用了SetDefault后为真
+            </remarks>
+        </member>
+        <member name="M:System.Linq.FixStack`1.op_Implicit(System.Linq.FixStack{`0})~`0">
+            <summary>
+              自动转换
+            </summary>
+            <param name="stack"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.FixStack`1.SetFix(`0)">
+            <summary>
+              配置固定值(只第一次调用有效果)
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:System.Linq.FixStack`1.SetFixAndReplaceAll(`0)">
+            <summary>
+            设置配置固定值(只第一次调用有效果)并将栈内所有值替换为它
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:System.Linq.FixStack`1.Push(`0)">
+            <summary>
+              入栈
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:System.Linq.FixStack`1.PushNull">
+            <summary>
+             空入栈
+            </summary>
+        </member>
+        <member name="M:System.Linq.FixStack`1.PushCurrent">
+            <summary>
+             当前再入栈
+            </summary>
+            <remarks>目的是和其它人做相同次数的入栈和出栈</remarks>
+        </member>
+        <member name="M:System.Linq.FixStack`1.Pop">
+            <summary>
+              出栈
+            </summary>
+        </member>
+        <member name="M:System.Linq.FixStack`1.Remove(`0)">
+            <summary>
+            移除
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:System.Linq.FixStack`1.Refresh">
+            <summary>
+            直接操作Stack后的更新
+            </summary>
+        </member>
+        <member name="T:System.Linq.FixStack2`1">
+            <summary>
+              表示一个栈底为固定值的栈
+            </summary>
+            <typeparam name="T"> </typeparam>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack2`1.Current">
+            <summary>
+              当前
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack2`1.IsEmpty">
+            <summary>
+             栈是否为空
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack2`1.FixValue">
+            <summary>
+              固定
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack2`1.FixStackBottom">
+            <summary>
+              栈底为固定值,即保证最后栈中总有一个值
+            </summary>
+            <remarks>
+              当调用了SetDefault后为真
+            </remarks>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.op_Implicit(System.Linq.FixStack2{`0})~`0">
+            <summary>
+              自动转换
+            </summary>
+            <param name="stack"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.SetFix(`0)">
+            <summary>
+              配置固定值(只第一次调用有效果)
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.Push(`0)">
+            <summary>
+              入栈
+            </summary>
+            <param name="value"> </param>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.PushCurrent">
+            <summary>
+             当前再入栈
+            </summary>
+            <remarks>目的是和其它人做相同次数的入栈和出栈</remarks>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.Clear">
+            <summary>
+            清栈
+            </summary>
+        </member>
+        <member name="P:System.Linq.FixStack2`1.StackCount">
+            <summary>
+            栈深
+            </summary>
+        </member>
+        <member name="M:System.Linq.FixStack2`1.Pop">
+            <summary>
+              出栈
+            </summary>
+        </member>
+    </members>
+</doc>

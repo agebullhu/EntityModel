@@ -1,0 +1,768 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gboxt.Common.Text</name>
+    </assembly>
+    <members>
+        <member name="T:System.Text.ChineseMoneyHelper">
+            <summary>
+              中文金额 该类重载的 ToString() 方法返回的是大写金额字符串
+            </summary>
+        </member>
+        <member name="M:System.Text.ChineseMoneyHelper.ToChineseMoney(System.Decimal)">
+            <summary>
+              构造函数
+            </summary>
+            <param name="money"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChineseMoneyHelper.ToPrintChineseMoney(System.Decimal)">
+            <summary>
+              构造函数
+            </summary>
+            <param name="money"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChineseMoneyHelper.ToChineseNumber(System.Int32)">
+            <summary>
+              构造函数
+            </summary>
+            <param name="money"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Text.ChineseNumber">
+            <summary>
+              中文金额 该类重载的 ToString() 方法返回的是大写金额字符串
+            </summary>
+        </member>
+        <member name="M:System.Text.ChineseNumber.NumberString(System.Int32)">
+            <summary>
+              构造函数
+            </summary>
+            <param name="number"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Text.ChineseMoney">
+            <summary>
+              中文金额 该类重载的 ToString() 方法返回的是大写金额字符串
+            </summary>
+        </member>
+        <member name="M:System.Text.ChineseMoney.InvoiceString(System.Decimal)">
+            <summary>
+              构造函数
+            </summary>
+            <param name="money"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChineseMoney.InvoicePrintString(System.Decimal)">
+            <summary>
+              转换为套打用的文本
+            </summary>
+            <param name="money"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Text.ChinessPinYin">
+            <summary>
+              拼音的操作类
+            </summary>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.Head(System.String)">
+            <summary>
+              取得文字的头一个拼音
+            </summary>
+            <param name="chinese"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.ConvertToPinYin(System.String)">
+            <summary>
+              得到文字的拼音
+            </summary>
+            <param name="chinese"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.PinYin(System.String)">
+            <summary>
+              得到文字的拼音
+            </summary>
+            <param name="chinese"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.ConvertToShengMu(System.String)">
+            <summary>
+              得到文字每个字的拼音的第一个
+            </summary>
+            <param name="chinese"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.ToField(System.String)">
+            <summary>
+              将字符串转为字母表示(中文用声母,其它不变)
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.ToAsciiField(System.String)">
+            <summary>
+              将字符串转为字母表示(中文用声母,其它不变)
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.ChinessPinYin.ShengMu(System.String)">
+            <summary>
+              得到文字每个字的拼音的第一个
+            </summary>
+            <param name="chinese"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Text.UnicodeBase64">
+            <summary>
+              unicodeBase64编，解码
+            </summary>
+        </member>
+        <member name="M:System.Text.UnicodeBase64.EncodeToBase64(System.String)">
+            <summary>
+              得到文字每个字的拼音的第一个
+            </summary>
+            <param name="code"> </param>
+            <returns> 返回编码的值($SG$) </returns>
+        </member>
+        <member name="M:System.Text.UnicodeBase64.EncodeBase64(System.String)">
+            <summary>
+              对文本进行Base64编码 使用unicode编码
+            </summary>
+            <param name="code"> 要编码的文本 </param>
+            <returns> 编码后的文本 </returns>
+        </member>
+        <member name="M:System.Text.UnicodeBase64.DecodeFromBase64(System.String)">
+            <summary>
+              对文本进行Base64解码
+            </summary>
+            <param name="code"> </param>
+            <returns> 返回编码的值($SG$) </returns>
+        </member>
+        <member name="M:System.Text.UnicodeBase64.DecodeBase64(System.String)">
+            <summary>
+              对文本进行Base64解码 使用unicode编码
+            </summary>
+            <param name="code"> 要解码的文本 </param>
+            <returns> 解码后的文本 </returns>
+        </member>
+        <member name="T:System.Text.QuanJiaoChinese">
+            <summary>
+              全角中文的操作类
+            </summary>
+        </member>
+        <member name="M:System.Text.QuanJiaoChinese.IsBjChar(System.Char)">
+            <summary>
+              是否半角文字 判断字符是否英文半角字符或标点 32 空格 33-47 标点 48-57 0~9 58-64 标点 65-90 A~Z 91-96 标点 97-122 a~z 123-126 标点
+            </summary>
+            <param name="c"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.QuanJiaoChinese.IsQjChar(System.Char)">
+            <summary>
+              判断字符是否全角字符或标点 全角字符 - 65248 = 半角字符 全角空格例外
+            </summary>
+            <param name="c"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.QuanJiaoChinese.ConverToAscii(System.String)">
+            <summary>
+              将字符串中的全角字符转换为半角
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.QuanJiaoChinese.ToBj(System.String)">
+            <summary>
+              将字符串中的全角字符转换为半角
+            </summary>
+            <param name="s"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:System.Text.StringHelper">
+            <summary>
+              文本帮助类
+            </summary>
+        </member>
+        <member name="M:System.Text.StringHelper.SpliteWord(System.String)">
+            <summary>
+            拆分到单词(每个标点或大写字母作为分隔符)
+            </summary>
+            <param name="word">单词</param>
+            <returns>复数形式</returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToName(System.String,System.Boolean)">
+            <summary>
+            一个字符器转为名称
+            </summary>
+            <param name="word">单词</param>
+            <param name="toFirstUpper">是否首字母大写</param>
+            <returns>字符器</returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToPluralism(System.String)">
+            <summary>
+            到一个单词的复数形式
+            </summary>
+            <param name="word">单词</param>
+            <returns>复数形式</returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToPluralismInner(System.String)">
+            <summary>
+            到一个单词的复数形式
+            </summary>
+            <param name="word">单词</param>
+            <returns>复数形式</returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToWord(System.String)">
+            <summary>
+              到首字母大写的文本
+            </summary>
+            <param name="word"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToWord2(System.String)">
+            <summary>
+              到首字母小写的文本
+            </summary>
+            <param name="word"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToUpper(System.Char)">
+            <summary>
+              将字母转为大写
+            </summary>
+            <param name="c"> 字母 </param>
+            <returns> 转换后的字母 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToLower(System.Char)">
+            <summary>
+              将字母转为小写
+            </summary>
+            <param name="c"> 字母 </param>
+            <returns> 转换后的字母 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ListToString(System.Collections.IEnumerable,System.Char)">
+            <summary>
+              列表转为以一个字符分隔的文本
+            </summary>
+            <param name="ls"> 列表 </param>
+            <param name="dot"> 分隔符 </param>
+            <returns> 文本 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.ToString(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+              列表转为以一个字符分隔的文本
+            </summary>
+            <param name="ls"> 列表 </param>
+            <returns> 文本 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper.FromString(System.String)">
+            <summary>
+              列表转为以一个字符分隔的文本
+            </summary>
+            <param name="value"> 列表 </param>
+            <returns> 文本 </returns>
+        </member>
+        <member name="T:System.Text.StringHelper2">
+            <summary>
+              文本帮助类(String类扩展)
+            </summary>
+        </member>
+        <member name="M:System.Text.StringHelper2.MulitReplace(System.String,System.String[])">
+            <summary>
+            替换多个内容对
+            </summary>
+            <param name="str"></param>
+            <param name="rs">成对的替换,请保证是成对的</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.MulitReplace2(System.String,System.String,System.String[])">
+            <summary>
+            替换多个内容为一个
+            </summary>
+            <param name="str"></param>
+            <param name="last">替换到</param>
+            <param name="org">被替换</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.MulitReplace(System.String,System.Char[])">
+            <summary>
+            替换多个内容对
+            </summary>
+            <param name="str"></param>
+            <param name="rs">成对的替换,请保证是成对的</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.MulitReplace2(System.String,System.Char,System.Char[])">
+            <summary>
+            替换多个内容为一个
+            </summary>
+            <param name="str"></param>
+            <param name="last">替换到</param>
+            <param name="org">被替换</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceText(System.Text.StringBuilder,System.Int32,System.String,System.Boolean)">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="str"></param>
+            <param name="newLine"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpace(System.Text.StringBuilder,System.Int32,System.Boolean)">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="newLine"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceTextFormat(System.Text.StringBuilder,System.Int32,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.SpaceString(System.Int32)">
+            <summary>
+            得到相应长度的空文本
+            </summary>
+            <param name="len"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.XamlString(System.Boolean)">
+            <summary>
+            得到布尔用于XAML的文字
+            </summary>
+            <param name="bl"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendAttrib(System.Text.StringBuilder,System.String,System.Object)">
+            <summary>
+            加入XML属性
+            </summary>
+            <param name="code"></param>
+            <param name="name">属性</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendAttrib(System.Text.StringBuilder,System.String,System.Boolean)">
+            <summary>
+            加入XML属性
+            </summary>
+            <param name="code"></param>
+            <param name="name">属性</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendAttrib(System.Text.StringBuilder,System.String,System.String,System.String)">
+            <summary>
+            加入XML属性
+            </summary>
+            <param name="code"></param>
+            <param name="name">属性</param>
+            <param name="head"></param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceTextFormat(System.Text.StringBuilder,System.Boolean,System.Int32,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="newLine"></param>
+            <param name="space"></param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineText(System.Text.StringBuilder,System.Int32,System.String,System.Boolean)">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="str"></param>
+            <param name="newLine"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendUsing(System.Text.StringBuilder,System.String)">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="nameSpace"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendUsing(System.Text.StringBuilder,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            写入using语句
+            </summary>
+            <param name="code"></param>
+            <param name="nameSpaces"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineFormat(System.Text.StringBuilder,System.Int32,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineFormat(System.Text.StringBuilder,System.Int32,System.Boolean,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="newLine"> </param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineText2(System.Text.StringBuilder,System.Int32,System.String,System.Boolean)">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="str"></param>
+            <param name="newLine"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineFormat2(System.Text.StringBuilder,System.Int32,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendSpaceLineFormat2(System.Text.StringBuilder,System.Int32,System.Boolean,System.String,System.Object[])">
+            <summary>
+            把空格放有每行前的格式化方式
+            </summary>
+            <param name="code"></param>
+            <param name="space"></param>
+            <param name="newLine"> </param>
+            <param name="fmt"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:System.Text.StringHelper2.SpaceLine2(System.String,System.Int32)">
+            <summary>
+            使每行都缩进相同个数的空格
+            </summary>
+            <param name="str"></param>
+            <param name="space"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.SpaceLine(System.String,System.Int32,System.String)">
+            <summary>
+            使每行都缩进相同个数的空格
+            </summary>
+            <param name="str"></param>
+            <param name="space"></param>
+            <param name="head"> </param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.IsNullOrDefault(System.String,System.String)">
+            <summary>
+              为空或是缺省文本
+            </summary>
+            <param name="word"> </param>
+            <param name="def"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.IsName(System.String)">
+            <summary>
+              检测一个文字是否一个单词
+            </summary>
+            <param name="text"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.ToUWord(System.String)">
+            <summary>
+              到首字母大写的文本
+            </summary>
+            <param name="word"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.ToLWord(System.String)">
+            <summary>
+              到首字母小写的文本
+            </summary>
+            <param name="word"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.ToUpper(System.Char)">
+            <summary>
+              将字母转为大写
+            </summary>
+            <param name="c"> 字母 </param>
+            <returns> 转换后的字母 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.ToLower(System.Char)">
+            <summary>
+              将字母转为小写
+            </summary>
+            <param name="c"> 字母 </param>
+            <returns> 转换后的字母 </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.IsEquals(System.String,System.String)">
+            <summary>
+              到首字母大写的文本
+            </summary>
+            <param name="a"> </param>
+            <param name="b"></param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.GetLen(System.String)">
+            <summary>
+              取得文本的长度(全角算两个)
+            </summary>
+            <param name="a"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.Append(System.String,System.String,System.Object[])">
+            <summary>
+            拼接文本
+            </summary>
+            <param name="head">起头文本</param>
+            <param name="splice">连接的中间文本</param>
+            <param name="args">被连接的内容(如果为空,不拼接)</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.Append(System.String,System.String,System.Object)">
+            <summary>
+            拼接文本
+            </summary>
+            <param name="head">起头文本</param>
+            <param name="splice">连接的中间文本</param>
+            <param name="arg">被连接的内容(如果为空,不拼接)</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Text.StringHelper2.AppendFormat(System.String,System.String,System.String,System.Object[])">
+            <summary>
+            拼接文本
+            </summary>
+            <param name="head">起头文本</param>
+            <param name="splice">连接的中间文本</param>
+            <param name="fmt"></param>
+            <param name="arg">被连接的内容(如果为空,不拼接)</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.ValueToStringHelper">
+            <summary>
+            值格式化扩展
+            </summary>
+        </member>
+        <member name="M:System.ValueToStringHelper.SpliteWord(System.String)">
+            <summary>
+            拆分到单词(每个标点或大写字母作为分隔符)
+            </summary>
+            <param name="word">单词</param>
+            <returns>复数形式</returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToName(System.String,System.Boolean)">
+            <summary>
+            一个字符器转为名称
+            </summary>
+            <param name="word">单词</param>
+            <param name="toFirstUpper">是否首字母大写</param>
+            <returns>字符器</returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToPluralism(System.String)">
+            <summary>
+            到一个单词的复数形式
+            </summary>
+            <param name="word">单词</param>
+            <returns>复数形式</returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.IsEquals(System.String,System.String)">
+            <summary>
+              数据是不是相等
+            </summary>
+            <param name="a"> </param>
+            <param name="b"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString(System.String,System.String)">
+            <summary>
+            到用空文本替换的文本
+            </summary>
+            <param name="str"></param>
+            <param name="nullString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToPercent(System.Decimal,System.String)">
+            <summary>
+            到百分比显示
+            </summary>
+            <param name="d"></param>
+            <param name="nullString">为0时表示的文本</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToPercent(System.Decimal)">
+            <summary>
+            到百分比显示
+            </summary>
+            <param name="d"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString(System.Decimal,System.Int32,System.String)">
+            <summary>
+            到没有多余小数位的文本
+            </summary>
+            <param name="d"></param>
+            <param name="nullString">为0时表示的文本</param>
+            <param name="dia">最长小数位(默认为10)</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString(System.Nullable{System.Decimal},System.Int32,System.String)">
+            <summary>
+            到没有多余小数位的文本
+            </summary>
+            <param name="d"></param>
+            <param name="nullString">为0时表示的文本</param>
+            <param name="dia">最长小数位(默认为10)</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString(System.DateTime,System.String,System.String)">
+            <summary>
+            到可为空的时间格式化
+            </summary>
+            <param name="v"></param>
+            <param name="fmt">格式化</param>
+            <param name="nullString">为0时表示的文本</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString(System.Nullable{System.DateTime},System.String,System.String)">
+            <summary>
+            到可为空的时间格式化
+            </summary>
+            <param name="v"></param>
+            <param name="fmt">格式化</param>
+            <param name="nullString">为0时表示的文本</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString``1(``0,System.String)">
+            <summary>
+            到缺省值用空文本表示的值
+            </summary>
+            <param name="v"></param>
+            <param name="nullString">为0时表示的文本</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToNullString``1(System.Nullable{``0},System.String)">
+            <summary>
+            到没有多余小数位的文本
+            </summary>
+            <param name="v"></param>
+            <param name="nullString">为0时表示的文本</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToFixLenString(System.Decimal,System.Int32,System.Int32)">
+            <summary>
+            到固定长度显示
+            </summary>
+            <param name="d">小数</param>
+            <param name="len">总长度</param>
+            <param name="dit">小数位</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToFixLenString(System.Single,System.Int32,System.Int32)">
+            <summary>
+            到固定长度显示
+            </summary>
+            <param name="d">小数</param>
+            <param name="len">总长度</param>
+            <param name="dit">小数位</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToFixLenString(System.Double,System.Int32,System.Int32)">
+            <summary>
+            到固定长度显示
+            </summary>
+            <param name="d">小数</param>
+            <param name="len">总长度</param>
+            <param name="dit">小数位</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToFixLenString(System.Int32,System.Int32)">
+            <summary>
+            到固定长度显示
+            </summary>
+            <param name="d">对象</param>
+            <param name="len">总长度</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.ValueToStringHelper.ToFixLenString``1(``0,System.Int32)">
+            <summary>
+            到固定长度显示
+            </summary>
+            <param name="d">对象</param>
+            <param name="len">总长度</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.LunDay">
+            <summary>
+              LunDay日期转农历 用法说明 直接调用即可,比较简单
+            </summary>
+        </member>
+        <member name="M:System.LunDay.ToLunDay(System.DateTime)">
+            <summary>
+              转为农历
+            </summary>
+            <param name="dt"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.LunDay.GetLunarCalendar(System.DateTime)">
+            <summary>
+              获取对应日期的农历
+            </summary>
+            <param name="dtDay"> 公历日期 </param>
+            <returns> </returns>
+        </member>
+        <member name="M:System.LunDay.ToLunarCalendar(System.DateTime)">
+            <summary>
+              获取对应日期的农历
+            </summary>
+            <param name="dtDay"> 公历日期 </param>
+            <returns> </returns>
+        </member>
+        <member name="T:Agebull.Common.Text.MulitStringDictionary">
+            <summary>
+              多文本的一个集合
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Text.MulitStringDictionary.#ctor">
+            <summary>
+              构造
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Text.MulitStringDictionary.Global">
+            <summary>
+              全局文本(空或空白键的文本)
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Text.MulitStringDictionary.Add(System.String,System.String)">
+            <summary>
+              加入
+            </summary>
+            <param name="name"> </param>
+            <param name="value"> </param>
+        </member>
+        <member name="P:Agebull.Common.Text.MulitStringDictionary.Item(System.String)">
+            <summary>
+              得到文本(列表已组合)
+            </summary>
+            <param name="name"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.Text.MulitStringDictionary.ToString">
+            <summary>
+              返回文本
+            </summary>
+            <returns> </returns>
+        </member>
+    </members>
+</doc>
