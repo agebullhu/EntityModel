@@ -22,7 +22,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicByAudit<TData, TAccess> : BusinessLogicByHistory<TData, TAccess>
         where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : HitoryTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
         #region 消息
 
@@ -113,7 +113,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public virtual bool Validate(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 return DoValidateInner(Details(id));
             }
@@ -124,7 +124,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool AuditPass(int id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 var data = Details(id);
                 if (data == null)
@@ -140,7 +140,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool AuditDeny(int id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 var data = Details(id);
                 if (data == null)
@@ -158,7 +158,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool UnAudit(int id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 var data = Details(id);
                 if (data == null)
@@ -178,7 +178,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public bool Submit(int id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 var data = Details(id);
                 if (data == null)
@@ -198,7 +198,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public bool Back(int id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 var data = Details(id);
                 if (data == null)
@@ -248,7 +248,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         public override bool Reset(int id)
         {
             ResetState(Access.First(id));
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
                 {
@@ -265,7 +265,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Disable(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass ))
                 {
@@ -280,7 +280,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Discard(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState <= AuditStateType.Again))
                 {
@@ -295,7 +295,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Enable(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
                 {
@@ -311,7 +311,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Lock(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
                     return false;
@@ -376,7 +376,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         protected bool AuditInner(TData data, bool pass)
         {
-            
+            //BusinessContext.Current.IsSystemMode = true;
             if (pass)
             {
                 AuditPrepare(data);
@@ -384,7 +384,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 {
                     return false;
                 }
-                if (!CanAudit(data))
+                if (!CanDoAuditAction(data))
+                {
+                    return false;
+                }
+                if (!CanAuditPass(data))
                 {
                     return false;
                 }
@@ -441,9 +445,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 BusinessContext.Current.LastMessage = BackMessage;
                 return false;
             }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
+                using (var scope = Access.DataBase.CreateTransactionScope())
                 {
                     if (!DoBack(data))
                     {
@@ -467,6 +471,12 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <returns></returns>
         protected bool SubmitInner(TData data)
         {
+            //BusinessContext.Current.IsSystemMode = true;
+            if (data == null || data.IsDeleted())
+            {
+                BusinessContext.Current.LastMessage = "数据不存在或已删除！";
+                return false;
+            }
             if (data.AuditState == AuditStateType.Submit)
             {
                 return true;
@@ -481,7 +491,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return false;
             }
-            if (!CanAudit(data))
+            if (!CanDoAuditAction(data))
             {
                 return false;
             }
@@ -535,13 +545,22 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         protected virtual void OnAuditStateChanged(TData data)
         {
         }
+        /// <summary>
+        ///     能否通过审核)的判断
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected virtual bool CanAuditPass(TData data)
+        {
+            return true;
+        }
 
         /// <summary>
         ///     能否进行审核的判断
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected virtual bool CanAudit(TData data)
+        protected virtual bool CanDoAuditAction(TData data)
         {
             if (data == null || data.IsDeleted())
             {

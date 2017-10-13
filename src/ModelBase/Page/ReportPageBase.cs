@@ -114,6 +114,7 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected override void CreateReport()
         {
+            BusinessContext.Current.IsUnSafeMode = true;
             var exporter = new ExcelExporter<TData, TAccess>();
             var temp = Path.Combine(Request.MapPath("~"),"Report","excel.xlsx");
             var buffer = exporter.ExportExcel(GetFilter(), Name, temp);

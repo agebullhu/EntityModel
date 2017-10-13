@@ -1,0 +1,650 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Yizuan.Service.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend">
+            <summary>
+            基于HTTP协议的返回消息对象扩展
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse(System.Net.Http.HttpRequestMessage,System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象
+            </summary>
+            <param name="request">请求对象</param>
+            <returns>HttpResponseMessage对象</returns>
+            <param name="statusCode">HTTP状态码</param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiResult,System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象
+            </summary>
+            <param name="request">请求对象</param>
+            <param name="result">返回内容</param>
+            <param name="statusCode">HTTP状态码</param>
+            <returns>HttpResponseMessage对象</returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.IApiResult,System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象
+            </summary>
+            <param name="request">请求对象</param>
+            <param name="result">返回内容</param>
+            <param name="statusCode">HTTP状态码</param>
+            <returns>HttpResponseMessage对象</returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,``0,System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象(没有返回值）
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="result">返回内容</param>
+            <param name="statusCode">HTTP状态码</param>
+            <returns>HttpResponseMessage对象</returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiResult{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象(返回一般数据)
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="statusCode">HTTP状态码</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.IApiResult{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象(返回一般数据)
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="statusCode">HTTP状态码</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,System.Collections.Generic.IList{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象（返回数组）
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="statusCode">HTTP状态码</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiArrayResult{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象（返回数组）
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="statusCode">HTTP状态码</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiPageResult{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象（返回分页）
+            </summary>
+            <typeparam name="TResult">返回类型，基于ApiResult</typeparam>
+            <param name="request">请求对象</param>
+            <param name="statusCode">HTTP状态码</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <returns></returns>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.ApiResponseMessage">
+            <summary>
+            API返回专用的ResponseMessage
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiResponseMessage.SuccessMessage">
+            <summary>
+            默认的成功消息
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage.#ctor">
+            <summary>
+            默认构造（状态码为
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage.#ctor(System.Net.HttpStatusCode)">
+            <summary>
+            状态构造
+            </summary>
+            <param name="statusCode">状态</param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage.#ctor(System.Net.HttpStatusCode,Yizuan.Service.Api.ApiResult)">
+            <summary>
+            状态构造
+            </summary>
+            <param name="statusCode">状态</param>
+            <param name="result"></param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage.#ctor(System.Net.HttpStatusCode,Yizuan.Service.Api.IApiResult)">
+            <summary>
+            状态构造
+            </summary>
+            <param name="statusCode">状态</param>
+            <param name="result"></param>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.ApiResponseMessage`1">
+            <summary>
+            API返回专用的ResponseMessage
+            </summary>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage`1.#ctor">
+            <summary>
+            默认构造（状态码为
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage`1.#ctor(System.Net.HttpStatusCode)">
+            <summary>
+            状态构造
+            </summary>
+            <param name="statusCode">状态</param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiResponseMessage`1.#ctor(`0,System.Net.HttpStatusCode)">
+            <summary>
+            状态构造
+            </summary>
+            <param name="result">数据</param>
+            <param name="statusCode">状态</param>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.BearerHandler">
+            <summary>
+            身份检查器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            重载
+            </summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.BearerHandler._request">
+            <summary>
+            请求对象
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.BearerHandler._token">
+            <summary>
+            令牌
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.Check">
+            <summary>
+            执行检查
+            </summary>
+            <returns>
+            0:表示通过验证，可以继续
+            1：令牌为空或不合格
+            2：令牌是伪造的
+            </returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CheckDeviceId">
+            <summary>
+            检查设备标识
+            </summary>
+            <returns>
+            0:表示通过验证，可以继续
+            1：令牌为空
+            2：令牌是伪造的
+            </returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CreateApiContext(Yizuan.Service.Api.IUserProfile)">
+            <summary>
+            构造上下文
+            </summary>
+            <param name="customer"></param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CheckServiceKey">
+            <summary>
+            检查旧标识
+            </summary>
+            <returns>
+            0:表示通过验证，可以继续
+            1：令牌为空
+            2：令牌是伪造的
+            </returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CheckAccessToken">
+            <summary>
+            检查AccessToken
+            </summary>
+            <returns>
+            0:表示通过验证，可以继续
+            1：令牌为空
+            2：令牌是伪造的
+            </returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.ExtractToken">
+            <summary>
+            取请求头的身份验证令牌
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.ApplicationHelper">
+            <summary>
+            WebApi应用辅助类
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.OnApplicationStart">
+            <summary>
+            Application_Start时调用
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.OnApplicationStartInner">
+            <summary>
+            Application_Start时调用(内部使用)
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.Regist(System.Web.Http.HttpConfiguration)">
+            <summary>
+            注册过滤器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.RegistFilter(System.Web.Http.HttpConfiguration)">
+            <summary>
+            注册过滤器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.RegistFormatter">
+            <summary>
+            注册格式化器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.RegistHandler">
+            <summary>
+            基础MessageHandler注册
+            </summary>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.ApiAccessOption">
+            <summary>
+            API访问配置
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.None">
+            <summary>
+            不可访问
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Public">
+            <summary>
+            公开访问
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Internal">
+            <summary>
+            内部访问
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Anymouse">
+            <summary>
+            游客
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Customer">
+            <summary>
+            客户
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Business">
+            <summary>
+            商家用户
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.ApiAccessOption.Employe">
+            <summary>
+            内部员工
+            </summary>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.ApiAccessOptionFilterAttribute">
+            <summary>
+            API配置过滤器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiAccessOptionFilterAttribute.#ctor(Yizuan.Service.Api.WebApi.ApiAccessOption)">
+            <summary>
+            构造
+            </summary>
+            <param name="option"></param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApiAccessOptionFilterAttribute.OnActionExecuting(System.Web.Http.Controllers.HttpActionContext)">
+            <summary>
+            动作运行前
+            </summary>
+            <param name="filterContext"></param>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.HttpIoLogHandler">
+            <summary>
+            Http进站出站的日志记录
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpIoLogHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            重载
+            </summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpIoLogHandler.RecordRequestInfo(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            记录API请求
+            </summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpIoLogHandler.FormatParams(System.String)">
+            <summary>
+            参数格式化
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpIoLogHandler.RecordResponseInfo(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            记录API返回
+            </summary>
+            <param name="response"></param>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpIoLogHandler.ExtractToken(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            取请求头的身份验证令牌
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.InternalApiCaller">
+            <summary>
+            内部服务调用代理
+            </summary>
+        </member>
+        <member name="F:Yizuan.Service.Api.WebApi.InternalApiCaller.Caller">
+            <summary>
+            内部访问器
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,System.String)">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="form"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,System.String)">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="form"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Yizuan.Service.Api.WebApi.WebApiCaller">
+            <summary>
+            内部服务调用代理
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.WebApi.WebApiCaller.Host">
+            <summary>
+            主机
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.WebApi.WebApiCaller.Bearer">
+            <summary>
+            主机
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.FormatParams(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            参数格式化
+            </summary>
+            <param name="httpParams"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String,System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post``1(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post``1(System.String,System.String)">
+            <summary>
+            通过Post调用
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="url"></param>
+            <param name="form"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.GetResult``1(System.Net.HttpWebRequest)">
+            <summary>
+            取返回值
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="req"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get(System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get(System.String,System.String)">
+            <summary>
+            通过Get调用
+            </summary>
+            <param name="url"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post(System.String,Yizuan.Service.Api.IApiArgument)">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Post(System.String,System.String)">
+            <summary>
+            通过Post调用
+            </summary>
+            <param name="url"></param>
+            <param name="form"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.GetResult(System.Net.HttpWebRequest)">
+            <summary>
+            取返回值
+            </summary>
+            <param name="req"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

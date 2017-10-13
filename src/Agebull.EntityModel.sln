@@ -1,15 +1,29 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gboxt.Common.DataEntity", "DataEntity\Gboxt.Common.DataEntity.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.DataEntity", "DataEntity\Agebull.Common.DataEntity.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gboxt.Common.ModelBase", "ModelBase\Gboxt.Common.ModelBase.csproj", "{6AC7FF64-8103-428C-987D-F7B527201F89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.ModelBase", "ModelBase\Agebull.Common.ModelBase.csproj", "{6AC7FF64-8103-428C-987D-F7B527201F89}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entity", "Entity", "{F2563A12-18F3-4BA7-BDF5-1A995F715518}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.Extend", "Agebull.Extend\Agebull.Common.Extend.csproj", "{E204D26E-EA0A-4905-A53F-19BD92F405BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extend", "Extend", "{71ACFD5A-4D57-4CC1-ADBE-32C3FE31151A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.DataModel.SystemModel", "System\Agebull.Common.DataModel.SystemModel.csproj", "{878C8642-B347-474E-9E62-8BC37FAADF0A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{D2C6569B-6E60-46ED-8B0B-0095088EB85C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yizuan.Service.ApiContract", "ApiContract\Yizuan.Service.ApiContract.csproj", "{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yizuan.Service.Fundtion", "ApiHelper\Yizuan.Service.Fundtion.csproj", "{178CC1E7-92C6-4613-9989-EF2951A89255}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yizuan.Service.WebApi", "WebApi\Yizuan.Service.WebApi.csproj", "{35A5FB95-C487-452C-AA43-9023EE97AB4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +39,26 @@ Global
 		{6AC7FF64-8103-428C-987D-F7B527201F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AC7FF64-8103-428C-987D-F7B527201F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AC7FF64-8103-428C-987D-F7B527201F89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878C8642-B347-474E-9E62-8BC37FAADF0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878C8642-B347-474E-9E62-8BC37FAADF0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878C8642-B347-474E-9E62-8BC37FAADF0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878C8642-B347-474E-9E62-8BC37FAADF0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{178CC1E7-92C6-4613-9989-EF2951A89255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{178CC1E7-92C6-4613-9989-EF2951A89255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{178CC1E7-92C6-4613-9989-EF2951A89255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{178CC1E7-92C6-4613-9989-EF2951A89255}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +66,13 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
 		{6AC7FF64-8103-428C-987D-F7B527201F89} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
+		{878C8642-B347-474E-9E62-8BC37FAADF0A} = {71ACFD5A-4D57-4CC1-ADBE-32C3FE31151A}
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB} = {D2C6569B-6E60-46ED-8B0B-0095088EB85C}
+		{178CC1E7-92C6-4613-9989-EF2951A89255} = {D2C6569B-6E60-46ED-8B0B-0095088EB85C}
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C} = {D2C6569B-6E60-46ED-8B0B-0095088EB85C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76F65055-833D-450A-80E3-D58986FBA4B6}
 	EndGlobalSection
 EndGlobal

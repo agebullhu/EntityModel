@@ -21,6 +21,11 @@
         Disable = 2,
 
         /// <summary>
+        ///     其它人编辑中
+        /// </summary>
+        Orther = 0xE,
+
+        /// <summary>
         ///     锁定(不可用,仅表明状态,应使用)
         /// </summary>
         Lock = 0xF,

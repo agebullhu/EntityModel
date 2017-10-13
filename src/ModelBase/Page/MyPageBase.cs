@@ -28,12 +28,7 @@ namespace Gboxt.Common.WebUI
     public abstract class MyPageBase : Page
     {
         #region 权限相关
-
-        /// <summary>
-        ///     是否可以完全访问(过时,无用,请用条件编译
-        /// </summary>
-        protected bool AllAccess { get; set; }
-
+        
         /// <summary>
         ///     是否页面内动作不检查
         /// </summary>
@@ -100,13 +95,27 @@ namespace Gboxt.Common.WebUI
                     LogRecorder.MonitorTrace("非法页面");
                     return false;
                 }
-                PagePower = BusinessContext.Current.PowerChecker.LoadPagePower(BusinessContext.Current.LoginUser, PageItem);
-                if (PagePower == null)
+                if (PageItem.IsHide)
                 {
-                    LogRecorder.MonitorTrace("非法访问");
-                    return false;
+                    LogRecorder.MonitorTrace("隐藏页面");
+                    PagePower = new SimpleRolePower
+                    {
+                        Id = -1,
+                        PageItemId = -1,
+                        Power = 1,
+                        RoleId = LoginUser.RoleId
+                    };
                 }
-                LogRecorder.MonitorTrace("授权访问");
+                else
+                {
+                    PagePower = BusinessContext.Current.PowerChecker.LoadPagePower(BusinessContext.Current.LoginUser, PageItem);
+                    if (PagePower == null)
+                    {
+                        LogRecorder.MonitorTrace("非法访问");
+                        return false;
+                    }
+                    LogRecorder.MonitorTrace("授权访问");
+                }
             }
             BusinessContext.Current.PageItem = PageItem;
             BusinessContext.Current.CurrentPagePower = PagePower;
@@ -161,6 +170,29 @@ namespace Gboxt.Common.WebUI
             LogRecorder.BeginMonitor(CurrentPageName);
             LogRecorder.MonitorTrace(Request.Url.AbsolutePath);
 
+            LogRequestInfo();
+            try
+            {
+                ProcessRequest();
+            }
+            catch (Exception exception)
+            {
+                LogRecorder.EndStepMonitor();
+                LogRecorder.BeginStepMonitor("Exception");
+                LogRecorder.MonitorTrace(exception.Message);
+                LogRecorder.Exception(exception);
+                Debug.WriteLine(exception);
+                OnFailed(exception);
+                LogRecorder.EndStepMonitor();
+            }
+            LogRecorder.BeginStepMonitor("Result");
+            OnResult();
+            LogRecorder.EndStepMonitor();
+            LogRecorder.EndMonitor();
+        }
+        [Conditional("Monitor")]
+        private void LogRequestInfo()
+        {
             var args = new StringBuilder();
             args.Append("Headers:");
             foreach (var head in Request.Headers.AllKeys)
@@ -189,24 +221,6 @@ namespace Gboxt.Common.WebUI
                 args.Append($"[{head}]{Request[head]}");
             }
             LogRecorder.MonitorTrace(args.ToString());
-            try
-            {
-                ProcessRequest();
-            }
-            catch (Exception exception)
-            {
-                LogRecorder.EndStepMonitor();
-                LogRecorder.BeginStepMonitor("Exception");
-                LogRecorder.MonitorTrace(exception.Message);
-                LogRecorder.Exception(exception);
-                Debug.WriteLine(exception);
-                OnFailed(exception);
-                LogRecorder.EndStepMonitor();
-            }
-            LogRecorder.BeginStepMonitor("Result");
-            OnResult();
-            LogRecorder.EndStepMonitor();
-            LogRecorder.EndMonitor();
         }
 
         private void ProcessRequest()

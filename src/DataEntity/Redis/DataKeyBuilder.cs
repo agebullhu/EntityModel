@@ -27,6 +27,18 @@ namespace Agebull.Common.DataModel
         {
             return $"{type}:{sub}";
         }
+
+        /// <summary>
+        /// 连接为Key
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="sub"></param>
+        /// <returns></returns>
+        public static string ToKey(string type, params object[] sub)
+        {
+            return $"{type}:{sub.LinkToString(':')}";
+        }
+
         /// <summary>
         /// 连接为Key
         /// </summary>

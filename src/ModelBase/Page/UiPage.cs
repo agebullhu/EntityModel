@@ -37,7 +37,7 @@ namespace Gboxt.Common.WebUI
                 {
                     return _uibuttons;
                 }
-                var buttons = BusinessContext.Current.PowerChecker.LoadPageButtons(BusinessContext.Current.LoginUser, PageItem, false);
+                var buttons = BusinessContext.Current.PowerChecker.LoadPageButtons(BusinessContext.Current.LoginUser, PageItem);
                 return _uibuttons = buttons == null
                     ? ""
                     : "'" + string.Join("','", buttons) + "'";
@@ -89,10 +89,10 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected override void OnResult()
         {
-            if (!UserIsLogin)
-                Response.Redirect("/login.htm");
-            else if (PagePower == null)
-                Response.Redirect("/nosupper.htm");
+            //if (!UserIsLogin)
+            //    Response.Redirect("/login.htm");
+            //else if (PagePower == null)
+            //    Response.Redirect("/nosupper.htm");
         }
     }
 
@@ -150,8 +150,8 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected override void OnResult()
         {
-            if (!UserIsLogin)
-                Response.Redirect("/login.htm");
+            //if (!UserIsLogin)
+            //    Response.Redirect("/login.htm");
         }
 
         public static string FormatDateTime(DateTime date, string fmt)

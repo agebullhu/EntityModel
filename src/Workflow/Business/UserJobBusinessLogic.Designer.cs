@@ -1,0 +1,33 @@
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2017/6/14 12:15:51*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Sql;
+using System.Linq;
+using System.Text;
+
+using MySql.Data.MySqlClient;
+
+using Gboxt.Common.DataModel;
+using Gboxt.Common.DataModel.BusinessLogic;
+using Gboxt.Common.DataModel.MySql;
+using Gboxt.Common.Workflow.DataAccess;
+
+namespace Gboxt.Common.Workflow.BusinessLogic
+{
+    /// <summary>
+    /// 用户工作列表
+    /// </summary>
+    partial class UserJobBusinessLogic
+    {
+        
+        /// <summary>
+        ///     实体类型
+        /// </summary>
+        public override int EntityType => WorkflowDataBase.Table_UserJob;
+
+
+
+    }
+}

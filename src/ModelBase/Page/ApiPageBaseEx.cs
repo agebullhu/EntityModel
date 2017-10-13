@@ -14,7 +14,7 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Agebull.Common.DataModel.Redis;
+using Agebull.Common.Logging;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.BusinessLogic;
 using Gboxt.Common.DataModel.MySql;
@@ -28,7 +28,7 @@ namespace Gboxt.Common.WebUI
     /// </summary>
     public abstract class ApiPageBaseEx<TData, TAccess, TBusinessLogic> : ApiPageBase
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess : MySqlTable<TData>, new()
+        where TAccess :class, IDataTable<TData>, new()
         where TBusinessLogic : UiBusinessLogicBase<TData, TAccess>, new()
     {
         #region 数据校验支持
@@ -91,6 +91,7 @@ namespace Gboxt.Common.WebUI
         /// <param name="action">传入的动作参数,如为单个操作可忽略</param>
         protected sealed override void DoActin(string action)
         {
+            Business.Request = Request;
             using (MySqlDataBaseScope.CreateScope(MySqlDataBase.DefaultDataBase))
             {
                 ConvertQueryString("id", arg => int.TryParse(arg, out _dataId));
@@ -103,15 +104,12 @@ namespace Gboxt.Common.WebUI
                     case "details":
                         Details();
                         break;
-                    case "add":
                     case "addnew":
                         AddNew();
                         break;
-                    case "edit":
                     case "update":
                         Update();
                         break;
-                    case "del":
                     case "delete":
                         DoDelete();
                         break;
@@ -138,15 +136,19 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected virtual void GetEntityType()
         {
+            if (PageItem == null)
+            {
+                LogRecorder.RecordLoginLog("错误页面" + Request.Url);
+            }
             //int pid;
             //using (var proxy = new RedisProxy(RedisProxy.DbSystem))
             //{
-            //    pid = proxy.Client.Get<int>($"page:{typeof(TData).FullName}");
+            //    pid = proxy.Get<int>($"page:{typeof(TData).FullName}");
             //}
             SetResultData(new
             {
                 entityType = Business.EntityType,
-                pageId = PageItem.Id
+                pageId = PageItem?.Id ?? 0
             });
         }
 
@@ -250,7 +252,7 @@ namespace Gboxt.Common.WebUI
             var adesc = GetArg("order", "asc").ToLower();
             if (sort == null)
             {
-                sort = Business.Access.KeyField;
+                sort = Business.Access.PrimaryKey;
                 desc = true;
             }
             else
@@ -272,6 +274,7 @@ namespace Gboxt.Common.WebUI
                 }
             }
 
+            BusinessContext.Current.IsUnSafeMode = true;
             var data = Business.PageData(page, rows, sort, desc, condition, args);
             if (OnListLoaded(data.Data, data.Total))
             {
@@ -376,24 +379,30 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected virtual void Details()
         {
+            TData data;
             if (ContextDataId <= 0)
             {
-                SetResultData(CreateData());
+                SetResultData(data = CreateData());
+                OnDetailsLoaded(data, true);
             }
             else
             {
-                var data = Business.Details(ContextDataId);
-                OnDetailsLoaded(data);
-                SetResultData(data);
+                data = Business.Details(ContextDataId);
+                if (data == null)
+                {
+                    SetFailed("数据不存在");
+                    return;
+                }
+                OnDetailsLoaded(data, false);
             }
+            SetResultData(data);
         }
 
         /// <summary>
         ///     详细数据载入
         /// </summary>
-        protected virtual void OnDetailsLoaded(TData data)
+        protected virtual void OnDetailsLoaded(TData data, bool isNew)
         {
-
         }
 
         /// <summary>
@@ -491,7 +500,7 @@ namespace Gboxt.Common.WebUI
     public abstract class ApiPageBaseEx<TData, TAccess> :
         ApiPageBaseEx<TData, TAccess, UiBusinessLogicBase<TData, TAccess>>
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess : MySqlTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
     }
 }

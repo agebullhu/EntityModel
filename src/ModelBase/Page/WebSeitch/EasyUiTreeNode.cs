@@ -20,7 +20,7 @@ namespace Agebull.ProjectDeveloper.WebDomain.Models
     ///     EasyUi树数据的格式
     /// </summary>
     /// <remarks>仅调用ToJson时符合格式</remarks>
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class EasyUiTreeNodeBase
     {
         #region 状态相关
@@ -28,37 +28,37 @@ namespace Agebull.ProjectDeveloper.WebDomain.Models
         /// <summary>
         ///     节点的 id，它对于加载远程数据很重要。
         /// </summary>
-        [DataMember, JsonProperty("id")]
+        [ JsonProperty("id")]
         public int ID { get; set; }
 
         /// <summary>
         ///     是否已选择
         /// </summary>
-        [DataMember, JsonProperty("checked")]
+        [ JsonProperty("checked")]
         public bool IsChecked { get; set; }
 
         /// <summary>
         ///     是否已选择
         /// </summary>
-        [DataMember, JsonProperty("selected")]
+        [ JsonProperty("selected")]
         public bool IsSelect { get; set; }
 
         /// <summary>
         ///     表格树关闭状态
         /// </summary>
-        [IgnoreDataMember, JsonProperty("state")]
+        [ JsonProperty("state")]
         public virtual string TreeState => IsOpen != null && IsOpen.Value ? "open" : "closed";
 
         /// <summary>
         ///     图标
         /// </summary>
-        [DataMember, JsonProperty("iconCls")]
+        [ JsonProperty("iconCls")]
         public string Icon { get; set; }
 
         /// <summary>
         ///     是否展开
         /// </summary>
-        [DataMember, JsonProperty("IsOpen")]
+        [ JsonProperty("IsOpen")]
         public bool? IsOpen { get; set; }
 
         #endregion
@@ -66,48 +66,63 @@ namespace Agebull.ProjectDeveloper.WebDomain.Models
         #region 内容相关
 
         /// <summary>
+        /// 是否文件夹
+        /// </summary>
+        [ JsonProperty("IsFolder")]
+        public bool IsFolder
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         ///     显示的节点文字。
         /// </summary>
-        [DataMember, JsonProperty("text")]
+        [ JsonProperty("text")]
         public string Text { get; set; }
 
         /// <summary>
         ///     对象的原始标题
         /// </summary>
-        [DataMember, JsonProperty("title")]
+        [ JsonProperty("title")]
         public string Title { get; set; }
 
         /// <summary>
         ///     给一个节点追加的自定义属性。
         /// </summary>
-        [DataMember, JsonProperty("attributes", NullValueHandling = NullValueHandling.Ignore)]
+        [ JsonProperty("attributes", NullValueHandling = NullValueHandling.Ignore)]
         public string Attributes { get; set; }
 
         /// <summary>
         ///     标签文本
         /// </summary>
-        [DataMember, JsonProperty("tag", NullValueHandling = NullValueHandling.Ignore)]
+        [ JsonProperty("tag", NullValueHandling = NullValueHandling.Ignore)]
         public string Tag { get; set; }
 
         /// <summary>
         ///     备注文本
         /// </summary>
-        [DataMember, JsonProperty("memo", NullValueHandling = NullValueHandling.Ignore)]
+        [ JsonProperty("memo", NullValueHandling = NullValueHandling.Ignore)]
         public string Memo { get; set; }
 
         /// <summary>
         ///     还有其它的
         /// </summary>
-        [DataMember, JsonProperty("json", NullValueHandling = NullValueHandling.Ignore)]
+        [ JsonProperty("json", NullValueHandling = NullValueHandling.Ignore)]
         public string Json { get; set; }
 
         /// <summary>
         ///     其它文本
         /// </summary>
-        [DataMember, JsonProperty("extend", NullValueHandling = NullValueHandling.Ignore)]
+        [ JsonProperty("extend", NullValueHandling = NullValueHandling.Ignore)]
         public string Extend { get; set; }
 
         #endregion
+
+        public override string ToString()
+        {
+            return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder})";
+        }
 
         public static EasyUiTreeNodeBase Empty = new EasyUiTreeNodeBase { ID = 0, Text = "-", Title = "-" };
     }
@@ -116,86 +131,95 @@ namespace Agebull.ProjectDeveloper.WebDomain.Models
     ///     EasyUi树数据的格式
     /// </summary>
     /// <remarks>仅调用ToJson时符合格式</remarks>
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class EasyUiTreeNode : EasyUiTreeNodeBase
     {
-        /// <summary>
-        ///     表格树的下级
-        /// </summary>
-        [IgnoreDataMember, JsonProperty("children", NullValueHandling = NullValueHandling.Ignore)]
-        public List<EasyUiTreeNode> Lists
+        public EasyUiTreeNode()
         {
-            get
-            {
-                return Children == null || Children.Count == 0
-                    ? IsOpen == true
-                        ? new List<EasyUiTreeNode>()
-                        : null
-                    : Children;
-            }
+
         }
+        public EasyUiTreeNode(List<EasyUiTreeNode> children)
+        {
+            IsFolder = children != null && children.Count > 0;
+            _children = children;
+        }
+        /// <summary>
+        /// 有否子级
+        /// </summary>
+        public bool HaseChildren => IsFolder && _children != null && _children.Count > 0;
+
+
+        [JsonProperty("children", NullValueHandling = NullValueHandling.Ignore)]
+        private List<EasyUiTreeNode> _children;
 
         /// <summary>
         ///     表格树的下级
         /// </summary>
-        [DataMember, JsonIgnore]
-        public List<EasyUiTreeNode> Children { get; set; }
+        [JsonIgnore]
+        public List<EasyUiTreeNode> Children => !IsFolder
+            ? null
+            : (_children ?? (_children = new List<EasyUiTreeNode>()));
 
         /// <summary>
         ///     表格树关闭状态
         /// </summary>
-        [IgnoreDataMember, JsonProperty("state")]
-        public override string TreeState
-        {
-            get
-            {
-                return IsOpen == null
-                    ? (Children != null && Children.Count > 0 ? "open" : "closed")
-                    : IsOpen.Value ? "open" : "closed";
-            }
-        }
+        [ JsonProperty("state")]
+        public override string TreeState => !IsFolder
+            ? "open"
+            : (IsOpen == null
+                ? (Children.Count > 0 ? "open" : "closed")
+                : IsOpen.Value ? "open" : "closed");
+
         public static EasyUiTreeNode EmptyNode = new EasyUiTreeNode { ID = 0, Text = "-", Title = "-", IsOpen = true };
+
+        public override string ToString()
+        {
+            return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder},HaseChildren:{HaseChildren})";
+        }
     }
 
     /// <summary>
     ///     EasyUi树数据的格式
     /// </summary>
     /// <remarks>仅调用ToJson时符合格式</remarks>
+    [JsonObject(MemberSerialization.OptIn)]
     public class EasyUiTreeNode<TData> : EasyUiTreeNodeBase
     {
         /// <summary>
+        /// 有否子级
+        /// </summary>
+        public bool HaseChildren => IsFolder && _children != null && _children.Count > 0;
+
+        /// <summary>
         ///     数据
         /// </summary>
-        [DataMember, JsonProperty("data")]
+        [ JsonProperty("data")]
         public TData Data { get; set; }
+        
+        [ JsonProperty("children", NullValueHandling = NullValueHandling.Ignore)]
+        private List<EasyUiTreeNode<TData>> _children;
 
         /// <summary>
         ///     表格树的下级
         /// </summary>
-        [IgnoreDataMember, JsonProperty("children", NullValueHandling = NullValueHandling.Ignore)]
-        public List<EasyUiTreeNode<TData>> Lists
-        {
-            get { return Children == null || Children.Count == 0 ? null : Children; }
-        }
-
-        /// <summary>
-        ///     表格树的下级
-        /// </summary>
-        [DataMember, JsonIgnore]
-        public List<EasyUiTreeNode<TData>> Children { get; set; }
+        [ JsonIgnore]
+        public List<EasyUiTreeNode<TData>> Children => !IsFolder
+            ? null
+            : (_children ?? (_children = new List<EasyUiTreeNode<TData>>()));
 
         /// <summary>
         ///     表格树关闭状态
         /// </summary>
-        [IgnoreDataMember, JsonProperty("state")]
-        public override string TreeState
+        [ JsonProperty("state")]
+        public override string TreeState => !IsFolder
+            ? "open"
+            : IsOpen == null
+                ? (Children.Count > 0 ? "open" : "closed")
+                : IsOpen.Value ? "open" : "closed";
+
+        public override string ToString()
         {
-            get
-            {
-                return IsOpen == null
-                    ? (Children != null && Children.Count > 0 ? "open" : "closed")
-                    : IsOpen.Value ? "open" : "closed";
-            }
+            return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder},HaseChildren:{HaseChildren})";
         }
     }
 }

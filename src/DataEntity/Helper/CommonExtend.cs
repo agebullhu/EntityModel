@@ -11,7 +11,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 
 #endregion
 
@@ -101,9 +104,7 @@ namespace Gboxt.Common.DataModel
         /// <returns>整数数组</returns>
         public static int[] ToIntegers(this string str)
         {
-            return str == null
-                ? new int[0]
-                : str.Trim().Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            return str?.Trim().Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray() ?? new int[0];
         }
 
         /// <summary>
@@ -159,5 +160,56 @@ namespace Gboxt.Common.DataModel
 
             return text;
         }
+
+        #region 发邮件
+
+        /// <summary>
+        /// 发送邮件
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="reciver"></param>
+        /// <param name="content"></param>
+        public static void SendMail(string subject, string content, string reciver)
+        {
+            SendMail(subject, content, new List<string> { reciver });
+        }
+
+        /// <summary>
+        /// 发送邮件
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="recivers"></param>
+        /// <param name="content"></param>
+        public static void SendMail(string subject, string content, List<string> recivers)
+        {
+            var emailAcount = ConfigurationManager.AppSettings["EmailAcount"];
+            var emailPassword = ConfigurationManager.AppSettings["EmailPassword"];
+            var from = ConfigurationManager.AppSettings["FromEmail"];
+            var smtp = ConfigurationManager.AppSettings["EmailSmtpAddress"];
+            int port;
+            if (!int.TryParse(ConfigurationManager.AppSettings["EmailSmtpPort"], out port))
+                port = 25;
+            MailMessage message = new MailMessage
+            {
+                From = new MailAddress(@from)//设置发件人,发件人需要与设置的邮件发送服务器的邮箱一致
+            };
+
+            foreach (var reciver in recivers)
+                message.To.Add(reciver);//设置收件人
+
+            message.Subject = subject; //设置邮件标题
+
+            message.Body = content;//设置邮件内容
+
+            SmtpClient client = new SmtpClient(smtp, port);//设置邮件发送服务器
+            //设置发送人的邮箱账号和密码
+            client.Credentials = new NetworkCredential(emailAcount, emailPassword);
+            //启用ssl,也就是安全发送
+            client.EnableSsl = true;
+            //发送邮件
+            client.Send(message);
+        }
+
+        #endregion
     }
 }

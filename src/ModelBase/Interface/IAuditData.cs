@@ -15,9 +15,9 @@ using System;
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-    ///     表示这条数据支持审核
-    /// </summary>
-    public interface IAuditData
+        ///     表示这条数据支持审核
+        /// </summary>
+        public interface IAuditData
     {
         /// <summary>
         ///     审核状态
@@ -31,11 +31,24 @@ namespace Gboxt.Common.DataModel
         /// <value>string</value>
         int AuditorId { get; set; }
 
+
         /// <summary>
         ///     审核日期
         /// </summary>
         /// <value>DateTime</value>
         DateTime AuditDate { get; set; }
+
+        /// <summary>
+        ///     审核人(仅用于界面)
+        /// </summary>
+        /// <value>string</value>
+        string ToUsers { get; set; }
+
+        /// <summary>
+        ///     能否审核(仅用于界面)
+        /// </summary>
+        /// <value>bool</value>
+        bool CanAudit { get; set; }
     }
 
     /// <summary>

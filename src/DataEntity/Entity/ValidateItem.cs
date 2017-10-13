@@ -42,7 +42,7 @@ namespace Gboxt.Common.DataModel
         /// 主键
         /// </summary>
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 类型: 0没错 1警告 2错误

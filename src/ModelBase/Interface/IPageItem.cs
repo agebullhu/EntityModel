@@ -91,5 +91,10 @@ namespace Gboxt.Common.SystemModel
         ///     上级节点
         /// </remarks>
         int ParentId { get; set; }
+
+        /// <summary>
+        ///     不显示
+        /// </summary>
+        bool IsHide { get; set; }
     }
 }

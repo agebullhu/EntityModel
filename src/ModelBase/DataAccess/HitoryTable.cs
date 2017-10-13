@@ -18,10 +18,10 @@ namespace Gboxt.Common.DataModel.MySql
         {
             if (BusinessContext.Current.IsSystemMode)
                 return null;
-            return string.Format(@"UPDATE `{1}` SET LastReviserID={0},LastModifyDate=NOW(){2};"
-                , BusinessContext.Current.LoginUserId
-                , WriteTableName
-                , string.IsNullOrEmpty(condition) ? null : " WHERE " + condition);
+            var filter= string.IsNullOrEmpty(condition) ? null : " WHERE " + condition;
+            return $@"UPDATE `{WriteTableName}` 
+SET {FieldDictionary["LastReviserID"]}={BusinessContext.Current.LoginUserId},
+{FieldDictionary["LastModifyDate"]}=NOW(){filter};";
         }
         
         /// <summary>

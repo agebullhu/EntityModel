@@ -23,7 +23,7 @@ namespace Gboxt.Common.SystemModel
         /// <summary>
         /// 保存页面的动作
         /// </summary>
-        void SavePageAction(int pageid,string action);
+        void SavePageAction(int pageid, string name, string title, string action,string type);
 
         /// <summary>
         /// 重新载入用户信息
@@ -47,9 +47,8 @@ namespace Gboxt.Common.SystemModel
         /// </summary>
         /// <param name="loginUser">登录用户</param>
         /// <param name="page">页面,不能为空</param>
-        /// <param name="full">是否包含所有页面</param>
         /// <returns>按钮配置集合</returns>
-        List<string> LoadPageButtons(ILoginUser loginUser, IPageItem page,bool full);
+        List<string> LoadPageButtons(ILoginUser loginUser, IPageItem page);
 
         /// <summary>
         ///     载入页面关联的按钮配置

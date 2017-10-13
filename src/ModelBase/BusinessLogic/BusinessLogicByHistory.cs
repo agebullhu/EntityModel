@@ -22,7 +22,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicByHistory<TData, TAccess> : BusinessLogicByStateData<TData, TAccess>
         where TData : EditDataObject, IIdentityData, IHistoryData,  IStateData, new()
-        where TAccess : HitoryTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
         /// <summary>
         ///     重置数据状态

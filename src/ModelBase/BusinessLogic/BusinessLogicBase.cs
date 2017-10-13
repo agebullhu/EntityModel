@@ -10,9 +10,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Linq.Expressions;
-using Gboxt.Common.DataModel.MySql;
+using System.Web;
+using Agebull.Common.Logging;
 using Gboxt.Common.WebUI;
 
 #endregion
@@ -26,7 +29,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicBase<TData, TAccess>
     where TData : EditDataObject, IIdentityData, new()
-    where TAccess : MySqlTable<TData>, new()
+    where TAccess : class, IDataTable<TData>, new()
     {
         #region 基础支持对象
 
@@ -40,7 +43,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     数据访问对象
         /// </summary>
-        public TAccess Access => _access ?? (_access= CreateAccess());
+        public TAccess Access => _access ?? (_access = CreateAccess());
 
         /// <summary>
         ///     数据访问对象
@@ -65,35 +68,6 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool DoByIds(string ids, Func<int, bool> func, Action onEnd = null)
         {
-            if (string.IsNullOrEmpty(ids))
-            {
-                return false;
-            }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
-                {
-                    var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (sids.Length == 0)
-                    {
-                        return false;
-                    }
-                    foreach (var sid in sids)
-                    {
-                        int id;
-                        if (!int.TryParse(sid, out id))
-                        {
-                            return false;
-                        }
-                        if (!func(id))
-                        {
-                            return false;
-                        }
-                    }
-                    onEnd?.Invoke();
-                    scope.SetState(true);
-                }
-            }
             return LoopIds(ids, func, onEnd);
         }
 
@@ -106,9 +80,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return false;
             }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
+                using (var scope = Access.DataBase.CreateTransactionScope())
                 {
                     var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sids.Length == 0)
@@ -151,9 +125,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return false;
             }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
+                using (var scope = Access.DataBase.CreateTransactionScope())
                 {
                     var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sids.Length == 0)
@@ -190,17 +164,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         {
             return Access.All();
         }
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>是否存在数据</returns>
-        public List<TData> All(LambdaItem<TData> lambda)
-        {
-            return Access.All(lambda);
-        }
-
+        
         /// <summary>
         ///     读取数据
         /// </summary>
@@ -237,15 +201,19 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class UiBusinessLogicBase<TData, TAccess> : BusinessLogicBase<TData, TAccess>
     where TData : EditDataObject, IIdentityData, new()
-    where TAccess : MySqlTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
+        /// <summary>
+        /// 当前请求
+        /// </summary>
+        public HttpRequest Request { get; set; }
 
         #region 读数据
 
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, string condition, params MySqlParameter[] args)
+        public EasyUiGridData<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, null, false, condition, args);
         }
@@ -254,9 +222,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         ///     取得列表数据
         /// </summary>
         public EasyUiGridData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
                 {
@@ -276,7 +244,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public EasyUiGridData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
                 {
@@ -294,28 +262,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 }
             }
         }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
-        {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-
-                if (limit <= 0 || limit >= 999)
-                {
-                    limit = 30;
-                }
-                var data = Access.PageData(page, limit, lambda);
-                var count = (int)Access.Count(lambda);
-                return new EasyUiGridData<TData>
-                {
-                    Data = data,
-                    Total = count
-                };
-            }
-        }
+        
         #endregion
 
         #region 写数据
@@ -435,7 +382,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool AddNew(TData data)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!CanSave(data, true))
                 {
@@ -445,9 +392,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 {
                     return false;
                 }
-                Access.Insert(data);
+                if (!data.__EntityStatusNull && data.__EntityStatus.IsExist)
+                    Access.Update(data);
+                else
+                    Access.Insert(data);
                 var result = LastSaved(data, true);
-                OnInnerCommand(data, BusinessCommandType.AddNew);
                 scope.SetState(true);
                 return result;
             }
@@ -462,8 +411,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return AddNew(data);
             }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!CanSave(data, true))
                 {
@@ -475,7 +423,6 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 }
                 Access.Update(data);
                 var result = LastSaved(data, false);
-                OnInnerCommand(data, BusinessCommandType.Update);
                 scope.SetState(true);
                 return result;
             }
@@ -491,8 +438,8 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool Delete(IEnumerable<int> lid)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 foreach (var id in lid)
                 {
@@ -509,8 +456,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public bool Delete(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!PrepareDelete(id))
                 {
@@ -519,7 +465,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 if (!DoDelete(id))
                     return false;
                 OnDeleted(id);
-
+                LogRecorder.MonitorTrace("Delete");
                 OnInnerCommand(id, BusinessCommandType.Delete);
                 scope.SetState(true);
                 return true;

@@ -40,13 +40,13 @@ namespace Gboxt.Common.WebUI
         /// <summary>
         ///     键
         /// </summary>
-        [JsonProperty("id", Required = Required.Always)]
+        [JsonProperty("id")]
         public object Key { get; set; }
 
         /// <summary>
         ///     值
         /// </summary>
-        [JsonProperty("text", Required = Required.Always)]
+        [JsonProperty("text")]
         public object Value { get; set; }
 
         /// <summary>

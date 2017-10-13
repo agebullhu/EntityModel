@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Drawing;
+using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Agebull.Common.Base;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
+using Newtonsoft.Json;
 using NServiceKit.Redis;
+using NServiceKit.Text;
 
 namespace Agebull.Common.DataModel.Redis
 {
@@ -74,6 +77,13 @@ namespace Agebull.Common.DataModel.Redis
 
         #endregion
 
+        #region 测试支持
+        /// <summary>
+        /// 测试支持
+        /// </summary>
+        public static bool IsTest { get; set; }
+
+        #endregion
         /// <summary>
         /// 锁对象
         /// </summary>
@@ -108,7 +118,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 客户端类
         /// </summary>
-        private RedisClient _client;
+        internal RedisClient _client;
         /// <summary>
         /// 得到一个可用的Redis客户端
         /// </summary>
@@ -118,22 +128,49 @@ namespace Agebull.Common.DataModel.Redis
             {
                 if (_client != null)
                     return _client;
-                Monitor.Enter(LockObj);
-                try
+                return _client = CreateClient(_db);
+            }
+        }
+        /// <summary>
+        /// 更改
+        /// </summary>
+        internal RedisClient ChangeDb(long db)
+        {
+            if (db == Client.Db)
+            {
+                return _client;
+            }
+            var old = _client;
+            _client = CreateClient(db);
+            return old;
+        }
+
+        /// <summary>
+        /// 更改
+        /// </summary>
+        internal void ResetClient(RedisClient client)
+        {
+            _client = client;
+        }
+
+        private RedisClient CreateClient(long db)
+        {
+            Monitor.Enter(LockObj);
+            try
+            {
+                //var dbid = (this.db << 16);
+                return new RedisClient(Address, Port, PassWord, db)
                 {
-                    //var dbid = (this._db << 16);
-                    return _client = new RedisClient(Address, Port, PassWord, _db)
-                    {
-                        RetryCount = 50,
-                        RetryTimeout = 5000
-                    };
-                    /*List<RedisClient> used;
+                    RetryCount = 50,
+                    RetryTimeout = 5000
+                };
+                /*List<RedisClient> used;
                     if (!Used.ContainsKey(dbid))
                     {
                         Used.Add(dbid, used = new List<RedisClient>());
                         Idle.Add(dbid, new List<RedisClient>());
 
-                        _client = new RedisClient(Address, Port, null, _db)
+                        _client = new RedisClient(Address, Port, null, db)
                         {
                             RetryCount = 50,
                             RetryTimeout = 5000
@@ -149,7 +186,7 @@ namespace Agebull.Common.DataModel.Redis
                     }
                     if (idle.Count == 0)
                     {
-                        _client = new RedisClient(Address, Port, null, _db)
+                        _client = new RedisClient(Address, Port, null, db)
                         {
                             RetryCount = 50,
                             RetryTimeout = 5000
@@ -164,11 +201,10 @@ namespace Agebull.Common.DataModel.Redis
 #endif
                     used.Add(_client);
                     return _client;*/
-                }
-                finally
-                {
-                    Monitor.Exit(LockObj);
-                }
+            }
+            finally
+            {
+                Monitor.Exit(LockObj);
             }
         }
 
@@ -206,56 +242,50 @@ namespace Agebull.Common.DataModel.Redis
         {
             Client.Remove(key);
         }
-        /// <summary>
-        /// 缓存的键
-        /// </summary>
-        private static readonly Dictionary<string, List<string>> KeysDictionary = new Dictionary<string, List<string>>();
 
         /// <summary>
         /// 查找关删除KEY
         /// </summary>
-        /// <param name="condition">条件</param>
-        public void FindAndRemoveKey(string condition)
+        /// <param name="pattern">条件</param>
+        public void FindAndRemoveKey(string pattern)
         {
-            if (!KeysDictionary.ContainsKey(condition))
-                KeysDictionary[condition] = Client.SearchKeys(condition);
-            foreach (var key in KeysDictionary[condition])
-                Client.Remove(key);
+            var keys = Client.SearchKeys(pattern);
+            Client.RemoveAll(keys);
         }
 
         /// <summary>
-        /// 使用键组合方式来取值
+        /// 读缓存
         /// </summary>
         /// <typeparam name="TData"></typeparam>
         /// <param name="id">键的组合</param>
         /// <param name="def">默认值</param>
         /// <returns></returns>
-        public TData GetEntity<TData>(int id, TData def=null) where TData : class, new()
+        public TData GetEntity<TData>(int id, TData def = null) where TData : class, new()
         {
-            return id == 0 ? def ?? new TData() : Client.Get<TData>(DataKey<TData>(id)) ?? def ?? new TData() ;
+            return id == 0 ? def ?? new TData() : Get<TData>(DataKey<TData>(id)) ?? def ?? new TData();
         }
 
         /// <summary>
-        /// 使用键组合方式来取值
+        /// 读缓存
         /// </summary>
         /// <typeparam name="TData"></typeparam>
         /// <param name="key">数据键</param>
         /// <param name="def">默认值</param>
         /// <returns></returns>
-        public TData GetEntity<TData>(string key,TData def = null) where TData : class, new()
+        public TData GetEntity<TData>(string key, TData def = null) where TData : class, new()
         {
-            return Client.Get<TData>(key) ?? def ?? new TData();
+            return Get<TData>(key) ?? def ?? new TData();
         }
 
         /// <summary>
-        /// 使用键组合方式来取值
+        /// 缓存数据
         /// </summary>
         /// <typeparam name="TData"></typeparam>
         /// <param name="data">键的组合</param>
         /// <returns></returns>
         public void SetEntity<TData>(TData data) where TData : class, IIdentityData
         {
-            Client.Set(DataKey(data), data);
+            Set(DataKey(data), data);
         }
 
         /// <summary>
@@ -273,7 +303,7 @@ namespace Agebull.Common.DataModel.Redis
             Client.Set(key, DateTime.Now);
             foreach (var data in datas)
             {
-                Client.Set(keyFunc(data), data);
+                Set(keyFunc(data), data);
             }
         }
 
@@ -293,30 +323,222 @@ namespace Agebull.Common.DataModel.Redis
             CacheData(datas, keyFunc);
         }
 
+        #region 文本读写
+
         /// <summary>
         /// 取文本
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string GetValue(string key)
+        public string Get(string key)
         {
-            var bytes = Client.Get(key);
-            return bytes?.BytesToString();
+            return Client.Get<string>(key);
         }
 
+
         /// <summary>
-        /// 写文本
+        /// 写值
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public void SetValue(string key, string value)
+        public void Set(string key, string value)
         {
-            if (value == null)
-                Client.Remove(key);
-            else
-                Client.Set(key, value.ToByte());
+            Client.Set(key, value);
         }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="last"></param>
+        /// <returns></returns>
+        public void Set(string key, string value, DateTime last)
+        {
+            Client.Set(key, value, last);
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        public void Set(string key, string value, TimeSpan span)
+        {
+            Client.Set(key, value, span);
+        }
+
+        #endregion
+
+        #region 值读写
+
+        /// <summary>
+        /// 取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public T GetValue<T>(string key)
+            where T : struct
+        {
+            return Client.Get<T>(key);
+        }
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public void SetValue<T>(string key, T value)
+            where T : struct
+        {
+            Client.Set(key, value);
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="last"></param>
+        /// <returns></returns>
+        public void SetValue<T>(string key, T value, DateTime last)
+            where T : struct
+        {
+            Client.Set(key, value, last);
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        public void SetValue<T>(string key, T value, TimeSpan span)
+            where T : struct
+        {
+            Client.Set(key, value, span);
+        }
+
+        #endregion
+
+        #region 对象读写
+
+
+        /// <summary>
+        /// 查找关删除KEY
+        /// </summary>
+        /// <param name="pattern">条件</param>
+        public List<T> GetAll<T>(string pattern)
+            where T : class
+        {
+            List<T> lists = new List<T>();
+            long cursor = 0;
+            do
+            {
+                var keys = Client.ScanKeys(ref cursor, pattern, 100);
+                foreach (var key in keys)
+                {
+                    lists.Add(Get<T>(key));
+                }
+            } while (cursor > 0);
+            return lists;
+        }
+
+        /// <summary>
+        /// 取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// 如果反序列化失败会抛出异常
+        /// </remarks>
+        public T Get<T>(string key)
+            where T : class
+        {
+            var bytes = Client.Get(key);
+            if (bytes == null || bytes.Length == 0)
+                return default(T);
+            return JsonConvert.DeserializeObject<T>(bytes.FromUtf8Bytes());
+        }
+        /// <summary>
+        /// 试图取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns>如果反序列化失败失败会访回空</returns>
+        public T TryGet<T>(string key)
+            where T : class
+        {
+            var bytes = Client.Get(key);
+            if (bytes == null || bytes.Length == 0)
+                return default(T);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(bytes.FromUtf8Bytes());
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public void Set<T>(string key, T value)
+            where T : class
+        {
+            if (IsTest)
+            {
+                Trace.WriteLine(JsonConvert.SerializeObject(value, Formatting.Indented), key);
+            }
+            Client.Set(key, JsonConvert.SerializeObject(value).ToUtf8Bytes());
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="last"></param>
+        /// <returns></returns>
+        public void Set<T>(string key, T value, DateTime last)
+            where T : class
+        {
+            if (IsTest)
+            {
+                Trace.WriteLine(JsonConvert.SerializeObject(value, Formatting.Indented), key);
+            }
+            Client.Set(key, JsonConvert.SerializeObject(value).ToUtf8Bytes(), last);
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        public void Set<T>(string key, T value, TimeSpan span)
+            where T : class
+        {
+            if (IsTest)
+            {
+                Trace.WriteLine(JsonConvert.SerializeObject(value, Formatting.Indented), key);
+            }
+            Client.Set(key, JsonConvert.SerializeObject(value).ToUtf8Bytes(), span);
+        }
+
+        #endregion
+
         /// <summary>
         /// 默认的数据键名称生成器
         /// </summary>
@@ -360,7 +582,7 @@ namespace Agebull.Common.DataModel.Redis
             where TData : EditDataObject, IIdentityData, new()
         {
             var key = DataKey<TData>(0);
-            var date = Client.Get<DateTime>(key);
+            var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
                 CacheData<TData, TDataAccess>(keyFunc);
         }
@@ -376,7 +598,7 @@ namespace Agebull.Common.DataModel.Redis
             where TData : EditDataObject, IIdentityData, new()
         {
             var key = DataKey<TData>(0);
-            var date = Client.Get<DateTime>(key);
+            var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
                 CacheData<TData, TDataAccess>(lambda, keyFunc);
         }
@@ -402,7 +624,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns>数据</returns>
         public void ClearCache<TData>()
         {
-            Client.Delete(Client.SearchKeys(DataKey<TData>("*")));
+            FindAndRemoveKey(DataKey<TData>("*"));
         }
 
         /// <summary>
@@ -418,7 +640,7 @@ namespace Agebull.Common.DataModel.Redis
             var access = new TDataAccess();
             var data = access.LoadByPrimaryKey(id);
             if (data != null && (lambda == null || lambda(data)))
-                Client.Set(DataKey(data), data);
+                Set(DataKey(data), data);
             else
                 Client.Remove(DataKey<TData>(id));
         }
@@ -436,10 +658,10 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// Redis的Db范围
     /// </summary>
-    public class RedisDbScope : ScopeBase 
+    public class RedisDbScope : ScopeBase
     {
         private readonly RedisProxy _proxy;
-        private readonly long _db;
+        private readonly RedisClient _client;
 
         public static RedisDbScope CreateScope(RedisProxy proxy, long db)
         {
@@ -449,22 +671,13 @@ namespace Agebull.Common.DataModel.Redis
         private RedisDbScope(RedisProxy proxy, long db)
         {
             _proxy = proxy;
-            if (db == proxy.CurrentDb)
-                _db = -1;
-            else
-            {
-                _db = proxy.CurrentDb;
-                _proxy.Client.Db = db;
-            }
+            _client = proxy.ChangeDb(db);
         }
 
         /// <summary>清理资源</summary>
         protected override void OnDispose()
         {
-            if (_db >= 0)
-            {
-                _proxy.Client.Db = _db;
-            }
+            _proxy.ResetClient(_client);
         }
     }
 }

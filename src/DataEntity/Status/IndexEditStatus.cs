@@ -298,6 +298,28 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
+        ///     是否已存在
+        /// </summary>
+        [ReadOnly(true), DisplayName("是否已存在"), Category("运行时")]
+        public bool IsExist
+        {
+            get { return (_state & 0x4) == 0x4; }
+            set
+            {
+                //Trace.WriteLine(string.Format("{1} => IsNew:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);
+                if (value)
+                {
+                    _state |= 0x4;
+                }
+                else
+                {
+                    _state &= 0xB;
+                }
+                Object.OnStatusChanged(() => IsExist);
+            }
+        }
+
+        /// <summary>
         ///     是否新增加的
         /// </summary>
         [ReadOnly(true), DisplayName("是否修改"), Category("运行时")]

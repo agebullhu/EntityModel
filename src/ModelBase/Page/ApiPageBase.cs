@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Agebull.Common;
 using Agebull.Common.Logging;
 using Gboxt.Common.DataModel;
@@ -28,8 +27,7 @@ namespace Gboxt.Common.WebUI
     public abstract class ApiPageBase : MyPageBase
     {
         #region 权限检查
-
-
+        
         /// <summary>
         ///     检查登录情况
         /// </summary>
@@ -43,7 +41,10 @@ namespace Gboxt.Common.WebUI
             return false;
         }
 
-        private readonly HashSet<string> _commonActions = new HashSet<string> { "eid", "list", "details", "tree" };
+        /// <summary>
+        /// 默认写死的权限
+        /// </summary>
+        private readonly Dictionary<string, bool> actions = new Dictionary<string, bool>();
 
         /// <summary>
         /// 注册公共动作(不需要进一步检查权限的动作)
@@ -51,32 +52,30 @@ namespace Gboxt.Common.WebUI
         /// <param name="action"></param>
         protected void RegisteCommonAction(params string[] action)
         {
-            action.Foreach(p => _commonActions.Add(p));
+            action.Foreach(p => actions.Add(p,true));
         }
-
-        private readonly HashSet<string> _denyActions = new HashSet<string>();
-
+        
         /// <summary>
         /// 注册禁止动作(不需要进一步检查权限的动作)
         /// </summary>
         /// <param name="action"></param>
         protected void RegisteDenyAction(params string[] action)
         {
-            action.Foreach(p => _denyActions.Add(p));
+            action.Foreach(p => actions.Add(p, false));
         }
         /// <summary>
         ///     当前页面的所有按钮
         /// </summary>
-        protected bool CanDoAction(string action)
+        private bool CanDoAction(string action)
         {
 #if NoAuthority
             return true;
 #else
-            if (AllAction)
-                return !_denyActions.Contains(action);
-            return _commonActions.Contains(action)
-                   || BusinessContext.Current.PowerChecker.CanDoAction(LoginUser, PageItem, action)
-                   || !_denyActions.Contains(action);
+            if (actions.ContainsKey(action))
+                return actions[action];
+            if (IsPublicPage || AllAction)
+                return true;
+            return BusinessContext.Current.PowerChecker.CanDoAction(LoginUser, PageItem, action);
 #endif 
         }
         /// <summary>
@@ -84,11 +83,14 @@ namespace Gboxt.Common.WebUI
         /// </summary>
         protected override bool CheckCanDo()
         {
+            if (IsPublicPage)
+                return true;
             if (CanDoAction(_action))
             {
                 LogRecorder.RecordLoginLog("用户{0}({3})访问{1}的的动作{2}", LoginUser.RealName, Request.Url, _action, LoginUser.Id);
                 return true;
             }
+            BusinessContext.Current.PowerChecker.SavePageAction(this.PageItem.Id, _action, _action, _action,"action");
             LogRecorder.RecordLoginLog("用户{0}({3})访问{1}的动作{2}时没有权限", LoginUser.RealName, Request.Url, _action, LoginUser.Id);
             IsFailed = true;
             Message = "非法访问";
@@ -114,7 +116,7 @@ namespace Gboxt.Common.WebUI
             if (!IsPublicPage)
             {
                 BusinessContext.Current.CurrentPagePower = PagePower;
-                BusinessContext.Current.PowerChecker.SavePageAction(PageItem.Id, _action);
+                BusinessContext.Current.PowerChecker.SavePageAction(PageItem.Id, _action, _action, _action, "action");
             }
             //LogRecorder.MonitorTrace("Headers:" + this.Request.Headers);
             //LogRecorder.MonitorTrace("Form:" + this.Request.Form);
@@ -345,10 +347,9 @@ namespace Gboxt.Common.WebUI
         /// <param name="value"></param>
         protected void SetCustomJsonValue(string value)
         {
-            CustomJson = $@"{{""state"":0,""succeed"":true,""message"":null,""value"":{value}}}"; ;
+            CustomJson = $@"{{""state"":0,""succeed"":true,""message"":null,""value"":{value}}}"; 
         }
-
-
+        
         /// <summary>
         ///     自定义返回的JSON值,如果不为空,直接返回它,无状态
         /// </summary>

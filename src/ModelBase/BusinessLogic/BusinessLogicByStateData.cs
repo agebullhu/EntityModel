@@ -10,6 +10,7 @@
 
 using System;
 using System.Linq.Expressions;
+using Agebull.Common.Logging;
 using Gboxt.Common.DataModel.MySql;
 
 #endregion
@@ -23,7 +24,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicByStateData<TData, TAccess> : UiBusinessLogicBase<TData, TAccess>
         where TData : EditDataObject, IIdentityData, IStateData, new()
-        where TAccess : MySqlTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
         #region 批量操作
 
@@ -80,12 +81,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         protected override bool DoDelete(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.DataState == DataStateType.Delete))
                     return Access.SetValue(p => p.DataState, DataStateType.Delete, p => p.Id == id && p.DataState == DataStateType.None) > 0;
-                if (BusinessContext.Current.CanDoCurrentPageAction("physical_delete"))
-                    return Access.PhysicalDelete(id);
                 BusinessContext.Current.LastMessage = "不允许随意执行物理删除操作";
                 return false;
             }
@@ -133,11 +132,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <param name="cmd">命令</param>
         protected void OnStateChanged(TData data, BusinessCommandType cmd)
         {
-            if (unityStateChanged)
-            {
-                OnInnerCommand(data, cmd);
-                DoStateChanged(data);
-            }
+            if (!unityStateChanged) return;
+            LogRecorder.MonitorTrace("OnStateChanged");
+            OnInnerCommand(data, cmd);
+            DoStateChanged(data);
         }
 
         /// <summary>
@@ -147,8 +145,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <param name="cmd">命令</param>
         protected sealed override void OnInnerCommand(int id, BusinessCommandType cmd)
         {
-            if (unityStateChanged)
-                OnInnerCommand(Access.LoadByPrimaryKey(id), cmd);
+            if (!unityStateChanged)
+                return;
+            OnInnerCommand(Access.LoadByPrimaryKey(id), cmd);
         }
         /// <summary>
         ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
@@ -230,7 +229,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool Lock(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
                     return false;
@@ -248,7 +247,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         protected bool SetDataState(int id, DataStateType state, Expression<Func<TData, bool>> filter)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (Access.DataBase.CreateDataBaseScope())
             {
                 if (!Access.ExistPrimaryKey(id) || !Access.Any(filter))
                     return false;

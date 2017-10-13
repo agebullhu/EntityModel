@@ -69,7 +69,12 @@ namespace Gboxt.Common.DataModel
         #endregion
 
         #region 权限对象
-        
+
+        /// <summary>
+        ///     是否工作在不安全模式下
+        /// </summary>
+        public bool IsUnSafeMode { get; set; }
+
         /// <summary>
         ///     是否工作在系统模式下
         /// </summary>

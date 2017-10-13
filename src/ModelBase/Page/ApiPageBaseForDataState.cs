@@ -24,7 +24,7 @@ namespace Gboxt.Common.WebUI
     public abstract class ApiPageBaseForDataState<TData, TAccess, TBusinessLogic> :
         ApiPageBaseEx<TData, TAccess, TBusinessLogic>
         where TData : EditDataObject, IStateData, IIdentityData, new()
-        where TAccess : MySqlTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
         where TBusinessLogic : BusinessLogicByStateData<TData, TAccess>, new()
     {
         #region 操作

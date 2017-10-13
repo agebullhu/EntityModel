@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3984FC11-36E0-4968-B833-3D90EF8BC213}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Agebull.Common.DataModel.Authority</RootNamespace>
+    <AssemblyName>Agebull.Common.DataModel.Authority</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;Monitor,SaveAction</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NServiceKit.Redis.1.0.20\lib\net35\NServiceKit.Redis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NServiceKit.Text, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NServiceKit.Text.1.0.10\lib\net35\NServiceKit.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Business\OrganizationBusinessLogic.cs" />
+    <Compile Include="Business\OrganizationBusinessLogic.Designer.cs">
+      <DependentUpon>OrganizationBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Business\OrganizePositionBusinessLogic.cs" />
+    <Compile Include="Business\OrganizePositionBusinessLogic.Designer.cs">
+      <DependentUpon>OrganizePositionBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Business\PositionPersonnelBusinessLogic.cs" />
+    <Compile Include="Business\PositionPersonnelBusinessLogic.Designer.cs">
+      <DependentUpon>PositionPersonnelBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Authority\AuthorityChecker.cs" />
+    <Compile Include="Business\RoleBusinessLogic.cs" />
+    <Compile Include="Business\RoleBusinessLogic.Designer.cs">
+      <DependentUpon>RoleBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Authority\RoleCache.cs" />
+    <Compile Include="Business\RolePowerBusinessLogic.cs" />
+    <Compile Include="Business\RolePowerBusinessLogic.Designer.cs">
+      <DependentUpon>RolePowerBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Business\UserBusinessLogic.cs" />
+    <Compile Include="Business\UserBusinessLogic.Designer.cs">
+      <DependentUpon>UserBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Combo\Area.combo.cs" />
+    <Compile Include="Combo\Personnel.combo.cs" />
+    <Compile Include="Combo\Role.combo.cs" />
+    <Compile Include="DataAccess\AreaDataAccess.cs" />
+    <Compile Include="DataAccess\AreaDataAccess.Designer.cs">
+      <DependentUpon>AreaDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\OrganizationDataAccess.cs" />
+    <Compile Include="DataAccess\OrganizationDataAccess.Designer.cs">
+      <DependentUpon>OrganizationDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\OrganizePositionDataAccess.cs" />
+    <Compile Include="DataAccess\OrganizePositionDataAccess.Designer.cs">
+      <DependentUpon>OrganizePositionDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\PersonnelDataAccess.cs" />
+    <Compile Include="DataAccess\PersonnelDataAccess.Designer.cs">
+      <DependentUpon>PersonnelDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\PositionPersonnelDataAccess.cs" />
+    <Compile Include="DataAccess\PositionPersonnelDataAccess.Designer.cs">
+      <DependentUpon>PositionPersonnelDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\RoleDataAccess.cs" />
+    <Compile Include="DataAccess\RoleDataAccess.Designer.cs">
+      <DependentUpon>RoleDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\RolePowerDataAccess.cs" />
+    <Compile Include="DataAccess\RolePowerDataAccess.Designer.cs">
+      <DependentUpon>RolePowerDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\UserDataAccess.cs" />
+    <Compile Include="DataAccess\UserDataAccess.Designer.cs">
+      <DependentUpon>UserDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataBase\Authorities.cs" />
+    <Compile Include="DataBase\Authorities.Designer.cs">
+      <DependentUpon>Authorities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\Area.cs" />
+    <Compile Include="DataModel\Area.Designer.cs">
+      <DependentUpon>Area.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\Organization.cs" />
+    <Compile Include="DataModel\Organization.Designer.cs">
+      <DependentUpon>Organization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Authority\LoginUser.cs" />
+    <Compile Include="DataModel\OrganizePosition.cs" />
+    <Compile Include="DataModel\OrganizePosition.Designer.cs">
+      <DependentUpon>OrganizePosition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\Personnel.cs" />
+    <Compile Include="DataModel\Personnel.Designer.cs">
+      <DependentUpon>Personnel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\PositionPersonnel.cs" />
+    <Compile Include="DataModel\PositionPersonnel.Designer.cs">
+      <DependentUpon>PositionPersonnel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\Role.cs" />
+    <Compile Include="DataModel\Role.Designer.cs">
+      <DependentUpon>Role.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\RolePower.cs" />
+    <Compile Include="DataModel\RolePower.Designer.cs">
+      <DependentUpon>RolePower.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\User.cs" />
+    <Compile Include="DataModel\User.Designer.cs">
+      <DependentUpon>User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Extend\Personnel.cs" />
+    <Compile Include="Extend\Personnel.Designer.cs">
+      <DependentUpon>Personnel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Page\Organization\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\Organization\OrganizationPageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\Organization\OrganizationPageAction.Designer.cs">
+      <DependentUpon>OrganizationPageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Page\OrganizePosition\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\OrganizePosition\OrganizePositionPageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\OrganizePosition\OrganizePositionPageAction.Designer.cs">
+      <DependentUpon>OrganizePositionPageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Page\PageHelper.cs" />
+    <Compile Include="Page\PositionPersonnel\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\PositionPersonnel\PositionPersonnelPageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\PositionPersonnel\PositionPersonnelPageAction.Designer.cs">
+      <DependentUpon>PositionPersonnelPageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Page\Role\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\Role\RolePageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\Role\RolePageAction.Designer.cs">
+      <DependentUpon>RolePageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Page\User\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\User\UserPageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\User\UserPageAction.Designer.cs">
+      <DependentUpon>UserPageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RowScope\AutoJobBusinessLogicBase.cs" />
+    <Compile Include="RowScope\AutoJobEntity.cs" />
+    <Compile Include="RowScope\AutoJobPageBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RowScope\IRowScopeData.cs" />
+    <Compile Include="RowScope\JobLinkDataAccess.cs" />
+    <Compile Include="RowScope\RowScopeDataAccess.cs" />
+    <Compile Include="Type\Enums.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
+      <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
+      <Name>Agebull.Common.Extend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
+      <Project>{0d626dda-02c0-4bd8-b2fd-efee0971510f}</Project>
+      <Name>Agebull.Common.DataEntity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModelBase\Agebull.Common.ModelBase.csproj">
+      <Project>{6ac7ff64-8103-428c-987d-f7b527201f89}</Project>
+      <Name>Agebull.Common.ModelBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\Agebull.Common.DataModel.SystemModel.csproj">
+      <Project>{878c8642-b347-474e-9e62-8bc37faadf0a}</Project>
+      <Name>Agebull.Common.DataModel.SystemModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workflow\Agebull.Common.DataModel.Workflow.csproj">
+      <Project>{568a7b8d-d7da-483d-a330-38999a2d2301}</Project>
+      <Name>Agebull.Common.DataModel.Workflow</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY $(TargetPath) "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).xml "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).pdb "..\..\..\Lib\" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

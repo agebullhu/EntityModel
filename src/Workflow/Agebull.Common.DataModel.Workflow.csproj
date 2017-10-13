@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{568A7B8D-D7DA-483D-A330-38999A2D2301}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Agebull.Common.DataModel.Workflow</RootNamespace>
+    <AssemblyName>Agebull.Common.DataModel.Workflow</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;Monitor,SaveAction0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NServiceKit.Redis.1.0.20\lib\net35\NServiceKit.Redis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NServiceKit.Text, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NServiceKit.Text.1.0.10\lib\net35\NServiceKit.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Business\UserJobBusinessLogic.cs" />
+    <Compile Include="Business\UserJobBusinessLogic.Designer.cs">
+      <DependentUpon>UserJobBusinessLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Business\UserJobTrigger.cs" />
+    <Compile Include="Business\WorkflowControler.cs" />
+    <Compile Include="DataAccess\UserJobDataAccess.cs" />
+    <Compile Include="DataAccess\UserJobDataAccess.Designer.cs">
+      <DependentUpon>UserJobDataAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataBase\WorkflowDataBase.cs" />
+    <Compile Include="DataBase\WorkflowDataBase.Designer.cs">
+      <DependentUpon>WorkflowDataBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\UserJob.cs" />
+    <Compile Include="DataModel\UserJob.Designer.cs">
+      <DependentUpon>UserJob.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Enums\Enums.cs" />
+    <Compile Include="Page\UserJob\Export.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\UserJob\UserJobPageAction.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Page\UserJob\UserJobPageAction.Designer.cs">
+      <DependentUpon>UserJobPageAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
+      <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
+      <Name>Agebull.Common.Extend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
+      <Project>{0d626dda-02c0-4bd8-b2fd-efee0971510f}</Project>
+      <Name>Agebull.Common.DataEntity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModelBase\Agebull.Common.ModelBase.csproj">
+      <Project>{6ac7ff64-8103-428c-987d-f7b527201f89}</Project>
+      <Name>Agebull.Common.ModelBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\Agebull.Common.DataModel.SystemModel.csproj">
+      <Project>{878c8642-b347-474e-9e62-8bc37faadf0a}</Project>
+      <Name>Agebull.Common.DataModel.SystemModel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY $(TargetPath) "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).xml "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).pdb "..\..\..\Lib\" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -24,7 +24,7 @@ namespace Gboxt.Common.WebUI
     public abstract class ApiPageBaseForAudit<TData, TAccess, TBusinessLogic> :
         ApiPageBaseForDataState<TData, TAccess, TBusinessLogic>
         where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TAccess : HitoryTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
         where TBusinessLogic : BusinessLogicByAudit<TData, TAccess>, new()
     {
         /// <summary>
@@ -61,7 +61,7 @@ namespace Gboxt.Common.WebUI
                     break;
             }
         }
-
+        
         /// <summary>
         ///     Ã·Ωª…Û∫À
         /// </summary>

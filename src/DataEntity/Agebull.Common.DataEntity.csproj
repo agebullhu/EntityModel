@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Agebull.Common.DataEntity</RootNamespace>
+    <AssemblyName>Agebull.Common.DataEntity</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WEB,SqlLog,Monitor,Binary</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>WEB</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\..\Lib\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Redis.1.0.20\lib\net35\NServiceKit.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Text, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Text.1.0.10\lib\net35\NServiceKit.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\Lib\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\..\Lib\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages">
+      <HintPath>..\..\Lib\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment">
+      <HintPath>..\..\Lib\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor">
+      <HintPath>..\..\Lib\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\NotificationObject.cs" />
+    <Compile Include="Base\ObjectCollection.cs" />
+    <Compile Include="Base\SimpleConfig.cs" />
+    <Compile Include="Base\TableSql.cs" />
+    <Compile Include="DataBase\Interface\ITransactionScope.cs" />
+    <Compile Include="DataBase\Interface\IDataBase.cs" />
+    <Compile Include="DataBase\Interface\IDataTable.cs" />
+    <Compile Include="DEncrypt\DEncrypt.cs" />
+    <Compile Include="DEncrypt\DesDecryptHelper.cs" />
+    <Compile Include="DEncrypt\DESEncrypt.cs" />
+    <Compile Include="DEncrypt\HashEncode.cs" />
+    <Compile Include="DEncrypt\RSACryption.cs" />
+    <Compile Include="Entity\EditDataObject.cs" />
+    <Compile Include="Entity\DataObjectBase.cs" />
+    <Compile Include="Entity\StatusDataObject.cs" />
+    <Compile Include="Entity\ValidateItem.cs" />
+    <Compile Include="Helper\CommonExtend.cs" />
+    <Compile Include="Helper\RandomOperate.cs" />
+    <Compile Include="Helper\EntityLoadScope.cs" />
+    <Compile Include="Helper\EditScope.cs" />
+    <Compile Include="Interface\DataStateType.cs" />
+    <Compile Include="DataBase\MySql\DataUpdateTrigger\DataUpdateHandler.cs" />
+    <Compile Include="Interface\IStateData.cs" />
+    <Compile Include="Interface\IEditObject.cs" />
+    <Compile Include="Interface\IDataObject.cs" />
+    <Compile Include="Interface\IIdentityData.cs" />
+    <Compile Include="Interface\ILogicDeleteData.cs" />
+    <Compile Include="Interface\ISqlCondition.cs" />
+    <Compile Include="Json\MyDateTimeConverter.cs" />
+    <Compile Include="DataBase\MySql\DataUpdateTrigger\IDataUpdateTrigger.cs" />
+    <Compile Include="DataBase\MySql\MySqlTable.Extend.cs" />
+    <Compile Include="DataBase\MySql\Scope\MySqlReaderScope.cs" />
+    <Compile Include="DataBase\MySql\DataUpdateTrigger\SqlCommandInfo.cs" />
+    <Compile Include="Redis\ByteCommond.cs" />
+    <Compile Include="Redis\DataKeyBuilder.cs" />
+    <Compile Include="Redis\RedisProxy.cs" />
+    <Compile Include="DataBase\MySql\CacheTable.cs" />
+    <Compile Include="DataBase\MySql\Lambda\ConditionItem.cs" />
+    <Compile Include="DataBase\Interface\LambdaItem.cs" />
+    <Compile Include="DataBase\MySql\Lambda\PredicateConvert.cs" />
+    <Compile Include="DataBase\MySql\Scope\MySqlDataBaseScope.cs" />
+    <Compile Include="DataBase\MySql\Scope\MySqlDataTableScope.cs" />
+    <Compile Include="DataBase\MySql\Scope\MySqlReadTableScope.cs" />
+    <Compile Include="DataBase\MySql\Scope\TransactionScope.cs" />
+    <Compile Include="DataBase\MySql\MySqlDataBase.cs" />
+    <Compile Include="DataBase\MySql\MySqlTable.cs" />
+    <Compile Include="DataBase\SqlServer\CacheTable.cs" />
+    <Compile Include="DataBase\SqlServer\IDataUpdateHandler.cs" />
+    <Compile Include="DataBase\SqlServer\Lambda\ConditionItem.cs" />
+    <Compile Include="DataBase\SqlServer\Lambda\PredicateConvert.cs" />
+    <Compile Include="DataBase\SqlServer\Scope\SqlServerDataBaseScope.cs" />
+    <Compile Include="DataBase\SqlServer\Scope\SqlServerDataTableScope.cs" />
+    <Compile Include="DataBase\SqlServer\Scope\SqlServerReadTableScope.cs" />
+    <Compile Include="DataBase\SqlServer\Scope\TransactionScope.cs" />
+    <Compile Include="DataBase\SqlServer\SqlServerDataBase.cs" />
+    <Compile Include="DataBase\SqlServer\SqlServerTable.cs" />
+    <Compile Include="Status\EditArrestMode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Status\EntitySturct.cs" />
+    <Compile Include="Status\IndexEditStatus.cs" />
+    <Compile Include="Status\EntitySubsist.cs" />
+    <Compile Include="Status\NotificationStatusType.cs" />
+    <Compile Include="Status\ObjectStatusBase.cs" />
+    <Compile Include="Status\PropertySturct.cs" />
+    <Compile Include="Status\PropertyValueType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
+      <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
+      <Name>Agebull.Common.Extend</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY $(TargetPath) "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).xml "..\..\..\Lib\" /Y
+COPY $(ProjectDir)$(OutDir)$(TargetName).pdb "..\..\..\Lib\" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
