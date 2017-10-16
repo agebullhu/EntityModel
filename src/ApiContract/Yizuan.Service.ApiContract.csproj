@@ -102,7 +102,7 @@
       <Project>{0d626dda-02c0-4bd8-b2fd-efee0971510f}</Project>
       <Name>Agebull.Common.DataEntity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Yizuan.Service.Fundtion\Yizuan.Service.Fundtion.csproj">
+    <ProjectReference Include="..\ApiHelper\Yizuan.Service.Fundtion.csproj">
       <Project>{178CC1E7-92C6-4613-9989-EF2951A89255}</Project>
       <Name>Yizuan.Service.Fundtion</Name>
     </ProjectReference>

@@ -22,7 +22,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     作者
         /// </summary>
-        /// <value>string</value>
+        /// <value>int</value>
         int AuthorID { get; set; }
 
         /// <summary>
@@ -34,8 +34,37 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     最后修改者
         /// </summary>
-        /// <value>string</value>
+        /// <value>int</value>
         int LastReviserID { get; set; }
+
+        /// <summary>
+        ///     最后修改日期
+        /// </summary>
+        /// <value>DateTime</value>
+        DateTime LastModifyDate { get; set; }
+    }
+    /// <summary>
+    ///     表示这条数据记录修改历史
+    /// </summary>
+    public interface IHistory
+    {
+        /// <summary>
+        ///     作者
+        /// </summary>
+        /// <value>string</value>
+        string Author { get; set; }
+
+        /// <summary>
+        ///     新增日期
+        /// </summary>
+        /// <value>DateTime</value>
+        DateTime AddDate { get; set; }
+
+        /// <summary>
+        ///     最后修改者
+        /// </summary>
+        /// <value>string</value>
+        string LastReviser { get; set; }
 
         /// <summary>
         ///     最后修改日期
