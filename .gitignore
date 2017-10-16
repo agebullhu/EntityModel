@@ -2,3 +2,5 @@
 /src/.vs
 bin
 obj
+*.DotSettings
+*.gitignore

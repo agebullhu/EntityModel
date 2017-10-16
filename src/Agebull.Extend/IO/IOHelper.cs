@@ -101,6 +101,33 @@ namespace Agebull.Common
             }
             return root;
         }
+        /// <summary>
+        ///   检查一个路径是否存在,不存在则建立之
+        /// </summary>
+        /// <param name="path"> 目录 </param>
+        /// <returns> 组合成的路径 </returns>
+        public static string CheckPaths(string path)
+        {
+            if (path == null)
+            {
+                return null;
+            }
+            if (Directory.Exists(path))
+            {
+                return path;
+            }
+            var root = Path.GetPathRoot(path);
+            var folders = path.Split(new char[] {'\\', '/'},StringSplitOptions.RemoveEmptyEntries).Skip(1);
+            foreach (string folder in folders)
+            {
+                root = Path.Combine(root, folder);
+                if (!Directory.Exists(root))
+                {
+                    Directory.CreateDirectory(root);
+                }
+            }
+            return root;
+        }
 
         /// <summary>
         ///   检查一个路径是否存在,不存在则建立之
