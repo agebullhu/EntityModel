@@ -77,7 +77,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
       <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
-      <Name>Agebull.Extend</Name>
+      <Name>Agebull.Common.Extend</Name>
     </ProjectReference>
     <ProjectReference Include="..\ApiContract\Yizuan.Service.ApiContract.csproj">
       <Project>{4b22f3c3-11a5-4063-bd7e-bef91705cafb}</Project>

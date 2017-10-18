@@ -26,7 +26,7 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static RedisProxy()
         {
-            var c = ConfigurationManager.AppSettings["Redis"].Split(',', ':');
+            var c = ConfigurationManager.AppSettings["RedisConnectionString"].Split(',', ':');
             Address = c[0];
             Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
             //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);

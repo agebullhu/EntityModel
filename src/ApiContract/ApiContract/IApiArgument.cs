@@ -32,7 +32,7 @@ namespace Yizuan.Service.Api
         /// <summary>
         /// AT
         /// </summary>
-        [JsonProperty("v",NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public T Value { get; set; }
 
 

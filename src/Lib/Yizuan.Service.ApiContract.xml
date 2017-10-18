@@ -441,13 +441,6 @@
             <param name="uid">用户ID</param>
             <returns></returns>
         </member>
-        <member name="M:Yizuan.Service.Api.IBearValidater.DeviceLog(System.String)">
-            <summary>
-            来自用户设备的日志记录
-            </summary>
-            <param name="log">用户ID</param>
-            <returns></returns>
-        </member>
         <member name="T:Yizuan.Service.Api.IUserProfile">
             <summary>
             用户信息

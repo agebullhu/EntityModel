@@ -81,7 +81,7 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// <summary>
         ///     是否已成功
         /// </summary>
-        public bool IsSucceed { get; private set; } = true;
+        public bool IsSucceed { get; private set; } = false;
 
         /// <summary>
         ///     析构

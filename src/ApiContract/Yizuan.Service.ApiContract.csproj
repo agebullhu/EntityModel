@@ -96,7 +96,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
       <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
-      <Name>Agebull.Extend</Name>
+      <Name>Agebull.Common.Extend</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
       <Project>{0d626dda-02c0-4bd8-b2fd-efee0971510f}</Project>

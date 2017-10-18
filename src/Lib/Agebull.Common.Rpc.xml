@@ -1,0 +1,2219 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Agebull.Common.Rpc</name>
+    </assembly>
+    <members>
+        <member name="T:System.ComponentModel.EditScope">
+            <summary>
+                对象编辑范围
+            </summary>
+        </member>
+        <member name="F:System.ComponentModel.EditScope._data">
+            <summary>
+                当前范围对象
+            </summary>
+        </member>
+        <member name="F:System.ComponentModel.EditScope._lockObj">
+            <summary>
+                锁定对象
+            </summary>
+        </member>
+        <member name="F:System.ComponentModel.EditScope._preIsEditing">
+            <summary>
+                前一个范围是否编辑中(如果是,事实上不起作用)
+            </summary>
+        </member>
+        <member name="M:System.ComponentModel.EditScope.#ctor(Agebull.Common.DataModel.NotificationObject,System.Object)">
+            <summary>
+                构造
+            </summary>
+            <param name="data">数据</param>
+            <param name="lockObj">锁定对象</param>
+        </member>
+        <member name="M:System.ComponentModel.EditScope.Dispose">
+            <summary>
+                析构
+            </summary>
+        </member>
+        <member name="M:System.ComponentModel.EditScope.CreatScope(Agebull.Common.DataModel.NotificationObject,System.Object)">
+            <summary>
+                生成一个范围
+            </summary>
+            <param name="data"></param>
+            <param name="lockObj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.DataModel.EntityBase">
+            <summary>
+                实体基类
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.CopyValue(Agebull.Common.DataModel.EntityBase)">
+            <summary>
+            复制值
+            </summary>
+            <param name="entity">复制的源字段</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.SetValue(System.String,System.Object)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.GetValue(System.String)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.GetValue``1(System.String)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.CopyValueInner(Agebull.Common.DataModel.EntityBase)">
+            <summary>
+            复制值
+            </summary>
+            <param name="source">复制的源字段</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.GetValueInner``1(System.String)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.GetValueInner(System.String)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.SetValueInner(System.String,System.Object)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+            <param name="value"></param>
+        </member>
+        <member name="F:Agebull.Common.DataModel.EntityBase._modifiedList">
+            <summary>
+            修改列表
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityBase.OnPropertyChangedInner(System.String)">
+            <summary>
+                属性修改处理
+            </summary>
+            <param name="propertyName">属性名称</param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.EntityList`1">
+            <summary>
+                业务实体对象列表
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.Item(System.Int32)">
+            <summary>
+                取设下标对象
+            </summary>
+            <param name="idx"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Find(`0)">
+            <summary>
+                是否包含
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.IndexOf(`0)">
+            <summary>
+                所在位置
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Contains(`0)">
+            <summary>
+                是否包含
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncOrInsert(`0)">
+            <summary>
+                是否包含
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.Count">
+            <summary>
+                总行数
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.GetEnumerator">
+            <summary>
+                得到枚举器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                加入一批
+            </summary>
+            <param name="entities"> </param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.AddOrSwitch(`0)">
+            <summary>
+                加入或是同步
+            </summary>
+            <param name="entity"> </param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.AddOrSwitch(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                加入或是同步
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.RemoveAt(System.Int32)">
+            <summary>
+                删除下标
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.CopyFrom(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                从一个集合中复制数据
+            </summary>
+            <param name="entities"></param>
+            <remarks>集合中不存在的数据将被删除,原来存在的数据进行覆盖,原来不存在的加入</remarks>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncMessage(`0)">
+            <summary>
+                同步数据
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncByUpdated(`0)">
+            <summary>
+                同步数据
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Sort``1(System.Func{`0,``0})">
+            <summary>
+                按索引排序
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IList#IndexOf(System.Object)">
+            <summary>
+            </summary>
+            <param name="value"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IList#Insert(System.Int32,System.Object)">
+            <summary>
+            </summary>
+            <param name="index"> </param>
+            <param name="value"> </param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+                得到枚举器
+            </summary>
+            <returns> 枚举器 </returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#Generic#ICollection{TEntity}#CopyTo(`0[],System.Int32)">
+            <summary>
+                复制到--未实现
+            </summary>
+            <param name="array"> 数组 </param>
+            <param name="arrayIndex"> 位置 </param>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.System#Collections#ICollection#IsSynchronized">
+            <summary>获取一个值，该值指示是否同步对 <see cref="T:System.Collections.ICollection" /> 的访问（线程安全）。</summary>
+            <returns>如果对 <see cref="T:System.Collections.ICollection" /> 的访问是同步的（线程安全），则为 true；否则为 false。</returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.System#Collections#ICollection#SyncRoot">
+            <summary>获取可用于同步对 <see cref="T:System.Collections.ICollection" /> 的访问的对象。</summary>
+            <returns>可用于同步对 <see cref="T:System.Collections.ICollection" /> 的访问的对象。</returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="E:Agebull.Common.DataModel.EntityList`1.CollectionChanged">
+            <summary>
+                集合内容增删
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.RaiseCollectionChangedInner(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+            <summary>
+                发出集合修改事件
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.EndEditInner(System.Collections.Generic.List{System.String})">
+            <summary>
+                结束编辑
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.EntityList`1._haseEditEvent">
+            <summary>
+                是否存在编辑期间的事件发生
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+            <summary>
+                处理集合修改事件
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.CollectionIsModify">
+            <summary>
+                集合有没有修改
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.OnAdd(`0)">
+            <summary>
+                新对象加入后续的处理
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.OnRemove(`0)">
+            <summary>
+                对象被清除后续的处理
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.OnClear">
+            <summary>
+                集合清空的后续处理
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.EntityList`1._entities">
+            <summary>
+                内部数据存储
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.Entities">
+            <summary>
+                内部列表
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityList`1.IsEmpty">
+            <summary>
+                是否为空
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.SetEmpty">
+            <summary>
+                是否为空
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Add(`0)">
+            <summary>
+                加入
+            </summary>
+            <param name="entity"> </param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Add(`0,System.Func{`0,`0,System.Boolean})">
+            <summary>
+                排序加入
+            </summary>
+            <param name="entity"> </param>
+            <param name="sort"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Insert(System.Int32,`0)">
+            <summary>
+                插入
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Remove(`0)">
+            <summary>
+                从列表中清除
+            </summary>
+            <param name="entity"> </param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EntityList`1.Clear">
+            <summary>
+                清除所有数据
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.EntityGroup`1">
+            <summary>
+            实体分组
+            </summary>
+            <typeparam name="TEntityBase"></typeparam>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EntityGroup`1.Title">
+            <summary>
+            标题
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.EventArgs`1">
+            <summary>
+            事件参数
+            </summary>
+            <typeparam name="TArgument"></typeparam>
+        </member>
+        <member name="M:Agebull.Common.DataModel.EventArgs`1.#ctor(`0)">
+            <summary>
+            构造
+            </summary>
+            <param name="arg"></param>
+        </member>
+        <member name="P:Agebull.Common.DataModel.EventArgs`1.Argument">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.NotificationObject">
+            <summary>
+                有属性通知的对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.InvokeInUiThread(System.Action)">
+            <summary>
+                在UI线程中执行
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginInvokeInUiThread(System.Action)">
+            <summary>
+                在UI线程中执行
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginInvokeInUiThread``1(System.Action{``0},``0)">
+            <summary>
+                在UI线程中执行
+            </summary>
+            <param name="action"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.InvokeInUiThread``1(System.Action{``0},``0)">
+            <summary>
+                在UI线程中执行
+            </summary>
+            <param name="action"></param>
+            <param name="args"></param>
+        </member>
+        <member name="E:Agebull.Common.DataModel.NotificationObject._propertyChanged">
+            <summary>
+                属性修改事件
+            </summary>
+        </member>
+        <member name="E:Agebull.Common.DataModel.NotificationObject.PropertyChanged">
+            <summary>
+                属性修改事件(属性为空表示删除)
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChangedEvent(System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>
+                发出属性修改事件(不受阻止模式影响)
+            </summary>
+            <param name="args">属性</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChangedEvent(System.String)">
+            <summary>
+                发出属性修改事件(同步发出)
+            </summary>
+            <param name="propertyName">属性</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChanged(System.String)">
+            <summary>
+                发出属性修改事件(外部调用)
+            </summary>
+            <param name="propertyName">属性</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.GetPropertyName``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                取属性名称
+            </summary>
+            <typeparam name="T">表达式参数</typeparam>
+            <param name="action">表达式</param>
+            <returns>属性名称</returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChanged(System.String)">
+            <summary>
+                发出属性修改事件
+            </summary>
+            <param name="propertyName">属性</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChanged``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+                发出属性修改事件
+            </summary>
+            <param name="action">属性字段</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChangedInner(System.String)">
+            <summary>
+                属性修改处理
+            </summary>
+            <param name="propertyName">属性名称</param>
+        </member>
+        <member name="P:Agebull.Common.DataModel.NotificationObject.IsEditing">
+            <summary>
+                是否处于集中编辑模式
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginEdit">
+            <summary>
+                开始编辑
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.EndEdit">
+            <summary>
+                结束编辑
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.EndEditInner(System.Collections.Generic.List{System.String})">
+            <summary>
+                结束编辑
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.NotificationObject.RaiseEditChanges">
+            <summary>
+                发出修改列表的修改事件
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.NotificationObject._changeLock">
+            <summary>
+                修改列表的锁
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.NotificationObject._changeds">
+            <summary>
+                当前未发出事件的已修改属性
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.ITson">
+            <summary>
+            表示实现自助TSON操作的类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.ITson.TypeId">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.ITson.SafeBufferLength">
+            <summary>
+            安全的缓存长度
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.ITson.Deserialize(Agebull.Common.DataModel.TsonDeserializer)">
+            <summary>
+            从TSON反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.ITson.Serialize(Agebull.Common.DataModel.TsonSerializer)">
+            <summary>
+            序列化到Tson
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.BofCode">
+            <summary>
+            开始标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.EofMark">
+            <summary>
+            尾部标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.EndMark">
+            <summary>
+            结束标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_bufer">
+            <summary>
+            缓存
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_postion">
+            <summary>
+            当前位置
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_buffer_len">
+            <summary>
+            缓存长度
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_full">
+            <summary>
+            是否全量写入
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_start_postion">
+            <summary>
+            起始位
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_end_postion">
+            <summary>
+            结束位(最后一位的下一位)
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_len">
+            <summary>
+            实际长度
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor">
+            <summary>
+            默认构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer">缓存</param>
+            <param name="len">缓存长度</param>
+            <param name="firstPostion">起始位置</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.Reset">
+            <summary>
+            重置位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.IsFull">
+            <summary>
+            全量写入
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.DataLen">
+            <summary>
+            数据长度
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.BufferLen">
+            <summary>
+            缓冲区长度
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.Buffer">
+            <summary>
+            缓冲区
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.EndPostion">
+            <summary>
+            结束位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.BeginPostion">
+            <summary>
+            起始位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.Postion">
+            <summary>
+            起始位置
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonDeserializer">
+            <summary>
+            TSON反序列化器
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_error">
+            <summary>
+            是否有错
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_type_id">
+            <summary>
+            数据类型ID
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_data_ver">
+            <summary>
+            数据版本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsError">
+            <summary>
+            是否有错
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataTypeId">
+            <summary>
+            数据类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataVersion">
+            <summary>
+            数据版本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsEof">
+            <summary>
+            是否处于尾部
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsBof">
+            <summary>
+            是否处于头部
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer">缓存</param>
+            <param name="len">缓存长度</param>
+            <param name="firstPostion">起始位置</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Begin">
+            <summary>
+            开始反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.End">
+            <summary>
+            结束反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.ReadIndex">
+            <summary>
+            读当前属性的数字索引
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.String@)">
+            <summary>
+            读取文本
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean@)">
+            <summary>
+            读取布尔值
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte@)">
+            <summary>
+            读取
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte@)">
+            <summary>
+            读取
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime@)">
+            <summary>
+            读取
+            </summary>
+            <param name="date"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read``1">
+            <summary>
+            读取
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonSerializer">
+            <summary>
+            TSON序列化器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer"></param>
+            <param name="len"></param>
+            <param name="firstPostion"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.CreateBuffer(System.Int32)">
+            <summary>
+            初始化缓冲区
+            </summary>
+            <param name="len"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Begin(System.Int32,System.Byte)">
+            <summary>
+            开始写入
+            </summary>
+            <param name="type"></param>
+            <param name="ver"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.End">
+            <summary>
+            完成写入
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.WriteIndex(System.Byte)">
+            <summary>
+            写入字段索引号
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty(System.String)">
+            <summary>
+            空值检测
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0[])">
+            <summary>
+            空值检测
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0)">
+            <summary>
+            空值检测
+            </summary>
+            <param name="t"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.String)">
+            <summary>
+            写入
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean)">
+            <summary>
+            写入
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte)">
+            <summary>
+            写入
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte)">
+            <summary>
+            写入
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime)">
+            <summary>
+            写入
+            </summary>
+            <param name="date"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(Agebull.Common.DataModel.ITson)">
+            <summary>
+            写入
+            </summary>
+            <param name="tson"></param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonTypeItem">
+            <summary>
+            Tson类型节点
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.typeId">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.creator">
+            <summary>
+            构造器
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonTypeRegister">
+            <summary>
+            Tson类型注册器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.RegisteType``1(System.Int32,System.String)">
+            <summary>
+            注册类型
+            </summary>
+            <typeparam name="T">类型</typeparam>
+            <param name="id">类型ID</param>
+            <param name="name">名称</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.TypeName(System.Int32)">
+            <summary>
+            注册类型
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.CreateType(System.Int32)">
+            <summary>
+            注册类型
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CommandArgument">
+            <summary>
+                命令的网络调用参数结构
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandArgument.ToString">
+            <summary>
+                到文本
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.command">
+            <summary>
+                命令，长度不超过34
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.token">
+            <summary>
+                命令标识(用于异步回发后的命令状态对应)长度不超过34
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.cmdId">
+            <summary>
+                命令标识(调用方设置)
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.tryNum">
+            <summary>
+                命令重发次数,在事件中要设置为-1而取消重试
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.cmdState">
+            <summary>
+                命令状态(0为数据)
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.crcCode">
+            <summary>
+                命令头的CRC16校验码
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.dataLen">
+            <summary>
+                参数长度--此处为TSON的头部
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.CommandArgument.dataTypeId">
+            <summary>
+                参数数据类型
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.Data">
+            <summary>
+                数据
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.Message">
+            <summary>
+                命令消息
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.Tag">
+            <summary>
+                其它数据
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.Tag1">
+            <summary>
+                其它数据
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.Tag2">
+            <summary>
+                其它数据
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.OnEnd">
+            <summary>
+                结束回调
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandArgument.TimeSpamp">
+            <summary>
+            时间戳
+            </summary>
+        </member>
+        <member name="E:Agebull.Zmq.Rpc.CommandArgument.RequestStateChanged">
+            <summary>
+                请求状态变化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandArgument.OnRequestStateChanged(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+                发出状态修改事件
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CommandReader">
+            <summary>
+            命令反序列化器
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandReader.Command">
+            <summary>
+            命令
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandReader.#ctor(NetMQ.NetMQFrame)">
+            <summary>
+            构造
+            </summary>
+            <param name="zMsg"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandReader.#ctor(System.Byte[])">
+            <summary>
+            构造
+            </summary>
+            <param name="bytes"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandReader.ReadCommandFromBuffer">
+            <summary>
+            字节解析为命令对象
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CommandWriter">
+            <summary>
+            命令序列化器
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandWriter.Command">
+            <summary>
+            命令
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandWriter.#ctor(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+            构造
+            </summary>
+            <param name="arg"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CommandWriter.WriteCommandToBuffer">
+            <summary>
+            命令对象写入字节
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CrcHelper">
+            <summary>
+            CRC计算辅助类(与C++实现一致)
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.CrcHelper.Crc(System.Byte[],System.Int32)">
+            <summary>
+            计算CRC值
+            </summary>
+            <param name="buffer">数据</param>
+            <param name="endPostion">计算到哪个数据位置为止</param>
+            <returns>CRC值</returns>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ICommandResult">
+            <summary>
+            命令的标准返回
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ICommandResult.Status">
+            <summary>
+            状态，0表示成功，其它表示错误代码
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ICommandResult.Message">
+            <summary>
+            错误消息，如果有的话
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CommandResult">
+            <summary>
+            基本命令返回
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandResult.Success">
+            <summary>
+            成功标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.CommandResult.Status">
+            <summary>
+            状态，0表示成功，其它表示错误代码,-1表示未知错误
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcConfig">
+            <summary>
+            RPC配置
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcConfig.RequestUrl">
+            <summary>
+            请求地址
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcConfig.AnswerUrl">
+            <summary>
+            回得地址
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcConfig.NotifyUrl">
+            <summary>
+            通知地址
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcConfig.Token">
+            <summary>
+            本地服务在全网中的标识
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcCore">
+            <summary>
+                RPC核心
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.IsWeb">
+            <summary>
+            是否WEB环境
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.Singleton">
+            <summary>
+                全局单例
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.Config">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.Run">
+            <summary>
+                启动
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.ShutDown">
+            <summary>
+                结束
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.Request">
+            <summary>
+                请求消息泵
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.Answer">
+            <summary>
+                回应消息泵
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcCore.Notify">
+            <summary>
+                通知消息泵
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.init_net_command">
+            <summary>
+                初始化网络命令环境
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.start_net_command">
+            <summary>
+                启动网络命令环境
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.close_net_command">
+            <summary>
+                关闭网络命令环境
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcCore.distory_net_command">
+            <summary>
+                销毁网络命令环境
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.CommandHandler">
+            <summary>
+                网络命令事件处理Handler
+            </summary>
+            <param name="arg"></param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcEnvironment">
+            <summary>
+            命令的环境相关的定义
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.SERIALIZE_HEAD_LEN">
+            <summary>
+            序列化头大小（长度4+类型4+版本1+类型1）
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.SERIALIZE_BASE_LEN">
+            <summary>
+            序列化基本大小（长度4+类型4+版本1+类型1+结束4）
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.NET_COMMAND_RETRY_MAX">
+            <summary>
+            最大重试次数
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.get_cmd_len(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+            取得命令对象的实际长度
+            </summary>
+            <param name="cmd_call"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.CurrentFlow">
+            <summary>
+                当前系统处于哪个流程中
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.OnUserModel">
+            <summary>
+                是否用户模式
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.UserCanDo">
+            <summary>
+                用户是否可操作
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.Token">
+            <summary>
+                客户端用户标识
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.m_netState">
+            <summary>
+                当前运行状态
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.NetState">
+            <summary>
+                运行状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.m_commandThreadCount">
+            <summary>
+                当前启动了多少命令线程
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcEnvironment.CommandThreadCount">
+            <summary>
+                当前启动了多少命令线程
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.set_command_thread_start">
+            <summary>
+                登记线程开始
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.set_command_thread_end">
+            <summary>
+                登记线程关闭
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcEnvironment.m_requestCommands">
+            <summary>
+            命令缓存字典（RequstId，Argument）
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.CacheCommand(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+            缓存命令
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.SyncCacheCommand(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+            同步到缓存命令中
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.RemoveCacheCommand(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+            删除缓存命令
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.ClearCacheCommand">
+            <summary>
+            删除缓存命令
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcEnvironment.TimeOutCheckTask">
+            <summary>
+                超时检测
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcFlowType">
+            <summary>
+                RPC流程状态类型
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.None">
+            <summary>
+                未初始化
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.GlobalInitializing">
+            <summary>
+                正在初始化全局环境
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.GlobalInitialized">
+            <summary>
+                全局环境初始化成功
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.OnLogin">
+            <summary>
+                正在登录(显示登录页面)
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.Logining">
+            <summary>
+                正在进行登录
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.LoginSucceed">
+            <summary>
+                登录成功
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.UserInitializing">
+            <summary>
+                正在初始化用户环境
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.UserInitialized">
+            <summary>
+                用户环境初始化完成
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.Browsing">
+            <summary>
+                用户正在浏览中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.OrderProcessing">
+            <summary>
+                下单事务处理中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.CancelProcessing">
+            <summary>
+                辙单事务处理中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.CoverProcessing">
+            <summary>
+                平仓事务处理中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.EnforceProcessing">
+            <summary>
+                系统强制事务处理中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.Exiting">
+            <summary>
+                登出中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.Exited">
+            <summary>
+                系统已关闭
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.RpcFlowType.Destroied">
+            <summary>
+                系统销毁
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqAnswerPump">
+            <summary>
+             事件返回命令泵
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqAnswerPump.DoInitialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqAnswerPump.OptionSocktet(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            配置Socket对象
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqAnswerPump.OnConnected(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            连接处理
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqAnswerPump.DoWork(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            执行工作
+            </summary>
+            <param name="socket"></param>
+            <returns>返回状态,其中-1会导致重连</returns>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqCommandPump`1">
+            <summary>
+                ZMQ命令执行泵
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.Name">
+            <summary>
+            泵名称
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.Run">
+            <summary>
+            运行起来
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.thread">
+            <summary>
+            线程
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.DoRun">
+            <summary>
+            启动泵任务
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.m_restart">
+            <summary>
+            重启次数
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.RestartCount">
+            <summary>
+            是否已析构
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.m_state">
+            <summary>
+            执行状态
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.IsInitialized">
+            <summary>
+            是否已初始化
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.IsDisposed">
+            <summary>
+            是否已析构
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.State">
+            <summary>
+            状态 0 初始状态,1 正在初始化,2 完成初始化,3 开始运行,4 运行中,5 正在析构 6 完成析构
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.Initialize">
+            <summary>
+                初始化客户端
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.DoInitialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.Dispose">
+            <summary>
+                清理
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.DoDispose">
+            <summary>
+            清理
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.m_queue">
+            <summary>
+                C端的命令调用队列
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.m_mutex">
+            <summary>
+                C端命令调用队列锁
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.Pop">
+            <summary>
+                取得队列数据
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.Push(Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+                数据写入队列
+            </summary>
+            <param name="cmdMsg"></param>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqCommandPump`1.timeOut">
+            <summary>
+            默认超时设置
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.ZmqCommandPump`1.ZmqAddress">
+            <summary>
+            ZMQ服务地址
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.OptionSocktet(`0)">
+            <summary>
+            配置Socket对象
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.OnConnected(`0)">
+            <summary>
+            连接处理
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.DoWork(`0)">
+            <summary>
+            执行工作
+            </summary>
+            <param name="socket"></param>
+            <returns>返回状态,其中-1会导致重连</returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.CreateSocket">
+            <summary>
+            生成SOCKET对象
+            </summary>
+            <remarks>版本不兼容导致改变</remarks>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.RunPump">
+            <summary>
+                执行处理泵
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqCommandPump`1.OnTaskEnd(System.Int32)">
+            <summary>
+            当任务结束时调用(基类实现为异常时重新执行)
+            </summary>
+            <param name="state">状态</param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqNetStatus">
+            <summary>
+            网络状态
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.None">
+            <summary>
+            无
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.Initialized">
+            <summary>
+            初始化完成
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.Runing">
+            <summary>
+            执行中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.Closing">
+            <summary>
+            关闭中
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.Closed">
+            <summary>
+            已关闭
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.ZmqNetStatus.Destroy">
+            <summary>
+            已销毁
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqNotifyPump">
+            <summary>
+             消息订阅命令泵
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.DoRun">
+            <summary>
+            启动泵任务
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.DoInitialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.OptionSocktet(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            配置Socket对象
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.OnConnected(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            连接处理
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.DoWork(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            执行工作
+            </summary>
+            <param name="socket"></param>
+            <returns>返回状态,其中-1会导致重连</returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.MessageNotifyTask">
+            <summary>
+                消息通知发送Task
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqNotifyPump.ProcessMessage(System.Object)">
+            <summary>
+            消息处理
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqQuestionPump">
+            <summary>
+                问答式命令泵
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.CreateSocket">
+            <summary>
+            生成SOCKET对象
+            </summary>
+            <remarks>版本不兼容导致改变</remarks>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.DoInitialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.OptionSocktet(NetMQ.Sockets.RequestSocket)">
+            <summary>
+            配置Socket对象
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.DoWork(NetMQ.Sockets.RequestSocket)">
+            <summary>
+            执行工作
+            </summary>
+            <param name="socket"></param>
+            <returns>返回状态,其中-1会导致重连</returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.request_net_cmmmand(Agebull.Zmq.Rpc.CommandArgument,System.Boolean)">
+            <summary>
+                命令调用
+            </summary>
+            <param name="command">命令参数</param>
+            <param name="cacheCommand">是否缓存命令(可在回发时找到原始命令)</param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqQuestionPump.TryRequest(Agebull.Zmq.Rpc.CommandArgument,System.Int32)">
+            <summary>
+                发送出错的重试处理
+            </summary>
+            <param name="callArg"></param>
+            <param name="state"></param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.ZmqSubscribePump">
+            <summary>
+            订阅命令泵
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqSubscribePump.CreateSocket">
+            <summary>
+            生成SOCKET对象
+            </summary>
+            <remarks>版本不兼容导致改变</remarks>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.ZmqSubscribePump.OptionSocktet(NetMQ.Sockets.SubscriberSocket)">
+            <summary>
+            配置Socket对象
+            </summary>
+            <param name="socket"></param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.GlobalsFuturesOption">
+            <summary>
+                外盘期货交易系统的全局内容
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.GlobalsFuturesOption.ReigsterEntityType">
+            <summary>
+            注册类型
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcArgument">
+            <summary>
+            命令调用参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcArgument.ClientKey">
+            <summary>
+            请求者标识（如果需要回发，则不能为空，因为这是回发接收者的全局标识）
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcArgument.RequestId">
+            <summary>
+            请求标识（不可为空）
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcArgument.UserInfo">
+            <summary>
+            请求用户信息（可为空）
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcArgument.ArgumentTypeId">
+            <summary>
+            命令参数标识，为0表示无参数，其实应使用RpcArgument
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcArgument`1">
+            <summary>
+            命令调用参数
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcArgument`1.Argument">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.UserContext">
+            <summary>
+            用户请求的上下文信息
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.UserContext.DeviceKey">
+            <summary>
+            App设备标识（可为空）
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.UserContext.UserId">
+            <summary>
+            请求用户标识（可为空）
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.UserContext.SessionId">
+            <summary>
+            用户请求SessionId（可为空）
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.StringArgumentData">
+            <summary>
+            文本参数
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData.Real_Argument">
+            <summary>
+            参数:参数的实时记录顺序
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData._argument">
+            <summary>
+            参数:参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.StringArgumentData.Argument">
+            <summary>
+            参数:参数
+            </summary>
+            <remarks>
+            参数
+            </remarks>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.SetValueInner(System.String,System.Object)">
+            <summary>
+                设置属性值
+            </summary>
+            <param name="property"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.GetValueInner(System.String)">
+            <summary>
+                读取属性值
+            </summary>
+            <param name="property"></param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.CopyValueInner(Agebull.Common.DataModel.EntityBase)">
+            <summary>
+            复制值
+            </summary>
+            <param name="source">复制的源字段</param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.Copy(Agebull.Zmq.Rpc.StringArgumentData)">
+            <summary>
+            复制
+            </summary>
+            <param name="source">复制的源字段</param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.ToString">
+            <summary>
+            显示为文本
+            </summary>
+            <returns>文本</returns>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData.TYPE_INDEX_STRINGARGUMENT">
+            <summary>
+            StringArgument类型代号
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData.EntityId">
+            <summary>
+            StringArgument类型代号
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData.FIELD_INDEX_STRINGARGUMENT_ARGUMENT">
+            <summary>
+            文本的参数-参数 的字段索引
+            </summary>
+        </member>
+        <member name="F:Agebull.Zmq.Rpc.StringArgumentData.TSON_BUFFER_LEN_STRINGARGUMENT">
+            <summary>
+            文本的参数的合理序列化长度
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.StringArgumentData.TypeId">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.StringArgumentData.SafeBufferLength">
+            <summary>
+            安全的缓存长度
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.Deserialize(Agebull.Common.DataModel.TsonDeserializer)">
+            <summary>
+            从TSON反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.Serialize(Agebull.Common.DataModel.TsonSerializer)">
+            <summary>
+            序列化到Tson
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcProxy">
+            <summary>
+            远程命令代理对象
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.Initialize">
+            <summary>
+                初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.Destroy">
+            <summary>
+                执行销毁时
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcProxy.Message">
+            <summary>
+                消息
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.Publish``1(System.String,``0)">
+            <summary>
+                广播
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.Call``1(System.String,``0)">
+            <summary>
+                请求命令
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.Result``1(``0)">
+            <summary>
+                发送文本消息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcProxy.OnRequestStateChanged(Agebull.Zmq.Rpc.CommandArgument,Agebull.Zmq.Rpc.CommandArgument)">
+            <summary>
+                消息处理
+            </summary>
+            <param name="sender">发送者</param>
+            <param name="arg">最新接收的参数（如果这不是响应状态则与发送者相同）</param>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.EventWorkerContainer">
+            <summary>
+            事件处理器容器
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.EventWorkerContainer.SubName">
+            <summary>
+            订阅的消息类型名称
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.EventWorkerContainer.CreateWorker">
+            <summary>
+            生成处理器
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.EventWorkerContainer.Regist``1(System.String)">
+            <summary>
+            注册处理器
+            </summary>
+            <typeparam name="TWorker"></typeparam>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.IEventWorker">
+            <summary>
+            表示一个远程调用命令处理器
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.IEventWorker.WorkerName">
+            <summary>
+            处理器名称
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.IEventWorker.Process(System.String,Agebull.Zmq.Rpc.RpcArgument)">
+            <summary>
+            事件处理器
+            </summary>
+            <param name="eventName">当前完整事件名称</param>
+            <param name="argument">事件参数</param>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.IEventWorker.ToArgument(System.String,System.String)">
+            <summary>
+            JSON文本反序列化为参数
+            </summary>
+            <param name="eventName">事件名称</param>
+            <param name="arg">JSON文本</param>
+            <returns>参数</returns>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcContext">
+            <summary>
+            远程调用上下文
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcContext.Current">
+            <summary>
+            当前线程单例
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcContext.Argument">
+            <summary>
+            当前原始参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcContext.Command">
+            <summary>
+            当前原始参数
+            </summary>
+        </member>
+        <member name="P:Agebull.Zmq.Rpc.RpcContext.UserInfo">
+            <summary>
+            当前请求的用户信息
+            </summary>
+        </member>
+        <member name="T:Agebull.Zmq.Rpc.RpcContextScope">
+            <summary>
+            远程请求上下文范围
+            </summary>
+        </member>
+        <member name="M:Agebull.Zmq.Rpc.RpcContextScope.CreateScope(Agebull.Zmq.Rpc.CommandArgument,Agebull.Zmq.Rpc.RpcArgument)">
+            <summary>
+            构造一个当前请求的上下文范围
+            </summary>
+            <param name="command"></param>
+            <param name="argument"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -1355,7 +1355,7 @@ namespace Gboxt.Common.DataModel.SqlServer
                     {
                         return;
                     }
-                    using (new EntityLoadScope(entity))
+                     using (new EntityLoadScope(entity))
                     {
                         LoadEntity(reader, entity);
                     }

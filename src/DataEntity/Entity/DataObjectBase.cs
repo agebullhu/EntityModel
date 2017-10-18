@@ -45,6 +45,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="value"></param>
         public void SetValue(string property, object value)
         {
+            property = property?.ToLower();
             SetValueInner(property, value);
         }
 
@@ -54,6 +55,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="property"></param>
         public object GetValue(string property)
         {
+            property = property?.ToLower();
             return GetValueInner(property);
         }
 
@@ -63,6 +65,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="property"></param>
         public TValue GetValue<TValue>(string property)
         {
+            property = property?.ToLower();
             return GetValueInner<TValue>(property);
         }
 

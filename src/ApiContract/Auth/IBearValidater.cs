@@ -31,11 +31,11 @@ namespace Yizuan.Service.Api
         /// <returns></returns>
         IApiResult<IUserProfile> GetUserProfile(long uid);
 
-        /// <summary>
+        /*// <summary>
         /// 来自用户设备的日志记录
         /// </summary>
         /// <param name="log">用户ID</param>
         /// <returns></returns>
-        IApiResult DeviceLog(string log);
+        IApiResult DeviceLog(string log);*/
     }
 }
