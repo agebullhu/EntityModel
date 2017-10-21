@@ -16,7 +16,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml;
 
-#if !WEB
 #if CLIENT
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -25,7 +24,6 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Resources;
-#endif
 #endif
 #endregion
 
@@ -672,7 +670,7 @@ namespace Agebull.Common
 #endif
 
         #endregion
-#if !WEB
+#if CLIENT
         #region WPF资源文件
 #if WPF
         /// <summary>

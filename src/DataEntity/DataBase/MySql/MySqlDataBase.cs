@@ -499,9 +499,10 @@ namespace Gboxt.Common.DataModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        [Conditional("SqlLog")]
         public static void TraceSql(MySqlCommand cmd)
         {
+            if (!LogRecorder.LogDataSql)
+                return;
             TraceSql(cmd.CommandText, cmd.Parameters.OfType<MySqlParameter>());
         }
 
@@ -514,9 +515,10 @@ namespace Gboxt.Common.DataModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        [Conditional("SqlLog")]
         public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
         {
+            if (!LogRecorder.LogDataSql)
+                return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
             var parameters = args as MySqlParameter[] ?? args.ToArray();

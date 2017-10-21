@@ -8,6 +8,7 @@ namespace Agebull.Common.Logging
     /// <summary>
     /// 侦测信息
     /// </summary>
+    [Serializable]
     class MonitorData
     {
         public FixStack<MonitorItem> Stack;
@@ -22,6 +23,7 @@ namespace Agebull.Common.Logging
     /// <summary>
     /// 侦测信息
     /// </summary>
+    [Serializable]
     internal class MonitorItem
     {
         private static MonitorData Data

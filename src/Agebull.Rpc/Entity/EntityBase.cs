@@ -1,3 +1,4 @@
+using Gboxt.Common.DataModel;
 using System.Collections.Generic;
 
 namespace Agebull.Common.DataModel

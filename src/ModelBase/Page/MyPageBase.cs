@@ -190,9 +190,10 @@ namespace Gboxt.Common.WebUI
             LogRecorder.EndStepMonitor();
             LogRecorder.EndMonitor();
         }
-        [Conditional("Monitor")]
         private void LogRequestInfo()
         {
+            if (!LogRecorder.LogMonitor)
+                return;
             var args = new StringBuilder();
             args.Append("Headers:");
             foreach (var head in Request.Headers.AllKeys)

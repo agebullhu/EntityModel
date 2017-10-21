@@ -28,6 +28,12 @@ namespace Yizuan.Service.Api
         public long UserId { get; set; }
 
         /// <summary>
+        /// 当前请求的HTTP Header
+        /// </summary>
+        [JsonProperty("b", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
+        public string Bear { get; set; }
+
+        /// <summary>
         /// 线程标识
         /// </summary>
         [JsonIgnore]

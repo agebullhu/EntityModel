@@ -18,6 +18,7 @@ namespace System.Linq
     ///   表示一个栈底为固定值的栈
     /// </summary>
     /// <typeparam name="T"> </typeparam>
+    [Serializable]
     public sealed class FixStack<T>
     {
         /// <summary>

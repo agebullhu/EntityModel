@@ -9,59 +9,9 @@
             全局配置变量
             </summary>
         </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.ConnectionString">
-            <summary>
-            数据库连接字符串
-            </summary>
-        </member>
         <member name="F:GoodLin.Common.Configuration.GlobalVariable.ServiceKey">
             <summary>
             当前服务的标识
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.EnableOAuthATValidation">
-            <summary>
-            是否启用AT校验
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.EnableClientKeyValidation">
-            <summary>
-            是否启用ClientKey校验
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.Secret">
-            <summary>
-            AT加密密钥
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.RedisConnectionString">
-            <summary>
-            REDIS连接字符串
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.RedisCacheHours">
-            <summary>
-            REDIS缓存小时数（不应该这样用）
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.UseRedis">
-            <summary>
-            是否使用Redis
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.RefreshTokenExpiresDayCount">
-            <summary>
-            RT有效时长
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.AccessTokenExpiresHourCount">
-            <summary>
-            AT有效时长
-            </summary>
-        </member>
-        <member name="F:GoodLin.Common.Configuration.GlobalVariable.OAuthRedisCacheMinutes">
-            <summary>
-            OAuth令牌缓存有效时长
             </summary>
         </member>
         <member name="F:GoodLin.Common.Configuration.GlobalVariable.OAuthServiceURL">

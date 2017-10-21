@@ -50,7 +50,7 @@ namespace Agebull.Common.Logging
                     var cfgpath = ConfigurationManager.AppSettings["LogPath"];
                     if (string.IsNullOrWhiteSpace(cfgpath))
                     {
-#if SERVICE
+#if CLIENT
                         string exeth = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 #else
                         string exeth = Path.GetDirectoryName(GetType().Assembly.Location);
@@ -168,27 +168,26 @@ namespace Agebull.Common.Logging
                 SytemDebug.WriteLine("日志记录时发生异常：\r\n{0}\r\n{1}" , info , ex) ;
             }
 #else
-
-            //string head = XmlHelper.BuildXml("Head", "Date", DateTime.Now.ToString(CultureInfo.InvariantCulture), "Type", type, "User", user);
-            //string xml = string.Join("\r\n", "<LogItem>", head, "<Infomation>", msg, "</Infomation>", "</LogItem>");
-            string xml = type== "DataBase" ? $"{msg}\r\n"
-                :
-                string.Format($@"
+            string log = type== "DataBase" 
+                ? $@"
+/*Date:{ DateTime.Now.ToString(CultureInfo.InvariantCulture)}*/
+{msg}"
+                : $@"
 Date:{DateTime.Now.ToString(CultureInfo.InvariantCulture)}
 Type:{type}
 User:{user}
-{msg}");
+{msg}";
             try
             {
                 if (!Directory.Exists(LogPath))
                 {
                     Directory.CreateDirectory(LogPath);
                 }
-                string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}{name}.log");
+                string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}.{name}.log");
 
                 using (ThreadLockScope.Scope(this))
                 {
-                    File.AppendAllText(ph, xml, Encoding.UTF8);
+                    File.AppendAllText(ph, log, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

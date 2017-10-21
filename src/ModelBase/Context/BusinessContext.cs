@@ -57,6 +57,16 @@ namespace Gboxt.Common.DataModel
         {
             return _messageBuilder.ToString();
         }
+
+        /// <summary>
+        ///     最后一个的错误消息ID
+        /// </summary>
+        public int LastError
+        {
+            get;
+            set;
+        }
+        
         #endregion 
 
         #region 依赖对象字典

@@ -251,8 +251,14 @@
         </member>
         <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.Regist(System.Web.Http.HttpConfiguration)">
             <summary>
-            注册过滤器
+            注册
             </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.RegistCors(System.Web.Http.HttpConfiguration)">
+            <summary>
+            跨域支持
+            </summary>
+            <param name="config"></param>
         </member>
         <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.RegistFilter(System.Web.Http.HttpConfiguration)">
             <summary>
@@ -365,133 +371,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:Yizuan.Service.Api.WebApi.InternalApiCaller">
-            <summary>
-            内部服务调用代理
-            </summary>
-        </member>
-        <member name="F:Yizuan.Service.Api.WebApi.InternalApiCaller.Caller">
-            <summary>
-            内部访问器
-            </summary>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            通过Get调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,Yizuan.Service.Api.IApiArgument)">
-            <summary>
-            通过Get调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String)">
-            <summary>
-            通过Get调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get``1(System.String,System.String)">
-            <summary>
-            通过Get调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,Yizuan.Service.Api.IApiArgument)">
-            <summary>
-            通过Post调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="argument"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            通过Post调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="argument"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post``1(System.String,System.String)">
-            <summary>
-            通过Post调用
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
-            <param name="form"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            通过Get调用
-            </summary>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,Yizuan.Service.Api.IApiArgument)">
-            <summary>
-            通过Get调用
-            </summary>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String)">
-            <summary>
-            通过Get调用
-            </summary>
-            <param name="url"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Get(System.String,System.String)">
-            <summary>
-            通过Get调用
-            </summary>
-            <param name="url"></param>
-            <param name="arguments"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,Yizuan.Service.Api.IApiArgument)">
-            <summary>
-            通过Post调用
-            </summary>
-            <param name="url"></param>
-            <param name="argument"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            通过Post调用
-            </summary>
-            <param name="url"></param>
-            <param name="argument"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Yizuan.Service.Api.WebApi.InternalApiCaller.Post(System.String,System.String)">
-            <summary>
-            通过Post调用
-            </summary>
-            <param name="url"></param>
-            <param name="form"></param>
-            <returns></returns>
-        </member>
         <member name="T:Yizuan.Service.Api.WebApi.WebApiCaller">
             <summary>
             内部服务调用代理
@@ -514,12 +393,19 @@
             <param name="httpParams"></param>
             <returns></returns>
         </member>
+        <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.ToUrl(System.String)">
+            <summary>
+            转为合理的API地址
+            </summary>
+            <param name="api"></param>
+            <returns></returns>
+        </member>
         <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String)">
             <summary>
             通过Get调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <returns></returns>
         </member>
         <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
@@ -527,7 +413,7 @@
             通过Get调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -536,7 +422,7 @@
             通过Get调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -545,7 +431,7 @@
             通过Get调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -554,7 +440,7 @@
             通过Post调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="argument"></param>
             <returns></returns>
         </member>
@@ -563,7 +449,7 @@
             通过Post调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="argument"></param>
             <returns></returns>
         </member>
@@ -572,7 +458,7 @@
             通过Post调用
             </summary>
             <typeparam name="TResult"></typeparam>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="form"></param>
             <returns></returns>
         </member>
@@ -588,14 +474,14 @@
             <summary>
             通过Get调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <returns></returns>
         </member>
         <member name="M:Yizuan.Service.Api.WebApi.WebApiCaller.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             通过Get调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -603,7 +489,7 @@
             <summary>
             通过Get调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -611,7 +497,7 @@
             <summary>
             通过Get调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="arguments"></param>
             <returns></returns>
         </member>
@@ -619,7 +505,7 @@
             <summary>
             通过Post调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="argument"></param>
             <returns></returns>
         </member>
@@ -627,7 +513,7 @@
             <summary>
             通过Post调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="argument"></param>
             <returns></returns>
         </member>
@@ -635,7 +521,7 @@
             <summary>
             通过Post调用
             </summary>
-            <param name="url"></param>
+            <param name="apiName"></param>
             <param name="form"></param>
             <returns></returns>
         </member>

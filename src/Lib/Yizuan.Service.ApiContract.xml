@@ -549,6 +549,11 @@
             当前请求的用户标识
             </summary>
         </member>
+        <member name="P:Yizuan.Service.Api.InternalCallContext.Bear">
+            <summary>
+            当前请求的HTTP Header
+            </summary>
+        </member>
         <member name="P:Yizuan.Service.Api.InternalCallContext.ThreadId">
             <summary>
             线程标识

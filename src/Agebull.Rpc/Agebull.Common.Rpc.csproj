@@ -60,11 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entity\EditScope.cs" />
-    <Compile Include="Entity\EntityBase.cs" />
-    <Compile Include="Entity\EntityList.cs" />
-    <Compile Include="Entity\EventArgs.cs" />
-    <Compile Include="Entity\NotificationObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\Command\CommandArgument.cs" />
     <Compile Include="Rpc\Command\CommandReader.cs" />
@@ -96,6 +91,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
+      <Project>{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}</Project>
+      <Name>Agebull.Common.DataEntity</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

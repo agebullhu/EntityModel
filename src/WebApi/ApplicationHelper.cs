@@ -3,6 +3,8 @@ using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Mvc;
 using Newtonsoft.Json.Serialization;
+using System.Configuration;
+using System.Web.Http.Cors;
 
 namespace Yizuan.Service.Api.WebApi
 {
@@ -21,6 +23,7 @@ namespace Yizuan.Service.Api.WebApi
             RegistHandler();
             //RegistFormatter();
             GlobalConfiguration.Configure(Regist);
+            
         }
 
         /// <summary>
@@ -33,12 +36,26 @@ namespace Yizuan.Service.Api.WebApi
             RegistFormatter();
             GlobalConfiguration.Configure(Regist);
         }
+
         /// <summary>
-        /// 注册过滤器
+        /// 注册
         /// </summary>
         public static void Regist(HttpConfiguration config)
         {
             RegistFilter(config);
+            RegistCors(config);
+        }
+        /// <summary>
+        /// 跨域支持
+        /// </summary>
+        /// <param name="config"></param>
+        public static void RegistCors(HttpConfiguration config)
+        {
+            var allowOrigins = ConfigurationManager.AppSettings["cors_allowOrigins"] ?? "*";
+            var allowHeaders = ConfigurationManager.AppSettings["cors_allowHeaders"] ?? "*";
+            var allowMethods = ConfigurationManager.AppSettings["cors_allowMethods"] ?? "*";
+            var globalCors = new EnableCorsAttribute(allowOrigins, allowHeaders, allowMethods);
+            config.EnableCors(globalCors);
         }
         /// <summary>
         /// 注册过滤器

@@ -480,9 +480,10 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        [Conditional("SqlLog")]
         public static void TraceSql(SqlCommand cmd)
         {
+            if (!LogRecorder.LogDataSql)
+                return;
             TraceSql(cmd.CommandText, cmd.Parameters.OfType<SqlParameter>());
         }
 
@@ -495,9 +496,10 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        [Conditional("SqlLog")]
         public static void TraceSql(string sql, IEnumerable<SqlParameter> args)
         {
+            if (!LogRecorder.LogDataSql)
+                return;
             if (string.IsNullOrWhiteSpace(sql))
                 return;
             StringBuilder code = new StringBuilder();

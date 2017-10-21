@@ -172,16 +172,7 @@ namespace Gboxt.Common.DataModel
                 return _version = string.IsNullOrWhiteSpace(ev) ? (byte) 1 : byte.Parse(ev);
             }
         }
-
-#if WEB
-
-        /// <summary>
-        ///     用于页面的选择属性
-        /// </summary>
-        [JsonProperty("IsSelected")]
-        public bool __IsSelected { get; set; }
-#endif
-
+        
         #endregion
     }
 }

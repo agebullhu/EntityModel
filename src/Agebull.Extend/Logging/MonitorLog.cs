@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -23,11 +24,23 @@ namespace Agebull.Common.Logging
         }
 
         /// <summary>
+        /// 是否开启跟踪日志
+        /// </summary>
+        public static bool LogMonitor { get; } = (ConfigurationManager.AppSettings["LogMonitor"] ?? "False").ToLower() == "true";
+
+        /// <summary>
+        /// 是否开启SQL日志
+        /// </summary>
+        public static bool LogDataSql { get; } = (ConfigurationManager.AppSettings["LogSql"] ?? "False").ToLower() == "true";
+
+        /// <summary>
         /// 开始检测资源
         /// </summary>
-        [Conditional("Monitor")]
         public static void BeginMonitor(string title)
         {
+            if (!LogMonitor)
+                return;
+
             if (!InMonitor || MonitorItem.MonitorStack == null)
                 BeginMonitorInner(title);
             else
@@ -61,9 +74,10 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void BeginStepMonitor(string title)
         {
+            if (!LogMonitor)
+                return;
             if (!InMonitor || MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
             {
                 BeginMonitorInner(title);
@@ -76,7 +90,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        public static void BeginStepMonitorInner(string title)
+        static void BeginStepMonitorInner(string title)
         {
             using (ThreadLockScope.Scope(LockKey))
             {
@@ -87,9 +101,10 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void EndStepMonitor()
         {
+            if (!LogMonitor)
+                return;
             using (ThreadLockScope.Scope(LockKey))
             {
                 if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
@@ -111,9 +126,10 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void EndAllStepMonitor()
         {
+            if (!LogMonitor)
+                return;
             EndAllStepMonitorInner();
         }
         static void EndAllStepMonitorInner()
@@ -147,17 +163,19 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 显示监视跟踪
         /// </summary>
-        [Conditional("Monitor")]
         public static void MonitorTrace(string message)
         {
+            if (!LogMonitor)
+                return;
             ShowMinitor(message, 4, false);
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void FlushMonitor(string title, bool number = false)
         {
+            if (!LogMonitor)
+                return;
             using (ThreadLockScope.Scope(LockKey))
             {
                 if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
@@ -171,17 +189,19 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void FlushMonitor(string fmt, params object[] args)
         {
+            if (!LogMonitor)
+                return;
             FlushMonitor(string.Format(fmt, args));
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
-        [Conditional("Monitor")]
         public static void EndMonitor()
         {
+            if (!LogMonitor)
+                return;
             using (ThreadLockScope.Scope(LockKey))
             {
                 if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)

@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-#if !WEB
+#if CLIENT
 using System.Windows.Forms;
 #endif
 #endregion
@@ -126,7 +126,7 @@ namespace Agebull.Common.Reflection
         /// </summary>
         private static readonly Dictionary<Type, List<IEnumInfomation>> EnumInfomationMaps = new Dictionary<Type, List<IEnumInfomation>>();
 
-#if !WEB
+#if CLIENT
         /// <summary>
         ///   直接将枚举绑定到下拉列表
         /// </summary>

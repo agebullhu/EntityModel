@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Agebull.Common.DataModel;
+using Gboxt.Common.DataModel;
 using Newtonsoft.Json;
 
 namespace Agebull.Zmq.Rpc
@@ -10,7 +11,7 @@ namespace Agebull.Zmq.Rpc
     /// <summary>
     /// 文本参数
     /// </summary>
-    internal partial class StringArgumentData : EntityBase , ITson
+    internal partial class StringArgumentData : DataObjectBase, ITson
     {
         #region 构造
         
@@ -82,7 +83,7 @@ namespace Agebull.Zmq.Rpc
             switch(property.Trim().ToLower())
             {
             case "argument":
-                this.Argument = value == null ? null : value.ToString();
+                this.Argument = value?.ToString();
                 return;
             }
 
@@ -106,6 +107,16 @@ namespace Agebull.Zmq.Rpc
             return null;
         }
 
+        protected override void SetValueInner(int property, object value)
+        {
+            this.Argument = value?.ToString();
+        }
+
+        protected override object GetValueInner(int property)
+        {
+            return this.Argument;
+        }
+
         #endregion
 
         #region 复制
@@ -121,7 +132,7 @@ namespace Agebull.Zmq.Rpc
         /// 复制值
         /// </summary>
         /// <param name="source">复制的源字段</param>
-        protected override void CopyValueInner(EntityBase source)
+        protected override void CopyValueInner(DataObjectBase source)
         {
             var sourceEntity = source as StringArgumentData;
             if(sourceEntity == null)

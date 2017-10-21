@@ -4,1128 +4,6 @@
         <name>Agebull.Common.Rpc</name>
     </assembly>
     <members>
-        <member name="T:System.ComponentModel.EditScope">
-            <summary>
-                对象编辑范围
-            </summary>
-        </member>
-        <member name="F:System.ComponentModel.EditScope._data">
-            <summary>
-                当前范围对象
-            </summary>
-        </member>
-        <member name="F:System.ComponentModel.EditScope._lockObj">
-            <summary>
-                锁定对象
-            </summary>
-        </member>
-        <member name="F:System.ComponentModel.EditScope._preIsEditing">
-            <summary>
-                前一个范围是否编辑中(如果是,事实上不起作用)
-            </summary>
-        </member>
-        <member name="M:System.ComponentModel.EditScope.#ctor(Agebull.Common.DataModel.NotificationObject,System.Object)">
-            <summary>
-                构造
-            </summary>
-            <param name="data">数据</param>
-            <param name="lockObj">锁定对象</param>
-        </member>
-        <member name="M:System.ComponentModel.EditScope.Dispose">
-            <summary>
-                析构
-            </summary>
-        </member>
-        <member name="M:System.ComponentModel.EditScope.CreatScope(Agebull.Common.DataModel.NotificationObject,System.Object)">
-            <summary>
-                生成一个范围
-            </summary>
-            <param name="data"></param>
-            <param name="lockObj"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.Common.DataModel.EntityBase">
-            <summary>
-                实体基类
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.CopyValue(Agebull.Common.DataModel.EntityBase)">
-            <summary>
-            复制值
-            </summary>
-            <param name="entity">复制的源字段</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.SetValue(System.String,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.GetValue(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.GetValue``1(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.CopyValueInner(Agebull.Common.DataModel.EntityBase)">
-            <summary>
-            复制值
-            </summary>
-            <param name="source">复制的源字段</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.GetValueInner``1(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.GetValueInner(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.SetValueInner(System.String,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="F:Agebull.Common.DataModel.EntityBase._modifiedList">
-            <summary>
-            修改列表
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityBase.OnPropertyChangedInner(System.String)">
-            <summary>
-                属性修改处理
-            </summary>
-            <param name="propertyName">属性名称</param>
-        </member>
-        <member name="T:Agebull.Common.DataModel.EntityList`1">
-            <summary>
-                业务实体对象列表
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.Item(System.Int32)">
-            <summary>
-                取设下标对象
-            </summary>
-            <param name="idx"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Find(`0)">
-            <summary>
-                是否包含
-            </summary>
-            <param name="value"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.IndexOf(`0)">
-            <summary>
-                所在位置
-            </summary>
-            <param name="value"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Contains(`0)">
-            <summary>
-                是否包含
-            </summary>
-            <param name="value"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncOrInsert(`0)">
-            <summary>
-                是否包含
-            </summary>
-            <param name="value"> </param>
-            <returns> </returns>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.Count">
-            <summary>
-                总行数
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.GetEnumerator">
-            <summary>
-                得到枚举器
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-                加入一批
-            </summary>
-            <param name="entities"> </param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.AddOrSwitch(`0)">
-            <summary>
-                加入或是同步
-            </summary>
-            <param name="entity"> </param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.AddOrSwitch(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-                加入或是同步
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.RemoveAt(System.Int32)">
-            <summary>
-                删除下标
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.CopyFrom(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-                从一个集合中复制数据
-            </summary>
-            <param name="entities"></param>
-            <remarks>集合中不存在的数据将被删除,原来存在的数据进行覆盖,原来不存在的加入</remarks>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncMessage(`0)">
-            <summary>
-                同步数据
-            </summary>
-            <param name="entity"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.SyncByUpdated(`0)">
-            <summary>
-                同步数据
-            </summary>
-            <param name="entity"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Sort``1(System.Func{`0,``0})">
-            <summary>
-                按索引排序
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IList#IndexOf(System.Object)">
-            <summary>
-            </summary>
-            <param name="value"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IList#Insert(System.Int32,System.Object)">
-            <summary>
-            </summary>
-            <param name="index"> </param>
-            <param name="value"> </param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-                得到枚举器
-            </summary>
-            <returns> 枚举器 </returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.System#Collections#Generic#ICollection{TEntity}#CopyTo(`0[],System.Int32)">
-            <summary>
-                复制到--未实现
-            </summary>
-            <param name="array"> 数组 </param>
-            <param name="arrayIndex"> 位置 </param>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.System#Collections#ICollection#IsSynchronized">
-            <summary>获取一个值，该值指示是否同步对 <see cref="T:System.Collections.ICollection" /> 的访问（线程安全）。</summary>
-            <returns>如果对 <see cref="T:System.Collections.ICollection" /> 的访问是同步的（线程安全），则为 true；否则为 false。</returns>
-            <filterpriority>2</filterpriority>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.System#Collections#ICollection#SyncRoot">
-            <summary>获取可用于同步对 <see cref="T:System.Collections.ICollection" /> 的访问的对象。</summary>
-            <returns>可用于同步对 <see cref="T:System.Collections.ICollection" /> 的访问的对象。</returns>
-            <filterpriority>2</filterpriority>
-        </member>
-        <member name="E:Agebull.Common.DataModel.EntityList`1.CollectionChanged">
-            <summary>
-                集合内容增删
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.RaiseCollectionChangedInner(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
-            <summary>
-                发出集合修改事件
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.EndEditInner(System.Collections.Generic.List{System.String})">
-            <summary>
-                结束编辑
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.EntityList`1._haseEditEvent">
-            <summary>
-                是否存在编辑期间的事件发生
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
-            <summary>
-                处理集合修改事件
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.CollectionIsModify">
-            <summary>
-                集合有没有修改
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.OnAdd(`0)">
-            <summary>
-                新对象加入后续的处理
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.OnRemove(`0)">
-            <summary>
-                对象被清除后续的处理
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.OnClear">
-            <summary>
-                集合清空的后续处理
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.EntityList`1._entities">
-            <summary>
-                内部数据存储
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.Entities">
-            <summary>
-                内部列表
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityList`1.IsEmpty">
-            <summary>
-                是否为空
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.SetEmpty">
-            <summary>
-                是否为空
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Add(`0)">
-            <summary>
-                加入
-            </summary>
-            <param name="entity"> </param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Add(`0,System.Func{`0,`0,System.Boolean})">
-            <summary>
-                排序加入
-            </summary>
-            <param name="entity"> </param>
-            <param name="sort"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Insert(System.Int32,`0)">
-            <summary>
-                插入
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Remove(`0)">
-            <summary>
-                从列表中清除
-            </summary>
-            <param name="entity"> </param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EntityList`1.Clear">
-            <summary>
-                清除所有数据
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.EntityGroup`1">
-            <summary>
-            实体分组
-            </summary>
-            <typeparam name="TEntityBase"></typeparam>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EntityGroup`1.Title">
-            <summary>
-            标题
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.EventArgs`1">
-            <summary>
-            事件参数
-            </summary>
-            <typeparam name="TArgument"></typeparam>
-        </member>
-        <member name="M:Agebull.Common.DataModel.EventArgs`1.#ctor(`0)">
-            <summary>
-            构造
-            </summary>
-            <param name="arg"></param>
-        </member>
-        <member name="P:Agebull.Common.DataModel.EventArgs`1.Argument">
-            <summary>
-            参数
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.NotificationObject">
-            <summary>
-                有属性通知的对象
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.InvokeInUiThread(System.Action)">
-            <summary>
-                在UI线程中执行
-            </summary>
-            <param name="action"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginInvokeInUiThread(System.Action)">
-            <summary>
-                在UI线程中执行
-            </summary>
-            <param name="action"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginInvokeInUiThread``1(System.Action{``0},``0)">
-            <summary>
-                在UI线程中执行
-            </summary>
-            <param name="action"></param>
-            <param name="args"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.InvokeInUiThread``1(System.Action{``0},``0)">
-            <summary>
-                在UI线程中执行
-            </summary>
-            <param name="action"></param>
-            <param name="args"></param>
-        </member>
-        <member name="E:Agebull.Common.DataModel.NotificationObject._propertyChanged">
-            <summary>
-                属性修改事件
-            </summary>
-        </member>
-        <member name="E:Agebull.Common.DataModel.NotificationObject.PropertyChanged">
-            <summary>
-                属性修改事件(属性为空表示删除)
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChangedEvent(System.ComponentModel.PropertyChangedEventArgs)">
-            <summary>
-                发出属性修改事件(不受阻止模式影响)
-            </summary>
-            <param name="args">属性</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChangedEvent(System.String)">
-            <summary>
-                发出属性修改事件(同步发出)
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.RaisePropertyChanged(System.String)">
-            <summary>
-                发出属性修改事件(外部调用)
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.GetPropertyName``1(System.Linq.Expressions.Expression{System.Func{``0}})">
-            <summary>
-                取属性名称
-            </summary>
-            <typeparam name="T">表达式参数</typeparam>
-            <param name="action">表达式</param>
-            <returns>属性名称</returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChanged(System.String)">
-            <summary>
-                发出属性修改事件
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChanged``1(System.Linq.Expressions.Expression{System.Func{``0}})">
-            <summary>
-                发出属性修改事件
-            </summary>
-            <param name="action">属性字段</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.OnPropertyChangedInner(System.String)">
-            <summary>
-                属性修改处理
-            </summary>
-            <param name="propertyName">属性名称</param>
-        </member>
-        <member name="P:Agebull.Common.DataModel.NotificationObject.IsEditing">
-            <summary>
-                是否处于集中编辑模式
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.BeginEdit">
-            <summary>
-                开始编辑
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.EndEdit">
-            <summary>
-                结束编辑
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.EndEditInner(System.Collections.Generic.List{System.String})">
-            <summary>
-                结束编辑
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.NotificationObject.RaiseEditChanges">
-            <summary>
-                发出修改列表的修改事件
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.NotificationObject._changeLock">
-            <summary>
-                修改列表的锁
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.NotificationObject._changeds">
-            <summary>
-                当前未发出事件的已修改属性
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.ITson">
-            <summary>
-            表示实现自助TSON操作的类
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.ITson.TypeId">
-            <summary>
-            类型ID
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.ITson.SafeBufferLength">
-            <summary>
-            安全的缓存长度
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.ITson.Deserialize(Agebull.Common.DataModel.TsonDeserializer)">
-            <summary>
-            从TSON反序列化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.ITson.Serialize(Agebull.Common.DataModel.TsonSerializer)">
-            <summary>
-            序列化到Tson
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.BofCode">
-            <summary>
-            开始标记
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.EofMark">
-            <summary>
-            尾部标记
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.EndMark">
-            <summary>
-            结束标记
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_bufer">
-            <summary>
-            缓存
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_postion">
-            <summary>
-            当前位置
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_buffer_len">
-            <summary>
-            缓存长度
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_full">
-            <summary>
-            是否全量写入
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_start_postion">
-            <summary>
-            起始位
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_end_postion">
-            <summary>
-            结束位(最后一位的下一位)
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_len">
-            <summary>
-            实际长度
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor">
-            <summary>
-            默认构造
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            构造
-            </summary>
-            <param name="buffer">缓存</param>
-            <param name="len">缓存长度</param>
-            <param name="firstPostion">起始位置</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonBase.Reset">
-            <summary>
-            重置位置
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.IsFull">
-            <summary>
-            全量写入
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.DataLen">
-            <summary>
-            数据长度
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.BufferLen">
-            <summary>
-            缓冲区长度
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.Buffer">
-            <summary>
-            缓冲区
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.EndPostion">
-            <summary>
-            结束位置
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.BeginPostion">
-            <summary>
-            起始位置
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonBase.Postion">
-            <summary>
-            起始位置
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.TsonDeserializer">
-            <summary>
-            TSON反序列化器
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_error">
-            <summary>
-            是否有错
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_type_id">
-            <summary>
-            数据类型ID
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_data_ver">
-            <summary>
-            数据版本
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsError">
-            <summary>
-            是否有错
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataTypeId">
-            <summary>
-            数据类型ID
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataVersion">
-            <summary>
-            数据版本
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsEof">
-            <summary>
-            是否处于尾部
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsBof">
-            <summary>
-            是否处于头部
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            构造
-            </summary>
-            <param name="buffer">缓存</param>
-            <param name="len">缓存长度</param>
-            <param name="firstPostion">起始位置</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Begin">
-            <summary>
-            开始反序列化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.End">
-            <summary>
-            结束反序列化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.ReadIndex">
-            <summary>
-            读当前属性的数字索引
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.String@)">
-            <summary>
-            读取文本
-            </summary>
-            <param name="str"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean@)">
-            <summary>
-            读取布尔值
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte@)">
-            <summary>
-            读取
-            </summary>
-            <param name="chr"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte@)">
-            <summary>
-            读取
-            </summary>
-            <param name="chr"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal@)">
-            <summary>
-            读取
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime@)">
-            <summary>
-            读取
-            </summary>
-            <param name="date"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read``1">
-            <summary>
-            读取
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal[]@)">
-            <summary>
-            读取
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="T:Agebull.Common.DataModel.TsonSerializer">
-            <summary>
-            TSON序列化器
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            构造
-            </summary>
-            <param name="buffer"></param>
-            <param name="len"></param>
-            <param name="firstPostion"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.CreateBuffer(System.Int32)">
-            <summary>
-            初始化缓冲区
-            </summary>
-            <param name="len"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Begin(System.Int32,System.Byte)">
-            <summary>
-            开始写入
-            </summary>
-            <param name="type"></param>
-            <param name="ver"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.End">
-            <summary>
-            完成写入
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.WriteIndex(System.Byte)">
-            <summary>
-            写入字段索引号
-            </summary>
-            <param name="index"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty(System.String)">
-            <summary>
-            空值检测
-            </summary>
-            <param name="str"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0[])">
-            <summary>
-            空值检测
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0)">
-            <summary>
-            空值检测
-            </summary>
-            <param name="t"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.String)">
-            <summary>
-            写入
-            </summary>
-            <param name="str"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean)">
-            <summary>
-            写入
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte)">
-            <summary>
-            写入
-            </summary>
-            <param name="chr"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte)">
-            <summary>
-            写入
-            </summary>
-            <param name="chr"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal)">
-            <summary>
-            写入
-            </summary>
-            <param name="number"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime)">
-            <summary>
-            写入
-            </summary>
-            <param name="date"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal[])">
-            <summary>
-            写入
-            </summary>
-            <param name="array"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(Agebull.Common.DataModel.ITson)">
-            <summary>
-            写入
-            </summary>
-            <param name="tson"></param>
-        </member>
-        <member name="T:Agebull.Common.DataModel.TsonTypeItem">
-            <summary>
-            Tson类型节点
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonTypeItem.typeId">
-            <summary>
-            类型ID
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonTypeItem.name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.TsonTypeItem.creator">
-            <summary>
-            构造器
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.TsonTypeRegister">
-            <summary>
-            Tson类型注册器
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.RegisteType``1(System.Int32,System.String)">
-            <summary>
-            注册类型
-            </summary>
-            <typeparam name="T">类型</typeparam>
-            <param name="id">类型ID</param>
-            <param name="name">名称</param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.TypeName(System.Int32)">
-            <summary>
-            注册类型
-            </summary>
-            <param name="id"></param>
-        </member>
-        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.CreateType(System.Int32)">
-            <summary>
-            注册类型
-            </summary>
-            <param name="id"></param>
-        </member>
         <member name="T:Agebull.Zmq.Rpc.CommandArgument">
             <summary>
                 命令的网络调用参数结构
@@ -2028,7 +906,7 @@
             </summary>
             <param name="property"></param>
         </member>
-        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.CopyValueInner(Agebull.Common.DataModel.EntityBase)">
+        <member name="M:Agebull.Zmq.Rpc.StringArgumentData.CopyValueInner(Gboxt.Common.DataModel.DataObjectBase)">
             <summary>
             复制值
             </summary>
@@ -2214,6 +1092,649 @@
             <param name="command"></param>
             <param name="argument"></param>
             <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.DataModel.ITson">
+            <summary>
+            表示实现自助TSON操作的类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.ITson.TypeId">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.ITson.SafeBufferLength">
+            <summary>
+            安全的缓存长度
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.ITson.Deserialize(Agebull.Common.DataModel.TsonDeserializer)">
+            <summary>
+            从TSON反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.ITson.Serialize(Agebull.Common.DataModel.TsonSerializer)">
+            <summary>
+            序列化到Tson
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.BofCode">
+            <summary>
+            开始标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.EofMark">
+            <summary>
+            尾部标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.EndMark">
+            <summary>
+            结束标记
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_bufer">
+            <summary>
+            缓存
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_postion">
+            <summary>
+            当前位置
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_buffer_len">
+            <summary>
+            缓存长度
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_full">
+            <summary>
+            是否全量写入
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_start_postion">
+            <summary>
+            起始位
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_end_postion">
+            <summary>
+            结束位(最后一位的下一位)
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonBase.m_data_len">
+            <summary>
+            实际长度
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor">
+            <summary>
+            默认构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer">缓存</param>
+            <param name="len">缓存长度</param>
+            <param name="firstPostion">起始位置</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonBase.Reset">
+            <summary>
+            重置位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.IsFull">
+            <summary>
+            全量写入
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.DataLen">
+            <summary>
+            数据长度
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.BufferLen">
+            <summary>
+            缓冲区长度
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.Buffer">
+            <summary>
+            缓冲区
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.EndPostion">
+            <summary>
+            结束位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.BeginPostion">
+            <summary>
+            起始位置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonBase.Postion">
+            <summary>
+            起始位置
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonDeserializer">
+            <summary>
+            TSON反序列化器
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_error">
+            <summary>
+            是否有错
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_type_id">
+            <summary>
+            数据类型ID
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonDeserializer.m_data_ver">
+            <summary>
+            数据版本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsError">
+            <summary>
+            是否有错
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataTypeId">
+            <summary>
+            数据类型ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.DataVersion">
+            <summary>
+            数据版本
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsEof">
+            <summary>
+            是否处于尾部
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.TsonDeserializer.IsBof">
+            <summary>
+            是否处于头部
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer">缓存</param>
+            <param name="len">缓存长度</param>
+            <param name="firstPostion">起始位置</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Begin">
+            <summary>
+            开始反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.End">
+            <summary>
+            结束反序列化
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.ReadIndex">
+            <summary>
+            读当前属性的数字索引
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.String@)">
+            <summary>
+            读取文本
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean@)">
+            <summary>
+            读取布尔值
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte@)">
+            <summary>
+            读取
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte@)">
+            <summary>
+            读取
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal@)">
+            <summary>
+            读取
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime@)">
+            <summary>
+            读取
+            </summary>
+            <param name="date"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read``1">
+            <summary>
+            读取
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.DateTime[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Boolean[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Byte[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.SByte[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int16[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt16[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int32[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt32[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Int64[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.UInt64[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Single[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Double[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonDeserializer.Read(System.Decimal[]@)">
+            <summary>
+            读取
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonSerializer">
+            <summary>
+            TSON序列化器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="buffer"></param>
+            <param name="len"></param>
+            <param name="firstPostion"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.CreateBuffer(System.Int32)">
+            <summary>
+            初始化缓冲区
+            </summary>
+            <param name="len"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Begin(System.Int32,System.Byte)">
+            <summary>
+            开始写入
+            </summary>
+            <param name="type"></param>
+            <param name="ver"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.End">
+            <summary>
+            完成写入
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.WriteIndex(System.Byte)">
+            <summary>
+            写入字段索引号
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty(System.String)">
+            <summary>
+            空值检测
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0[])">
+            <summary>
+            空值检测
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.IsEmpty``1(``0)">
+            <summary>
+            空值检测
+            </summary>
+            <param name="t"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.String)">
+            <summary>
+            写入
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean)">
+            <summary>
+            写入
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte)">
+            <summary>
+            写入
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte)">
+            <summary>
+            写入
+            </summary>
+            <param name="chr"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal)">
+            <summary>
+            写入
+            </summary>
+            <param name="number"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime)">
+            <summary>
+            写入
+            </summary>
+            <param name="date"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.DateTime[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Boolean[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Byte[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.SByte[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int16[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt16[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int32[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt32[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Int64[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.UInt64[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Single[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Double[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(System.Decimal[])">
+            <summary>
+            写入
+            </summary>
+            <param name="array"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonSerializer.Write(Agebull.Common.DataModel.ITson)">
+            <summary>
+            写入
+            </summary>
+            <param name="tson"></param>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonTypeItem">
+            <summary>
+            Tson类型节点
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.typeId">
+            <summary>
+            类型ID
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.DataModel.TsonTypeItem.creator">
+            <summary>
+            构造器
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.DataModel.TsonTypeRegister">
+            <summary>
+            Tson类型注册器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.RegisteType``1(System.Int32,System.String)">
+            <summary>
+            注册类型
+            </summary>
+            <typeparam name="T">类型</typeparam>
+            <param name="id">类型ID</param>
+            <param name="name">名称</param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.TypeName(System.Int32)">
+            <summary>
+            注册类型
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.TsonTypeRegister.CreateType(System.Int32)">
+            <summary>
+            注册类型
+            </summary>
+            <param name="id"></param>
         </member>
     </members>
 </doc>

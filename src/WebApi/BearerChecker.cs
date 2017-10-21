@@ -82,20 +82,28 @@ namespace Yizuan.Service.Api.WebApi
             if (string.IsNullOrWhiteSpace(_token))
                 return ErrorCode.Auth_Device_Unknow;
             
-            ApiContext.SetRequestContext(new InternalCallContext
-            {
-                RequestId = Guid.NewGuid(),
-                ServiceKey = GlobalVariable.ServiceKey,
-                UserId = -2
-            });
             _token = _token.Trim();
             switch (_token[0])
             {
                 case '*':
+                    ApiContext.SetRequestContext(new InternalCallContext
+                    {
+                        RequestId = Guid.NewGuid(),
+                        ServiceKey = GlobalVariable.ServiceKey,
+                        Bear = _token,
+                        UserId = -2
+                    });
                     return CheckDeviceId();
                 case '{':
                     return CheckServiceKey();
                 case '#':
+                    ApiContext.SetRequestContext(new InternalCallContext
+                    {
+                        RequestId = Guid.NewGuid(),
+                        ServiceKey = GlobalVariable.ServiceKey,
+                        Bear = _token,
+                        UserId = -2
+                    });
                     return CheckAccessToken();
             }
             return ErrorCode.Auth_Device_Unknow;
