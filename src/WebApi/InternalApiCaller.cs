@@ -32,7 +32,7 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         public string Bearer
         {
-            get => _beare ?? (ApiContext.IsClientTest? "*TEST_CLIENT":ApiContext.RequestContext == null ? null : JsonConvert.SerializeObject(ApiContext.RequestContext));
+            get => _beare ?? (ApiContext.IsClientTest ? "*TEST_CLIENT" : ApiContext.RequestContext == null ? null : JsonConvert.SerializeObject(ApiContext.RequestContext));
             set => _beare = value;
         }
 
@@ -41,7 +41,7 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         /// <param name="httpParams"></param>
         /// <returns></returns>
-        private  string FormatParams(Dictionary<string, string> httpParams)
+        private string FormatParams(Dictionary<string, string> httpParams)
         {
             if (httpParams == null)
                 return null;
@@ -119,9 +119,9 @@ namespace Yizuan.Service.Api.WebApi
         public ApiResult<TResult> Get<TResult>(string apiName, string arguments)
             where TResult : IApiResultData
         {
-            LogRecorder.BeginStepMonitor("内部API调用"+ ToUrl(apiName));
-            
-            var ctx =string.IsNullOrEmpty(Bearer)? null: $"Bearer {Bearer}";
+            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+
+            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
             LogRecorder.MonitorTrace(ctx);
             LogRecorder.MonitorTrace("Arguments:" + arguments);
 
@@ -171,9 +171,9 @@ namespace Yizuan.Service.Api.WebApi
         public ApiResult<TResult> Post<TResult>(string apiName, string form)
             where TResult : IApiResultData
         {
-            LogRecorder.BeginStepMonitor("内部API调用"+ ToUrl(apiName));
-            
-            var ctx =string.IsNullOrEmpty(Bearer)? null: $"Bearer {Bearer}";
+            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+
+            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
             LogRecorder.MonitorTrace(ctx);
             LogRecorder.MonitorTrace("Arguments:" + form);
 
@@ -224,23 +224,58 @@ namespace Yizuan.Service.Api.WebApi
             }
             catch (WebException e)
             {
-                try
+                switch (e.Status)
                 {
-                    using (var response = e.Response)
-                    {
-                        using (var receivedStream = response.GetResponseStream())
-                        {
-                            var streamReader = new StreamReader(receivedStream);
-                            result = streamReader.ReadToEnd();
-                        }
-                        response.Close();
-                    }
+                    case WebExceptionStatus.ProtocolError:
+                        break;
+                    case WebExceptionStatus.CacheEntryNotFound:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "找不到指定的缓存项");
+                    case WebExceptionStatus.ConnectFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "在传输级别无法联系远程服务点");
+                    case WebExceptionStatus.ConnectionClosed:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "过早关闭连接");
+                    case WebExceptionStatus.KeepAliveFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "指定保持活动状态的标头的请求的连接意外关闭");
+                    case WebExceptionStatus.MessageLengthLimitExceeded:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "已收到一条消息的发送请求时超出指定的限制或从服务器接收响应");
+                    case WebExceptionStatus.NameResolutionFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "名称解析程序服务或无法解析主机名");
+                    case WebExceptionStatus.Pending:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "内部异步请求处于挂起状态");
+                    case WebExceptionStatus.PipelineFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "该请求是管线请求和连接被关闭之前收到响应");
+                    case WebExceptionStatus.ProxyNameResolutionFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "名称解析程序服务无法解析代理服务器主机名");
+                    case WebExceptionStatus.ReceiveFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "从远程服务器未收到完整的响应");
+                    case WebExceptionStatus.RequestCanceled:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "请求已取消");
+                    case WebExceptionStatus.RequestProhibitedByCachePolicy:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "缓存策略不允许该请求");
+                    case WebExceptionStatus.RequestProhibitedByProxy:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "由该代理不允许此请求");
+                    case WebExceptionStatus.SecureChannelFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "使用 SSL 建立连接时出错");
+                    case WebExceptionStatus.SendFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "无法与远程服务器发送一个完整的请求");
+                    case WebExceptionStatus.ServerProtocolViolation:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "服务器响应不是有效的 HTTP 响应");
+                    case WebExceptionStatus.Timeout:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "请求的超时期限内未不收到任何响应");
+                    case WebExceptionStatus.TrustFailure:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "无法验证服务器证书");
+                    default:
+                        //case WebExceptionStatus.UnknownError:
+                        return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError, "发生未知类型的异常");
                 }
-                catch (Exception exception)
+                using (var response = e.Response)
                 {
-                    LogRecorder.Exception(exception);
-                    LogRecorder.EndStepMonitor();
-                    return ApiResult<TResult>.ErrorResult(ErrorCode.NetworkError);
+                    using (var receivedStream = response.GetResponseStream())
+                    {
+                        var streamReader = new StreamReader(receivedStream);
+                        result = streamReader.ReadToEnd();
+                    }
+                    response.Close();
                 }
             }
             catch (Exception e)
@@ -312,9 +347,9 @@ namespace Yizuan.Service.Api.WebApi
         /// <returns></returns>
         public ApiValueResult<string> Get(string apiName, string arguments)
         {
-            LogRecorder.BeginStepMonitor("内部API调用"+ ToUrl(apiName));
-            
-            var ctx =string.IsNullOrEmpty(Bearer)? null: $"Bearer {Bearer}";
+            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+
+            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
             LogRecorder.MonitorTrace(ctx);
             LogRecorder.MonitorTrace("Arguments:" + arguments);
 
@@ -358,9 +393,9 @@ namespace Yizuan.Service.Api.WebApi
         /// <returns></returns>
         public ApiValueResult<string> Post(string apiName, string form)
         {
-            LogRecorder.BeginStepMonitor("内部API调用"+ ToUrl(apiName));
-            
-            var ctx =string.IsNullOrEmpty(Bearer)? null: $"Bearer {Bearer}";
+            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+
+            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
             LogRecorder.MonitorTrace(ctx);
             LogRecorder.MonitorTrace("Arguments:" + form);
 
@@ -410,6 +445,51 @@ namespace Yizuan.Service.Api.WebApi
             }
             catch (WebException e)
             {
+                switch (e.Status)
+                {
+                    case WebExceptionStatus.ProtocolError:
+                        break;
+                    case WebExceptionStatus.CacheEntryNotFound:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"找不到指定的缓存项");
+                    case WebExceptionStatus.ConnectFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"在传输级别无法联系远程服务点");
+                    case WebExceptionStatus.ConnectionClosed:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"过早关闭连接");
+                    case WebExceptionStatus.KeepAliveFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"指定保持活动状态的标头的请求的连接意外关闭");
+                    case WebExceptionStatus.MessageLengthLimitExceeded:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"已收到一条消息的发送请求时超出指定的限制或从服务器接收响应");
+                    case WebExceptionStatus.NameResolutionFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"名称解析程序服务或无法解析主机名");
+                    case WebExceptionStatus.Pending:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"内部异步请求处于挂起状态");
+                    case WebExceptionStatus.PipelineFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"该请求是管线请求和连接被关闭之前收到响应");
+                    case WebExceptionStatus.ProxyNameResolutionFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"名称解析程序服务无法解析代理服务器主机名");
+                    case WebExceptionStatus.ReceiveFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"从远程服务器未收到完整的响应");
+                    case WebExceptionStatus.RequestCanceled:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"请求已取消");
+                    case WebExceptionStatus.RequestProhibitedByCachePolicy:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "缓存策略不允许该请求");
+                    case WebExceptionStatus.RequestProhibitedByProxy:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"由该代理不允许此请求");
+                    case WebExceptionStatus.SecureChannelFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"使用 SSL 建立连接时出错");
+                    case WebExceptionStatus.SendFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"无法与远程服务器发送一个完整的请求");
+                    case WebExceptionStatus.ServerProtocolViolation:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"服务器响应不是有效的 HTTP 响应");
+                    case WebExceptionStatus.Timeout:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"请求的超时期限内未不收到任何响应");
+                    case WebExceptionStatus.TrustFailure:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"无法验证服务器证书");
+                    default:
+                    //case WebExceptionStatus.UnknownError:
+                        return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError,"发生未知类型的异常");
+                }
+
                 using (var response = e.Response)
                 {
                     using (var receivedStream = response.GetResponseStream())
