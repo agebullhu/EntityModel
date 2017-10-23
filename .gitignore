@@ -4,3 +4,11 @@ bin
 obj
 *.DotSettings
 *.gitignore
+/src/Agebull.Rpc.Cpp/boost_1_62_0
+Debug
+/src/Agebull.Rpc.Cpp/WindowsService/DebugPS
+*.user
+.vs
+/src/Agebull.Rpc.Cpp/publish/Rpc Service.rar
+/src/Agebull.Rpc.Cpp
+/doc/~$tityModel基础框架中包含的配置项说明.docx

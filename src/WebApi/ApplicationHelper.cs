@@ -20,10 +20,9 @@ namespace Yizuan.Service.Api.WebApi
         public static void OnApplicationStart()
         {
             AreaRegistration.RegisterAllAreas();
-            RegistHandler();
-            //RegistFormatter();
+            RegistFormatter();
             GlobalConfiguration.Configure(Regist);
-            
+            RegistHandler();
         }
 
         /// <summary>
@@ -32,9 +31,9 @@ namespace Yizuan.Service.Api.WebApi
         public static void OnApplicationStartInner()
         {
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpIoLogHandler());
             RegistFormatter();
             GlobalConfiguration.Configure(Regist);
+            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpIoLogHandler());
         }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Yizuan.Service.Api.WebApi
         public static void Regist(HttpConfiguration config)
         {
             RegistFilter(config);
-            RegistCors(config);
+            RegistCors(config);//注意，必须是第一个MessageHandler，否则打死没用。
         }
         /// <summary>
         /// 跨域支持
@@ -62,7 +61,7 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         public static void RegistFilter(HttpConfiguration config)
         {
-            GlobalFilters.Filters.Add(new HandleErrorAttribute());
+            GlobalFilters.Filters.Add(new HandleErrorAttribute()); 
         }
         /// <summary>
         /// 注册格式化器
@@ -86,8 +85,8 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         public static void RegistHandler()
         {
-            GlobalConfiguration.Configuration.MessageHandlers.Add(new BearerHandler());
             GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpIoLogHandler());
+            GlobalConfiguration.Configuration.MessageHandlers.Add(new BearerHandler());
         }
     }
 }
