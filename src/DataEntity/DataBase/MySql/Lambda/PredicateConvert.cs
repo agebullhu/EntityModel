@@ -571,6 +571,10 @@ namespace Gboxt.Common.DataModel.MySql
                     return array.LinkToString("'", "','", "'");
                 }
             }
+            if (vlType == typeof(DateTime))
+            {
+                return $"?{_condition.AddParameter(vl)}";
+            }
             if (vlType.IsValueType && vlType.IsBaseType())
             {
                 return $"'{vl}'";
