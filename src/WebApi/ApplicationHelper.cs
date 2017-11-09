@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Mvc;
+using Agebull.Common.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Configuration;
-using System.Web.Http.Cors;
+using Yizuan2.Service.Api.WebApi;
 
 namespace Yizuan.Service.Api.WebApi
 {
@@ -13,6 +15,43 @@ namespace Yizuan.Service.Api.WebApi
     /// </summary>
     public static class ApplicationHelper
     {
+        /// <summary>
+        /// 是否已初始化
+        /// </summary>
+        public static bool IsInitialize
+        {
+            get;
+            private set;
+        }
+        /// <summary>
+        /// 初始化，必须先调用
+        /// </summary>
+        public static void Initialize()
+        {
+            if (IsInitialize)
+                return;
+            IsInitialize = true;
+
+            // 调用ID的取得
+            LogRecorder.GetRequestIdFunc = () => ApiContext.RequestContext?.RequestId ?? Guid.NewGuid();
+            // 跨域支持
+            HttpHandler.Handlers.Add(new CorsHandler());
+            // 日志支持
+            HttpHandler.Handlers.Add(new HttpIoLogHandler());
+            // 身份验证上下文校验与处理
+            HttpHandler.Handlers.Add(new BearerHandler());
+        }
+        /// <summary>
+        /// 注册系统处理器
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void RegistSystemHandler(IHttpSystemHandler handler)
+        {
+            if (!IsInitialize)
+                Initialize();
+            if (handler != null && !HttpHandler.Handlers.Contains(handler))
+                HttpHandler.Handlers.Add(handler);
+        }
 
         /// <summary>
         /// Application_Start时调用
@@ -20,9 +59,9 @@ namespace Yizuan.Service.Api.WebApi
         public static void OnApplicationStart()
         {
             AreaRegistration.RegisterAllAreas();
-            RegistFormatter();
+            //RegistFormatter();
             GlobalConfiguration.Configure(Regist);
-            RegistHandler();
+            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpHandler());
         }
 
         /// <summary>
@@ -31,38 +70,26 @@ namespace Yizuan.Service.Api.WebApi
         public static void OnApplicationStartInner()
         {
             AreaRegistration.RegisterAllAreas();
-            RegistFormatter();
+            //RegistFormatter();
             GlobalConfiguration.Configure(Regist);
-            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpIoLogHandler());
+            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpHandler());
         }
 
         /// <summary>
         /// 注册
         /// </summary>
-        public static void Regist(HttpConfiguration config)
+        private static void Regist(HttpConfiguration config)
         {
             RegistFilter(config);
-            RegistCors(config);//注意，必须是第一个MessageHandler，否则打死没用。
-        }
-        /// <summary>
-        /// 跨域支持
-        /// </summary>
-        /// <param name="config"></param>
-        public static void RegistCors(HttpConfiguration config)
-        {
-            var allowOrigins = ConfigurationManager.AppSettings["cors_allowOrigins"] ?? "*";
-            var allowHeaders = ConfigurationManager.AppSettings["cors_allowHeaders"] ?? "*";
-            var allowMethods = ConfigurationManager.AppSettings["cors_allowMethods"] ?? "*";
-            var globalCors = new EnableCorsAttribute(allowOrigins, allowHeaders, allowMethods);
-            config.EnableCors(globalCors);
         }
         /// <summary>
         /// 注册过滤器
         /// </summary>
         public static void RegistFilter(HttpConfiguration config)
         {
-            GlobalFilters.Filters.Add(new HandleErrorAttribute()); 
+            GlobalFilters.Filters.Add(new HandleErrorAttribute());
         }
+
         /// <summary>
         /// 注册格式化器
         /// </summary>
@@ -71,22 +98,14 @@ namespace Yizuan.Service.Api.WebApi
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
             //默认返回 json  
             var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-            json.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            json.SerializerSettings.Formatting = Formatting.None;
             json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            json.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-            json.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-            json.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Local;
+            json.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            json.SerializerSettings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
+            json.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
             json.SerializerSettings.Culture = CultureInfo.GetCultureInfo("zh-cn");
             json.MediaTypeMappings.Add(new QueryStringMapping("datatype", "json", "application/json"));
         }
 
-        /// <summary>
-        /// 基础MessageHandler注册
-        /// </summary>
-        public static void RegistHandler()
-        {
-            GlobalConfiguration.Configuration.MessageHandlers.Add(new HttpIoLogHandler());
-            GlobalConfiguration.Configuration.MessageHandlers.Add(new BearerHandler());
-        }
     }
 }

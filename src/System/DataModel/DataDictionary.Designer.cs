@@ -42,7 +42,7 @@ namespace Gboxt.Common.SystemModel
         /// <summary>
         /// Id键
         /// </summary>
-        int IIdentityData.Id
+        long IIdentityData.Id
         {
             get
             {
@@ -76,13 +76,13 @@ namespace Gboxt.Common.SystemModel
         /// 标识:标识
         /// </summary>
         [DataMember,JsonIgnore]
-        internal int _id;
+        internal long _id;
 
         partial void OnIdGet();
 
-        partial void OnIdSet(ref int value);
+        partial void OnIdSet(ref long value);
 
-        partial void OnIdLoad(ref int value);
+        partial void OnIdLoad(ref long value);
 
         partial void OnIdSeted();
 
@@ -94,7 +94,7 @@ namespace Gboxt.Common.SystemModel
         /// </remarks>
         [IgnoreDataMember , ReadOnly(true) , DisplayName(@"标识")]
         [JsonProperty("Id", NullValueHandling = NullValueHandling.Ignore)]
-        public int Id
+        public long Id
         {
             get
             {

@@ -93,7 +93,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData FirstOrDefault(int id);
+        TData FirstOrDefault(object id);
 
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData First(int id);
+        TData First(object id);
 
         /// <summary>
         ///     载入首行
@@ -416,19 +416,11 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
             Expression<Func<TData, bool>> lambda);
-        
+
         #endregion
 
         #region 单列读取
-
-        /// <summary>
-        ///     读取一个字段
-        /// </summary>
-        /// <param name="fieldExpression">字段</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>内容</returns>
-        int LoadValue(Expression<Func<TData, int>> fieldExpression, Expression<Func<TData, bool>> lambda);
-
+        
 
         /// <summary>
         ///     读取一个字段
@@ -445,16 +437,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="key">主键</param>
         /// <returns>内容</returns>
         TField LoadValue<TField, TKey>(Expression<Func<TData, TField>> field, TKey key);
-
-        /// <summary>
-        ///     读取一个字段
-        /// </summary>
-        /// <param name="fieldExpression">字段</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>内容</returns>
-        List<int> LoadValues(Expression<Func<TData, int>> fieldExpression,
-            Expression<Func<TData, bool>> lambda);
-
+        
         /// <summary>
         ///     读取一个字段
         /// </summary>
@@ -491,7 +474,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData LoadData(int id);
+        TData LoadData(object id);
 
         /// <summary>
         ///     全表读取
@@ -587,7 +570,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     删除数据
         /// </summary>
-        int Delete(int id);
+        int Delete(object id);
         
 
         /// <summary>
@@ -630,7 +613,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="value">值</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        int SetValue(string field, object value, int key);
+        int SetValue(string field, object value, object key);
 
         /// <summary>
         ///     全量更新
@@ -685,8 +668,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="condition"></param>
-        bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val,
-            Expression<Func<TData, bool>> condition);
+        bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val,Expression<Func<TData, bool>> condition);
 
         /// <summary>
         ///     检查值的唯一性

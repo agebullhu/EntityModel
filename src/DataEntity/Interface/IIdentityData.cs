@@ -17,7 +17,7 @@ namespace Gboxt.Common.DataModel
         ///     数字标识
         /// </summary>
         /// <value>int</value>
-        int Id { get; set; }
+        long Id { get; set; }
     }
     /// <summary>
     ///     表示有标题的数据

@@ -2625,12 +2625,12 @@ namespace Gboxt.Common.DataModel.SqlServer
             });
         }
 
-        public TData FirstOrDefault(int id)
+        public TData FirstOrDefault(object id)
         {
             return LoadByPrimaryKey(id);
         }
 
-        public TData First(int id)
+        public TData First(object id)
         {
             return LoadByPrimaryKey(id);
         }
@@ -2647,19 +2647,6 @@ namespace Gboxt.Common.DataModel.SqlServer
             return ExistInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(id));
         }
         
-
-        public int LoadValue(Expression<Func<TData, int>> fieldExpression, Expression<Func<TData, bool>> lambda)
-        {
-            var convert = Compile(lambda);
-            var vl = LoadValue(GetPropertyName(fieldExpression), convert.ConditionSql, convert.Parameters);
-            return vl == null || vl == DBNull.Value ? Int32.MinValue : (int) vl;
-        }
-        
-        public List<int> LoadValues(Expression<Func<TData, int>> fieldExpression, Expression<Func<TData, bool>> lambda)
-        {
-            return LoadValues<int>(fieldExpression, lambda);
-        }
-
         public List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition)
         {
             var field = GetPropertyName(fieldExpression);
@@ -2668,7 +2655,7 @@ namespace Gboxt.Common.DataModel.SqlServer
             return result.Count == 0 ? new List<TField>() : result.Select(p => (TField)p).ToList();
         }
 
-        public TData LoadData(int id)
+        public TData LoadData(object id)
         {
             return LoadByPrimaryKey(id);
         }
@@ -2688,12 +2675,12 @@ namespace Gboxt.Common.DataModel.SqlServer
             return list;
         }
 
-        public int Delete(int id)
+        public int Delete(object id)
         {
            return Delete(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(id));
         }
         
-        public int SetValue(string field, object value, int key)
+        public int SetValue(string field, object value, object key)
         {
             return SetValue(field, value, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
         }

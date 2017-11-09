@@ -44,6 +44,7 @@
       <HintPath>..\..\Yizuan.Service.Fundtion\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,8 +62,7 @@
     <Compile Include="ApiContract\ErrorMessage.cs" />
     <Compile Include="ApiContract\IApiArgument.cs" />
     <Compile Include="Auth\IBearValidater.cs" />
-    <Compile Include="Auth\IUserProfile.cs" />
-    <Compile Include="Auth\UserProfile.cs" />
+    <Compile Include="Auth\ILoginUserInfo.cs" />
     <Compile Include="Context\ApiContext.cs" />
     <Compile Include="InternalCall\InternalCallContext.cs" />
     <Compile Include="Logging.Log4\LocaleItem.cs" />

@@ -32,5 +32,16 @@ namespace Yizuan.Service.Api
         /// 当前服务器时间
         /// </summary>
         long ApiServerTime { get; set; }
+
+        /// <summary>
+        /// 请求者操作系统
+        /// </summary>
+        string Os { get; set; }
+
+        /// <summary>
+        /// 请求者操作系统
+        /// </summary>
+        string Browser { get; set; }
     }
+
 }

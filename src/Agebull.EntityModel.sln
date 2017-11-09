@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.DataEntity", "DataEntity\Agebull.Common.DataEntity.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rpc", "Rpc", "{C741EC50-8C09-4615-A66A-D782814342F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.Rpc", "Agebull.Rpc\Agebull.Common.Rpc.csproj", "{2386EF6B-7D22-4150-83E0-F047468DC11F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{24BBA554-30B3-464E-8939-44ECEA092230}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24BBA554-30B3-464E-8939-44ECEA092230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24BBA554-30B3-464E-8939-44ECEA092230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24BBA554-30B3-464E-8939-44ECEA092230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24BBA554-30B3-464E-8939-44ECEA092230}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

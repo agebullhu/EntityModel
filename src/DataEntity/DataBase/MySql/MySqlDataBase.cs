@@ -878,8 +878,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     缓存数据
         /// </summary>
-        private readonly Dictionary<int, Dictionary<int, EditDataObject>> _dataCache =
-            new Dictionary<int, Dictionary<int, EditDataObject>>();
+        private readonly Dictionary<int, Dictionary<long, EditDataObject>> _dataCache =
+            new Dictionary<int, Dictionary<long, EditDataObject>>();
 
         /// <summary>
         ///     取缓存数据
@@ -890,7 +890,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns></returns>
         public TData GetData<TData>(int table, int id) where TData : EditDataObject
         {
-            Dictionary<int, EditDataObject> tableDatas;
+            Dictionary<long, EditDataObject> tableDatas;
             if (!_dataCache.TryGetValue(table, out tableDatas))
             {
                 return null;
@@ -911,12 +911,12 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="id"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public TData TryAddToCache<TData>(int table, int id, TData data) where TData : EditDataObject
+        public TData TryAddToCache<TData>(int table, long id, TData data) where TData : EditDataObject
         {
-            Dictionary<int, EditDataObject> tableDatas;
+            Dictionary<long, EditDataObject> tableDatas;
             if (!_dataCache.TryGetValue(table, out tableDatas))
             {
-                _dataCache.Add(table, tableDatas = new Dictionary<int, EditDataObject>());
+                _dataCache.Add(table, tableDatas = new Dictionary<long, EditDataObject>());
             }
 
             if (tableDatas.ContainsKey(id))

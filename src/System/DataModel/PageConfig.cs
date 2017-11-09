@@ -36,13 +36,13 @@ namespace Gboxt.Common.SystemModel
         /// 审批页面
         /// </summary>
         [JsonProperty("audit_page", NullValueHandling = NullValueHandling.Ignore)]
-        public int AuditPage;
+        public long AuditPage;
 
         /// <summary>
         /// 主页面
         /// </summary>
         [JsonProperty("master_page", NullValueHandling = NullValueHandling.Ignore)]
-        public int MasterPage;
+        public long MasterPage;
 
         /// <summary>
         /// 是否数据管理

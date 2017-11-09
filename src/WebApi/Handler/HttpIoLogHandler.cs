@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -8,51 +6,69 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Logging;
-using Newtonsoft.Json;
-
 
 namespace Yizuan.Service.Api.WebApi
 {
     /// <summary>
-    /// Http进站出站的日志记录
+    ///     Http进站出站的日志记录
     /// </summary>
-    public sealed class HttpIoLogHandler : DelegatingHandler
+    internal sealed class HttpIoLogHandler : IHttpSystemHandler
     {
         /// <summary>
-        /// 重载
+        ///     开始时的处理
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        /// <returns>如果返回内容不为空，直接返回,后续的处理不再继续</returns>
+        Task<HttpResponseMessage> IHttpSystemHandler.OnBegin(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            if (!LogRecorder.LogMonitor)
+                return null;
             LogRecorder.BeginMonitor(request.RequestUri.ToString());
-            RecordRequestInfo(request, cancellationToken);
-            var result = base.SendAsync(request, cancellationToken);
-            result.ContinueWith((task, state) => RecordResponseInfo(task.Result), null,
-                TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
-            return result;
+            try
+            {
+                var args = new StringBuilder();
+                args.Append("Headers：");
+                foreach (var head in request.Headers)
+                    args.Append($"【{head.Key}】{head.Value.LinkToString('|')}");
+                LogRecorder.MonitorTrace(args.ToString());
+                LogRecorder.MonitorTrace($"Method：{request.Method}");
+
+                LogRecorder.MonitorTrace($"QueryString：{request.RequestUri.Query}");
+
+                RecordRequestToCode(request);
+            }
+            catch (Exception e)
+            {
+                LogRecorder.Exception(e);
+            }
+            return null;
         }
 
         /// <summary>
-        /// 记录API请求
+        ///     结束时的处理
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        private void RecordRequestInfo(HttpRequestMessage request, CancellationToken cancellationToken)
+        void IHttpSystemHandler.OnEnd(HttpRequestMessage request, CancellationToken cancellationToken, HttpResponseMessage response)
         {
-            var args = new StringBuilder();
-            args.Append("Headers：");
-            foreach (var head in request.Headers)
+            if (!LogRecorder.LogMonitor)
+                return;
+            try
             {
-                args.Append($"【{head.Key}】{head.Value.LinkToString('|')}");
+                var task = response.Content.ReadAsStringAsync();
+                task.Wait(cancellationToken);
+                LogRecorder.MonitorTrace($"Result：{task.Result}");
             }
-            LogRecorder.MonitorTrace(args.ToString());
-            LogRecorder.MonitorTrace($"Method：{request.Method}");
+            catch (Exception e)
+            {
+                LogRecorder.MonitorTrace($"Result：{e.Message}");
+            }
+            LogRecorder.EndMonitor();
+        }
 
-            LogRecorder.MonitorTrace($"QueryString：{request.RequestUri.Query}");
-
-            StringBuilder code = new StringBuilder();
+        /// <summary>
+        ///     请求注册为代码
+        /// </summary>
+        private void RecordRequestToCode(HttpRequestMessage request)
+        {
+            var code = new StringBuilder();
             if (request.Method == HttpMethod.Get)
             {
                 code.Append($@"
@@ -65,7 +81,7 @@ namespace Yizuan.Service.Api.WebApi
             else
             {
                 var task = request.Content.ReadAsStringAsync();
-                task.Wait(cancellationToken);
+                task.Wait();
                 LogRecorder.MonitorTrace($"Content：{task.Result}");
                 code.Append($@"
                 {{
@@ -73,22 +89,20 @@ namespace Yizuan.Service.Api.WebApi
                     var result = caller.Post/*<>*/(""{request.RequestUri}"", new Dictionary<string, string>
                     {{");
                 var di = FormatParams(task.Result);
-                foreach(var item in di)
-                {
+                foreach (var item in di)
                     code.Append($@"
                         {{""{item.Key}"",""{item.Value}""}},");
-                }
-                code.Append($@"
-                    }});
+                code.Append(@"
+                    });
                     Console.WriteLine(JsonConvert.SerializeObject(result));
-                }}");
+                }");
             }
-            LogRecorder.Record(code.ToString(), LogType.Message);
+            LogRecorder.Record(code.ToString());
         }
 
 
         /// <summary>
-        /// 参数格式化
+        ///     参数格式化
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -97,12 +111,12 @@ namespace Yizuan.Service.Api.WebApi
             if (string.IsNullOrWhiteSpace(args))
                 return new Dictionary<string, string>();
             var result = new Dictionary<string, string>();
-            var kw = args.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            var kw = args.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries);
             if (kw.Length == 0)
                 return result;
             foreach (var item in kw)
             {
-                var words = item.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var words = item.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
                 switch (words.Length)
                 {
                     case 0:
@@ -117,26 +131,9 @@ namespace Yizuan.Service.Api.WebApi
             }
             return result;
         }
+
         /// <summary>
-        /// 记录API返回
-        /// </summary>
-        /// <param name="response"></param>
-        private static void RecordResponseInfo(HttpResponseMessage response)
-        {
-            try
-            {
-                var task = response.Content.ReadAsStringAsync();
-                task.Wait();
-                LogRecorder.MonitorTrace($"Result：{task.Result}");
-            }
-            catch (Exception e)
-            {
-                LogRecorder.MonitorTrace($"Result：{e.Message}");
-            }
-            LogRecorder.EndMonitor();
-        }
-        /// <summary>
-        /// 取请求头的身份验证令牌
+        ///     取请求头的身份验证令牌
         /// </summary>
         /// <returns></returns>
         private string ExtractToken(HttpRequestMessage request)
@@ -147,10 +144,10 @@ namespace Yizuan.Service.Api.WebApi
                 return string.Equals(authz.Scheme, bearer, StringComparison.OrdinalIgnoreCase) ? authz.Parameter : null;
             if (!request.Headers.Contains("Authorization"))
                 return null;
-            string au = request.Headers.GetValues("Authorization").FirstOrDefault();
+            var au = request.Headers.GetValues("Authorization").FirstOrDefault();
             if (au == null)
                 return null;
-            var aus = au.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var aus = au.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
             if (aus.Length < 2 || aus[0] != bearer)
                 return null;
             return aus[1];

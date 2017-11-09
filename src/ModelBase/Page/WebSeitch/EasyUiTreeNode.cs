@@ -29,7 +29,7 @@ namespace Agebull.ProjectDeveloper.WebDomain.Models
         ///     节点的 id，它对于加载远程数据很重要。
         /// </summary>
         [ JsonProperty("id")]
-        public int ID { get; set; }
+        public long ID { get; set; }
 
         /// <summary>
         ///     是否已选择

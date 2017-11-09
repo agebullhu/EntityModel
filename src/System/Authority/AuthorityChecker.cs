@@ -78,7 +78,7 @@ namespace Agebull.Common.DataModel.SystemModel
         /// <summary>
         /// 保存页面的动作
         /// </summary>
-        void IPowerChecker.SavePageAction(int pageid, string name, string title, string action, string type)
+        void IPowerChecker.SavePageAction(long pageid, string name, string title, string action, string type)
         {
             PageItemLogical.SavePageAction(pageid, name, title, action, type);
         }

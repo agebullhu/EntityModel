@@ -187,7 +187,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public TData FirstOrDefault(int id)
+        public TData FirstOrDefault(object id)
         {
             return LoadByPrimaryKey(id);
         }
@@ -198,7 +198,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public TData First(int id)
+        public TData First(object id)
         {
             return LoadByPrimaryKey(id);
         }
@@ -979,38 +979,7 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
         #region 单列读取
-
-        /// <summary>
-        ///     读取一个字段
-        /// </summary>
-        /// <param name="fieldExpression">字段</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>内容</returns>
-        public int LoadValue(Expression<Func<TData, int>> fieldExpression, Expression<Func<TData, bool>> lambda)
-        {
-            var field = GetPropertyName(fieldExpression);
-            var convert = Compile(lambda);
-            Debug.Assert(FieldDictionary.ContainsKey(field));
-            var sql = CreateLoadValueSql(field, convert.ConditionSql);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
-            {
-                using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
-                {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader.IsDBNull(0))
-                                continue;
-                            return reader.GetInt32(0);
-                        }
-                    }
-                }
-            }
-            return 0;
-        }
-
-
+        
         /// <summary>
         ///     读取一个字段
         /// </summary>
@@ -1050,38 +1019,7 @@ namespace Gboxt.Common.DataModel.MySql
             var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, key));
             return vl == DBNull.Value || vl == null ? default(TField) : (TField)vl;
         }
-
-        /// <summary>
-        ///     读取一个字段
-        /// </summary>
-        /// <param name="fieldExpression">字段</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>内容</returns>
-        public List<int> LoadValues(Expression<Func<TData, int>> fieldExpression, Expression<Func<TData, bool>> lambda)
-        {
-            var field = GetPropertyName(fieldExpression);
-            var convert = Compile(lambda);
-            Debug.Assert(FieldDictionary.ContainsKey(field));
-            var sql = CreateLoadValuesSql(field, convert);
-            var values = new List<int>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
-            {
-                using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
-                {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader.IsDBNull(0))
-                                continue;
-                            values.Add(reader.GetInt32(0));
-                        }
-                    }
-                }
-            }
-            return values;
-        }
-
+        
         /// <summary>
         ///     读取一个字段
         /// </summary>
@@ -1200,7 +1138,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public TData LoadData(int id)
+        public TData LoadData(object id)
         {
             return LoadByPrimaryKey(id);
         }
@@ -1842,7 +1780,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     删除数据
         /// </summary>
-        public int Delete(int id)
+        public int Delete(object id)
         {
             using (MySqlDataBaseScope.CreateScope(DataBase))
             {
@@ -1853,7 +1791,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     物理删除数据
         /// </summary>
-        public bool PhysicalDelete(int id)
+        public bool PhysicalDelete(object id)
         {
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(id);
@@ -1976,7 +1914,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         /// <param name="value">值</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        public int SetValue(string field, object value, int key)
+        public int SetValue(string field, object value, object key)
         {
             return SetValueInner(field, value, $"`{PrimaryKey}`='{key}'", CreateFieldParameter(KeyField, key));
         }

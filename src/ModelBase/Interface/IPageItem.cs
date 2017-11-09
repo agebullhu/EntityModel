@@ -21,12 +21,12 @@ namespace Gboxt.Common.SystemModel
         /// <summary>
         ///     对象标识
         /// </summary>
-        int Id { get; set; }
+        long Id { get; set; }
 
         /// <summary>
         ///     对象标识
         /// </summary>
-        int ID { get; set; }
+        long ID { get; set; }
 
         /// <summary>
         ///     序号
@@ -90,7 +90,7 @@ namespace Gboxt.Common.SystemModel
         /// <remarks>
         ///     上级节点
         /// </remarks>
-        int ParentId { get; set; }
+        long ParentId { get; set; }
 
         /// <summary>
         ///     不显示

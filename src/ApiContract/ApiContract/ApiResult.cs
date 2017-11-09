@@ -157,6 +157,26 @@ namespace Yizuan.Service.Api
             };
         }
         /// <summary>
+        /// 生成一个包含错误码的标准返回
+        /// </summary>
+        /// <param name="errCode">错误码</param>
+        /// <param name="message"></param>
+        /// <param name="innerMessage"></param>
+        /// <returns></returns>
+        public static ApiResult ErrorResult(int errCode, string message, string innerMessage)
+        {
+            return new ApiResult
+            {
+                Result = false,
+                Status = new ApiStatsResult
+                {
+                    ErrorCode = errCode,
+                    Message = message,
+                    InnerMessage = innerMessage
+                }
+            };
+        }
+        /// <summary>
         /// 生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
@@ -225,6 +245,27 @@ namespace Yizuan.Service.Api
                 {
                     ErrorCode = errCode,
                     Message = message
+                }
+            };
+        }
+
+        /// <summary>
+        /// 生成一个包含错误码的标准返回
+        /// </summary>
+        /// <param name="errCode">错误码</param>
+        /// <param name="message"></param>
+        /// <param name="innerMessage"></param>
+        /// <returns></returns>
+        public static ApiValueResult<TData> ErrorResult(int errCode, string message,string innerMessage)
+        {
+            return new ApiValueResult<TData>
+            {
+                Result = false,
+                Status = new ApiStatsResult
+                {
+                    ErrorCode = errCode,
+                    Message = message,
+                    InnerMessage = innerMessage
                 }
             };
         }

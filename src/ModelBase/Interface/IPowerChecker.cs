@@ -23,7 +23,7 @@ namespace Gboxt.Common.SystemModel
         /// <summary>
         /// 保存页面的动作
         /// </summary>
-        void SavePageAction(int pageid, string name, string title, string action,string type);
+        void SavePageAction(long pageid, string name, string title, string action,string type);
 
         /// <summary>
         /// 重新载入用户信息

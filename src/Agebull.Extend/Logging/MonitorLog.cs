@@ -296,11 +296,20 @@ namespace Agebull.Common.Logging
     /// </summary>
     public class MonitorScope : ScopeBase
     {
+        /// <summary>
+        /// 生成范围
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static MonitorStepScope CreateScope(string name)
         {
             LogRecorder.BeginMonitor(name);
             return new MonitorStepScope();
         }
+
+        /// <summary>
+        /// 清理资源
+        /// </summary>
         protected override void OnDispose()
         {
             LogRecorder.EndMonitor();

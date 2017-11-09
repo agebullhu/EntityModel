@@ -12,7 +12,7 @@ namespace GoodLin.Common.Configuration
         /// <summary>
         /// 当前服务的标识
         /// </summary>
-        public static readonly Guid ServiceKey;
+        public static readonly string ServiceKey;
 
         /// <summary>
         /// OAuth服务根地址
@@ -21,7 +21,8 @@ namespace GoodLin.Common.Configuration
 
         static GlobalVariable()
         {
-            if (!Guid.TryParse(ConfigurationManager.AppSettings["ServiceKey"], out ServiceKey))
+            ServiceKey = ConfigurationManager.AppSettings["ServiceKey"];
+            if (string.IsNullOrWhiteSpace(ServiceKey))
                 throw new ConfigurationErrorsException("必须在AppSettings中配置ServiceKey项");
             OAuthServiceURL = ConfigurationManager.AppSettings["OAuthServiceURL"];
             if (string.IsNullOrWhiteSpace(OAuthServiceURL))

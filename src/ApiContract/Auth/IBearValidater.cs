@@ -1,4 +1,4 @@
-namespace Yizuan.Service.Api
+namespace Yizuan.Service.Api.OAuth
 {
     /// <summary>
     /// 用户身份校验
@@ -10,32 +10,27 @@ namespace Yizuan.Service.Api
         /// </summary>
         /// <param name="token">令牌</param>
         /// <returns></returns>
-        IApiResult ValidateServiceKey(string token);
+        ApiResult ValidateServiceKey(string token);
+
         /// <summary>
         /// 检查AT(来自登录用户)
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        IApiResult<IUserProfile> VerifyAccessToken(string token);
+        ApiResult<LoginUserInfo> VerifyAccessToken(string token);
+
         /// <summary>
         /// 检查设备标识（来自未登录用户）
         /// </summary>
         /// <param name="token">令牌</param>
         /// <returns></returns>
-        IApiResult<IUserProfile> ValidateDeviceId(string token);
+        ApiResult<LoginUserInfo> ValidateDeviceId(string token);
 
         /// <summary>
         /// 检查设备标识（来自未登录用户）
         /// </summary>
-        /// <param name="uid">用户ID</param>
+        /// <param name="at">登录用户的AT</param>
         /// <returns></returns>
-        IApiResult<IUserProfile> GetUserProfile(long uid);
-
-        /*// <summary>
-        /// 来自用户设备的日志记录
-        /// </summary>
-        /// <param name="log">用户ID</param>
-        /// <returns></returns>
-        IApiResult DeviceLog(string log);*/
+        ApiResult<LoginUserInfo> GetLoginUser(string at);
     }
 }

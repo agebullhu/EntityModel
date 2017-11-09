@@ -74,12 +74,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHttpResponseMessage.cs" />
-    <Compile Include="BearerChecker.cs" />
+    <Compile Include="Handler\BearerChecker.cs" />
     <Compile Include="ApplicationHelper.cs" />
     <Compile Include="Filter\ApiAccessOptionFilterAttribute.cs" />
-    <Compile Include="CorsHandler.cs" />
-    <Compile Include="HttpIoLogHandler.cs" />
+    <Compile Include="Handler\CorsHandler.cs" />
+    <Compile Include="Handler\HttpHandler.cs" />
+    <Compile Include="Handler\HttpIoLogHandler.cs" />
     <Compile Include="InternalApiCaller.cs" />
+    <Compile Include="Handler\IHttpSystemHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +96,10 @@
     <ProjectReference Include="..\ApiHelper\Yizuan.Service.Fundtion.csproj">
       <Project>{178cc1e7-92c6-4613-9989-ef2951a89255}</Project>
       <Name>Yizuan.Service.Fundtion</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
+      <Project>{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}</Project>
+      <Name>Agebull.Common.DataEntity</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

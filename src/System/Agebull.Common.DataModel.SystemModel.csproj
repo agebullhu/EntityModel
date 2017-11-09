@@ -40,18 +40,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Agebull.Common.DataEntity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\AgebullDesigner\demo\cms\src\Lib\Agebull.Common.DataEntity.dll</HintPath>
-    </Reference>
-    <Reference Include="Agebull.Common.Extend, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\AgebullDesigner\demo\cms\src\Lib\Agebull.Common.Extend.dll</HintPath>
-    </Reference>
-    <Reference Include="Agebull.Common.ModelBase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\AgebullDesigner\demo\cms\src\Lib\Agebull.Common.ModelBase.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
@@ -152,6 +140,20 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.csproj">
+      <Project>{e204d26e-ea0a-4905-a53f-19bd92f405be}</Project>
+      <Name>Agebull.Common.Extend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.csproj">
+      <Project>{0d626dda-02c0-4bd8-b2fd-efee0971510f}</Project>
+      <Name>Agebull.Common.DataEntity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModelBase\Agebull.Common.ModelBase.csproj">
+      <Project>{6ac7ff64-8103-428c-987d-f7b527201f89}</Project>
+      <Name>Agebull.Common.ModelBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

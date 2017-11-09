@@ -28,7 +28,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <param name="userId">用户</param>
         /// <param name="pageId">关联页面</param>
         /// <param name="args">查询参数</param>
-        public static void SaveQueryHistory(int userId, int pageId, Dictionary<string, string> args)
+        public static void SaveQueryHistory(long userId, long pageId, Dictionary<string, string> args)
         {
             if (userId == 0 || pageId == 0)
                 return;
@@ -60,7 +60,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <param name="userId">用户</param>
         /// <param name="pageId">关联页面</param>
         /// <returns>返回的是参数字典的JSON格式的文本</returns>
-        public static string LoadQueryHistory(int userId, int pageId)
+        public static string LoadQueryHistory(long userId, long pageId)
         {
             if (userId == 0 || pageId == 0)
                 return "{'page': 0,'order':'asc','size':20}";

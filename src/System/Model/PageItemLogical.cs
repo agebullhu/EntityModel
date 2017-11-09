@@ -33,11 +33,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// 保存页面的动作
         /// </summary>
         [Conditional("SaveAction")]
-        public static void SavePageAction(int pid, string name, string title, string action, string type)
+        public static void SavePageAction(long pid, string name, string title, string action, string type)
         {
             Save(pid, name, title, action, type);
         }
-        static void Save(int pid, string name, string title, string action, string type)
+        static void Save(long pid, string name, string title, string action, string type)
         {
             var access = new PageItemDataAccess();
             if (!access.ExistPrimaryKey(pid))
@@ -121,7 +121,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="pid"></param>
         /// <param name="types"></param>
-        public bool BindType(int pid, List<Type> types)
+        public bool BindType(long pid, List<Type> types)
         {
             using (SystemContextScope.CreateScope())
             {
@@ -138,7 +138,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="pid"></param>
         /// <param name="types"></param>
-        public void FindAndBindType(int pid, List<Type> types)
+        public void FindAndBindType(long pid, List<Type> types)
         {
             if (pid < 0)
             {
@@ -154,7 +154,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             BindPageType(pid, types);
         }
 
-        private void BindPageType(int pid, List<Type> types)
+        private void BindPageType(long pid, List<Type> types)
         {
             var page = Access.LoadByPrimaryKey(pid);
             if (page == null || page.ItemType != PageItemType.Page)
@@ -201,7 +201,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="pid"></param>
         /// <param name="type">类型</param>
-        public bool CheckNormalButtons(int pid, string type)
+        public bool CheckNormalButtons(long pid, string type)
         {
             using (SystemContextScope.CreateScope())
             {
@@ -228,7 +228,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// 检查标准的增删改查按钮
         /// </summary>
         /// <param name="pid"></param>
-        void CheckNormalButtonsInner(int pid)
+        void CheckNormalButtonsInner(long pid)
         {
             var childs = Access.LoadValues(p => p.Id, p => p.ParentId == pid && p.ItemType <= PageItemType.Page);
             foreach (var id in childs)
@@ -242,7 +242,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// 检查标准的增删改查按钮
         /// </summary>
         /// <param name="pid"></param>
-        void NormalButtons(int pid)
+        void NormalButtons(long pid)
         {
             var page = Access.LoadByPrimaryKey(pid);
             if (page == null || page.ItemType != PageItemType.Page)
@@ -311,7 +311,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
 
-        private void SaveButtonItem(int pid, string element, string caption, string action, bool isButton = true)
+        private void SaveButtonItem(long pid, string element, string caption, string action, bool isButton = true)
         {
             var b = Access.All(p => p.ParentId == pid && p.ExtendValue == action);
             if (b.Count != 0)
@@ -396,7 +396,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         ///     载入完整的结构树(UI相关）
         /// </summary>
         /// <returns></returns>
-        public void LoadTreeForUi(int pid, EasyUiTreeNode parent)
+        public void LoadTreeForUi(long pid, EasyUiTreeNode parent)
         {
             var childs = Access.All(p => p.ParentId == pid && p.ItemType <= PageItemType.Page);
             if (childs.Count == 0)
@@ -461,7 +461,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="pageId">页面,不能为空</param>
         /// <returns>按钮配置集合</returns>
-        public static List<string> LoadPageButtons(int pageId)
+        public static List<string> LoadPageButtons(long pageId)
         {
             using (var proxy = new RedisProxy(RedisProxy.DbSystem))
             {
@@ -474,7 +474,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="pid"></param>
         /// <returns></returns>
-        public static PageItemData GetPageItem(int pid)
+        public static PageItemData GetPageItem(long pid)
         {
             using (var proxy = new RedisProxy(RedisProxy.DbSystem))
             {

@@ -43,5 +43,15 @@ namespace GoodLin.OAuth.Api
         /// 状态
         /// </summary>
         public DataStateType State { get; set; }
+
+        /// <summary>
+        /// 请求者操作系统
+        /// </summary>
+        public string Os { get; set; }
+
+        /// <summary>
+        /// 请求者操作系统
+        /// </summary>
+        public string Browser { get; set; }
     }
 }

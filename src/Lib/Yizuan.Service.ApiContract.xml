@@ -119,6 +119,15 @@
             <param name="message"></param>
             <returns></returns>
         </member>
+        <member name="M:Yizuan.Service.Api.ApiResult.ErrorResult(System.Int32,System.String,System.String)">
+            <summary>
+            生成一个包含错误码的标准返回
+            </summary>
+            <param name="errCode">错误码</param>
+            <param name="message"></param>
+            <param name="innerMessage"></param>
+            <returns></returns>
+        </member>
         <member name="M:Yizuan.Service.Api.ApiResult.Succees">
             <summary>
             生成一个成功的标准返回
@@ -154,6 +163,15 @@
             </summary>
             <param name="errCode">错误码</param>
             <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Yizuan.Service.Api.ApiValueResult`1.ErrorResult(System.Int32,System.String,System.String)">
+            <summary>
+            生成一个包含错误码的标准返回
+            </summary>
+            <param name="errCode">错误码</param>
+            <param name="message"></param>
+            <param name="innerMessage"></param>
             <returns></returns>
         </member>
         <member name="T:Yizuan.Service.Api.ApiResult`1">
@@ -408,73 +426,175 @@
             <param name="message">返回的消息</param>
             <returns>成功则返回真</returns>
         </member>
-        <member name="T:Yizuan.Service.Api.IBearValidater">
+        <member name="T:Yizuan.Service.Api.OAuth.IBearValidater">
             <summary>
             用户身份校验
             </summary>
         </member>
-        <member name="M:Yizuan.Service.Api.IBearValidater.ValidateServiceKey(System.String)">
+        <member name="M:Yizuan.Service.Api.OAuth.IBearValidater.ValidateServiceKey(System.String)">
             <summary>
             检查调用的ServiceKey（来自内部调用）
             </summary>
             <param name="token">令牌</param>
             <returns></returns>
         </member>
-        <member name="M:Yizuan.Service.Api.IBearValidater.VerifyAccessToken(System.String)">
+        <member name="M:Yizuan.Service.Api.OAuth.IBearValidater.VerifyAccessToken(System.String)">
             <summary>
             检查AT(来自登录用户)
             </summary>
             <param name="token"></param>
             <returns></returns>
         </member>
-        <member name="M:Yizuan.Service.Api.IBearValidater.ValidateDeviceId(System.String)">
+        <member name="M:Yizuan.Service.Api.OAuth.IBearValidater.ValidateDeviceId(System.String)">
             <summary>
             检查设备标识（来自未登录用户）
             </summary>
             <param name="token">令牌</param>
             <returns></returns>
         </member>
-        <member name="M:Yizuan.Service.Api.IBearValidater.GetUserProfile(System.Int64)">
+        <member name="M:Yizuan.Service.Api.OAuth.IBearValidater.GetLoginUser(System.String)">
             <summary>
             检查设备标识（来自未登录用户）
             </summary>
-            <param name="uid">用户ID</param>
+            <param name="at">登录用户的AT</param>
             <returns></returns>
         </member>
-        <member name="T:Yizuan.Service.Api.IUserProfile">
+        <member name="T:Yizuan.Service.Api.OAuth.IUser">
             <summary>
-            用户信息
+            当前登录的用户信息
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.UserId">
+        <member name="P:Yizuan.Service.Api.OAuth.IUser.UserId">
             <summary>
             用户数字标识
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.DeviceId">
+        <member name="T:Yizuan.Service.Api.OAuth.IPerson">
             <summary>
-            用户所在设备标识
+            当前登录的用户信息
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.NickName">
+        <member name="P:Yizuan.Service.Api.OAuth.IPerson.NickName">
             <summary>
             用户昵称
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.PhoneNumber">
+        <member name="P:Yizuan.Service.Api.OAuth.IPerson.AvatarUrl">
             <summary>
-            用户手机号
+            头像
+            </summary>
+            <remarks>
+            头像
+            </remarks>
+        </member>
+        <member name="T:Yizuan.Service.Api.OAuth.ILoginUserInfo">
+            <summary>
+            当前登录的用户信息
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.JoinTime">
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.LoginSystem">
             <summary>
-            加入系统时间
+            当前用户登录到哪个系统（预先定义的系统标识）
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.IUserProfile.ApiServerTime">
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.LoginType">
             <summary>
-            当前服务器时间
+            当前用户登录方式
             </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.Phone">
+            <summary>
+            登录者的手机号
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.Account">
+            <summary>
+            登录者的账号
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.DeviceId">
+            <summary>
+            登录设备的标识
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.Os">
+            <summary>
+            登录设备的操作系统
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.ILoginUserInfo.Browser">
+            <summary>
+            登录设备的浏览器
+            </summary>
+        </member>
+        <member name="T:Yizuan.Service.Api.OAuth.LoginUserInfo">
+            <summary>
+            当前登录的用户信息
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.UserId">
+            <summary>
+            用户数字标识
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.NickName">
+            <summary>
+            用户昵称
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.AvatarUrl">
+            <summary>
+            头像
+            </summary>
+            <remarks>
+            头像
+            </remarks>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.LoginSystem">
+            <summary>
+            当前用户登录到哪个系统（预先定义的系统标识）
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.LoginType">
+            <summary>
+            当前用户登录方式
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.Phone">
+            <summary>
+            登录者的手机号
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.Account">
+            <summary>
+            登录者的账号
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.DeviceId">
+            <summary>
+            登录设备的标识
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.Os">
+            <summary>
+            登录设备的操作系统
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.Browser">
+            <summary>
+            登录设备的浏览器
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.DataState">
+            <summary>
+                数据状态
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.OAuth.LoginUserInfo.IsFreeze">
+            <summary>
+                数据是否已冻结，如果是，则为只读数据
+            </summary>
+            <value>bool</value>
         </member>
         <member name="T:Yizuan.Service.Api.ApiContext">
             <summary>
@@ -483,7 +603,7 @@
         </member>
         <member name="P:Yizuan.Service.Api.ApiContext.IsClientTest">
             <summary>
-            是否客户端模拟
+            是否客户端模拟(已废弃)
             </summary>
         </member>
         <member name="F:Yizuan.Service.Api.ApiContext._requestContext">
@@ -496,13 +616,23 @@
             当前调用上下文
             </summary>
         </member>
+        <member name="M:Yizuan.Service.Api.ApiContext.Cache">
+            <summary>
+            缓存当前上下文
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.ApiContext.GetCacheKey(System.String)">
+            <summary>
+            得到缓存的键
+            </summary>
+        </member>
         <member name="M:Yizuan.Service.Api.ApiContext.SetContext(Yizuan.Service.Api.ApiContext)">
             <summary>
             设置当前上下文
             </summary>
             <param name="context"></param>
         </member>
-        <member name="M:Yizuan.Service.Api.ApiContext.SetCustomer(Yizuan.Service.Api.IUserProfile)">
+        <member name="M:Yizuan.Service.Api.ApiContext.SetCustomer(Yizuan.Service.Api.OAuth.ILoginUserInfo)">
             <summary>
             设置当前用户
             </summary>
@@ -524,7 +654,22 @@
             当前调用上下文
             </summary>
         </member>
+        <member name="M:Yizuan.Service.Api.ApiContext.TryCheckByAnymouse">
+            <summary>
+            检查上下文，如果信息为空，加入系统匿名用户上下文
+            </summary>
+        </member>
         <member name="P:Yizuan.Service.Api.ApiContext.Customer">
+            <summary>
+            当前调用的客户信息
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.ApiContext.Request">
+            <summary>
+            当前调用上下文
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.ApiContext.LoginUser">
             <summary>
             当前调用的客户信息
             </summary>
@@ -549,14 +694,24 @@
             当前请求的用户标识
             </summary>
         </member>
+        <member name="P:Yizuan.Service.Api.InternalCallContext.DeviceId">
+            <summary>
+            当前请求的用户标识
+            </summary>
+        </member>
         <member name="P:Yizuan.Service.Api.InternalCallContext.Bear">
             <summary>
             当前请求的HTTP Header
             </summary>
         </member>
-        <member name="P:Yizuan.Service.Api.InternalCallContext.ThreadId">
+        <member name="P:Yizuan.Service.Api.InternalCallContext.Os">
             <summary>
-            线程标识
+            请求者操作系统
+            </summary>
+        </member>
+        <member name="P:Yizuan.Service.Api.InternalCallContext.Browser">
+            <summary>
+            请求者操作系统
             </summary>
         </member>
         <member name="T:Yizuan.Service.ApiContract.Properties.Resources">
@@ -573,46 +728,6 @@
             <summary>
               使用此强类型资源类，为所有资源查找
               重写当前线程的 CurrentUICulture 属性。
-            </summary>
-        </member>
-        <member name="T:GoodLin.OAuth.Api.UserProfile">
-            <summary>
-            用户信息
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.UserId">
-            <summary>
-            用户数字标识
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.DeviceId">
-            <summary>
-            用户所在设备标识
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.NickName">
-            <summary>
-            用户昵称
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.PhoneNumber">
-            <summary>
-            用户手机号
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.JoinTime">
-            <summary>
-            加入系统时间
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.ApiServerTime">
-            <summary>
-            当前服务器时间
-            </summary>
-        </member>
-        <member name="P:GoodLin.OAuth.Api.UserProfile.State">
-            <summary>
-            状态
             </summary>
         </member>
         <member name="T:Agebull.Common.Server.Logging.LocaleItem">

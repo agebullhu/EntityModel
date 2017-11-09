@@ -73,7 +73,7 @@ namespace Gboxt.Common.SystemModel
         /// 审批页面
         /// </summary>
         [JsonProperty("audit_page", NullValueHandling = NullValueHandling.Ignore)]
-        public int AuditPage
+        public long AuditPage
         {
             get => Config.AuditPage;
             set => Config.AuditPage = value;
@@ -110,7 +110,7 @@ namespace Gboxt.Common.SystemModel
         /// 主页面
         /// </summary>
         [JsonProperty("master_page", NullValueHandling = NullValueHandling.Ignore)]
-        public int MasterPage
+        public long MasterPage
         {
             get => Config.MasterPage;
             set => Config.MasterPage = value;
