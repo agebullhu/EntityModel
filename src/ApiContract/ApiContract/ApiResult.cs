@@ -23,7 +23,7 @@ namespace Yizuan.Service.Api
         /// <summary>
         /// API执行状态（为空表示状态正常）
         /// </summary>
-        IApiStatusResult Status { get;}
+        IApiStatusResult Status { get; }
     }
     /// <summary>
     /// API返回基类
@@ -68,6 +68,21 @@ namespace Yizuan.Service.Api
     [JsonObject(MemberSerialization.OptIn)]
     public class ApiStatsResult : IApiStatusResult
     {
+        /// <summary>
+        /// 默认构造
+        /// </summary>
+        public ApiStatsResult()
+        {
+
+        }
+        /// <summary>
+        /// 默认构造
+        /// </summary>
+        public ApiStatsResult(int code, string messgae)
+        {
+            ErrorCode = code;
+            Message = messgae;
+        }
         /// <summary>
         /// 错误码
         /// </summary>
@@ -256,7 +271,7 @@ namespace Yizuan.Service.Api
         /// <param name="message"></param>
         /// <param name="innerMessage"></param>
         /// <returns></returns>
-        public static ApiValueResult<TData> ErrorResult(int errCode, string message,string innerMessage)
+        public static ApiValueResult<TData> ErrorResult(int errCode, string message, string innerMessage)
         {
             return new ApiValueResult<TData>
             {

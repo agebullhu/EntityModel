@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
+using Agebull.Common;
 using Agebull.Common.DataModel.Redis;
 using GoodLin.Common.Redis;
 using Newtonsoft.Json;
@@ -10,14 +11,10 @@ namespace Yizuan.Service.Api
     /// <summary>
     /// API调用上下文（流程中使用）
     /// </summary>
+    [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
     public class ApiContext
     {
-        /// <summary>
-        /// 是否客户端模拟(已废弃)
-        /// </summary>
-        public static bool IsClientTest { get; set; }
-
         /// <summary>
         /// 当前调用上下文
         /// </summary>
@@ -55,7 +52,7 @@ namespace Yizuan.Service.Api
         /// <param name="context"></param>
         public static void SetContext(ApiContext context)
         {
-            CallContext.LogicalSetData("ApiContext", context);
+            ContextHelper.LogicalSetData("ApiContext", context);
         }
 
         /// <summary>
@@ -75,7 +72,7 @@ namespace Yizuan.Service.Api
         {
             Current._requestContext = context;
         }
-
+        
         /// <summary>
         /// 当前实例对象
         /// </summary>
@@ -83,10 +80,10 @@ namespace Yizuan.Service.Api
         {
             get
             {
-                var current = CallContext.LogicalGetData("ApiContext") as ApiContext;
+                var current = ContextHelper.LogicalGetData< ApiContext>("ApiContext");
                 if (current != null)
                     return current;
-                CallContext.LogicalSetData("ApiContext", current = new ApiContext());
+                ContextHelper.LogicalSetData("ApiContext", current = new ApiContext());
                 return current;
             }
         }

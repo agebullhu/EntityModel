@@ -186,7 +186,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        public virtual TData Details(int id)
+        public virtual TData Details(long id)
         {
             return id == 0 ? null : Access.LoadByPrimaryKey(id);
         }
@@ -283,7 +283,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected virtual void OnInnerCommand(int id, BusinessCommandType cmd)
+        protected virtual void OnInnerCommand(long id, BusinessCommandType cmd)
         {
 
         }
@@ -436,7 +436,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        public bool Delete(IEnumerable<int> lid)
+        public bool Delete(IEnumerable<long> lid)
         {
             using (Access.DataBase.CreateDataBaseScope())
             using (var scope = Access.DataBase.CreateTransactionScope())
@@ -454,7 +454,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        public bool Delete(int id)
+        public bool Delete(long id)
         {
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
@@ -475,7 +475,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected virtual bool DoDelete(int id)
+        protected virtual bool DoDelete(long id)
         {
             return Access.DeletePrimaryKey(id) == 1;
         }
@@ -483,7 +483,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected virtual bool PrepareDelete(int id)
+        protected virtual bool PrepareDelete(long id)
         {
             return true;
         }
@@ -491,7 +491,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
-        protected virtual void OnDeleted(int id)
+        protected virtual void OnDeleted(long id)
         {
 
         }

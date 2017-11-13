@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Context\ContextHelper.cs" />
     <Compile Include="Exception\AccountException.cs" />
     <Compile Include="Exception\BugException.cs" />
     <Compile Include="Exception\ExceptionBase.cs" />

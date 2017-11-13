@@ -11,7 +11,14 @@ namespace Agebull.Common.Logging
     [Serializable]
     class MonitorData
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public FixStack<MonitorItem> Stack;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder Texter;
 
         /// <summary>
@@ -30,9 +37,9 @@ namespace Agebull.Common.Logging
         {
             get
             {
-                var data = CallContext.LogicalGetData("MonitorData") as MonitorData;
+                var data = ContextHelper.LogicalGetData<MonitorData>("MonitorData");
                 if (data == null)
-                    CallContext.LogicalSetData("MonitorData", data = new MonitorData());
+                    ContextHelper.LogicalSetData("MonitorData", data = new MonitorData());
                 return data;
             }
         }
@@ -47,14 +54,13 @@ namespace Agebull.Common.Logging
             {
                 if (value)
                 {
-                    CallContext.LogicalSetData("MonitorData", new MonitorData
-                    {
-                        InMonitor = true
-                    });
+                    if (Data.InMonitor)
+                        return;
+                    Data.InMonitor = true;
                 }
                 else
                 {
-                    CallContext.LogicalSetData("MonitorData", null);
+                    ContextHelper.Remove("MonitorData");
                 }
             }
         }

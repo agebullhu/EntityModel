@@ -425,6 +425,20 @@ namespace Gboxt.Common.DataModel.MySql
             {
                 throw new ArgumentException("不支持参数的方法(仅支持属性的方法)");
             }
+            if (expression.Method.Name == "Equals")
+            {
+                var left = ConvertExpression(expression.Object);
+                var right = GetArguments(expression);
+                if ((left == null || string.Equals(left, "null", StringComparison.OrdinalIgnoreCase) &&
+                     (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))))
+                    return "(1 = 1)";
+
+                if (left == null || string.Equals(left, "null", StringComparison.OrdinalIgnoreCase))
+                    return $"({right} IS NULL)";
+                if (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))
+                    return $"({left} IS NULL)";
+                return $"({left} = {right})";
+            }
             if (expression.Method.DeclaringType == typeof(string))
             {
                 switch (expression.Method.Name)
@@ -544,7 +558,7 @@ namespace Gboxt.Common.DataModel.MySql
             if (vlType.IsEnum)
             {
                 if (!vlType.IsArray)
-                    return $"'{(int) vl}'";
+                    return $"'{(int)vl}'";
                 var array = vl as IEnumerable;
                 if (array != null)
                 {

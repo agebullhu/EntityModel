@@ -218,7 +218,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override bool PrepareDelete(int id)
+        protected override bool PrepareDelete(long id)
         {
             if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.None))
             {

@@ -70,7 +70,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override bool PrepareDelete(int id)
+        protected override bool PrepareDelete(long id)
         {
             if (Access.Any(p => p.Id == id && (p.IsFreeze || p.DataState == DataStateType.Disable || p.DataState == DataStateType.Enable)))
                 return false;
@@ -79,7 +79,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected override bool DoDelete(int id)
+        protected override bool DoDelete(long id)
         {
             using (Access.DataBase.CreateDataBaseScope())
             {
@@ -93,7 +93,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
-        protected override void OnDeleted(int id)
+        protected override void OnDeleted(long id)
         {
             if (unityStateChanged)
             {
@@ -143,7 +143,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected sealed override void OnInnerCommand(int id, BusinessCommandType cmd)
+        protected sealed override void OnInnerCommand(long id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;

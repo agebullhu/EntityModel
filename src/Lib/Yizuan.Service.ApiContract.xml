@@ -64,6 +64,16 @@
             API状态返回接口实现
             </summary>
         </member>
+        <member name="M:Yizuan.Service.Api.ApiStatsResult.#ctor">
+            <summary>
+            默认构造
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.ApiStatsResult.#ctor(System.Int32,System.String)">
+            <summary>
+            默认构造
+            </summary>
+        </member>
         <member name="P:Yizuan.Service.Api.ApiStatsResult.ErrorCode">
             <summary>
             错误码
@@ -599,11 +609,6 @@
         <member name="T:Yizuan.Service.Api.ApiContext">
             <summary>
             API调用上下文（流程中使用）
-            </summary>
-        </member>
-        <member name="P:Yizuan.Service.Api.ApiContext.IsClientTest">
-            <summary>
-            是否客户端模拟(已废弃)
             </summary>
         </member>
         <member name="F:Yizuan.Service.Api.ApiContext._requestContext">

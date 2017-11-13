@@ -176,23 +176,31 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
         #region 纯虚方法
+
         /// <summary>
         ///     设置更新数据的命令
         /// </summary>
-        protected abstract void SetUpdateCommand(TData entity, MySqlCommand cmd);
+        protected virtual void SetUpdateCommand(TData entity, MySqlCommand cmd)
+        {
+        }
 
         /// <summary>
         ///     设置插入数据的命令
         /// </summary>
         /// <returns>返回真说明要取主键</returns>
-        protected abstract bool SetInsertCommand(TData entity, MySqlCommand cmd);
+        protected virtual bool SetInsertCommand(TData entity, MySqlCommand cmd)
+        {
+            return false;
+        }
 
         /// <summary>
         ///     载入数据
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        protected abstract void LoadEntity(MySqlDataReader reader, TData entity);
+        protected virtual void LoadEntity(MySqlDataReader reader, TData entity)
+        {
+        }
 
         #endregion
 

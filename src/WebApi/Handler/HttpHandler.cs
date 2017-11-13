@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
+using Agebull.Common;
 using Agebull.Common.Logging;
 
 namespace Yizuan.Service.Api.WebApi
@@ -36,7 +37,7 @@ namespace Yizuan.Service.Api.WebApi
                         var task = handler.OnBegin(request,cancellationToken);
                         if (task == null)
                             continue;
-                        CallContext.LogicalSetData("ApiContext", null);
+                        ContextHelper.Remove("ApiContext");
                         return task;
                     }
                     catch (Exception e)
@@ -86,7 +87,7 @@ namespace Yizuan.Service.Api.WebApi
                     LogRecorder.Exception(e);
                 }
             }
-            CallContext.LogicalSetData("ApiContext", null);
+            ContextHelper.Remove("ApiContext");
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Yizuan.Service.Api
     /// <summary>
     /// 内部服务调用上下文（跨系统边界传递）
     /// </summary>
+    [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
     public class InternalCallContext
     {

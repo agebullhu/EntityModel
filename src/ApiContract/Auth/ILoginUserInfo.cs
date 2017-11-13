@@ -1,3 +1,4 @@
+using System;
 using Gboxt.Common.DataModel;
 
 namespace Yizuan.Service.Api.OAuth
@@ -81,6 +82,7 @@ namespace Yizuan.Service.Api.OAuth
     /// <summary>
     /// 当前登录的用户信息
     /// </summary>
+    [Serializable]
     public class LoginUserInfo : ILoginUserInfo
     {
         /// <summary>

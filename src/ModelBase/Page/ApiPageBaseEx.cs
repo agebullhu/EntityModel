@@ -478,7 +478,7 @@ namespace Gboxt.Common.WebUI
                 SetFailed("没有数据");
                 return;
             }
-            var lid = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            var lid = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
             if (lid.Length == 0)
             {
                 SetFailed("没有数据");
