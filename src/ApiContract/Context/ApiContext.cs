@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
+using System.Diagnostics;
 using Agebull.Common;
 using Agebull.Common.DataModel.Redis;
 using GoodLin.Common.Redis;
@@ -25,7 +25,7 @@ namespace Yizuan.Service.Api
         /// 当前调用上下文
         /// </summary>
         [JsonProperty]
-        private ILoginUserInfo _user;
+        private LoginUserInfo _user;
 
         /// <summary>
         /// 缓存当前上下文
@@ -34,17 +34,28 @@ namespace Yizuan.Service.Api
         {
             using (var proxy = new RedisProxy())
             {
-                proxy.Client.Set(RedisKeyBuilder.ToSystemKey("api", "ctx",this.Request.RequestId), this);
+                proxy.Set(GetCacheKey(this.Request.RequestId), this);
             }
         }
 
+        /// <summary>
+        /// 得到缓存的键
+        /// </summary>
+        public static string GetCacheKey(Guid requestId)
+        {
+            var key = RedisKeyBuilder.ToSystemKey("api", "ctx", requestId.ToString().ToUpper());
+            Debug.WriteLine(key);
+            return key;
+        }
 
         /// <summary>
         /// 得到缓存的键
         /// </summary>
         public static string GetCacheKey(string requestId)
         {
-            return RedisKeyBuilder.ToSystemKey("api", "ctx", requestId.Trim('$'));
+            var key = RedisKeyBuilder.ToSystemKey("api", "ctx", requestId.Trim('$').ToUpper());
+            Debug.WriteLine(key);
+            return key;
         }
         /// <summary>
         /// 设置当前上下文
@@ -59,7 +70,7 @@ namespace Yizuan.Service.Api
         /// 设置当前用户
         /// </summary>
         /// <param name="customer"></param>
-        public static void SetCustomer(ILoginUserInfo customer)
+        public static void SetCustomer(LoginUserInfo customer)
         {
             Current._user = customer;
         }
@@ -121,6 +132,7 @@ namespace Yizuan.Service.Api
                     LoginType = 0
                 };
             }
+            Current.Cache();
         }
         /// <summary>
         /// 当前调用的客户信息

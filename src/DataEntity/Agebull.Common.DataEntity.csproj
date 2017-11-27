@@ -167,6 +167,8 @@
     <Compile Include="DataBase\MySql\DataUpdateTrigger\SqlCommandInfo.cs" />
     <Compile Include="Redis\ByteCommond.cs" />
     <Compile Include="Redis\DataKeyBuilder.cs" />
+    <Compile Include="Redis\RedisDbScope - 复制.cs" />
+    <Compile Include="Redis\RedisDbScope.cs" />
     <Compile Include="Redis\RedisProxy.cs" />
     <Compile Include="DataBase\MySql\CacheTable.cs" />
     <Compile Include="DataBase\MySql\Lambda\ConditionItem.cs" />

@@ -24,8 +24,8 @@ namespace Yizuan2.Service.Api.WebApi
             {
                 var result = new HttpResponseMessage(HttpStatusCode.OK);
                 //list = request.Headers.GetValues("Origin");
-                result.Headers.Add("Access-Control-Allow-Origin", "*");
-                result.Headers.Add("Access-Control-Allow-Methods", new[] {"GET", "POST", "OPTION"});
+                //result.Headers.Add("Access-Control-Allow-Origin", "*");
+                result.Headers.Add("Access-Control-Allow-Methods", new[] {"GET", "POST" });
                 result.Headers.Add("Access-Control-Allow-Headers",
                     new[] {"x-requested-with", "content-type", "authorization", "*"});
                 return result;
@@ -38,7 +38,7 @@ namespace Yizuan2.Service.Api.WebApi
         void IHttpSystemHandler.OnEnd(HttpRequestMessage request, CancellationToken cancellationToken,HttpResponseMessage response)
         {
             //list = request.Headers.GetValues("Origin");
-            //result.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
             //result.Headers.Add("Access-Control-Allow-Methods", new[] { "GET", "POST", "OPTION" });
             //result.Headers.Add("Access-Control-Allow-Headers", new[] { "x-requested-with", "content-type", "authorization", "*" });
         }

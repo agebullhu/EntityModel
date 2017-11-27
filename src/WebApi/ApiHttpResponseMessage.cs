@@ -24,6 +24,30 @@ namespace Yizuan.Service.Api.WebApi
                 RequestMessage = request
             };
         }
+
+        /// <summary>
+        /// 生成一个标准返回对象
+        /// </summary>
+        /// <param name="request">请求对象</param>
+        /// <param name="result">返回内容</param>
+        /// <returns>HttpResponseMessage对象</returns>
+        /// <param name="statusCode">HTTP状态码</param>
+        public static ApiResponseMessage<ApiValueResult<T>> ToResponse<T>(this HttpRequestMessage request, ApiValueResult<T> result, HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            if (result == null)
+            {
+                return new ApiResponseMessage<ApiValueResult<T>>(statusCode)
+                {
+                    RequestMessage = request
+                };
+            }
+            var response = new ApiResponseMessage<ApiValueResult<T>>(result, statusCode)
+            {
+                RequestMessage = request
+            };
+            return response;
+        }
+        
         /// <summary>
         /// 生成一个标准返回对象
         /// </summary>

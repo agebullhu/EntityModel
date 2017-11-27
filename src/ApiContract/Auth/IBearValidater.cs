@@ -1,3 +1,7 @@
+using System.Runtime.Serialization;
+using System.Text;
+using Newtonsoft.Json;
+
 namespace Yizuan.Service.Api.OAuth
 {
     /// <summary>

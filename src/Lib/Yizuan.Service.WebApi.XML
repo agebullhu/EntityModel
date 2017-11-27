@@ -17,6 +17,15 @@
             <returns>HttpResponseMessage对象</returns>
             <param name="statusCode">HTTP状态码</param>
         </member>
+        <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse``1(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiValueResult{``0},System.Net.HttpStatusCode)">
+            <summary>
+            生成一个标准返回对象
+            </summary>
+            <param name="request">请求对象</param>
+            <param name="result">返回内容</param>
+            <returns>HttpResponseMessage对象</returns>
+            <param name="statusCode">HTTP状态码</param>
+        </member>
         <member name="M:Yizuan.Service.Api.WebApi.HttpResponseMessageExtend.ToResponse(System.Net.Http.HttpRequestMessage,Yizuan.Service.Api.ApiResult,System.Net.HttpStatusCode)">
             <summary>
             生成一个标准返回对象
@@ -195,7 +204,7 @@
                 2：令牌是伪造的
             </returns>
         </member>
-        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CreateApiContext(Yizuan.Service.Api.OAuth.ILoginUserInfo,System.String)">
+        <member name="M:Yizuan.Service.Api.WebApi.BearerHandler.CreateApiContext(Yizuan.Service.Api.OAuth.LoginUserInfo,System.String)">
             <summary>
                 构造上下文
             </summary>
@@ -242,6 +251,11 @@
             </summary>
         </member>
         <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.Initialize">
+            <summary>
+            初始化，必须先调用
+            </summary>
+        </member>
+        <member name="M:Yizuan.Service.Api.WebApi.ApplicationHelper.InitializeNoBearer">
             <summary>
             初始化，必须先调用
             </summary>

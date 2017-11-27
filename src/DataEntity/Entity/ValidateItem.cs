@@ -13,7 +13,7 @@ namespace Gboxt.Common.DataModel
     {
         [JsonProperty("results", NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidateResult> Result = new List<ValidateResult>();
-        
+
         public void TryAdd(ValidateResult row)
         {
             Result.Add(row);
@@ -62,8 +62,19 @@ namespace Gboxt.Common.DataModel
         /// <returns></returns>
         public override string ToString()
         {
-            return succeed ? "" : Items.Select(p => $"[{p.Caption}]{p.Message }").LinkToString();
+            return succeed ? "" : Items.Select(p => p.Message).LinkToString('。');
         }
+
+        /// <summary>
+        /// 到消息文本
+        /// </summary>
+        /// <returns></returns>
+        public string ToJson()
+        {
+            return succeed ? "{}" : Items.Select(p => $"\"{p.Name}\":\"{p.Message }\"").LinkToString("{", ",", "}");
+        }
+
+
         public void Add(string message)
         {
             Messages.Add(message);
@@ -76,7 +87,7 @@ namespace Gboxt.Common.DataModel
                 Name = field,
                 Caption = caption,
                 Message = "不能为空"
-            }); 
+            });
         }
 
         public void Add(string caption, string field, string message)

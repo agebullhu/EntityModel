@@ -47,6 +47,8 @@
     <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,9 +60,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiContract\ApiResult.cs" />
-    <Compile Include="ApiContract\ErrorMessage.cs" />
-    <Compile Include="ApiContract\IApiArgument.cs" />
+    <Compile Include="ApiContract\ApiArgument\Argument.cs" />
+    <Compile Include="ApiContract\ApiArgument\PageArgument.cs" />
+    <Compile Include="ApiContract\ApiResult\ApiArrayResult.cs" />
+    <Compile Include="ApiContract\ApiResult\ApiPageResult.cs" />
+    <Compile Include="ApiContract\ApiResult\ApiResult.cs" />
+    <Compile Include="ApiContract\ApiResult\ApiStatsResult.cs" />
+    <Compile Include="ApiContract\ApiResult\ApiValueResult.cs" />
+    <Compile Include="ApiContract\ApiResult\IApiResult.cs" />
+    <Compile Include="ApiContract\ApiResult\IApiResultData.cs" />
+    <Compile Include="ApiContract\ApiResult\IApiStatusResult.cs" />
+    <Compile Include="ApiContract\ErrorCode.cs" />
+    <Compile Include="ApiContract\ApiArgument\IApiArgument.cs" />
     <Compile Include="Auth\IBearValidater.cs" />
     <Compile Include="Auth\ILoginUserInfo.cs" />
     <Compile Include="Context\ApiContext.cs" />
@@ -107,9 +118,7 @@
       <Name>Yizuan.Service.Fundtion</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ApiExtend\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>COPY $(TargetPath) "..\..\..\Lib\" /Y

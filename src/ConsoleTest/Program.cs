@@ -6,11 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yizuan.Service.Api;
+using Yizuan.Service.Api.WebApi;
 
 namespace ConsoleTest
 {
     class Program
     {
+        static void Main(string[] args)
+        {
+            var caller = new WebApiCaller
+            {
+                Host = "http://10.5.202.234/"
+            };
+            caller.Get("age.html");
+        }
         //private static ApiValueResult<DeviceArgument> test = new ApiValueResult<DeviceArgument>
         //{
         //    Result = true,
@@ -22,7 +31,7 @@ namespace ConsoleTest
 
         //    }
         //};
-        static void Main(string[] args)
+        /*static void Main(string[] args)
         {
             string result = "{}";//JsonConvert.SerializeObject(test);
             StringBuilder code = new StringBuilder();
@@ -108,6 +117,6 @@ namespace ConsoleTest
                 code[code.Length - 1] = ' ';
             Console.WriteLine(code.ToString());
             Console.ReadKey();
-        }
+        }*/
     }
 }

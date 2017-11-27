@@ -35,6 +35,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ApiHelper\bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NServiceKit.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Common.1.0.31\lib\net35\NServiceKit.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Redis, Version=1.0.20.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Redis.1.0.20\lib\net35\NServiceKit.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Text, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceKit.Text.1.0.10\lib\net35\NServiceKit.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,11 +62,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ApiContract\Yizuan.Service.ApiContract.csproj">
       <Project>{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}</Project>
       <Name>Yizuan.Service.ApiContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebApi\Yizuan.Service.WebApi.csproj">
+      <Project>{35A5FB95-C487-452C-AA43-9023EE97AB4C}</Project>
+      <Name>Yizuan.Service.WebApi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

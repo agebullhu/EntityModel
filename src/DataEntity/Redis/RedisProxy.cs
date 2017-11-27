@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-using Agebull.Common.Base;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 using Newtonsoft.Json;
@@ -39,7 +37,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 地址
         /// </summary>
-        public static readonly string Address;
+        static readonly string Address;
 
         /// <summary>
         /// 密码
@@ -84,6 +82,10 @@ namespace Agebull.Common.DataModel.Redis
         public static bool IsTest { get; set; }
 
         #endregion
+
+        #region 构造
+
+
         /// <summary>
         /// 锁对象
         /// </summary>
@@ -234,6 +236,12 @@ namespace Agebull.Common.DataModel.Redis
                 Monitor.Exit(LockObj);
             }
         }
+
+
+        #endregion
+
+        #region 文本读写
+
         /// <summary>
         /// 删除KEY
         /// </summary>
@@ -252,78 +260,6 @@ namespace Agebull.Common.DataModel.Redis
             var keys = Client.SearchKeys(pattern);
             Client.RemoveAll(keys);
         }
-
-        /// <summary>
-        /// 读缓存
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="id">键的组合</param>
-        /// <param name="def">默认值</param>
-        /// <returns></returns>
-        public TData GetEntity<TData>(int id, TData def = null) where TData : class, new()
-        {
-            return id == 0 ? def ?? new TData() : Get<TData>(DataKey<TData>(id)) ?? def ?? new TData();
-        }
-
-        /// <summary>
-        /// 读缓存
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="key">数据键</param>
-        /// <param name="def">默认值</param>
-        /// <returns></returns>
-        public TData GetEntity<TData>(string key, TData def = null) where TData : class, new()
-        {
-            return Get<TData>(key) ?? def ?? new TData();
-        }
-
-        /// <summary>
-        /// 缓存数据
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="data">键的组合</param>
-        /// <returns></returns>
-        public void SetEntity<TData>(TData data) where TData : class, IIdentityData
-        {
-            Set(DataKey(data), data);
-        }
-
-        /// <summary>
-        /// 缓存这些对象
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="datas">数据</param>
-        /// <param name="keyFunc">设置键的方法,可为空</param>
-        /// <returns></returns>
-        public void CacheData<TData>(IEnumerable<TData> datas, Func<TData, string> keyFunc = null) where TData : class, IIdentityData, new()
-        {
-            if (keyFunc == null)
-                keyFunc = DataKey;
-            var key = keyFunc(new TData());
-            Client.Set(key, DateTime.Now);
-            foreach (var data in datas)
-            {
-                Set(keyFunc(data), data);
-            }
-        }
-
-        /// <summary>
-        /// 缓存这些对象
-        /// </summary>
-        /// <typeparam name="TDataAccess"></typeparam>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="keyFunc">设置键的方法,可为空</param>
-        /// <returns></returns>
-        public void CacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData>, new()
-            where TData : EditDataObject, IIdentityData, new()
-        {
-            var access = new TDataAccess();
-            var datas = access.All();
-            CacheData(datas, keyFunc);
-        }
-
-        #region 文本读写
 
         /// <summary>
         /// 取文本
@@ -539,6 +475,78 @@ namespace Agebull.Common.DataModel.Redis
 
         #endregion
 
+        #region 实体缓存支持
+
+        /// <summary>
+        /// 读缓存
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="id">键的组合</param>
+        /// <param name="def">默认值</param>
+        /// <returns></returns>
+        public TData GetEntity<TData>(int id, TData def = null) where TData : class, new()
+        {
+            return id == 0 ? def ?? new TData() : Get<TData>(DataKey<TData>(id)) ?? def ?? new TData();
+        }
+
+        /// <summary>
+        /// 读缓存
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="key">数据键</param>
+        /// <param name="def">默认值</param>
+        /// <returns></returns>
+        public TData GetEntity<TData>(string key, TData def = null) where TData : class, new()
+        {
+            return Get<TData>(key) ?? def ?? new TData();
+        }
+
+        /// <summary>
+        /// 缓存数据
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="data">键的组合</param>
+        /// <returns></returns>
+        public void SetEntity<TData>(TData data) where TData : class, IIdentityData
+        {
+            Set(DataKey(data), data);
+        }
+
+        /// <summary>
+        /// 缓存这些对象
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="datas">数据</param>
+        /// <param name="keyFunc">设置键的方法,可为空</param>
+        /// <returns></returns>
+        public void CacheData<TData>(IEnumerable<TData> datas, Func<TData, string> keyFunc = null) where TData : class, IIdentityData, new()
+        {
+            if (keyFunc == null)
+                keyFunc = DataKey;
+            var key = keyFunc(new TData());
+            Client.Set(key, DateTime.Now);
+            foreach (var data in datas)
+            {
+                Set(keyFunc(data), data);
+            }
+        }
+
+        /// <summary>
+        /// 缓存这些对象
+        /// </summary>
+        /// <typeparam name="TDataAccess"></typeparam>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="keyFunc">设置键的方法,可为空</param>
+        /// <returns></returns>
+        public void CacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
+            where TDataAccess : MySqlTable<TData>, new()
+            where TData : EditDataObject, IIdentityData, new()
+        {
+            var access = new TDataAccess();
+            var datas = access.All();
+            CacheData(datas, keyFunc);
+        }
+
         /// <summary>
         /// 默认的数据键名称生成器
         /// </summary>
@@ -654,30 +662,13 @@ namespace Agebull.Common.DataModel.Redis
             if (id > 0)
                 Client.Remove(DataKey<TData>(id));
         }
-    }
-    /// <summary>
-    /// Redis的Db范围
-    /// </summary>
-    public class RedisDbScope : ScopeBase
-    {
-        private readonly RedisProxy _proxy;
-        private readonly RedisClient _client;
 
-        public static RedisDbScope CreateScope(RedisProxy proxy, long db)
-        {
-            return new RedisDbScope(proxy, db);
-        }
+        #endregion
 
-        private RedisDbScope(RedisProxy proxy, long db)
-        {
-            _proxy = proxy;
-            _client = proxy.ChangeDb(db);
-        }
+        #region 锁
 
-        /// <summary>清理资源</summary>
-        protected override void OnDispose()
-        {
-            _proxy.ResetClient(_client);
-        }
+        
+
+        #endregion
     }
 }

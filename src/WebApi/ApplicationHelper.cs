@@ -42,6 +42,24 @@ namespace Yizuan.Service.Api.WebApi
             HttpHandler.Handlers.Add(new BearerHandler());
         }
         /// <summary>
+        /// 初始化，必须先调用
+        /// </summary>
+        public static void InitializeNoBearer()
+        {
+            if (IsInitialize)
+                return;
+            IsInitialize = true;
+
+            // 调用ID的取得
+            LogRecorder.GetRequestIdFunc = () => ApiContext.RequestContext?.RequestId ?? Guid.NewGuid();
+            // 跨域支持
+            HttpHandler.Handlers.Add(new CorsHandler());
+            // 日志支持
+            HttpHandler.Handlers.Add(new HttpIoLogHandler());
+            // 身份验证上下文校验与处理
+            //HttpHandler.Handlers.Add(new BearerHandler());
+        }
+        /// <summary>
         /// 注册系统处理器
         /// </summary>
         /// <param name="handler"></param>

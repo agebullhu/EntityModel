@@ -121,7 +121,7 @@ namespace Yizuan.Service.Api.WebApi
         /// <summary>
         ///     构造上下文
         /// </summary>
-        private void CreateApiContext(ILoginUserInfo customer, string token)
+        private void CreateApiContext(LoginUserInfo customer, string token)
         {
             ApiContext.SetCustomer(customer);
             ApiContext.SetRequestContext(new InternalCallContext
@@ -147,7 +147,11 @@ namespace Yizuan.Service.Api.WebApi
                 context = proxy.Get<ApiContext>(ApiContext.GetCacheKey(token));
             }
             if (context?.Request == null || context.LoginUser == null)
-                return ErrorCode.DenyAccess;
+            {
+                //return ErrorCode.DenyAccess;
+                ApiContext.TryCheckByAnymouse();
+                return 0;
+            }
             var checker = IocHelper.Create<IBearValidater>();
             var result = checker.ValidateServiceKey(context.Request.ServiceKey);
             if (!result.Result)

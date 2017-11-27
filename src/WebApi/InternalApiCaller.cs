@@ -547,7 +547,19 @@ namespace Yizuan.Service.Api.WebApi
                             return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "发生未知类型的异常");
                     }
                 }
-
+                var codes = e.Message.Split(new[] {'(', ')'},StringSplitOptions.RemoveEmptyEntries);
+                if (codes.Length == 3)
+                {
+                    int s;
+                    if (int.TryParse(codes[1], out s))
+                    {
+                        switch (s)
+                        {
+                            case 404:
+                                return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "服务器内部错误","页面不存在");
+                        }
+                    }
+                }
                 using (var response = e.Response)
                 {
                     var receivedStream = response.GetResponseStream();
