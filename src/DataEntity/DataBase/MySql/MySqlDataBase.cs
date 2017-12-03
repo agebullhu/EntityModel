@@ -118,7 +118,7 @@ namespace Gboxt.Common.DataModel.MySql
 
         /// <summary>
         ///     连接字符串
-        ///     Database=test;Data Source=127.0.0.1;User Id=root;Password=123456;pooling=false;CharSet=utf8;port=3306
+        ///     Database=test;Data Source=localhost;User Id=root;Password=123456;pooling=false;CharSet=utf8;port=3306
         /// </summary>
         private string _connectionString;
 
@@ -211,8 +211,7 @@ namespace Gboxt.Common.DataModel.MySql
                         _connection.Close();
                     }
                     Connections.Remove(_connection);
-                    //Debug.WriteLine(Connections.Count, "未关闭总数");
-                    //Trace.WriteLine(_count--, "Close");
+                    LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
                     _connection = null;
                 }
             }
@@ -682,7 +681,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns>参数</returns>
         public static MySqlParameter CreateParameter(string parameterName, object value)
         {
-            return CreateParameter(parameterName, value, ToSqlDbType(value.GetType().Name));
+            return CreateParameter(parameterName, value, ToSqlDbType(value?.GetType().Name));
         }
 
         /// <summary>

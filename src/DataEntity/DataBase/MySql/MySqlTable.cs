@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Agebull.Common.Logging;
 using MySql.Data.MySqlClient;
 
 #endregion
@@ -1517,6 +1518,7 @@ namespace Gboxt.Common.DataModel.MySql
             using (var cmd = DataBase.CreateCommand())
             {
                 var isIdentitySql = SetInsertCommand(entity, cmd);
+                MySqlDataBase.TraceSql(cmd);
                 if (isIdentitySql)
                 {
                     var key = cmd.ExecuteScalar();
@@ -1547,6 +1549,7 @@ namespace Gboxt.Common.DataModel.MySql
             using (var cmd = DataBase.CreateCommand())
             {
                 SetUpdateCommand(entity, cmd);
+                MySqlDataBase.TraceSql(cmd);
                 cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
 {UpdateSqlCode}
 {AfterUpdateSql(PrimaryKeyConditionSQL)}";

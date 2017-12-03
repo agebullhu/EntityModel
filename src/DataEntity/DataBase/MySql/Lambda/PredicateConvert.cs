@@ -532,25 +532,13 @@ namespace Gboxt.Common.DataModel.MySql
             var vl = GetValue(expression);
             if (vl == null)
             {
-                return $"?{_condition.AddParameter(vl)}";
-            }
-
-            var ilist = vl as IList<int>;
-            if (ilist != null)
-            {
-                return string.Join(",", ilist);
-            }
-            var slist = vl as IList<string>;
-            if (slist != null)
-            {
-                return "'" + string.Join("','", slist) + "'";
-            }
-            var dlist = vl as IList<DateTime>;
-            if (dlist != null)
-            {
-                return "'" + string.Join("','", dlist) + "'";
+                return $"?{_condition.AddParameter((object) null)}";
             }
             if (vl is string)
+            {
+                return $"?{_condition.AddParameter(vl)}";
+            }
+            if (vl is DateTime)
             {
                 return $"?{_condition.AddParameter(vl)}";
             }
@@ -560,34 +548,25 @@ namespace Gboxt.Common.DataModel.MySql
                 if (!vlType.IsArray)
                     return $"'{(int)vl}'";
                 var array = vl as IEnumerable;
-                if (array != null)
+                if (array == null)
+                    return $"'{(int) vl}'";
+                StringBuilder sb = new StringBuilder();
+                sb.Append("'");
+                bool first = true;
+                foreach (var v in array)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("'");
-                    bool first = true;
-                    foreach (var v in array)
-                    {
-                        if (first)
-                            first = false;
-                        else
-                            sb.Append(',');
-                        sb.Append($"'{(int)v}'");
-                    }
-                    return sb.ToString();
+                    if (first)
+                        first = false;
+                    else
+                        sb.Append(',');
+                    sb.Append($"'{(int)v}'");
                 }
-                return $"'{(int)vl}'";
+                return sb.ToString();
             }
-            if (vlType.IsArray)
+            var enumerable = vl as IEnumerable;
+            if (enumerable != null)
             {
-                var array = vl as IEnumerable;
-                if (array != null)
-                {
-                    return array.LinkToString("'", "','", "'");
-                }
-            }
-            if (vlType == typeof(DateTime))
-            {
-                return $"?{_condition.AddParameter(vl)}";
+                return enumerable.LinkToString("'", "','", "'");
             }
             if (vlType.IsValueType && vlType.IsBaseType())
             {

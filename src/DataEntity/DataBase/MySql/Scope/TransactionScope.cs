@@ -9,6 +9,7 @@
 #region 引用
 
 using System;
+using Agebull.Common.Logging;
 
 #endregion
 
@@ -144,10 +145,12 @@ namespace Gboxt.Common.DataModel.MySql
             if (!IsSucceed)
             {
                 _dataBase.Transaction.Rollback();
+                LogRecorder.MonitorTrace("事务回滚");
             }
             else
             {
                 _dataBase.Transaction.Commit();
+                LogRecorder.MonitorTrace("事务提交");
             }
             if (_beginType == 2)
             {

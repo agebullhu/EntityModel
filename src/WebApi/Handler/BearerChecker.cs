@@ -64,6 +64,7 @@ namespace Yizuan.Service.Api.WebApi
 
             switch (token[0])
             {
+                default:
                 case '*':
                     ApiContext.SetRequestContext(new InternalCallContext
                     {
@@ -87,7 +88,6 @@ namespace Yizuan.Service.Api.WebApi
                     });
                     return CheckAccessToken(request, token);
             }
-            return ErrorCode.Auth_Device_Unknow;
         }
 
         /// <summary>
@@ -134,6 +134,7 @@ namespace Yizuan.Service.Api.WebApi
                 UserId = customer.UserId
             });
             ApiContext.Current.Cache();
+            LogRecorder.MonitorTrace(JsonConvert.SerializeObject(customer));
         }
 
         /// <summary>
@@ -215,7 +216,7 @@ namespace Yizuan.Service.Api.WebApi
             catch (Exception e)
             {
                 LogRecorder.Exception(e);
-                return ErrorCode.Auth_AccessToken_Unknow;
+                return ErrorCode.UnknowError;
             }
             if (!result.Result)
                 return result.Status.ErrorCode;
