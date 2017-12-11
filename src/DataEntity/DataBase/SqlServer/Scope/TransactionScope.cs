@@ -56,17 +56,17 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// <param name="dataBase">数据库对象</param>
         private TransactionScope(SqlServerDataBase dataBase)
         {
-            _preScope = CurrentScope;
-            CurrentScope = this;
+            //_preScope = CurrentScope;
+            //CurrentScope = this;
 
-            _dataBase = dataBase;
-            dataBase.Open();
-            if (dataBase.Transaction != null)
-            {
-                return;
-            }
-            _beginType = 1;
-            dataBase.Transaction = dataBase.Connection.BeginTransaction();
+            //_dataBase = dataBase;
+            //dataBase.Open();
+            //if (dataBase.Transaction != null)
+            //{
+            //    return;
+            //}
+            //_beginType = 1;
+            //dataBase.Transaction = dataBase.Connection.BeginTransaction();
         }
 
         /// <summary>
@@ -96,10 +96,10 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// </summary>
         public static void EndAll()
         {
-            while (CurrentScope != null)
-            {
-                CurrentScope.DoDispose();
-            }
+            //while (CurrentScope != null)
+            //{
+            //    CurrentScope.DoDispose();
+            //}
         }
 
         /// <summary>
@@ -118,12 +118,12 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// <param name="succeed">是否成功</param>
         public void SetState(bool succeed)
         {
-            IsSucceed = succeed;
-            //失败向上冒泡，成功由上层自行决定
-            if (_beginType > 0 && !succeed && _preScope != null)
-            {
-                _preScope.SetState(false);
-            }
+            //IsSucceed = succeed;
+            ////失败向上冒泡，成功由上层自行决定
+            //if (_beginType > 0 && !succeed && _preScope != null)
+            //{
+            //    _preScope.SetState(false);
+            //}
         }
 
         /// <summary>
@@ -131,27 +131,27 @@ namespace Gboxt.Common.DataModel.SqlServer
         /// </summary>
         private void DoDispose()
         {
-            if (CurrentScope == this)
-            {
-                CurrentScope = _preScope;
-            }
-            if (_beginType == 0)
-            {
-                return;
-            }
-            if (!IsSucceed)
-            {
-                _dataBase.Transaction.Rollback();
-            }
-            else
-            {
-                _dataBase.Transaction.Commit();
-            }
-            if (_beginType == 2)
-            {
-                _dataBase.Connection.Close();
-            }
-            _beginType = 0;
+            //if (CurrentScope == this)
+            //{
+            //    CurrentScope = _preScope;
+            //}
+            //if (_beginType == 0)
+            //{
+            //    return;
+            //}
+            //if (!IsSucceed)
+            //{
+            //    _dataBase.Transaction.Rollback();
+            //}
+            //else
+            //{
+            //    _dataBase.Transaction.Commit();
+            //}
+            //if (_beginType == 2)
+            //{
+            //    _dataBase.Connection.Close();
+            //}
+            //_beginType = 0;
         }
     }
 }

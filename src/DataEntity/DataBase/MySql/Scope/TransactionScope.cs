@@ -57,18 +57,18 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="dataBase">数据库对象</param>
         private TransactionScope(MySqlDataBase dataBase)
         {
-            dbScope = MySqlDataBaseScope.CreateScope(dataBase);
-            _preScope = CurrentScope;
-            CurrentScope = this;
+            //dbScope = MySqlDataBaseScope.CreateScope(dataBase);
+            //_preScope = CurrentScope;
+            //CurrentScope = this;
 
-            _dataBase = dataBase;
-            dataBase.Open();
-            if (dataBase.Transaction != null)
-            {
-                return;
-            }
-            _beginType = 1;
-            dataBase.Transaction = dataBase.Connection.BeginTransaction();
+            //_dataBase = dataBase;
+            //dataBase.Open();
+            //if (dataBase.Transaction != null)
+            //{
+            //    return;
+            //}
+            //_beginType = 1;
+            //dataBase.Transaction = dataBase.Connection.BeginTransaction();
         }
 
         /// <summary>
@@ -90,8 +90,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         void IDisposable.Dispose()
         {
-            DoDispose();
-            dbScope.Dispose();
+            //DoDispose();
+            //dbScope.Dispose();
         }
 
         /// <summary>
@@ -99,10 +99,10 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public static void EndAll()
         {
-            while (CurrentScope != null)
-            {
-                CurrentScope.DoDispose();
-            }
+            //while (CurrentScope != null)
+            //{
+            //    CurrentScope.DoDispose();
+            //}
         }
 
         /// <summary>
@@ -121,12 +121,12 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="succeed">是否成功</param>
         public void SetState(bool succeed)
         {
-            IsSucceed = succeed;
-            //失败向上冒泡，成功由上层自行决定
-            if (_beginType > 0 && !succeed)
-            {
-                _preScope?.SetState(false);
-            }
+            //IsSucceed = succeed;
+            ////失败向上冒泡，成功由上层自行决定
+            //if (_beginType > 0 && !succeed)
+            //{
+            //    _preScope?.SetState(false);
+            //}
         }
 
         /// <summary>
@@ -134,29 +134,29 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         private void DoDispose()
         {
-            if (CurrentScope == this)
-            {
-                CurrentScope = _preScope;
-            }
-            if (_beginType == 0)
-            {
-                return;
-            }
-            if (!IsSucceed)
-            {
-                _dataBase.Transaction.Rollback();
-                LogRecorder.MonitorTrace("事务回滚");
-            }
-            else
-            {
-                _dataBase.Transaction.Commit();
-                LogRecorder.MonitorTrace("事务提交");
-            }
-            if (_beginType == 2)
-            {
-                _dataBase.Connection.Close();
-            }
-            _beginType = 0;
+            //if (CurrentScope == this)
+            //{
+            //    CurrentScope = _preScope;
+            //}
+            //if (_beginType == 0)
+            //{
+            //    return;
+            //}
+            //if (!IsSucceed)
+            //{
+            //    _dataBase.Transaction.Rollback();
+            //    LogRecorder.MonitorTrace("事务回滚");
+            //}
+            //else
+            //{
+            //    _dataBase.Transaction.Commit();
+            //    LogRecorder.MonitorTrace("事务提交");
+            //}
+            //if (_beginType == 2)
+            //{
+            //    _dataBase.Connection.Close();
+            //}
+            //_beginType = 0;
         }
     }
 }
