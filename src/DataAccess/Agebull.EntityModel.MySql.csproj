@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Description>Agebull.EntityModel.MySql</Description>
+    <AssemblyTitle>Agebull.Extends</AssemblyTitle>
     <Version>1.0.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <DebugType>portable</DebugType>
-    <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
+    <PackageId>Agebull.EntityModel.MySql</PackageId>
+    <PackageTags>Agebull.EntityModel.MySql</PackageTags>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
@@ -18,20 +18,22 @@
     <PackageVersion>1.0.0.2</PackageVersion>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard2.0' ">2.0.1</NetStandardImplicitPackageVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    <Description>Cool!</Description>
-    <PackageReleaseNotes>Cool!</PackageReleaseNotes>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Product>Agebull.EntityModel.MySql</Product>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <PackageReference Include="MySql.Data" Version="6.9.10" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -41,37 +43,38 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.4.0" />
-    <PackageReference Include="System.Threading" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
+    <PackageReference Include="MySql.Data" Version="6.10.5" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.0" />
   </ItemGroup>
-  
   <ItemGroup>
-    <Compile Remove="Redis\RedisClientEx.cs" />
-    <Compile Remove="Redis\RedisDbScope.cs" />
-    <Compile Remove="Redis\RedisProxy.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    <Compile Remove="Interface\**" />
+    <Compile Remove="SQLite\**" />
+    <Compile Remove="SqlServer\**" />
+    <EmbeddedResource Remove="Interface\**" />
+    <EmbeddedResource Remove="SQLite\**" />
+    <EmbeddedResource Remove="SqlServer\**" />
+    <None Remove="Interface\**" />
+    <None Remove="SQLite\**" />
+    <None Remove="SqlServer\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
-    <ProjectReference Include="..\DataEntity\Agebull.Common.DataEntity.Core.csproj" />
+    <PackageReference Include="MySql.Data" Version="6.10.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="XCOPY $(ProjectDir)\bin\$(ConfigurationName)\*.nupkg &quot;$(SolutionDir)publish\&quot; /Y" />
   </Target>
-
 
 </Project>

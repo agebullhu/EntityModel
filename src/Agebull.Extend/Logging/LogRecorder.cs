@@ -732,7 +732,7 @@ namespace Agebull.Common.Logging
         {
             while (true)
             {
-                Thread.Sleep(3);
+                Thread.SpinWait(3);
                 RecordInfo[] infos;
                 using (ThreadLockScope.Scope(recordInfos))
                 {
@@ -741,7 +741,7 @@ namespace Agebull.Common.Logging
                 }
                 foreach (var info in infos)
                 {
-                    Thread.Sleep(0);//释放一次时间片,以保证主要线程的流畅性
+                    Thread.SpinWait(0);//释放一次时间片,以保证主要线程的流畅性
                     WriteToLog(info);
                 }
             }
@@ -756,7 +756,7 @@ namespace Agebull.Common.Logging
                 if (Listener != null)
                 {
                     Listener.Trace(info);
-                    Thread.Sleep(0);
+                    Thread.SpinWait(0);
                 }
                 else
                 {

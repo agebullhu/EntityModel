@@ -9,28 +9,28 @@
 
   <PropertyGroup>
     <Description>Cool!</Description>
-    <AssemblyTitle>Agebull.Extends</AssemblyTitle>
+    <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
     <Version>1.0.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <DebugType>portable</DebugType>
-    <AssemblyName>Agebull.Common.Extend.Core</AssemblyName>
-    <PackageId>Agebull.Common.Extend.Core</PackageId>
-    <PackageTags>Agebull.Common.Extend.Core</PackageTags>
+    <AssemblyName>Agebull.Common.Extend</AssemblyName>
+    <PackageId>Agebull.Common.Extend</PackageId>
+    <PackageTags>Agebull.Common.Extend</PackageTags>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
     <PackageVersion>1.0.0.2</PackageVersion>
-    <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    <Product>Agebull.Common.Extend.Core</Product>
+    <Product>Agebull.Common.Extend</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>Cool!</PackageReleaseNotes>

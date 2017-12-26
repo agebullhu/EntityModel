@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Agebull.Common.DataEntity.Core</Description>
+    <Description>Agebull.EntityModel.Core</Description>
     <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>1.0.1.1</Version>
+    <Version>1.0.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <DebugType>portable</DebugType>
-    <AssemblyName>Agebull.Extends</AssemblyName>
-    <PackageId>Agebull.Common.DataEntity.Core</PackageId>
-    <PackageTags>Agebull.Common.DataEntity.Core</PackageTags>
+    <AssemblyName>Agebull.EntityModel.Core</AssemblyName>
+    <PackageId>Agebull.EntityModel.Core</PackageId>
+    <PackageTags>Agebull.EntityModel.Core</PackageTags>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
@@ -23,7 +23,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    <Product>Agebull.Common.DataEntity.Core</Product>
+    <Product>Agebull.EntityModel.Core</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
@@ -76,6 +76,14 @@
     <None Remove="Agebull.Common.DataEntity.csproj.vspscc" />
     <None Remove="app.config" />
     <None Remove="packages.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="DataBase\Interface\IDataBase.cs" />
+    <Compile Include="DataBase\Interface\IDataTable.cs" />
+    <Compile Include="DataBase\Interface\ITransactionScope.cs" />
+    <Compile Include="DataBase\Interface\LambdaItem.cs" />
+    <Compile Include="DataBase\Interface\TableSql.cs" />
   </ItemGroup>
 
   <ItemGroup>

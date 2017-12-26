@@ -10,16 +10,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Data.Common;
-using MySql.Data.MySqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using Agebull.Common.Base;
-using Agebull.Common.Logging;
-using Newtonsoft.Json.Serialization;
 
 #endregion
 
