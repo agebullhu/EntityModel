@@ -63,8 +63,8 @@ namespace Agebull.Common.DataModel
         /// <param name="v"></param>
         public NameValue(string n, object v)
         {
-            this.name = n;
-            this.value = v == null ? null : v.ToString();
+            name = n;
+            value = v == null ? null : v.ToString();
         }
     }
     /// <summary>
@@ -87,8 +87,8 @@ namespace Agebull.Common.DataModel
         /// <param name="v"></param>
         public NameValue2(string n, object v)
         {
-            this.name = n;
-            this.value = v;
+            name = n;
+            value = v;
         }
     }
 }

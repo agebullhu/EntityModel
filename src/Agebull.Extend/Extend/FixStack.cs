@@ -38,7 +38,7 @@ namespace System.Linq
             using (ThreadLockScope.Scope(this))
             {
                 _value = new List<T>();
-                this.Current = this.FixValue;
+                Current = FixValue;
             }
         }
         /// <summary>
@@ -98,12 +98,12 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (Equals(value, default(T)) || this.FixStackBottom)
+                if (Equals(value, default(T)) || FixStackBottom)
                 {
                     return;
                 }
-                this.FixStackBottom = true;
-                this.FixValue = this.Current = value;
+                FixStackBottom = true;
+                FixValue = Current = value;
             }
         }
         /// <summary>
@@ -114,12 +114,12 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (Equals(value, default(T)) || this.FixStackBottom)
+                if (Equals(value, default(T)) || FixStackBottom)
                 {
                     return;
                 }
-                this.FixStackBottom = true;
-                this.FixValue = this.Current = value;
+                FixStackBottom = true;
+                FixValue = Current = value;
                 int cnt = _value.Count;
                 _value.Clear();
                 for (int i = 0; i < cnt; i++)
@@ -141,9 +141,9 @@ namespace System.Linq
                 {
                     return;
                 }
-                this.IsEmpty = false;
-                this._value.Add(value);
-                this.Current = value;
+                IsEmpty = false;
+                _value.Add(value);
+                Current = value;
             }
         }
 
@@ -154,9 +154,9 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                this.IsEmpty = false;
-                this._value.Add(default(T));
-                this.Current = default(T);
+                IsEmpty = false;
+                _value.Add(default(T));
+                Current = default(T);
             }
         }
 
@@ -168,8 +168,8 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                this.IsEmpty = false;
-                this._value.Add(this.Current);
+                IsEmpty = false;
+                _value.Add(Current);
             }
         }
 
@@ -180,15 +180,15 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (this._value.Count == 0)
+                if (_value.Count == 0)
                 {
                     return FixValue;
                 }
-                this._value.RemoveAt(this._value.Count - 1);
-                this.IsEmpty = this._value.Count == 0;
-                return this.Current = this.IsEmpty
-                    ? this.FixValue
-                    : this._value[this._value.Count - 1];
+                _value.RemoveAt(_value.Count - 1);
+                IsEmpty = _value.Count == 0;
+                return Current = IsEmpty
+                    ? FixValue
+                    : _value[_value.Count - 1];
             }
         }
         /// <summary>
@@ -199,8 +199,8 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (this._value != null)
-                    this._value.Remove(value);
+                if (_value != null)
+                    _value.Remove(value);
             }
         }
 
@@ -211,10 +211,10 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                this.IsEmpty = this._value.Count == 0;
-                this.Current = this.IsEmpty
-                    ? this.FixValue
-                    : this._value[this._value.Count - 1];
+                IsEmpty = _value.Count == 0;
+                Current = IsEmpty
+                    ? FixValue
+                    : _value[_value.Count - 1];
             }
         }
     }
@@ -276,12 +276,12 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (this.FixStackBottom)
+                if (FixStackBottom)
                 {
                     return;
                 }
-                this.FixStackBottom = true;
-                this.FixValue = this.Current = value;
+                FixStackBottom = true;
+                FixValue = Current = value;
             }
         }
 
@@ -293,9 +293,9 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                this.IsEmpty = false;
-                this._value.Add(value);
-                this.Current = value;
+                IsEmpty = false;
+                _value.Add(value);
+                Current = value;
             }
         }
 
@@ -307,8 +307,8 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                this.IsEmpty = false;
-                this._value.Add(this.Current);
+                IsEmpty = false;
+                _value.Add(Current);
             }
         }
         /// <summary>
@@ -319,7 +319,7 @@ namespace System.Linq
             using (ThreadLockScope.Scope(this))
             {
                 _value = new List<T>();
-                this.Current = this.FixValue;
+                Current = FixValue;
             }
         }
         /// <summary>
@@ -336,15 +336,15 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (this._value.Count == 0)
+                if (_value.Count == 0)
                 {
                     return;
                 }
-                this._value.RemoveAt(this._value.Count - 1);
-                this.IsEmpty = this._value.Count == 0;
-                this.Current = this.IsEmpty
-                    ? this.FixValue
-                    : this._value[this._value.Count - 1];
+                _value.RemoveAt(_value.Count - 1);
+                IsEmpty = _value.Count == 0;
+                Current = IsEmpty
+                    ? FixValue
+                    : _value[_value.Count - 1];
             }
         }
     }

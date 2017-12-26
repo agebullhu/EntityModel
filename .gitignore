@@ -12,3 +12,7 @@ Debug
 /src/Agebull.Rpc.Cpp/publish/Rpc Service.rar
 /src/Agebull.Rpc.Cpp
 /doc/~$tityModel基础框架中包含的配置项说明.docx
+/src/publish/*.nupkg
+/src/DataEntity/*.vspscc
+/src/20171225/*.nupkg
+*.vspscc

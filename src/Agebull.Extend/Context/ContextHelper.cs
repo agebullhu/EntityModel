@@ -1,5 +1,10 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+#if !NETSTANDARD2_0
 using System.Runtime.Remoting.Messaging;
+#endif
 
 namespace Agebull.Common
 {
@@ -8,10 +13,17 @@ namespace Agebull.Common
     /// </summary>
     public static class ContextHelper
     {
+#if !NETSTANDARD2_0
         /// <summary>
         /// 单元测试时使用的字典
         /// </summary>
         private static readonly Dictionary<string, object> Contexts = new Dictionary<string, object>();
+#else
+        /// <summary>
+        /// 单元测试时使用的字典
+        /// </summary>
+        private static readonly Dictionary<string, object> Contexts = new Dictionary<string, object>();
+#endif
 
         /// <summary>
         /// 得到调用逻辑上下文对象
@@ -20,10 +32,25 @@ namespace Agebull.Common
             where T : class
         {
             if (!InUnitTest)
+            {
+#if !NETSTANDARD2_0
                 return CallContext.LogicalGetData(name) as T;
+#else
+                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
+                if (slot == null)
+                {
+                    return null;
+                }
+                return Thread.GetData(slot) as T;
+#endif
+            }
             object value;
-            if (!Contexts.TryGetValue(name, out value))
-                return null;
+            name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
+            lock (Contexts)
+            {
+                if (!Contexts.TryGetValue(name, out value))
+                    return null;
+            }
             return value as T;
         }
 
@@ -35,13 +62,23 @@ namespace Agebull.Common
         {
             if (!InUnitTest)
             {
+#if !NETSTANDARD2_0
                 CallContext.LogicalSetData(name, value);
-                return;
+#else
+
+                var key = $"ctx_bl_{name}";
+                var slot = Thread.GetNamedDataSlot(key) ?? Thread.AllocateNamedDataSlot(key);
+                Thread.SetData(slot, value);
+#endif
             }
-            if (Contexts.ContainsKey(name))
-                Contexts[name] = value;
-            else
-                Contexts.Add(name, value);
+            name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
+            lock (Contexts)
+            {
+                if (Contexts.ContainsKey(name))
+                    Contexts[name] = value;
+                else
+                    Contexts.Add(name, value);
+            }
         }
 
         /// <summary>
@@ -51,11 +88,24 @@ namespace Agebull.Common
         {
             if (!InUnitTest)
             {
+#if !NETSTANDARD2_0
                 CallContext.LogicalSetData(name, null);
+#else
+                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
+                if (slot != null)
+                {
+                    Thread.FreeNamedDataSlot($"ctx_bl_{name}");
+                }
+#endif
                 return;
             }
-            if (Contexts.ContainsKey(name))
-                Contexts.Remove(name);
+            name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
+            lock (Contexts)
+            {
+                if (Contexts.ContainsKey(name))
+                    Contexts.Remove(name);
+
+            }
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using System;
 using Agebull.Zmq.Rpc;
-using ServiceStack;
 
 namespace Agebull.Common.DataModel
 {

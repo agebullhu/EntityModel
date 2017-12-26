@@ -7,13 +7,10 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Runtime.Serialization;
 
-#if SERVICE
-using System.Data.Common ;
+#if !NETSTANDARD2_0
 using System.Data.SqlClient ;
-using System.Runtime.Serialization ;
 #endif
 
 #endregion
@@ -79,7 +76,7 @@ namespace Agebull.Common
         /// <param name="innerException"> 内联消息 </param>
         public AgebullSystemException(string message , Exception innerException) : base(message , innerException)
         {
-            this.ErrorType = SystemErrorType.UnknowError ;
+            ErrorType = SystemErrorType.UnknowError ;
         }
 
         /// <summary>
@@ -91,8 +88,8 @@ namespace Agebull.Common
         /// <param name="innermessage"> 内部扩展消息 </param>
         public AgebullSystemException(string message , SystemErrorType errtype , string innermessage , Exception innerException) : base(message , innerException)
         {
-            this.ErrorType = errtype ;
-            this.InnerMessage = innermessage ;
+            ErrorType = errtype ;
+            InnerMessage = innermessage ;
         }
 
         /// <summary>
@@ -103,7 +100,7 @@ namespace Agebull.Common
         protected AgebullSystemException(SerializationInfo info , StreamingContext context) : base(info , context)
         {
         }
-
+#if !NETSTANDARD2_0
         /// <summary>
         ///   基本构造
         /// </summary>
@@ -131,7 +128,7 @@ namespace Agebull.Common
             }
             return errclass ;
         }
-
+#endif
         /// <summary>
         /// </summary>
         /// <param name="serr"> </param>

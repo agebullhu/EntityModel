@@ -1,3 +1,4 @@
+#if !NETSTANDARD2_0
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -115,3 +116,4 @@ namespace Yizuan.Service.Api.WebApi
         }
     }
 }
+#endif

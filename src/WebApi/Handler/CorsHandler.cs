@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿#if !NETSTANDARD2_0
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,3 +45,4 @@ namespace Yizuan2.Service.Api.WebApi
         }
     }
 }
+# endif

@@ -22,11 +22,6 @@ namespace Agebull.Common.Logging
         None ,
 
         /// <summary>
-        ///   系統消息
-        /// </summary>
-        System ,
-
-        /// <summary>
         ///   登录消息
         /// </summary>
         Login ,
@@ -62,16 +57,6 @@ namespace Agebull.Common.Logging
         Warning ,
 
         /// <summary>
-        ///   错误
-        /// </summary>
-        Error ,
-
-        /// <summary>
-        ///   异常
-        /// </summary>
-        Exception,
-
-        /// <summary>
         ///   计划
         /// </summary>
         Plan,
@@ -79,9 +64,59 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   监视
         /// </summary>
-        Monitor
+        Monitor,
+
+        /// <summary>
+        ///   系統消息
+        /// </summary>
+        System,
+
+        /// <summary>
+        ///   错误
+        /// </summary>
+        Error,
+
+        /// <summary>
+        ///   异常
+        /// </summary>
+        Exception,
     }
 
+    /// <summary>
+    ///   日志类型
+    /// </summary>
+    public enum LogLevel
+    {
+        /// <summary>
+        ///   无
+        /// </summary>
+        None,
+
+        /// <summary>
+        ///   调试信息
+        /// </summary>
+        Debug,
+
+        /// <summary>
+        ///   跟踪信息
+        /// </summary>
+        Trace,
+
+        /// <summary>
+        ///   警告
+        /// </summary>
+        Warning,
+
+        /// <summary>
+        ///   系统
+        /// </summary>
+        System,
+
+        /// <summary>
+        ///   错误
+        /// </summary>
+        Error
+    }
     /// <summary>
     ///   记录信息
     /// </summary>
@@ -90,7 +125,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   日志记录序号
         /// </summary>
-        public int Index;
+        public ulong Index;
 
         /// <summary>
         ///   线程ID

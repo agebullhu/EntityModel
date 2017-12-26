@@ -312,7 +312,7 @@ namespace Agebull.Common.Reflection
         /// <returns> </returns>
         public override string ToString()
         {
-            return this.Caption;
+            return Caption;
         }
     }
 
@@ -345,7 +345,7 @@ namespace Agebull.Common.Reflection
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -355,7 +355,7 @@ namespace Agebull.Common.Reflection
         /// <returns> </returns>
         public override string ToString()
         {
-            return this.Caption;
+            return Caption;
         }
     }
 }

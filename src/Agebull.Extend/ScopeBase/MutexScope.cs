@@ -39,8 +39,8 @@ namespace Agebull.Common.Frame
         /// <param name="lockObject">要锁定的一或多个对象</param>
         public ThreadLockScope(object lockObject)
         {
-            this._lockObject = lockObject;
-            this.isLocked = Monitor.TryEnter(lockObject, 500);
+            _lockObject = lockObject;
+            isLocked = Monitor.TryEnter(lockObject, 500);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Agebull.Common.Frame
         /// </summary>
         protected override void OnDispose()
         {
-            if (!this.isLocked)
+            if (!isLocked)
                 return;
             Monitor.Exit(_lockObject);
         }

@@ -32,10 +32,10 @@ namespace Agebull.Common.Reflection
         public void SetProperty(B value)
         {
             // Call a method.
-            typeof(A).InvokeMember(this.Property,
+            typeof(A).InvokeMember(Property,
                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                                    null,
-                                   this.Object,
+                                   Object,
                                    new object[]
                                        {
                                                value
@@ -48,13 +48,13 @@ namespace Agebull.Common.Reflection
         public void SetProperty()
         {
             // Call a method.
-            typeof(A).InvokeMember(this.Property,
+            typeof(A).InvokeMember(Property,
                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                                    null,
-                                   this.Object,
+                                   Object,
                                    new object[]
                                        {
-                                               this.Value
+                                               Value
                                        });
         }
     }
@@ -91,10 +91,10 @@ namespace Agebull.Common.Reflection
         public void SetProperty(Object value)
         {
             // Call a method.
-            this.Type.InvokeMember(this.Property,
+            Type.InvokeMember(Property,
                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                                    null,
-                                   this.Object,
+                                   Object,
                                    new[]
                                        {
                                                value
@@ -107,13 +107,13 @@ namespace Agebull.Common.Reflection
         public void SetProperty()
         {
             // Call a method.
-            this.Type.InvokeMember(this.Property,
+            Type.InvokeMember(Property,
                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                                    null,
-                                   this.Object,
+                                   Object,
                                    new[]
                                        {
-                                               this.Value
+                                               Value
                                        });
         }
     }

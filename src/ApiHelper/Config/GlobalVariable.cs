@@ -22,11 +22,11 @@ namespace GoodLin.Common.Configuration
         static GlobalVariable()
         {
             ServiceKey = ConfigurationManager.AppSettings["ServiceKey"];
-            if (string.IsNullOrWhiteSpace(ServiceKey))
-                throw new ConfigurationErrorsException("必须在AppSettings中配置ServiceKey项");
+            //if (string.IsNullOrWhiteSpace(ServiceKey))
+            //    throw new ConfigurationErrorsException("必须在AppSettings中配置ServiceKey项");
             OAuthServiceURL = ConfigurationManager.AppSettings["OAuthServiceURL"];
-            if (string.IsNullOrWhiteSpace(OAuthServiceURL))
-                throw new ConfigurationErrorsException("必须在AppSettings中配置OAuthServiceURL项");
+            //if (string.IsNullOrWhiteSpace(OAuthServiceURL))
+            //    throw new ConfigurationErrorsException("必须在AppSettings中配置OAuthServiceURL项");
         }
     }
 }

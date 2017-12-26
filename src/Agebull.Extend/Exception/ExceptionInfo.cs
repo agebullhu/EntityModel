@@ -37,16 +37,16 @@ namespace Agebull.Common
         {
             get
             {
-                RemoteExceptionInfoItem it = this.Item ;
+                RemoteExceptionInfoItem it = Item;
                 while(it != null)
                 {
                     if(!string.IsNullOrWhiteSpace(it.Reason))
                     {
-                        return string.Format("{0}<BR/>代码:{2}<BR/>信息:{1}" , this.RootMessage , it.Reason , this.ErrorCode) ;
+                        return string.Format("{0}<BR/>代码:{2}<BR/>信息:{1}" , RootMessage, it.Reason , ErrorCode) ;
                     }
                     it = it.Item ;
                 }
-                return this.RootMessage ;
+                return RootMessage;
             }
         }
 
@@ -57,7 +57,7 @@ namespace Agebull.Common
         {
             get
             {
-                RemoteExceptionInfoItem it = this.Item ;
+                RemoteExceptionInfoItem it = Item;
                 while(it != null)
                 {
                     if(!string.IsNullOrWhiteSpace(it.ErrorCode))
@@ -94,12 +94,12 @@ namespace Agebull.Common
             if (root != null)
             {
                 XmlNode rm = root.SelectSingleNode("//RootMessage") ;
-                if(rm != null && this.RootMessage != null)
+                if(rm != null && RootMessage != null)
                 {
-                    this.RootMessage = rm.InnerText ; // HttpUtility.UrlDecode(rm.InnerText);
+                    RootMessage = rm.InnerText ; // HttpUtility.UrlDecode(rm.InnerText);
                 }
             }
-            this.Item = DeserializeException(root) ;
+            Item = DeserializeException(root) ;
         }
 
         /// <summary>

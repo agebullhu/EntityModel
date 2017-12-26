@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using ServiceStack;
 
 namespace Agebull.Common.DataModel
 {

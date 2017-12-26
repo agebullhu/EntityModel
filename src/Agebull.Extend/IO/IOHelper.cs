@@ -670,7 +670,6 @@ namespace Agebull.Common
 #endif
 
         #endregion
-#if CLIENT
         #region WPF资源文件
 #if WPF
         /// <summary>
@@ -722,6 +721,5 @@ namespace Agebull.Common
         }
 #endif
         #endregion
-#endif
     }
 }

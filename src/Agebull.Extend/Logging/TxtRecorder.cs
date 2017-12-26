@@ -7,12 +7,10 @@
 
 using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using Agebull.Common.Frame;
-using Agebull.Common.Xml;
 
 #if SILVERLIGHT
 using System.IO.IsolatedStorage;
@@ -66,6 +64,7 @@ namespace Agebull.Common.Logging
                 {
                     Directory.CreateDirectory(LogPath);
                 }
+                Console.WriteLine($"LogPath:{LogPath}");
             }
             catch (Exception ex)
             {
@@ -85,45 +84,49 @@ namespace Agebull.Common.Logging
         ///   文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
         /// </summary>
         public static string LogPath { get; set; }
-
+        
         /// <summary>
-        ///   记录日志
-        /// </summary>
-        /// <param name="info"> 日志消息 </param>
-        public void RecordLog(RecordInfo info)
-        {
+            ///   记录日志
+            /// </summary>
+            /// <param name="info"> 日志消息 </param>
+            public void RecordLog(RecordInfo info)
+            {
 #if CLIENT
             RecordLog(info.gID, info.Message, info.TypeName);
 #else
-            switch (info.Type)
+                switch (info.Type)
             {
                 case LogType.System:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".system");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "system");
                     break;
                 case LogType.Login:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".user");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "user");
                     break;
                 case LogType.Request:
                 case LogType.WcfMessage:
                 case LogType.Trace:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".trace");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "trace");
                     break;
                 case LogType.DataBase:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".sql");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "sql");
                     break;
                 case LogType.Warning:
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "warning");
+                    break;
                 case LogType.Error:
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "error");
+                    break;
                 case LogType.Exception:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".error");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "exception");
                     break;
                 case LogType.Plan:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".plan");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "plan");
                     break;
                 case LogType.Monitor:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User, ".monitor");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "monitor");
                     break;
                 default:
-                    this.RecordLog(info.gID, info.Message, info.TypeName, info.User);
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User,"info");
                     break;
             }
 #endif
@@ -170,9 +173,11 @@ namespace Agebull.Common.Logging
 #else
             string log = type== "DataBase" 
                 ? $@"
-/*Date:{ DateTime.Now.ToString(CultureInfo.InvariantCulture)}*/
+/*Date:{ DateTime.Now.ToString(CultureInfo.InvariantCulture)}
+RQID:{id}*/
 {msg}"
                 : $@"
+RQID:{id}
 Date:{DateTime.Now.ToString(CultureInfo.InvariantCulture)}
 Type:{type}
 User:{user}
@@ -183,7 +188,7 @@ User:{user}
                 {
                     Directory.CreateDirectory(LogPath);
                 }
-                string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}.{name}.log");
+                string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}.{name ?? "info"}.log");
 
                 using (ThreadLockScope.Scope(this))
                 {
@@ -202,7 +207,7 @@ User:{user}
         /// </summary>
         /// <param name="message"> </param>
         /// <param name="type"></param>
-        public static void RecordTrace(string message, string type = ".trace")
+        public static void RecordTrace(string message, string type = "trace")
         {
             try
             {
@@ -217,7 +222,7 @@ User:{user}
         /// <summary>
         ///   记录日志
         /// </summary>
-        private void RecordTraceInner(string msg,string type= ".trace")
+        private void RecordTraceInner(string msg,string type= "trace")
         {
 #if SILVERLIGHT
             using (var store = IsolatedStorageFile.GetUserStoreForApplication())
@@ -241,7 +246,7 @@ User:{user}
             {
                 Directory.CreateDirectory(LogPath);
             }
-            string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyy-MM-dd}{type}.log");
+            string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyy-MM-dd}.{type}.log");
 
             using (ThreadLockScope.Scope(this))
             {
@@ -259,7 +264,7 @@ User:{user}
         public void Write(string message)
 #endif
         {
-            this.RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
+            RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
         }
 
         /// <summary>
@@ -272,7 +277,7 @@ User:{user}
         public void WriteLine(string message)
 #endif
         {
-            this.RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
+            RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
         }
     }
 }

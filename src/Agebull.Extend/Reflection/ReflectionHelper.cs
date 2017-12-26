@@ -27,13 +27,13 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-
+#if !NETSTANDARD2_0
 using Microsoft.CSharp;
 using System.Runtime.Serialization.Formatters.Soap;
+#endif
 #if WINFORM
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
-
 #endif
 
 #endregion
@@ -45,8 +45,8 @@ namespace Agebull.Common.Reflection
     /// </summary>
     public sealed class ReflectionHelper
     {
-#if SILVERLIGHT
-        /// <summary>
+#if !NETSTANDARD2_0
+        /*// <summary>
         ///   载入动态编译的结果并运行一个缺省的静态方法
         /// </summary>
         /// <param name="path"> 编译结果路径 </param>
@@ -73,8 +73,7 @@ namespace Agebull.Common.Reflection
         {
             AssemblyPart assemblyPart = new AssemblyPart();
             return assemblyPart.Load(stream);
-        }
-#else
+        }*/
         /// <summary>
         ///     动态编译
         /// </summary>
@@ -399,7 +398,6 @@ namespace Agebull.Common.Reflection
         public Type ThisType
         {
             get;
-            protected set;
         }
 
         /// <summary>
@@ -408,7 +406,6 @@ namespace Agebull.Common.Reflection
         public object ThisObject
         {
             get;
-            protected set;
         }
 
         /// <summary>
@@ -421,17 +418,10 @@ namespace Agebull.Common.Reflection
             {
                 return;
             }
-            this.ThisType = type;
-            this.ThisObject = CreateObject(type);
+            ThisType = type;
+            ThisObject = CreateObject(type);
         }
-
-        /// <summary>
-        ///     构造
-        /// </summary>
-        protected ReflectionHelper()
-        {
-        }
-
+        
         /// <summary>
         ///     读取或配置类型实例的属性
         /// </summary>
@@ -441,11 +431,11 @@ namespace Agebull.Common.Reflection
         {
             get
             {
-                return GetProperty(this.ThisType, property, this.ThisObject);
+                return GetProperty(ThisType, property, ThisObject);
             }
             set
             {
-                SetProperty(this.ThisType, property, this.ThisObject, value);
+                SetProperty(ThisType, property, ThisObject, value);
             }
         }
 
@@ -457,7 +447,7 @@ namespace Agebull.Common.Reflection
         /// <returns> 返回结果 </returns>
         public object Invoke(string name, object[] args)
         {
-            return InvokeMethod(this.ThisType, name, this.ThisObject, args);
+            return InvokeMethod(ThisType, name, ThisObject, args);
         }
 
         /// <summary>
@@ -467,7 +457,7 @@ namespace Agebull.Common.Reflection
         /// <returns> 返回结果 </returns>
         public object Invoke(string name)
         {
-            return InvokeMethod(this.ThisType, name, this.ThisObject, null);
+            return InvokeMethod(ThisType, name, ThisObject, null);
         }
 
         /// <summary>
@@ -769,7 +759,7 @@ namespace Agebull.Common.Reflection
             }
             throw new WarningException(SerializeException(null, "调用的方法不存在 "));
         }
-
+#if !NETSTANDARD2_0
         ///// <summary>
         ///// 以SOAP方式序列化未标记为序列化的对象
         ///// </summary>
@@ -793,26 +783,6 @@ namespace Agebull.Common.Reflection
         //        return lc;
         //    }
         //}
-        /// <summary>
-        /// </summary>
-        /// <param name="o"> </param>
-        /// <returns> </returns>
-        public static string Serialize(Object o)
-        {
-            if (o == null)
-            {
-                return null;
-            }
-            if (o is string)
-            {
-                return o.ToString();
-            }
-            IFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
-            formatter.Serialize(stream, o);
-            stream.Flush();
-            return Convert.ToBase64String(stream.GetBuffer());
-        }
 
         /// <summary>
         ///     以SOAP方式序列化
@@ -839,7 +809,27 @@ namespace Agebull.Common.Reflection
                 return lc;
             }
         }
-
+#endif
+        /// <summary>
+        /// </summary>
+        /// <param name="o"> </param>
+        /// <returns> </returns>
+        public static string Serialize(Object o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+            if (o is string)
+            {
+                return o.ToString();
+            }
+            IFormatter formatter = new BinaryFormatter();
+            MemoryStream stream = new MemoryStream();
+            formatter.Serialize(stream, o);
+            stream.Flush();
+            return Convert.ToBase64String(stream.GetBuffer());
+        }
         /// <summary>
         /// </summary>
         /// <param name="s"> </param>
@@ -1470,7 +1460,7 @@ namespace Agebull.Common.Reflection
             return sb.ToString();
         }
 
-        #region 名称检查
+#region 名称检查
 
         /// <summary>
         /// 取得this属性的正确名称
@@ -1592,7 +1582,7 @@ namespace Agebull.Common.Reflection
             }
             return type;
         }
-        #endregion
+#endregion
         /// <summary>
         ///     序列化异常到XML
         /// </summary>
@@ -1674,9 +1664,9 @@ namespace Agebull.Common.Reflection
             SerializeException(err.InnerException, inner);
         }
 
-        #endregion
+#endregion
 
-        #region Lambda表达式支持
+#region Lambda表达式支持
 
         /// <summary>
         ///     取得名称
@@ -1803,6 +1793,6 @@ namespace Agebull.Common.Reflection
             Action func = lambda.Compile();
             func();
         }
-        #endregion
+#endregion
     }
 }

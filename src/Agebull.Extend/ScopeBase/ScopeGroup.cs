@@ -24,7 +24,7 @@ namespace Agebull.Common
         /// <param name="scopes"></param>
         public ScopeGroup(IDisposable[] scopes)
         {
-            this.Scopes = scopes;
+            Scopes = scopes;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Agebull.Common
         /// </summary>
         protected override void OnDispose()
         {
-            foreach (IDisposable scope in this.Scopes)
+            foreach (IDisposable scope in Scopes)
                 scope.Dispose();
         }
     }

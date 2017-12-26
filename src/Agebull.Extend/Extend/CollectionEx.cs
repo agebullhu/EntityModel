@@ -405,7 +405,7 @@ namespace System.Linq
         /// <returns> </returns>
         public static List<string> DistinctBy(this IEnumerable<string> em, string empty = null)
         {
-            return em == null ? null : em.Where(p => p != empty).Distinct().ToList();
+            return em?.Where(p => p != empty).Distinct().ToList();
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+#if !NETSTANDARD2_0
 using System;
 using System.Linq;
 using System.Net;
@@ -6,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.DataModel.Redis;
 using Agebull.Common.Logging;
-using GoodLin.Common.Configuration;
 using GoodLin.Common.Ioc;
 using Newtonsoft.Json;
 using Yizuan.Service.Api.OAuth;
@@ -58,6 +58,9 @@ namespace Yizuan.Service.Api.WebApi
         /// </returns>
         private int Check(HttpRequestMessage request)
         {
+            var header = request.Headers.ToString();
+            if (string.IsNullOrWhiteSpace(header) || header.Contains("iToolsVM"))
+                return ErrorCode.DenyAccess;
             var token = ExtractToken(request);
             if (string.IsNullOrWhiteSpace(token))
                 return ErrorCode.DenyAccess;
@@ -69,7 +72,7 @@ namespace Yizuan.Service.Api.WebApi
                     ApiContext.SetRequestContext(new InternalCallContext
                     {
                         RequestId = Guid.NewGuid(),
-                        ServiceKey = GlobalVariable.ServiceKey,
+                        ServiceKey = System.Configuration.ConfigurationManager.AppSettings["ServiceKey"],
                         Bear = token,
                         UserId = -2
                     });
@@ -82,11 +85,11 @@ namespace Yizuan.Service.Api.WebApi
                     ApiContext.SetRequestContext(new InternalCallContext
                     {
                         RequestId = Guid.NewGuid(),
-                        ServiceKey = GlobalVariable.ServiceKey,
+                        ServiceKey = System.Configuration.ConfigurationManager.AppSettings["ServiceKey"],
                         Bear = token,
                         UserId = -2
                     });
-                    return CheckAccessToken(request, token);
+                    return CheckAccessToken(token);
             }
         }
 
@@ -100,6 +103,15 @@ namespace Yizuan.Service.Api.WebApi
         /// </returns>
         private int CheckDeviceId(HttpRequestMessage request, string token)
         {
+            if (string.IsNullOrWhiteSpace(token) || token.Contains('.') || token.Length <= 33)
+                return ErrorCode.DenyAccess;
+            for (var index = 1; index < token.Length; index++)
+            {
+                var ch = token[index];
+                if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '_')
+                    continue;
+                return ErrorCode.DenyAccess;
+            }
             var checker = IocHelper.Create<IBearValidater>();
             ApiResult<LoginUserInfo> result;
             try
@@ -130,7 +142,7 @@ namespace Yizuan.Service.Api.WebApi
                 Os = customer.Os,
                 Browser = customer.Browser,
                 RequestId = Guid.NewGuid(),
-                ServiceKey = GlobalVariable.ServiceKey,
+                ServiceKey = System.Configuration.ConfigurationManager.AppSettings["ServiceKey"],
                 UserId = customer.UserId
             });
             ApiContext.Current.Cache();
@@ -142,10 +154,21 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         private int RevertCallContext(HttpRequestMessage request, string token)
         {
+            //if (request.Headers.UserAgent.ToString() != "Yizuan.Service.WebApi.WebApiCaller")
+            //    return ErrorCode.DenyAccess;
+            //for (var index = 1; index < token.Length; index++)
+            //{
+            //    var ch = token[index];
+            //    if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '-')
+            //        continue;
+            //    return ErrorCode.DenyAccess;
+            //}
             ApiContext context;
             using (var proxy = new RedisProxy())
             {
-                context = proxy.Get<ApiContext>(ApiContext.GetCacheKey(token));
+                var key = ApiContext.GetCacheKey(token);
+                context = proxy.Get<ApiContext>(key);
+                proxy.RemoveKey(key);
             }
             if (context?.Request == null || context.LoginUser == null)
             {
@@ -205,8 +228,17 @@ namespace Yizuan.Service.Api.WebApi
         ///     1：令牌为空
         ///     2：令牌是伪造的
         /// </returns>
-        private int CheckAccessToken(HttpRequestMessage request, string token)
+        private int CheckAccessToken(string token)
         {
+            if (token.Length != 33)
+                return ErrorCode.DenyAccess;
+            for (var index = 1; index < token.Length; index++)
+            {
+                var ch = token[index];
+                if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'))
+                    continue;
+                return ErrorCode.DenyAccess;
+            }
             var checker = IocHelper.Create<IBearValidater>();
             ApiResult<LoginUserInfo> result;
             try
@@ -242,10 +274,11 @@ namespace Yizuan.Service.Api.WebApi
             var au = request.Headers.GetValues("Authorization").FirstOrDefault();
             if (au == null)
                 return null;
-            var aus = au.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            var aus = au.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (aus.Length < 2 || aus[0] != bearer)
                 return null;
             return aus[1].Trim();
         }
     }
 }
+#endif

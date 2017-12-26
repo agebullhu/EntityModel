@@ -1,4 +1,4 @@
-﻿#if !SILVERLIGHT
+﻿#if !NETSTANDARD2_0
 using Microsoft.Win32;
 
 namespace Agebull.Common.Base

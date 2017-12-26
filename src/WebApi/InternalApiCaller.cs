@@ -67,7 +67,7 @@ namespace Yizuan.Service.Api.WebApi
         /// </summary>
         /// <param name="httpParams"></param>
         /// <returns></returns>
-        private static string FormatParams(Dictionary<string, string> httpParams)
+        public static string FormatParams(Dictionary<string, string> httpParams)
         {
             if (httpParams == null)
                 return null;
@@ -85,17 +85,45 @@ namespace Yizuan.Service.Api.WebApi
             }
             return builder.ToString();
         }
-
         /// <summary>
-        ///     转为合理的API地址
+        /// 生成请求对象
         /// </summary>
-        /// <param name="api"></param>
+        /// <param name="apiName"></param>
+        /// <param name="method"></param>
+        /// <param name="arg"></param>
         /// <returns></returns>
-        private string ToUrl(string api)
+        HttpWebRequest CreateRequest(string apiName, string method, string arg)
         {
-            return $"{Host?.TrimEnd('/') + "/"}{api?.TrimStart('/')}";
-        }
+            var auth = $"Bearer {Bearer}";
 
+            var url = $"{Host?.TrimEnd('/') + "/"}{apiName?.TrimStart('/')}";
+            if (method == "GET" && !string.IsNullOrWhiteSpace(arg))
+                url = $"{url}?{arg}";
+
+            LogRecorder.BeginStepMonitor($"内部API调用:{apiName}");
+            LogRecorder.MonitorTrace($"Url:{url}");
+            LogRecorder.MonitorTrace($"Auth:{auth}");
+
+            var req = (HttpWebRequest)WebRequest.Create(url);
+
+            req.Method = method;
+            //req.Headers.Add(HttpRequestHeader.UserAgent, "Yizuan.Service.WebApi.WebApiCaller");
+            req.Headers.Add(HttpRequestHeader.Authorization, auth);
+
+            if (method == "POST" )
+            {
+                if (arg == null)
+                    arg = "";
+                req.ContentType = "application/x-www-form-urlencoded";
+                using (var rs = req.GetRequestStream())
+                {
+                    var formData = Encoding.UTF8.GetBytes(arg);
+                    rs.Write(formData, 0, formData.Length);
+                }
+                LogRecorder.MonitorTrace("Form:" + arg);
+            }
+            return req;
+        }
         #endregion
 
         #region 强类型取得
@@ -148,20 +176,7 @@ namespace Yizuan.Service.Api.WebApi
         public ApiResult<TResult> Get<TResult>(string apiName, string arguments)
             where TResult : IApiResultData
         {
-            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-
-            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-            LogRecorder.MonitorTrace(ctx);
-            LogRecorder.MonitorTrace("Arguments:" + arguments);
-
-            if (!string.IsNullOrWhiteSpace(arguments))
-                apiName = $"{apiName}?{arguments}";
-
-            var req = (HttpWebRequest) WebRequest.Create(ToUrl(apiName));
-            req.Method = "GET";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.Headers.Add(HttpRequestHeader.Authorization, ctx);
-
+            var req = CreateRequest(apiName, "GET", arguments);
             return GetResult<TResult>(req);
         }
 
@@ -201,24 +216,10 @@ namespace Yizuan.Service.Api.WebApi
         public ApiResult<TResult> Post<TResult>(string apiName, string form)
             where TResult : IApiResultData
         {
-            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-
-            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-            LogRecorder.MonitorTrace(ctx);
-            LogRecorder.MonitorTrace("Arguments:" + form);
-
-            var req = (HttpWebRequest) WebRequest.Create(ToUrl(apiName));
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.Headers.Add(HttpRequestHeader.Authorization, ctx);
-
+            var req = CreateRequest(apiName, "POST", form);
+            LogRecorder.MonitorTrace("Form:" + form);
             try
             {
-                using (var rs = req.GetRequestStream())
-                {
-                    var formData = Encoding.UTF8.GetBytes(form);
-                    rs.Write(formData, 0, formData.Length);
-                }
             }
             catch (Exception e)
             {
@@ -393,20 +394,7 @@ namespace Yizuan.Service.Api.WebApi
         /// <returns></returns>
         public ApiValueResult<string> Get(string apiName, string arguments)
         {
-            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-
-            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-            LogRecorder.MonitorTrace(ctx);
-            LogRecorder.MonitorTrace("Arguments:" + arguments);
-
-            if (!string.IsNullOrWhiteSpace(arguments))
-                apiName = $"{apiName}?{arguments}";
-
-            var req = (HttpWebRequest) WebRequest.Create(ToUrl(apiName));
-            req.Method = "GET";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.Headers.Add(HttpRequestHeader.Authorization, ctx);
-
+            var req = CreateRequest(apiName, "GET", arguments);
             return GetResult(req);
         }
 
@@ -440,32 +428,7 @@ namespace Yizuan.Service.Api.WebApi
         /// <returns></returns>
         public ApiValueResult<string> Post(string apiName, string form)
         {
-            LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-
-            var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-            LogRecorder.MonitorTrace(ctx);
-            LogRecorder.MonitorTrace("Arguments:" + form);
-
-            var req = (HttpWebRequest) WebRequest.Create(ToUrl(apiName));
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.Headers.Add(HttpRequestHeader.Authorization, ctx);
-
-            try
-            {
-                using (var rs = req.GetRequestStream())
-                {
-                    var formData = Encoding.UTF8.GetBytes(form);
-                    rs.Write(formData, 0, formData.Length);
-                }
-            }
-            catch (Exception e)
-            {
-                LogRecorder.Exception(e);
-                LogRecorder.EndStepMonitor();
-                return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError);
-            }
-
+            var req = CreateRequest(apiName, "POST",form);
             return GetResult(req);
         }
 
@@ -547,7 +510,7 @@ namespace Yizuan.Service.Api.WebApi
                             return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "发生未知类型的异常");
                     }
                 }
-                var codes = e.Message.Split(new[] {'(', ')'},StringSplitOptions.RemoveEmptyEntries);
+                var codes = e.Message.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
                 if (codes.Length == 3)
                 {
                     int s;
@@ -556,7 +519,7 @@ namespace Yizuan.Service.Api.WebApi
                         switch (s)
                         {
                             case 404:
-                                return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "服务器内部错误","页面不存在");
+                                return ApiValueResult<string>.ErrorResult(ErrorCode.NetworkError, "服务器内部错误", "页面不存在");
                         }
                     }
                 }

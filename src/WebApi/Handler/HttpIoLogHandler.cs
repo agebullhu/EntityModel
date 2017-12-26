@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -34,7 +35,7 @@ namespace Yizuan.Service.Api.WebApi
 
                 LogRecorder.MonitorTrace($"QueryString：{request.RequestUri.Query}");
 
-                RecordRequestToCode(request);
+                //RecordRequestToCode(request);
             }
             catch (Exception e)
             {
@@ -154,3 +155,4 @@ namespace Yizuan.Service.Api.WebApi
         }
     }
 }
+# endif

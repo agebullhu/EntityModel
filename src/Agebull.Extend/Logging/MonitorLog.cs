@@ -22,17 +22,6 @@ namespace Agebull.Common.Logging
             get { return MonitorItem.InMonitor; }
             set { MonitorItem.InMonitor = value; }
         }
-
-        /// <summary>
-        /// 是否开启跟踪日志
-        /// </summary>
-        public static bool LogMonitor { get; } = (ConfigurationManager.AppSettings["LogMonitor"] ?? "False").ToLower() == "true";
-
-        /// <summary>
-        /// 是否开启SQL日志
-        /// </summary>
-        public static bool LogDataSql { get; } = (ConfigurationManager.AppSettings["LogSql"] ?? "False").ToLower() == "true";
-
         /// <summary>
         /// 开始检测资源
         /// </summary>
@@ -56,8 +45,10 @@ namespace Agebull.Common.Logging
             using (ThreadLockScope.Scope(LockKey))
             {
                 InMonitor = true;
+#if !NETSTANDARD2_0
                 if (!AppDomain.MonitoringIsEnabled)
                     AppDomain.MonitoringIsEnabled = true;
+#endif
                 MonitorItem.MonitorTexter = new StringBuilder();
                 StringBuilder sb = new StringBuilder();
                 sb.Append(' ', 24);
@@ -219,12 +210,12 @@ namespace Agebull.Common.Logging
                     MonitorItem.MonitorStack.FixValue.EndMessage();
                     string title = MonitorItem.MonitorStack.FixValue.Title ?? "Monitor";
                     ShowMinitor(title, 3);
-                    string log = MonitorItem.MonitorTexter.ToString();
+                    string log =  MonitorItem.MonitorTexter?.ToString();
 
-                    Record(GetRequestId(), title, log, LogType.Monitor);
+                    RecordInner(title, log, LogType.Monitor);
 
                     //if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                    //    Clipboard.SetText(MonitorItem.MonitorTexter.ToString());
+                    //    Clipboard.SetText( MonitorItem.MonitorTexter?.ToString());
                 }
                 catch
                 { }
@@ -287,7 +278,7 @@ namespace Agebull.Common.Logging
             SystemTrace(msg);
             using (ThreadLockScope.Scope(LockKey))
             {
-                MonitorItem.MonitorTexter.AppendLine(msg);
+                 MonitorItem.MonitorTexter?.AppendLine(msg);
             }
         }
     }
@@ -321,11 +312,20 @@ namespace Agebull.Common.Logging
     /// </summary>
     public class MonitorStepScope : ScopeBase
     {
+        /// <summary>
+        /// 生成范围
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static MonitorStepScope CreateScope(string name)
         {
             LogRecorder.BeginStepMonitor(name);
             return new MonitorStepScope();
         }
+
+        /// <summary>
+        /// 清理资源
+        /// </summary>
         protected override void OnDispose()
         {
             LogRecorder.EndStepMonitor();

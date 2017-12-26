@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
-using ServiceStack;
 
 namespace Agebull.Zmq.Rpc
 {

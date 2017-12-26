@@ -34,7 +34,7 @@ namespace Agebull.Common.Text
         {
             get
             {
-                return this.ListToString(this._Global) ;
+                return ListToString(_Global) ;
             }
         }
 
@@ -53,13 +53,13 @@ namespace Agebull.Common.Text
             }
             if(string.IsNullOrWhiteSpace(name))
             {
-                this._Global.Add(value) ;
+                _Global.Add(value) ;
             }
             else
             {
                 name = name.Trim() ;
                 value = value.Trim() ;
-                if(!this.ContainsKey(name))
+                if(!ContainsKey(name))
                 {
                     base.Add(name , new List<string>()) ;
                 }
@@ -92,12 +92,12 @@ namespace Agebull.Common.Text
             {
                 if(string.IsNullOrWhiteSpace(name))
                 {
-                    return this.ListToString(this._Global) ;
+                    return ListToString(_Global) ;
                 }
                 name = name.Trim() ;
-                return !this.ContainsKey(name)
+                return !ContainsKey(name)
                                ? null
-                               : this.ListToString(base[name]) ;
+                               : ListToString(base[name]) ;
             }
             set
             {
@@ -112,11 +112,11 @@ namespace Agebull.Common.Text
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder() ;
-            if(this._Global.Count > 0)
+            if(_Global.Count > 0)
             {
-                sb.AppendFormat("〖{0}〗" , this.Global) ;
+                sb.AppendFormat("〖{0}〗" , Global) ;
             }
-            foreach(string name in this.Keys)
+            foreach(string name in Keys)
             {
                 if(base[name].Count > 0)
                 {

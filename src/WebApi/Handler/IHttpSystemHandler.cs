@@ -1,3 +1,4 @@
+#if !NETSTANDARD2_0
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,3 +27,4 @@ namespace Yizuan.Service.Api.WebApi
         void OnEnd(HttpRequestMessage request, CancellationToken cancellationToken, HttpResponseMessage response);
     }
 }
+# endif

@@ -1,12 +1,13 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+using System;
 using System.Globalization;
 using System.Net.Http.Formatting;
-using System.Web.Http;
-using System.Web.Mvc;
 using Agebull.Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Yizuan2.Service.Api.WebApi;
+using System.Web.Http;
+using System.Web.Mvc;
 
 namespace Yizuan.Service.Api.WebApi
 {
@@ -127,3 +128,5 @@ namespace Yizuan.Service.Api.WebApi
 
     }
 }
+
+#endif

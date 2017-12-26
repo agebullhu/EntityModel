@@ -167,21 +167,21 @@ namespace Agebull.Common
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            if (this.AtomLock != null)
+            if (AtomLock != null)
             {
                 using (ThreadLockScope.Scope(AtomLock))
                 {
-                    if (this.LockName == null)
-                        this.AtomLock.AtomLockNames.Clear();
+                    if (LockName == null)
+                        AtomLock.AtomLockNames.Clear();
                     else
-                        this.AtomLock.AtomLockNames.Remove(this.LockName);
+                        AtomLock.AtomLockNames.Remove(LockName);
                 }
             }
             else
             {
                 using (ThreadLockScope.Scope(AtomLocks))
                 {
-                    AtomLocks.Remove(this.LockName);
+                    AtomLocks.Remove(LockName);
                 }
             }
         }

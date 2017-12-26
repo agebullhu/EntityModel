@@ -228,19 +228,20 @@ namespace Agebull.Common.Server.Logging
             }
             if (e != null)
             {
-                if (e is SqlException)
-                {
-                    if (AgebullSystemException.SqlExceptionLevel(e as SqlException) > 16)
-                    {
-                        lc.Infomation = "内部错误";
-                        re = string.Format("发生内部错误,系统标识:{0}", lc.QueryKey);
-                    }
-                    else
-                    {
-                        re = string.Format("{1},系统标识:{0}", lc.QueryKey, e.Message);
-                    }
-                }
-                else if (e is SystemException)
+                //if (e is SqlException)
+                //{
+                //    if (AgebullSystemException.SqlExceptionLevel(e as SqlException) > 16)
+                //    {
+                //        lc.Infomation = "内部错误";
+                //        re = string.Format("发生内部错误,系统标识:{0}", lc.QueryKey);
+                //    }
+                //    else
+                //    {
+                //        re = string.Format("{1},系统标识:{0}", lc.QueryKey, e.Message);
+                //    }
+                //}
+                //else 
+                if (e is SystemException)
                 {
                     lc.Infomation = "系统错误";
                     re = string.Format("发生内部错误,系统标识:{0}", lc.QueryKey);

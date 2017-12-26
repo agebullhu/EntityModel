@@ -11,7 +11,6 @@
 using System;
 using System.Configuration;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 #endregion
 

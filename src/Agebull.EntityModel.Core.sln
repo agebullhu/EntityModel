@@ -1,0 +1,117 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2008
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.DataEntity.Core", "DataEntity\Agebull.Common.DataEntity.Core.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entity", "Entity", "{F2563A12-18F3-4BA7-BDF5-1A995F715518}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.Extend.Core", "Agebull.Extend\Agebull.Common.Extend.Core.csproj", "{E204D26E-EA0A-4905-A53F-19BD92F405BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extend", "Extend", "{71ACFD5A-4D57-4CC1-ADBE-32C3FE31151A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{D2C6569B-6E60-46ED-8B0B-0095088EB85C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.ApiContract.Core", "ApiContract\Agebull.Common.ApiContract.Core.csproj", "{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.WebApi.Core", "WebApi\Agebull.Common.WebApi.Core.csproj", "{35A5FB95-C487-452C-AA43-9023EE97AB4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rpc", "Rpc", "{C741EC50-8C09-4615-A66A-D782814342F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.Rpc.Core", "Agebull.Rpc\Agebull.Common.Rpc.Core.csproj", "{2386EF6B-7D22-4150-83E0-F047468DC11F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.DataAccess.Core", "DataAccess\Agebull.Common.DataAccess.Core.csproj", "{C2B7B11A-C173-4A50-AA28-8721A53180D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.DataEntity.Redis.Core", "Redis\Agebull.Common.DataEntity.Redis.Core.csproj", "{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}.Release|x64.ActiveCfg = Release|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB}.Release|x64.ActiveCfg = Release|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C}.Release|x64.ActiveCfg = Release|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2386EF6B-7D22-4150-83E0-F047468DC11F}.Release|x64.ActiveCfg = Release|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5}.Release|x64.Build.0 = Release|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Debug|x64.Build.0 = Debug|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|x64.ActiveCfg = Release|Any CPU
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{E204D26E-EA0A-4905-A53F-19BD92F405BE} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
+		{4B22F3C3-11A5-4063-BD7E-BEF91705CAFB} = {D2C6569B-6E60-46ED-8B0B-0095088EB85C}
+		{35A5FB95-C487-452C-AA43-9023EE97AB4C} = {D2C6569B-6E60-46ED-8B0B-0095088EB85C}
+		{2386EF6B-7D22-4150-83E0-F047468DC11F} = {C741EC50-8C09-4615-A66A-D782814342F7}
+		{C2B7B11A-C173-4A50-AA28-8721A53180D5} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76F65055-833D-450A-80E3-D58986FBA4B6}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs.yizuanbao.cn:8080/tfs/yizhaobao
+		SccProjectUniqueName0 = Agebull.Extend\\Agebull.Common.Extend.Core.csproj
+		SccProjectTopLevelParentUniqueName0 = Agebull.EntityModel.Core.sln
+		SccProjectName0 = $/yizuanbao/common/src/Agebull.Extend
+		SccAuxPath0 = http://tfs.yizuanbao.cn:8080/tfs/yizhaobao
+		SccLocalPath0 = Agebull.Extend
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = ApiContract\\Agebull.Common.ApiContract.Core.csproj
+		SccProjectTopLevelParentUniqueName1 = Agebull.EntityModel.Core.sln
+		SccProjectName1 = $/yizuanbao/common/src/ApiContract
+		SccAuxPath1 = http://tfs.yizuanbao.cn:8080/tfs/yizhaobao
+		SccLocalPath1 = ApiContract
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

@@ -40,7 +40,7 @@ namespace Agebull.Common.Base
         {
             if (_isDisposed)
                 return;
-            this.OnDispose();
+            OnDispose();
             _isDisposed = true;
             GC.SuppressFinalize(this);
         }

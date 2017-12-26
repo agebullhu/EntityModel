@@ -24,6 +24,46 @@ namespace System
     public static class ValueToStringHelper
     {
         /// <summary>
+        /// 转为Ascii字节
+        /// </summary>
+        /// <param name="word">单词</param>
+        /// <returns>字节</returns>
+        public static byte[] ToAsciiBytes(this string word)
+        {
+            return word == null ? null : Encoding.ASCII.GetBytes(word);
+        }
+
+        /// <summary>
+        /// 转为UTF8字节
+        /// </summary>
+        /// <param name="word">单词</param>
+        /// <returns>字节</returns>
+        public static byte[] ToUtf8Bytes(this string word)
+        {
+            return word == null ? null : Encoding.UTF8.GetBytes(word);
+        }
+
+        /// <summary>
+        /// 按Ascii字节还原为文本
+        /// </summary>
+        /// <param name="bytes">字节</param>
+        /// <returns>文本</returns>
+        public static string FromAsciBytes(this byte[] bytes)
+        {
+            return bytes == null || bytes.Length == 0 ? null : Encoding.ASCII.GetString(bytes);
+        }
+
+        /// <summary>
+        /// 按Ascii字节还原为文本
+        /// </summary>
+        /// <param name="bytes">字节</param>
+        /// <returns>文本</returns>
+        public static string FromUtf8Bytes(this byte[] bytes)
+        {
+            return bytes == null || bytes.Length == 0 ? null : Encoding.ASCII.GetString(bytes);
+        }
+
+        /// <summary>
         /// 拆分到单词(每个标点或大写字母作为分隔符)
         /// </summary>
         /// <param name="word">单词</param>

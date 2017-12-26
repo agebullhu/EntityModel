@@ -14,14 +14,14 @@
         {
             get
             {
-                return this._succeed;
+                return _succeed;
             }
             set
             {
-                this._succeed = value;
-                if (!this.Succeed2)
+                _succeed = value;
+                if (!Succeed2)
                 {
-                    this.RecordFailedStack();
+                    RecordFailedStack();
                 }
             }
         }
@@ -33,7 +33,7 @@
         {
             get
             {
-                return this._succeed == null || this._succeed.Value;
+                return _succeed == null || _succeed.Value;
             }
         }
     }
