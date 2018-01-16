@@ -241,6 +241,7 @@ namespace Gboxt.Common.DataModel
         /// </remarks>
         public void LaterPeriodByModify(EntitySubsist subsist)
         {
+            BusinessGlobal.EntityEventProxy?.OnStatusChanged(__Struct.EntityType, subsist, this);
             OnLaterPeriodBySignleModified(subsist, __EntityStatus.ModifiedProperties);
         }
 
