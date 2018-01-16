@@ -11,14 +11,24 @@ namespace Gboxt.Common.DataModel
     [JsonObject(MemberSerialization.OptIn)]
     public class ValidateResultDictionary
     {
+        /// <summary>
+        /// 校验结果
+        /// </summary>
         [JsonProperty("results", NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidateResult> Result = new List<ValidateResult>();
 
+        /// <summary>
+        /// 尝试加入
+        /// </summary>
+        /// <param name="row"></param>
         public void TryAdd(ValidateResult row)
         {
             Result.Add(row);
         }
-
+        /// <summary>
+        /// 文本
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -49,10 +59,14 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         [JsonProperty("succeed", NullValueHandling = NullValueHandling.Ignore)]
         public bool succeed => Items.Count == 0 || Items.All(p => p.succeed);
-
+        /// <summary>
+        /// 节点
+        /// </summary>
         [JsonProperty("items", NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidateItem> Items = new List<ValidateItem>();
-
+        /// <summary>
+        /// 消息
+        /// </summary>
         [JsonProperty("messages", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Messages = new List<string>();
 
@@ -74,11 +88,19 @@ namespace Gboxt.Common.DataModel
             return succeed ? "{}" : Items.Select(p => $"\"{p.Name}\":\"{p.Message }\"").LinkToString("{", ",", "}");
         }
 
-
+        /// <summary>
+        /// 加入消息
+        /// </summary>
+        /// <param name="message"></param>
         public void Add(string message)
         {
             Messages.Add(message);
         }
+        /// <summary>
+        /// 加入校验不能为空的消息
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="field"></param>
         public void AddNoEmpty(string caption, string field)
         {
             Items.Add(new ValidateItem
@@ -89,7 +111,12 @@ namespace Gboxt.Common.DataModel
                 Message = "不能为空"
             });
         }
-
+        /// <summary>
+        /// 加入消息
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="field"></param>
+        /// <param name="message"></param>
         public void Add(string caption, string field, string message)
         {
             Items.Add(new ValidateItem
@@ -100,7 +127,12 @@ namespace Gboxt.Common.DataModel
                 Message = message
             });
         }
-
+        /// <summary>
+        /// 加入警告
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="field"></param>
+        /// <param name="message"></param>
         public void AddWarning(string caption, string field, string message)
         {
             Items.Add(new ValidateItem

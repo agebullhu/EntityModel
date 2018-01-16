@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Yizuan.Service.Fundtion
 {
+    /// <summary>
+    /// ID编码器
+    /// </summary>
     public static class IdEncoder
     {
         /// <summary>

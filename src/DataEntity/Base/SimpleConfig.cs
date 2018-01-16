@@ -10,6 +10,9 @@ namespace Gboxt.Common.DataModel
     [DataContract, JsonObject(MemberSerialization.OptIn)]
     public class SimpleConfig : NotificationObject
     {
+        /// <summary>
+        /// 名称
+        /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _name;
 
@@ -32,6 +35,9 @@ namespace Gboxt.Common.DataModel
             }
         }
 
+        /// <summary>
+        ///     标题
+        /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _caption;
 
@@ -53,6 +59,9 @@ namespace Gboxt.Common.DataModel
             }
         }
 
+        /// <summary>
+        ///     说明
+        /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _description;
 
