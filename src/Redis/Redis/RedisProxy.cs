@@ -7,8 +7,8 @@ using System.Threading;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 using Newtonsoft.Json;
-using NServiceKit.Redis;
-using NServiceKit.Text;
+using ServiceStack.Common.Utils;
+using ServiceStack.Redis;
 
 namespace Agebull.Common.DataModel.Redis
 {
@@ -372,6 +372,8 @@ namespace Agebull.Common.DataModel.Redis
         public List<T> GetAll<T>(string pattern)
             where T : class
         {
+            Microsoft.Extensions.Caching.Redis.RedisCache cache;
+            
             List<T> lists = new List<T>();
             long cursor = 0;
             do

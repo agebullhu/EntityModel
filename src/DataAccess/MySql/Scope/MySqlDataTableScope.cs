@@ -20,9 +20,16 @@ namespace Gboxt.Common.DataModel.MySql
         {
             Table = table;
         }
-
+        /// <summary>
+        /// 表对象
+        /// </summary>
         public MySqlTable<TEntity> Table { get; private set; }
-
+        /// <summary>
+        /// 生成对象
+        /// </summary>
+        /// <param name="dataBase"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
         public static MySqlDataTableScope<TEntity> CreateScope(MySqlDataBase dataBase, MySqlTable<TEntity> table)
         {
             return new MySqlDataTableScope<TEntity>(dataBase, table);

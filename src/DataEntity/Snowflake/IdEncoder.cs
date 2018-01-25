@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Yizuan.Service.Fundtion
+namespace Agebull.Common
 {
     /// <summary>
     /// ID编码器

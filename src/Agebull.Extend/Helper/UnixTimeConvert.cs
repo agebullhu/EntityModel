@@ -1,7 +1,6 @@
 ﻿using System;
 
-
-namespace GoodLin.Common.Helper
+namespace Agebull.Common
 {
     /// <summary>
     /// Unix时间互转
@@ -11,13 +10,11 @@ namespace GoodLin.Common.Helper
         /// <summary>
         /// 将Unix时间戳转换为DateTime类型时间
         /// </summary>
-        /// <param name="d">double 型数字</param>
+        /// <param name="unix">double 型数字</param>
         /// <returns>DateTime</returns>
-        public static System.DateTime ConvertUnixTimeToDateTime(this double d)
+        public static DateTime ConvertUnixTimeToDateTime(this double unix)
         {
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
-            var time = startTime.AddMilliseconds(d);
-            return time;
+            return new DateTime(1970, 1, 1).AddSeconds(unix);
         }
 
         /// <summary>
@@ -25,13 +22,9 @@ namespace GoodLin.Common.Helper
         /// </summary>
         /// <param name="time">时间</param>
         /// <returns>long</returns>
-        public static long ConvertDateTimeToUnixTime(this System.DateTime time)
+        public static double ConvertDateTimeToUnixTime(this System.DateTime time)
         {
-            //double intResult = 0;
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1, 0, 0, 0, 0));
-            //intResult = (time- startTime).TotalMilliseconds;
-            long t = (time.Ticks - startTime.Ticks) / 10000;            //除10000调整为13位
-            return t;
+            return (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
         }
     }
 }

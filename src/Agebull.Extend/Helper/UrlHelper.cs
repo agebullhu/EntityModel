@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Web;
 
-namespace GoodLin.Common.Helper
+namespace Agebull.Common
 {
     /// <summary>
     /// 对URL的扩展

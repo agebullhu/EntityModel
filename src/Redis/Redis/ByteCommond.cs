@@ -257,37 +257,61 @@ namespace Agebull.Common.DataModel
             ulong num3 = (num2 << 0x20) | num;
             return *(((double*)&num3));
         }
-
+        /// <summary>
+        /// 转换到Bool
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static bool BytesToBoolean(this byte[] buffer)
         {
             return (buffer[0] != 0);
         }
 
-
+        /// <summary>
+        /// 转换到Short
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static short BytesToShort(this byte[] buffer)
         {
             return (short)(buffer[0] | (buffer[1] << 8));
         }
-
+        /// <summary>
+        /// 转换到Float
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static unsafe float BytesSingle(this byte[] buffer)
         {
             uint num = (uint)(((buffer[0] | (buffer[1] << 8)) | (buffer[2] << 0x10)) | (buffer[3] << 0x18));
             return *(((float*)&num));
         }
 
-
+        /// <summary>
+        /// 转到ushort
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static ushort BytesUInt16(this byte[] buffer)
         {
             return (ushort)(buffer[0] | (buffer[1] << 8));
         }
 
-
+        /// <summary>
+        /// 转到Uint
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static uint BytesUInt32(this byte[] buffer)
         {
             return (uint)(((buffer[0] | (buffer[1] << 8)) | (buffer[2] << 0x10)) | (buffer[3] << 0x18));
         }
 
-
+        /// <summary>
+        /// 转到uint64
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public static ulong BytesUInt64(this byte[] buffer)
         {
             uint num = (uint)(((buffer[0] | (buffer[1] << 8)) | (buffer[2] << 0x10)) | (buffer[3] << 0x18));

@@ -60,8 +60,8 @@ namespace Gboxt.Common.DataModel
             Random random2 = new Random(GetHashCode());
             for (int i = 0; i < codeCount; i += 2)
             {
-                str.Append(keys[random1.Next(36)]);
-                str.Append(keys[random2.Next(36)]);
+                str.Append(keys[random1.Next(keys.Length)]);
+                str.Append(keys[random2.Next(keys.Length)]);
             }
             return str.ToString();
         }

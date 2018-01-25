@@ -144,7 +144,6 @@ namespace Agebull.Common.DataModel.Redis
         {
             return CreateClient(db);
         }
-        
         private IDatabase CreateClient(int db)
         {
             Monitor.Enter(LockObj);
@@ -165,6 +164,7 @@ namespace Agebull.Common.DataModel.Redis
         }
 
 
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
             if (connect == null)
@@ -194,7 +194,7 @@ namespace Agebull.Common.DataModel.Redis
         {
             Client.KeyDelete(key);
         }
-        
+
 
         /// <summary>
         /// 取文本
@@ -227,7 +227,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public void Set(string key, string value, DateTime last)
         {
-            Client.StringSet(key, value, last - DateTime.Now );
+            Client.StringSet(key, value, last - DateTime.Now);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Agebull.Common.DataModel.Redis
         public T GetValue<T>(string key)
             where T : struct
         {
-            string vl =  Client.StringGet(key);
+            string vl = Client.StringGet(key);
             return string.IsNullOrWhiteSpace(vl) ? default(T) : JsonConvert.DeserializeObject<T>(vl);
         }
         /// <summary>
@@ -282,7 +282,7 @@ namespace Agebull.Common.DataModel.Redis
             where T : struct
         {
             string json = JsonConvert.SerializeObject(value);
-            Client.StringSet(key, json, last -DateTime.Now);
+            Client.StringSet(key, json, last - DateTime.Now);
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace Agebull.Common.DataModel.Redis
         #endregion
 
         #region 对象读写
-        
+
         /// <summary>
         /// 取值
         /// </summary>
@@ -575,10 +575,42 @@ namespace Agebull.Common.DataModel.Redis
         }
 
         #endregion
+        
 
-        #region 锁
+        #region 其它扩展
+        /// <summary>
+        /// 如果值不存在，则写入，否则失败
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool SetNx(string key, byte[] value = null)
+        {
+            var re = Client.Execute("SetNx", key, value ?? new byte[0]);
+            return !re.IsNull && (int)re == 1;
+        }
 
+        /// <summary>
+        /// 取得一个自增值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>0表示失败，其它数字成功</returns>
+        public long Incr(string key)
+        {
+            var re = Client.Execute("Incr", key);
+            return re.IsNull ? 0 : (long)re;
+        }
 
+        /// <summary>
+        /// 取得一个自减值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>0表示失败，其它数字成功</returns>
+        public long Decr(string key)
+        {
+            var re = Client.Execute("Decr", key);
+            return re.IsNull ? 0 : (long)re;
+        }
 
         #endregion
     }

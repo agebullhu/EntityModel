@@ -31,19 +31,19 @@ namespace Agebull.Common
         public static T LogicalGetData<T>(string name)
             where T : class
         {
-            if (!InUnitTest)
-            {
-#if !NETSTANDARD2_0
-                return CallContext.LogicalGetData(name) as T;
-#else
-                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
-                if (slot == null)
-                {
-                    return null;
-                }
-                return Thread.GetData(slot) as T;
-#endif
-            }
+//            if (!InUnitTest)
+//            {
+//#if !NETSTANDARD2_0
+//                return CallContext.LogicalGetData(name) as T;
+//#else
+//                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
+//                if (slot == null)
+//                {
+//                    return null;
+//                }
+//                return Thread.GetData(slot) as T;
+//#endif
+//            }
             object value;
             name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
             lock (Contexts)
@@ -60,17 +60,17 @@ namespace Agebull.Common
         public static void LogicalSetData<T>(string name, T value)
             where T : class
         {
-            if (!InUnitTest)
-            {
-#if !NETSTANDARD2_0
-                CallContext.LogicalSetData(name, value);
-#else
+//            if (!InUnitTest)
+//            {
+//#if !NETSTANDARD2_0
+//                CallContext.LogicalSetData(name, value);
+//#else
 
-                var key = $"ctx_bl_{name}";
-                var slot = Thread.GetNamedDataSlot(key) ?? Thread.AllocateNamedDataSlot(key);
-                Thread.SetData(slot, value);
-#endif
-            }
+//                var key = $"ctx_bl_{name}";
+//                var slot = Thread.GetNamedDataSlot(key) ?? Thread.AllocateNamedDataSlot(key);
+//                Thread.SetData(slot, value);
+//#endif
+//            }
             name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
             lock (Contexts)
             {
@@ -86,19 +86,19 @@ namespace Agebull.Common
         /// </summary>
         public static void Remove(string name)
         {
-            if (!InUnitTest)
-            {
-#if !NETSTANDARD2_0
-                CallContext.LogicalSetData(name, null);
-#else
-                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
-                if (slot != null)
-                {
-                    Thread.FreeNamedDataSlot($"ctx_bl_{name}");
-                }
-#endif
-                return;
-            }
+//            if (!InUnitTest)
+//            {
+//#if !NETSTANDARD2_0
+//                CallContext.LogicalSetData(name, null);
+//#else
+//                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
+//                if (slot != null)
+//                {
+//                    Thread.FreeNamedDataSlot($"ctx_bl_{name}");
+//                }
+//#endif
+//                return;
+//            }
             name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
             lock (Contexts)
             {

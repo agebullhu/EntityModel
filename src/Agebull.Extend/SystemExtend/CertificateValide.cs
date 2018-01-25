@@ -9,8 +9,6 @@
 using System.IdentityModel.Selectors ;
 using System.Security.Cryptography.X509Certificates ;
 
-using Agebull.Common.Logging ;
-
 #endregion
 
 namespace Agebull.Common.Security.Certificate.X509
@@ -26,8 +24,6 @@ namespace Agebull.Common.Security.Certificate.X509
         /// <param name="certificate"> 证书 </param>
         public override void Validate(X509Certificate2 certificate)
         {
-            LogRecorder.Trace(certificate.Subject) ;
-            LogRecorder.Trace(certificate.Thumbprint) ;
         }
     }
 }

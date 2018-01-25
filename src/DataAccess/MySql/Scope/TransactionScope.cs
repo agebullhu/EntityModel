@@ -25,12 +25,12 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         [ThreadStatic] private static TransactionScope _currentScope;
 
-        /// <summary>
+        /*// <summary>
         ///     数据库连接对象
         /// </summary>
         //private readonly MySqlDataBase _dataBase;
 
-        /*// <summary>
+        /// <summary>
         ///     在范围之前的连接对象
         /// </summary>
         private readonly SqlConnection _oldConnection;
@@ -38,7 +38,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     在范围之前的事务对象
         /// </summary>
-        private readonly SqlTransaction _oldTransaction;*/
+        private readonly SqlTransaction _oldTransaction;
 
         /// <summary>
         ///     上一个范围
@@ -50,7 +50,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         //private int _beginType;
 
-        //private readonly MySqlDataBaseScope dbScope;
+        //private readonly MySqlDataBaseScope dbScope;*/
         /// <summary>
         ///     构造
         /// </summary>

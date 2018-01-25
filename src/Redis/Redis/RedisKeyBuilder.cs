@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Text;
 
-namespace GoodLin.Common.Redis
+namespace Agebull.Common.Redis
 {
+    /// <summary>
+    /// Redis的Key生成器
+    /// </summary>
     public class RedisKeyBuilder
     {
         /// <summary>

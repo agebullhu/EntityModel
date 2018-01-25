@@ -20,7 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace Yizuan.Service.Fundtion
+namespace Agebull.Common
 {
     /// <summary>
     /// 模仿Twitter的SnowFlakes算法，根据开源代码更改的适用于本框架的生成一个根据时间递增，带有机器号和一个本地计数器的生成52位整型数的分布式Id生成器
@@ -36,11 +36,18 @@ namespace Yizuan.Service.Fundtion
 
         //We can provider id for about 34 years
 
-        //总共52位，额外一位用来标记紧急客户端生成的顺序Id
-
+        /// <summary>
+        /// 总共52位，额外一位用来标记紧急客户端生成的顺序Id
+        /// </summary>
         private static int _counter;
-
+        /// <summary>
+        /// 机器名称
+        /// </summary>
         public static string MachineName { get; private set; }
+
+        /// <summary>
+        /// 工作ID
+        /// </summary>
         public static int WorkerId { get; private set; }
 
         static SmallFlakes()

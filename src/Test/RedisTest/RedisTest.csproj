@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
+    <ProjectReference Include="..\..\DataAccess\Agebull.EntityModel.MySql.csproj" />
+    <ProjectReference Include="..\..\DataEntity\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\..\Redis\Agebull.EntityModel.Redis.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

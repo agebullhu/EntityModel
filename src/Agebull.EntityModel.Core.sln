@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.Core", "DataEntity\Agebull.EntityModel.Core.csproj", "{0D626DDA-02C0-4BD8-B2FD-EFEE0971510F}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.MySql", "DataAccess\Agebull.EntityModel.MySql.csproj", "{C2B7B11A-C173-4A50-AA28-8721A53180D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.Redis", "Redis\Agebull.EntityModel.Redis.csproj", "{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{677DFB08-4083-4DC0-8620-9D418AD71FF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.Common.LogRecorder", "LogRecorder\Agebull.Common.LogRecorder.csproj", "{1643AD52-B84C-439B-933C-C1489C5431B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|x64.ActiveCfg = Release|Any CPU
 		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}.Release|x64.Build.0 = Release|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Debug|x64.Build.0 = Debug|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|x64.ActiveCfg = Release|Any CPU
+		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +72,7 @@ Global
 		{E204D26E-EA0A-4905-A53F-19BD92F405BE} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
 		{C2B7B11A-C173-4A50-AA28-8721A53180D5} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
 		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{1643AD52-B84C-439B-933C-C1489C5431B7} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F65055-833D-450A-80E3-D58986FBA4B6}

@@ -14,9 +14,9 @@
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <DebugType>portable</DebugType>
-    <AssemblyName>Agebull.Common.Extend</AssemblyName>
-    <PackageId>Agebull.Common.Extend</PackageId>
-    <PackageTags>Agebull.Common.Extend</PackageTags>
+    <AssemblyName>Agebull.Common.LogRecorder</AssemblyName>
+    <PackageId>Agebull.Common.LogRecorder</PackageId>
+    <PackageTags>Agebull.Common.LogRecorder</PackageTags>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
@@ -30,10 +30,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    <Product>Agebull.Common.Extend</Product>
+    <Product>Agebull.Common</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Copyright />
-    <PackageReleaseNotes>一些常用的基础功能扩展</PackageReleaseNotes>
+    <PackageReleaseNotes>扩展日志记录器</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -70,13 +70,10 @@
     <None Remove="Properties\PublishProfiles\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
   </ItemGroup>
 
 </Project>
