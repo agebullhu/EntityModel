@@ -713,11 +713,11 @@ namespace Agebull.Common.Logging
             {
                 info.User = Thread.CurrentPrincipal.Identity.Name;
             }
-            if (recordInfos.Count > 1024 && info.Type < LogType.Error)
+            if (recordInfos.Count > 256 && info.Type < LogType.Error)
             {
                 Console.WriteLine("日志队列已满，当前级别内容已丢弃");
             }
-            using (ThreadLockScope.Scope(recordInfos))
+            //using (ThreadLockScope.Scope(recordInfos))
             {
                 recordInfos.Add(info);
             }
@@ -731,16 +731,16 @@ namespace Agebull.Common.Logging
         {
             while (true)
             {
-                Thread.SpinWait(3);
+                Thread.Sleep(3);
                 RecordInfo[] infos;
-                using (ThreadLockScope.Scope(recordInfos))
+                //using (ThreadLockScope.Scope(recordInfos))
                 {
                     infos = recordInfos.ToArray();
                     recordInfos.Clear();
                 }
                 foreach (var info in infos)
                 {
-                    Thread.SpinWait(0);//释放一次时间片,以保证主要线程的流畅性
+                    Thread.Sleep(0);//释放一次时间片,以保证主要线程的流畅性
                     WriteToLog(info);
                 }
             }
@@ -755,7 +755,7 @@ namespace Agebull.Common.Logging
                 if (Listener != null)
                 {
                     Listener.Trace(info);
-                    Thread.SpinWait(0);
+                    Thread.Sleep(0);
                 }
                 else
                 {

@@ -16,3 +16,6 @@ Debug
 /src/DataEntity/*.vspscc
 /src/20171225/*.nupkg
 *.vspscc
+/src/publish
+/publish
+/src/Lib

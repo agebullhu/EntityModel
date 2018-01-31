@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Agebull.Common.Logging
 {
@@ -36,10 +37,8 @@ namespace Agebull.Common.Logging
         {
             get
             {
-                var data = ContextHelper.LogicalGetData<MonitorData>("MonitorData");
-                if (data == null)
-                    ContextHelper.LogicalSetData("MonitorData", data = new MonitorData());
-                return data;
+                var sync = new AsyncLocal<MonitorData>();
+                return sync.Value ?? (sync.Value = new MonitorData());
             }
         }
 
@@ -59,7 +58,7 @@ namespace Agebull.Common.Logging
                 }
                 else
                 {
-                    ContextHelper.Remove("MonitorData");
+                    var asyncLocal = new AsyncLocal<MonitorData> {Value = null};
                 }
             }
         }

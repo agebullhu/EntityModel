@@ -40,7 +40,7 @@ namespace Agebull.Common.Frame
         public ThreadLockScope(object lockObject)
         {
             _lockObject = lockObject;
-            isLocked = Monitor.TryEnter(lockObject, 500);
+            isLocked = Monitor.TryEnter(lockObject);
         }
 
         /// <summary>

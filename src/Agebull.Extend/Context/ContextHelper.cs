@@ -31,19 +31,21 @@ namespace Agebull.Common
         public static T LogicalGetData<T>(string name)
             where T : class
         {
-//            if (!InUnitTest)
-//            {
-//#if !NETSTANDARD2_0
-//                return CallContext.LogicalGetData(name) as T;
-//#else
-//                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
-//                if (slot == null)
-//                {
-//                    return null;
-//                }
-//                return Thread.GetData(slot) as T;
-//#endif
-//            }
+            //            if (!InUnitTest)
+            //            {
+            //#if !NETSTANDARD2_0
+            //                return CallContext.LogicalGetData(name) as T;
+            //#else
+            //                var slot = Thread.GetNamedDataSlot($"ctx_bl_{name}");
+            //                if (slot == null)
+            //                {
+            //                    return null;
+            //                }
+            //                return Thread.GetData(slot) as T;
+            //#endif
+            //            }
+            //var ctx = new AsyncLocal<T>();
+            
             object value;
             name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
             lock (Contexts)
