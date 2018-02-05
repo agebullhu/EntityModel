@@ -56,7 +56,6 @@ namespace Agebull.Common.Logging
                 sb.Append(' ', 24);
                 sb.Append("|状态|   时间   |   用 时(ms)   |  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");//   计数A  |   计数B  |   计数C  |
                 ShowMinitor(sb.ToString());
-
                 MonitorItem.MonitorStack = new FixStack<MonitorItem>();
                 MonitorItem.MonitorStack.SetFix(new MonitorItem(title));
                 ShowMinitor(title, 0);
@@ -210,7 +209,7 @@ namespace Agebull.Common.Logging
                     MonitorItem.MonitorStack.FixValue.EndMessage();
                     string title = MonitorItem.MonitorStack.FixValue.Title ?? "Monitor";
                     ShowMinitor(title, 3);
-                    string log =  MonitorItem.MonitorTexter?.ToString();
+                    string log = MonitorItem.MonitorTexter?.ToString();
 
                     RecordInner(title, log, LogType.Monitor);
 
@@ -278,7 +277,7 @@ namespace Agebull.Common.Logging
             SystemTrace(msg);
             using (ThreadLockScope.Scope(LockKey))
             {
-                 MonitorItem.MonitorTexter?.AppendLine(msg);
+                MonitorItem.MonitorTexter?.AppendLine(msg);
             }
         }
     }

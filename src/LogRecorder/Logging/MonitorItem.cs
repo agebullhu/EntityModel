@@ -33,12 +33,16 @@ namespace Agebull.Common.Logging
     [Serializable]
     internal class MonitorItem
     {
+        //[ThreadStatic] private static MonitorData data;
+        private static AsyncLocal<MonitorData> dataLocal = new AsyncLocal<MonitorData>();
         private static MonitorData Data
         {
             get
             {
-                var sync = new AsyncLocal<MonitorData>();
-                return sync.Value ?? (sync.Value = new MonitorData());
+                //return dataLocal.Value;
+                ////return data ?? (data = new MonitorData());
+                //var sync = new AsyncLocal<MonitorData>();
+                return dataLocal.Value ?? (dataLocal.Value = new MonitorData());
             }
         }
 
@@ -58,34 +62,20 @@ namespace Agebull.Common.Logging
                 }
                 else
                 {
-                    var asyncLocal = new AsyncLocal<MonitorData> {Value = null};
+                    Data.InMonitor = false;
                 }
             }
         }
-
-
-        private static FixStack<MonitorItem> localMonitorStack
-        {
-            get { return Data.Stack; }
-            set { Data.Stack = value; }
-        }
-
-        private static StringBuilder localMonitorTexter
-        {
-            get { return Data.Texter; }
-            set { Data.Texter = value; }
-        }
         
-
         internal static FixStack<MonitorItem> MonitorStack
         {
             get
             {
-                return localMonitorStack;
+                return Data.Stack;
             }
             set
             {
-                localMonitorStack = value;
+                Data.Stack = value;
             }
         }
         /// <summary>
@@ -93,14 +83,8 @@ namespace Agebull.Common.Logging
         /// </summary>
         internal static StringBuilder MonitorTexter
         {
-            get
-            {
-                return localMonitorTexter;
-            }
-            set
-            {
-                localMonitorTexter = value;
-            }
+            get { return Data.Texter; }
+            set { Data.Texter = value; }
         }
 
 #if !NETSTANDARD2_0
@@ -258,10 +242,7 @@ namespace Agebull.Common.Logging
                 , NumberC.ToFixLenString(10)
                 , a.TotalMilliseconds.ToFixLenString(7, 1));
 #else
-            message = string.Format("|完成| {0:HH:mm:ss} |{1}/{2}|"
-                , DateTime.Now
-                , TotalTime.ToFixLenString(7, 1)
-                , a.TotalMilliseconds.ToFixLenString(7, 1));
+            message = $"|完成| {DateTime.Now:HH:mm:ss} |{TotalTime.ToFixLenString(7, 1)}/{a.TotalMilliseconds.ToFixLenString(7, 1)}|";
 #endif
         }
     }

@@ -55,7 +55,7 @@ namespace Agebull.Common.Logging
 #endif
                         if (exeth != null)
                         {
-                            cfgpath = Path.Combine(exeth, "log");
+                            cfgpath = Path.Combine(exeth, "logs");
                         }
                     }
                     LogPath = cfgpath;
@@ -84,17 +84,17 @@ namespace Agebull.Common.Logging
         ///   文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
         /// </summary>
         public static string LogPath { get; set; }
-        
+
         /// <summary>
-            ///   记录日志
-            /// </summary>
-            /// <param name="info"> 日志消息 </param>
-            public void RecordLog(RecordInfo info)
-            {
+        ///   记录日志
+        /// </summary>
+        /// <param name="info"> 日志消息 </param>
+        public void RecordLog(RecordInfo info)
+        {
 #if CLIENT
             RecordLog(info.gID, info.Message, info.TypeName);
 #else
-                switch (info.Type)
+            switch (info.Type)
             {
                 case LogType.System:
                     RecordLog(info.gID, info.Message, info.TypeName, info.User, "system");
@@ -126,7 +126,7 @@ namespace Agebull.Common.Logging
                     RecordLog(info.gID, info.Message, info.TypeName, info.User, "monitor");
                     break;
                 default:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User,"info");
+                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "info");
                     break;
             }
 #endif
@@ -171,7 +171,7 @@ namespace Agebull.Common.Logging
                 SytemDebug.WriteLine("日志记录时发生异常：\r\n{0}\r\n{1}" , info , ex) ;
             }
 #else
-            string log = type== "DataBase" 
+            string log = type == "DataBase"
                 ? $@"
 /*Date:{ DateTime.Now.ToString(CultureInfo.InvariantCulture)}
 RQID:{id}*/
@@ -184,13 +184,13 @@ User:{user}
 {msg}";
             try
             {
-                if (!Directory.Exists(LogPath))
-                {
-                    Directory.CreateDirectory(LogPath);
-                }
+                //if (!Directory.Exists(LogPath))
+                //{
+                //    Directory.CreateDirectory(LogPath);
+                //}
                 string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}.{name ?? "info"}.log");
 
-                using (ThreadLockScope.Scope(this))
+                //using (ThreadLockScope.Scope(this))
                 {
                     File.AppendAllText(ph, log, Encoding.UTF8);
                 }
@@ -222,7 +222,7 @@ User:{user}
         /// <summary>
         ///   记录日志
         /// </summary>
-        private void RecordTraceInner(string msg,string type= "trace")
+        private void RecordTraceInner(string msg, string type = "trace")
         {
 #if SILVERLIGHT
             using (var store = IsolatedStorageFile.GetUserStoreForApplication())
@@ -246,7 +246,7 @@ User:{user}
             {
                 Directory.CreateDirectory(LogPath);
             }
-            string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyy-MM-dd}.{type}.log");
+            string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyy-MM-dd}.{DateTime.Now.Hour / 2}.{type.Trim('.')}.log");
 
             using (ThreadLockScope.Scope(this))
             {

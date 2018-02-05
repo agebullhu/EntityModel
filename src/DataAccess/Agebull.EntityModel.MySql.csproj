@@ -3,9 +3,9 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>2.0.0.0</Version>
+    <Version>2.0.0.2</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
     <PackageId>Agebull.EntityModel.MySql</PackageId>
@@ -15,7 +15,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.0.0</PackageVersion>
+    <PackageVersion>2.0.0.2</PackageVersion>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
@@ -32,7 +32,7 @@
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <PackageReference Include="MySql.Data" Version="6.9.10" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -51,7 +51,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="MySql.Data" Version="6.10.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Interface\**" />
@@ -66,7 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="6.10.5" />
+    <PackageReference Include="MySql.Data" Version="6.10.6" />
   </ItemGroup>
 
   <ItemGroup>
