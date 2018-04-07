@@ -31,7 +31,7 @@ namespace Agebull.Common
         /// <summary>
         /// 用于同步的信号量
         /// </summary>
-        private Semaphore _semaphore = new Semaphore(0,Int32.MinValue);
+        private Semaphore _semaphore = new Semaphore(0, Int32.MaxValue);
 
         /// <summary>
         /// 是否为空
@@ -62,7 +62,8 @@ namespace Agebull.Common
                 {
                     var json = File.ReadAllText(file);
                     queue = JsonConvert.DeserializeObject<MulitToOneQueue<T>>(json);
-                    queue._semaphore = new Semaphore(0, Int32.MinValue);
+                    if (queue._semaphore == null)
+                        queue._semaphore = new Semaphore(0, Int32.MinValue);
                 }
                 catch (Exception e)
                 {
@@ -94,21 +95,21 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="t">返回内容（如果返回True)</param>
         /// <param name="waitMs">等待时长</param>
-        public bool StartProcess(out T t,int waitMs)
+        public bool StartProcess(out T t, int waitMs)
         {
             if (Doing.Count > 0)//之前存在失败
             {
                 t = Doing.Peek();
                 return true;
             }
-            if (_semaphore.WaitOne(waitMs))
+            if (!_semaphore.WaitOne(waitMs))
             {
                 t = default(T);
                 return false;
             }
             lock (this)
             {
-                t=Queue.Dequeue();
+                t = Queue.Dequeue();
             }
             Doing.Enqueue(t);
             return true;
