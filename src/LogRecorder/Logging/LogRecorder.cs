@@ -53,11 +53,9 @@ namespace Agebull.Common.Logging
         /// </summary>
         static LogRecorder()
         {
-            ;
-
             Recorder = BaseRecorder = new TxtRecorder();
             Recorder.Initialize();
-            IsTextRecorder = true;
+            _isTextRecorder = true;
             var logThread = new Thread(WriteRecordLoop)
             {
                 IsBackground = true,
@@ -79,7 +77,13 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 是否仅使用文本记录器
         /// </summary>
-        private static bool IsTextRecorder;
+        private static bool _isTextRecorder;
+
+        /// <summary>
+        /// 正在记录日志（用于防止重入）
+        /// </summary>
+        [ThreadStatic]
+        internal static bool InRecording;
 
         /// <summary>
         ///   初始化
@@ -96,7 +100,7 @@ namespace Agebull.Common.Logging
             if (record == null)
                 return;
             Recorder = record;
-            IsTextRecorder = false;
+            _isTextRecorder = record is TxtRecorder ;
             Recorder.Initialize();
         }
 
@@ -707,7 +711,7 @@ namespace Agebull.Common.Logging
         ///   入队列
         /// </summary>
         /// <param name="info"> </param>
-        private static void Push(RecordInfo info)
+        public static void Push(RecordInfo info)
         {
             if (Thread.CurrentPrincipal != null)
             {
@@ -772,7 +776,13 @@ namespace Agebull.Common.Logging
                         TxtRecorder.RecordTrace(info.Message, "monitor");
                         return;
                 }
-                if (!IsTextRecorder && info.Type > LogType.System)
+
+                if (InRecording)
+                {
+                    BaseRecorder.RecordLog(info);
+                    return;
+                }
+                if (!_isTextRecorder && info.Type > LogType.System)
                     BaseRecorder.RecordLog(info);
                 Recorder.RecordLog(info);
             }
@@ -789,7 +799,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void SystemTrace(object arg)
         {
-            //Console.WriteLine(arg);
+            Console.WriteLine(arg);
         }
 
         /// <summary>
@@ -800,7 +810,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void SystemTrace(string title, object arg)
         {
-            //Console.WriteLine($"{title}:{arg}");
+            Console.WriteLine($"{title}:{arg}");
         }
 
         #endregion

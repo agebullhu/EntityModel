@@ -6,6 +6,7 @@
 #region
 
 using System ;
+using Agebull.Common.Base;
 
 #endregion
 
@@ -195,5 +196,32 @@ namespace Agebull.Common.Logging
         /// </summary>
         /// <param name="info"> 日志消息 </param>
         void Trace(RecordInfo info) ;
+    }
+    /// <summary>
+    /// 正在记录日志的范围
+    /// </summary>
+    public class LogRecordingScope : ScopeBase
+    {
+        /// <summary>
+        /// 生成日志记录的范围
+        /// </summary>
+        /// <returns></returns>
+        public static ScopeBase CreateScope()
+        {
+            LogRecorder.InRecording = true;
+            return new LogRecordingScope();
+        }
+
+        private LogRecordingScope()
+        {
+
+        }
+        /// <summary>
+        /// 清理资源
+        /// </summary>
+        protected override void OnDispose()
+        {
+            LogRecorder.InRecording = false;
+        }
     }
 }
