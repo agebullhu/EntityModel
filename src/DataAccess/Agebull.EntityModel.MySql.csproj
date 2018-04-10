@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>2.0.0.3</Version>
+    <Version>2.0.0.7</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -15,7 +15,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.0.3</PackageVersion>
+    <PackageVersion>2.0.0.7</PackageVersion>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
@@ -26,7 +26,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
-    <Company>Agebull</Company>
+    <Company>Yizuanbao &amp; Agebull</Company>
     <Product>Agebull.EntityModel.MySql</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>

@@ -23,11 +23,13 @@ namespace Agebull.Common
         /// </summary>
         [JsonProperty]
         public Queue<T> Queue { get; } = new Queue<T>();
+
         /// <summary>
         /// 正在处理
         /// </summary>
         [JsonProperty]
         public Queue<T> Doing { get; } = new Queue<T>();
+
         /// <summary>
         /// 用于同步的信号量
         /// </summary>
@@ -41,14 +43,19 @@ namespace Agebull.Common
         {
             return Queue.Count == 0;
         }
+
+
         /// <summary>
         /// 保存以备下次启动时使用
         /// </summary>
         public void Save(string file)
         {
-            var json = JsonConvert.SerializeObject(this);
+            string json;
+            lock (this)
+                json = JsonConvert.SerializeObject(this);
             File.WriteAllText(file, json);
         }
+
         /// <summary>
         /// 载入保存的内容
         /// </summary>
@@ -77,6 +84,7 @@ namespace Agebull.Common
             }
             return queue;
         }
+
         /// <summary>
         /// 加入队列
         /// </summary>
@@ -99,7 +107,8 @@ namespace Agebull.Common
         {
             if (Doing.Count > 0)//之前存在失败
             {
-                t = Doing.Peek();
+                lock (this)
+                    t = Doing.Peek();
                 return true;
             }
             if (!_semaphore.WaitOne(waitMs))
@@ -114,12 +123,14 @@ namespace Agebull.Common
             Doing.Enqueue(t);
             return true;
         }
+
         /// <summary>
         /// 完成处理队列内容
         /// </summary>
         public void EndProcess()
         {
-            Doing.Dequeue();
+            lock (this)
+                Doing.Dequeue();
         }
     }
 }
