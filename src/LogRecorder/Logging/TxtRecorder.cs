@@ -97,36 +97,36 @@ namespace Agebull.Common.Logging
             switch (info.Type)
             {
                 case LogType.System:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "system");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "system");
                     break;
                 case LogType.Login:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "user");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "user");
                     break;
                 case LogType.Request:
                 case LogType.WcfMessage:
                 case LogType.Trace:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "trace");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "trace");
                     break;
                 case LogType.DataBase:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "sql");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "sql");
                     break;
                 case LogType.Warning:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "warning");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "warning");
                     break;
                 case LogType.Error:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "error");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "error");
                     break;
                 case LogType.Exception:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "exception");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "exception");
                     break;
                 case LogType.Plan:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "plan");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "plan");
                     break;
                 case LogType.Monitor:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "monitor");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "monitor");
                     break;
                 default:
-                    RecordLog(info.gID, info.Message, info.TypeName, info.User, "info");
+                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "info");
                     break;
             }
 #endif
@@ -140,7 +140,7 @@ namespace Agebull.Common.Logging
         /// <param name="type"> 日志类型 </param>
         /// <param name="user"> 当前操作者 </param>
         /// <param name="name"> 标识的文件后缀(如.error,则文件名可能为 20160602.error.log) </param>
-        private void RecordLog(Guid id, string msg, string type, string user = null, string name = null)
+        private void RecordLog(string id, string msg, string type, string user = null, string name = null)
         {
 #if SILVERLIGHT
             XElement xmlTree1 = new XElement("LogItem", new XElement("Date", DateTime.Now), new XElement("Type", type), new XElement("User", user), new XElement("Infomation", msg));
@@ -264,7 +264,7 @@ User:{user}
         public void Write(string message)
 #endif
         {
-            RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
+            RecordLog(LogRecorder.GetRequestId(), message, LogRecorder.TypeToString(LogType.Trace));
         }
 
         /// <summary>
@@ -277,7 +277,7 @@ User:{user}
         public void WriteLine(string message)
 #endif
         {
-            RecordLog(Guid.NewGuid(), message, LogRecorder.TypeToString(LogType.Trace));
+            RecordLog(LogRecorder.GetRequestId(), message, LogRecorder.TypeToString(LogType.Trace));
         }
     }
 }

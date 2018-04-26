@@ -6,9 +6,9 @@
 #region
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 #if !NETSTANDARD2_0
+using System.Collections.Generic;
 using System.Data.SqlClient;
 #endif
 using System.Diagnostics;
@@ -84,12 +84,34 @@ namespace Agebull.Common.Logging
         /// </summary>
         [ThreadStatic]
         internal static bool InRecording;
-
+        /// <summary>
+        /// 日志记录状态
+        /// </summary>
+        public enum LogRecorderStatus
+        {
+            /// <summary>
+            /// 无
+            /// </summary>
+            None,
+            /// <summary>
+            /// 完成初始化
+            /// </summary>
+            Initialized,
+            /// <summary>
+            /// 已关闭
+            /// </summary>
+            Shutdown
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static LogRecorderStatus State { get; private set; }
         /// <summary>
         ///   初始化
         /// </summary>
         public static void Initialize()
         {
+            State = LogRecorderStatus.Initialized;
         }
         /// <summary>
         ///   初始化
@@ -97,11 +119,13 @@ namespace Agebull.Common.Logging
         /// <param name="record"> </param>
         public static void Initialize(ILogRecorder record)
         {
-            if (record == null)
-                return;
-            Recorder = record;
-            _isTextRecorder = record is TxtRecorder ;
-            Recorder.Initialize();
+            if (record != null)
+            {
+                Recorder = record;
+                _isTextRecorder = record is TxtRecorder;
+                Recorder.Initialize();
+            }
+            State = LogRecorderStatus.Initialized;
         }
 
         /// <summary>
@@ -109,20 +133,23 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
+            State = LogRecorderStatus.Shutdown;
             Recorder.Shutdown();
+            if (!_isTextRecorder)
+                BaseRecorder.Shutdown();
         }
 
         /// <summary>
         /// 取请求ID的方法
         /// </summary>
-        public static Func<Guid> GetRequestIdFunc;
+        public static Func<string> GetRequestIdFunc;
 
         /// <summary>
         /// 取请求ID的方法
         /// </summary>
-        static Guid GetRequestId()
+        public static string  GetRequestId()
         {
-            return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid();
+            return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
         }
         #endregion
 
@@ -576,16 +603,6 @@ namespace Agebull.Common.Logging
         #region 写入
 
         /// <summary>
-        /// 日志序号
-        /// </summary>
-        static ulong _id = 1;
-
-        /// <summary>
-        /// 用于对象锁定
-        /// </summary>
-        static readonly object lockTooken = new RecordInfo();
-
-        /// <summary>
         ///   记录日志
         /// </summary>
         /// <param name="name"> 原始的消息 </param>
@@ -672,6 +689,22 @@ namespace Agebull.Common.Logging
                 RecordInner(name, msg, type, typeName);
         }
 
+
+        #endregion
+
+        #region 内部真实记录
+
+
+        /// <summary>
+        /// 待写入的日志信息集合
+        /// </summary>
+        private static readonly MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
+
+        /// <summary>
+        /// 日志序号
+        /// </summary>
+        static ulong _id = 1;
+
         /// <summary>
         ///   记录日志
         /// </summary>
@@ -681,116 +714,66 @@ namespace Agebull.Common.Logging
         /// <param name="typeName"> 类型名称 </param>
         private static void RecordInner(string name, string msg, LogType type, string typeName = null)
         {
-            Guid id = GetRequestId();
             if (type == LogType.None)
             {
                 type = LogType.Trace;
             }
-            ulong idx;
-            using (ThreadLockScope.Scope(lockTooken))
+            RecordInfos.Push(new RecordInfo
             {
-                idx = _id++;
-            }
-            Push(new RecordInfo
-            {
-                gID = id,
-                Index = idx,
+                RequestID = GetRequestId(),
                 Name = name,
                 Type = type,
                 Message = msg,
+                Time = DateTime.Now,
                 ThreadID = Thread.CurrentThread.ManagedThreadId,
                 TypeName = typeName ?? TypeToString(type)
             });
         }
-        /// <summary>
-        /// 待写入的日志信息集合
-        /// </summary>
-        static readonly List<RecordInfo> RecordInfos = new List<RecordInfo>();
-
-        /// <summary>
-        ///   入队列
-        /// </summary>
-        /// <param name="info"> </param>
-        public static void Push(RecordInfo info)
-        {
-            if (Thread.CurrentPrincipal != null)
-            {
-                info.User = Thread.CurrentPrincipal.Identity.Name;
-            }
-            if (RecordInfos.Count > 1024 && info.Type < LogType.Error)
-            {
-                SystemTrace("日志队列已满，当前级别内容已丢弃");
-                return;
-            }
-            RecordInfos.Add(info);
-        }
-
         /// <summary>
         ///  日志记录独立线程
         /// </summary>
         /// <param name="arg"> </param>
         private static void WriteRecordLoop(object arg)
         {
-            while (true)
+            while (State != LogRecorderStatus.Shutdown)
             {
-                Thread.Sleep(10); //释放一次时间片,以保证主要线程的流畅性
-                if (RecordInfos.Count == 0)
+                if (!RecordInfos.StartProcess(out var info, 100))
                     continue;
-                var infos = RecordInfos.ToArray();
-                RecordInfos.Clear();
-                foreach (var info in infos)
+                RecordInfos.EndProcess();
+                info.Index = ++_id;
+                try
                 {
-                    WriteToLog(info);
+                    if (Listener != null)
+                    {
+                        Listener.Trace(info);
+                    }
+                    else
+                    {
+                        SystemTrace(info.Message);
+                    }
                 }
-            }
-
-            // ReSharper disable FunctionNeverReturns
-        }
-        // ReSharper restore FunctionNeverReturns
-
-        private static void WriteToLog(RecordInfo info)
-        {
-            try
-            {
-                if (Listener != null)
+                catch (Exception ex)
                 {
-                    Listener.Trace(info);
+                    SystemTrace("日志侦听器发生错误", ex);
                 }
-                else
+                try
                 {
-                    SystemTrace(info.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                SystemTrace("日志侦听器发生错误", ex);
-            }
-            try
-            {
-                switch (info.Type)
-                {
-                    case LogType.Trace:
-                        TxtRecorder.RecordTrace(info.Message);
+                    if (InRecording)
+                    {
+                        BaseRecorder.RecordLog(info);
                         return;
-                    case LogType.Monitor:
-                        TxtRecorder.RecordTrace(info.Message, "monitor");
-                        return;
+                    }
+                    if (!_isTextRecorder && info.Type > LogType.System)
+                        BaseRecorder.RecordLog(info);
+                    Recorder.RecordLog(info);
                 }
-
-                if (InRecording)
+                catch (Exception ex)
                 {
-                    BaseRecorder.RecordLog(info);
-                    return;
+                    SystemTrace("日志写入发生错误", ex);
                 }
-                if (!_isTextRecorder && info.Type > LogType.System)
-                    BaseRecorder.RecordLog(info);
-                Recorder.RecordLog(info);
-            }
-            catch (Exception ex)
-            {
-                SystemTrace("日志写入发生错误", ex);
             }
         }
+
 
         /// <summary>
         /// 写入系统跟踪

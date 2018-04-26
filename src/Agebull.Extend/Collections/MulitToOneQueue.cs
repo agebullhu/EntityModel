@@ -41,8 +41,9 @@ namespace Agebull.Common
         /// <returns></returns>
         public bool IsEmpty()
         {
-            return Queue.Count == 0;
+            return Queue.Count == 0 && Doing.Count == 0;
         }
+
 
 
         /// <summary>
@@ -50,10 +51,14 @@ namespace Agebull.Common
         /// </summary>
         public void Save(string file)
         {
-            string json;
-            lock (this)
-                json = JsonConvert.SerializeObject(this);
-            File.WriteAllText(file, json);
+            Queue<T> queue = new Queue<T>();
+            lock (Doing)
+                foreach (var doing in Doing.ToArray())
+                    queue.Enqueue(doing);
+            lock (Queue)
+                foreach (var doing in Queue)
+                    queue.Enqueue(doing);
+            File.WriteAllText(file, JsonConvert.SerializeObject(queue));
         }
 
         /// <summary>
@@ -62,25 +67,22 @@ namespace Agebull.Common
         /// <returns>队列对象</returns>
         public static MulitToOneQueue<T> Load(string file)
         {
-            MulitToOneQueue<T> queue;
-            if (File.Exists(file))
+            MulitToOneQueue<T> queue = new MulitToOneQueue<T>();
+            if (!File.Exists(file))
+                return queue;
+            try
             {
-                try
+                var json = File.ReadAllText(file);
+                if (!string.IsNullOrWhiteSpace(json))
                 {
-                    var json = File.ReadAllText(file);
-                    queue = JsonConvert.DeserializeObject<MulitToOneQueue<T>>(json);
-                    if (queue._semaphore == null)
-                        queue._semaphore = new Semaphore(0, Int32.MinValue);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    queue = new MulitToOneQueue<T>();
+                    var old = JsonConvert.DeserializeObject<Queue<T>>(json);
+                    foreach (var doing in old)
+                        queue.Doing.Enqueue(doing);
                 }
             }
-            else
+            catch (Exception e)
             {
-                queue = new MulitToOneQueue<T>();
+                Console.WriteLine(e);
             }
             return queue;
         }
@@ -91,7 +93,7 @@ namespace Agebull.Common
         /// <param name="t"></param>
         public void Push(T t)
         {
-            lock (this)
+            lock (Queue)
             {
                 Queue.Enqueue(t);
             }
@@ -107,7 +109,7 @@ namespace Agebull.Common
         {
             if (Doing.Count > 0)//之前存在失败
             {
-                lock (this)
+                lock (Doing)
                     t = Doing.Peek();
                 return true;
             }
@@ -116,7 +118,7 @@ namespace Agebull.Common
                 t = default(T);
                 return false;
             }
-            lock (this)
+            lock (Queue)
             {
                 t = Queue.Dequeue();
             }
@@ -129,7 +131,7 @@ namespace Agebull.Common
         /// </summary>
         public void EndProcess()
         {
-            lock (this)
+            lock (Doing)
                 Doing.Dequeue();
         }
     }
