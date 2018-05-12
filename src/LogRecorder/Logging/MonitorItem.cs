@@ -143,9 +143,8 @@ namespace Agebull.Common.Logging
             TotalAllocatedMemorySize = 0;
 
 
-            message = string.Format("|开始| {0:HH:mm:ss} |       -       |     -    |     -    |{1}|    -     |{2}|"//    -     |     -    |     -    |
-                , DateTime.Now, (AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize / 1048576F).ToFixLenString(10, 3)
-                , (AppDomain.CurrentDomain.MonitoringSurvivedMemorySize / 1048576F).ToFixLenString(10, 3));
+            message =
+                $"|开始| {DateTime.Now:HH:mm:ss} |       -       |     -    |     -    |{(AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize / 1048576F).ToFixLenString(10, 3)}|    -     |{(AppDomain.CurrentDomain.MonitoringSurvivedMemorySize / 1048576F).ToFixLenString(10, 3)}|";
 #else
             message = $"|开始| {DateTime.Now:HH:mm:ss} |";
 #endif

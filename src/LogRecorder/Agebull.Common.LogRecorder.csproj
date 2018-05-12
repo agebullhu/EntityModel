@@ -10,7 +10,7 @@
   <PropertyGroup>
     <Description>扩展日志记录器</Description>
     <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
-    <Version>2.0.0.9</Version>
+    <Version>2.0.0.10</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -22,14 +22,14 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.0.9</PackageVersion>
+    <PackageVersion>2.0.0.10</PackageVersion>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
-    <Company>Yizuanbao &amp; Agebull</Company>
+    <Company>Agebull</Company>
     <Product>Agebull.Common</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Copyright />
@@ -42,7 +42,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>DEBUG;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">

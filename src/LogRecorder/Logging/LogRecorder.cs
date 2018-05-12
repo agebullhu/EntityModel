@@ -8,13 +8,12 @@
 using System;
 using System.Configuration;
 #if !NETSTANDARD2_0
-using System.Collections.Generic;
 using System.Data.SqlClient;
 #endif
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using Agebull.Common.Frame;
 using Agebull.Common.Reflection;
 
 #endregion
@@ -27,6 +26,17 @@ namespace Agebull.Common.Logging
     public static partial class LogRecorder
     {
         #region 对象
+
+        /// <summary>
+        /// 是否用Task而非线程方式后台记录日志
+        /// </summary>
+        public static bool LogByTask { get; set; } = (ConfigurationManager.AppSettings["LogByTask"] ?? "False").ToLower() == "true";
+
+
+        /// <summary>
+        /// 是否将日志输出到控制台
+        /// </summary>
+        public static bool TraceToConsole { get; set; } = (ConfigurationManager.AppSettings["TraceToConsole"] ?? "False").ToLower() == "true";
 
         /// <summary>
         /// 是否开启跟踪日志
@@ -48,21 +58,6 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static ILogListener Listener { get; set; }
 
-        /// <summary>
-        ///   静态构造
-        /// </summary>
-        static LogRecorder()
-        {
-            Recorder = BaseRecorder = new TxtRecorder();
-            Recorder.Initialize();
-            _isTextRecorder = true;
-            var logThread = new Thread(WriteRecordLoop)
-            {
-                IsBackground = true,
-                Priority = ThreadPriority.BelowNormal
-            };
-            logThread.Start();
-        }
 
         /// <summary>
         ///   记录器
@@ -103,9 +98,50 @@ namespace Agebull.Common.Logging
             Shutdown
         }
         /// <summary>
-        /// 
+        /// 日志状态
         /// </summary>
         public static LogRecorderStatus State { get; private set; }
+
+
+
+        /// <summary>
+        /// 取请求ID的方法
+        /// </summary>
+        public static Func<string> GetRequestIdFunc;
+
+        /// <summary>
+        /// 取请求ID的方法
+        /// </summary>
+        public static string  GetRequestId()
+        {
+            return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
+        }
+        #endregion
+
+        #region 基本流程
+
+        /// <summary>
+        ///   静态构造
+        /// </summary>
+        static LogRecorder()
+        {
+            Recorder = BaseRecorder = new TxtRecorder();
+            Recorder.Initialize();
+            _isTextRecorder = true;
+            if (LogByTask)
+            {
+                Task.Factory.StartNew(WriteRecordLoop);
+            }
+            else
+            {
+                var logThread = new Thread(WriteRecordLoop)
+                {
+                    IsBackground = true,
+                    Priority = ThreadPriority.BelowNormal
+                };
+                logThread.Start();
+            }
+        }
         /// <summary>
         ///   初始化
         /// </summary>
@@ -137,19 +173,6 @@ namespace Agebull.Common.Logging
             Recorder.Shutdown();
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
-        }
-
-        /// <summary>
-        /// 取请求ID的方法
-        /// </summary>
-        public static Func<string> GetRequestIdFunc;
-
-        /// <summary>
-        /// 取请求ID的方法
-        /// </summary>
-        public static string  GetRequestId()
-        {
-            return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
         }
         #endregion
 
@@ -191,20 +214,23 @@ namespace Agebull.Common.Logging
                     return "WcfMessage";
             }
         }
-
-        static string FormatMessage(string message, object[] formatArgs)
+        /// <summary>
+        /// 格式化消息
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="formatArgs"></param>
+        /// <returns></returns>
+        private static string FormatMessage(string message, object[] formatArgs)
         {
-            string msg = null;
-            if (message != null)
+            if (message == null) return null;
+            string msg;
+            if (formatArgs == null || formatArgs.Length == 0)
             {
-                if (formatArgs == null || formatArgs.Length == 0)
-                {
-                    msg = message;
-                }
-                else
-                {
-                    msg = String.Format(message, formatArgs);
-                }
+                msg = message;
+            }
+            else
+            {
+                msg = String.Format(message, formatArgs);
             }
             return msg;
         }
@@ -214,8 +240,8 @@ namespace Agebull.Common.Logging
         /// <param name="title"> 标题 </param>
         public static string StackTraceInfomation(string title = null)
         {
-            return String.Format(@"{0}:
-{1}", title, new StackTrace());
+            return $@"{title}:
+{new StackTrace()}";
         }
 
         #endregion
@@ -431,8 +457,7 @@ namespace Agebull.Common.Logging
         public static void RecordException(Exception exception, out string message)
         {
             message = ExceptionMessage(exception);
-            string xml;
-            ExceptionInfomation(exception, null, out xml);
+            ExceptionInfomation(exception, null, out string xml);
             string title = "异常";
             if (exception != null)
             {
@@ -448,8 +473,7 @@ namespace Agebull.Common.Logging
         /// <param name="message"> 日志详细信息 </param>
         public static string Exception(Exception ex, string message = null)
         {
-            string xml;
-            string re = ExceptionInfomation(ex, message, out xml);
+            string re = ExceptionInfomation(ex, message, out var xml);
             Record("异常", xml, LogType.Exception);
             return re;
         }
@@ -462,8 +486,7 @@ namespace Agebull.Common.Logging
         /// <param name="formatArgs">格式化参数</param>
         public static string Exception(Exception e, string message, params object[] formatArgs)
         {
-            string xml;
-            string re = ExceptionInfomation(e, FormatMessage(message, formatArgs), out xml);
+            string re = ExceptionInfomation(e, FormatMessage(message, formatArgs), out string xml);
             if (e != null)
             {
                 message = e.Message;
@@ -481,37 +504,27 @@ namespace Agebull.Common.Logging
         /// <returns> </returns>
         public static string ExceptionMessage(Exception ex)
         {
-            if (ex != null)
+            switch (ex)
             {
+                case null:
+                    return "发生未处理异常";
 #if !NETSTANDARD2_0
-                if (ex is SqlException)
-                {
-                    return AgebullSystemException.SqlExceptionLevel(ex as SqlException) > 16
-                                   ? String.Format("发生服务器错误,系统标识:{0}", GetRequestId())
-                                   : String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), ex.Message);
-                }
+                case SqlException exception:
+                    return AgebullSystemException.SqlExceptionLevel(exception) > 16
+                        ? $"发生服务器错误,系统标识:{GetRequestId()}"
+                        : String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), exception.Message);
 #endif
-                if (ex is SystemException)
-                {
-                    return String.Format("发生系统错误,系统标识:{0}", GetRequestId());
-                }
-                if (ex is AgebullSystemException)
-                {
-                    return String.Format("发生内部错误,系统标识:{0}", GetRequestId());
-                }
-                if (ex is BugException)
-                {
-                    return String.Format("发生设计错误,系统标识:{0}", GetRequestId());
-                }
-                if (ex is AgebullBusinessException)
-                {
+                case SystemException _:
+                    return $"发生系统错误,系统标识:{GetRequestId()}";
+                case AgebullSystemException _:
+                    return $"发生内部错误,系统标识:{GetRequestId()}";
+                case BugException _:
+                    return $"发生设计错误,系统标识:{GetRequestId()}";
+                case AgebullBusinessException _:
                     return String.Format("发生业务逻辑错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
-                }
-#if !NETSTANDARD2_0
-                return String.Format("发生未知错误,系统标识:{0}", GetRequestId());
-#endif
             }
-            return "发生未处理异常";
+
+            return $"发生未知错误,系统标识:{GetRequestId()}";
         }
 
         /// <summary>
@@ -530,12 +543,12 @@ namespace Agebull.Common.Logging
                 if (ex is AgebullSystemException)
                 {
                     tag = "系统致命错误";
-                    outmsg = String.Format("发生内部错误,系统标识:{0}", GetRequestId());
+                    outmsg = $"发生内部错误,系统标识:{GetRequestId()}";
                 }
                 else if (ex is BugException)
                 {
                     tag = "存在设计缺陷";
-                    outmsg = String.Format("发生设计错误,系统标识:{0}", GetRequestId());
+                    outmsg = $"发生设计错误,系统标识:{GetRequestId()}";
                 }
                 else if (ex is AgebullBusinessException)
                 {
@@ -543,29 +556,29 @@ namespace Agebull.Common.Logging
                     outmsg = String.Format("发生错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
                 }
 #if !NETSTANDARD2_0
-                else if (ex is SqlException)
+                else if (ex is SqlException exception)
                 {
-                    if (AgebullSystemException.SqlExceptionLevel(ex as SqlException) > 16)
+                    if (AgebullSystemException.SqlExceptionLevel(exception) > 16)
                     {
                         tag = "数据库致命错误(级别大于16)";
-                        outmsg = String.Format("发生服务器错误,系统标识:{0}", GetRequestId());
+                        outmsg = $"发生服务器错误,系统标识:{GetRequestId()}";
                     }
                     else
                     {
                         tag = "数据库一般错误(级别小等于16)";
-                        outmsg = String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), ex.Message);
+                        outmsg = String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), exception.Message);
                     }
                 }
 #endif
                 else if (ex is SystemException)
                 {
                     tag = "系统错误";
-                    outmsg = String.Format("发生系统错误,系统标识:{0}", GetRequestId());
+                    outmsg = $"发生系统错误,系统标识:{GetRequestId()}";
                 }
                 else
                 {
                     tag = "未知错误";
-                    outmsg = String.Format("发生未知错误,系统标识:{0}", GetRequestId());
+                    outmsg = $"发生未知错误,系统标识:{GetRequestId()}";
                 }
             }
             XElement element = new XElement("ExceptionInfomation",
@@ -729,11 +742,11 @@ namespace Agebull.Common.Logging
                 TypeName = typeName ?? TypeToString(type)
             });
         }
+
         /// <summary>
         ///  日志记录独立线程
         /// </summary>
-        /// <param name="arg"> </param>
-        private static void WriteRecordLoop(object arg)
+        private static void WriteRecordLoop()
         {
             while (State != LogRecorderStatus.Shutdown)
             {
@@ -747,7 +760,7 @@ namespace Agebull.Common.Logging
                     {
                         Listener.Trace(info);
                     }
-                    else
+                    else if(TraceToConsole)
                     {
                         SystemTrace(info.Message);
                     }
