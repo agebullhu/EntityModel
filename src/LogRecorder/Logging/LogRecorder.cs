@@ -1,4 +1,4 @@
-﻿// 所在工程：GBoxtCommonService
+// 所在工程：GBoxtCommonService
 // 整理用户：bull2
 // 建立时间：2012-08-13 5:35
 // 整理时间：2012-08-30 3:12
@@ -101,20 +101,43 @@ namespace Agebull.Common.Logging
         /// 日志状态
         /// </summary>
         public static LogRecorderStatus State { get; private set; }
-
-
-
+        
         /// <summary>
         /// 取请求ID的方法
         /// </summary>
         public static Func<string> GetRequestIdFunc;
 
         /// <summary>
-        /// 取请求ID的方法
+        /// 取请求ID
         /// </summary>
         public static string  GetRequestId()
         {
             return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// 取得当前用户方法
+        /// </summary>
+        public static Func<string> GetUserNameFunc;
+
+        /// <summary>
+        /// 取得当前用户
+        /// </summary>
+        public static string GetUserName()
+        {
+            return GetRequestIdFunc?.Invoke() ?? "Unknow";
+        }
+        /// <summary>
+        /// 取请求ID的方法
+        /// </summary>
+        public static Func<string> GetMachineNameFunc;
+
+        /// <summary>
+        /// 取得当前机器
+        /// </summary>
+        public static string GetMachineName()
+        {
+            return GetRequestIdFunc?.Invoke() ?? "Local";
         }
         #endregion
 
@@ -169,10 +192,10 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
-            State = LogRecorderStatus.Shutdown;
-            Recorder.Shutdown();
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
+            State = LogRecorderStatus.Shutdown;
+            Recorder.Shutdown();
         }
         #endregion
 
@@ -716,7 +739,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 日志序号
         /// </summary>
-        static ulong _id = 1;
+        private static ulong _id = 1;
 
         /// <summary>
         ///   记录日志
@@ -734,6 +757,8 @@ namespace Agebull.Common.Logging
             RecordInfos.Push(new RecordInfo
             {
                 RequestID = GetRequestId(),
+                Machine = GetMachineName(),
+                User = GetUserName(),
                 Name = name,
                 Type = type,
                 Message = msg,
@@ -754,6 +779,8 @@ namespace Agebull.Common.Logging
                     continue;
                 RecordInfos.EndProcess();
                 info.Index = ++_id;
+                if (_id == ulong.MaxValue)
+                    _id = 1;
                 try
                 {
                     if (Listener != null)

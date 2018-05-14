@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>2.0.0.7</Version>
+    <Version>2.0.0.11</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -15,18 +15,16 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.0.7</PackageVersion>
-    <IncludeSymbols>false</IncludeSymbols>
+    <PackageVersion>2.0.0.11</PackageVersion>
+    <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard2.0' ">2.0.1</NetStandardImplicitPackageVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
-    <Company>Yizuanbao &amp; Agebull</Company>
+    <Company>Agebull</Company>
     <Product>Agebull.EntityModel.MySql</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
@@ -66,7 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="6.10.6" />
+    <PackageReference Include="MySql.Data" Version="8.0.11" />
   </ItemGroup>
 
   <ItemGroup>
