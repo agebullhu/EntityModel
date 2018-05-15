@@ -1,20 +1,15 @@
-// 所在工程：GBoxtCommonService
-// 整理用户：bull2
+// 所在工程：Agebull.EntityModel
+// 整理用户：agebull
 // 建立时间：2012-08-13 5:35
-// 整理时间：2012-08-30 3:12
-
+// 整理时间：2018年5月16日 00:34:00
 #region
 
 using System;
 using System.Configuration;
-#if !NETSTANDARD2_0
-using System.Data.SqlClient;
-#endif
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Agebull.Common.Reflection;
 
 #endregion
 
@@ -480,13 +475,13 @@ namespace Agebull.Common.Logging
         public static void RecordException(Exception exception, out string message)
         {
             message = ExceptionMessage(exception);
-            ExceptionInfomation(exception, null, out string xml);
+            string msg =ExceptionInfomation(exception, null);
             string title = "异常";
             if (exception != null)
             {
                 title = exception.Message;
             }
-            Record(title, xml, LogType.Exception);
+            Record(title, msg, LogType.Exception);
         }
 
         /// <summary>
@@ -496,26 +491,20 @@ namespace Agebull.Common.Logging
         /// <param name="message"> 日志详细信息 </param>
         public static string Exception(Exception ex, string message = null)
         {
-            string re = ExceptionInfomation(ex, message, out var xml);
-            Record("异常", xml, LogType.Exception);
-            return re;
+            Record("异常", ExceptionInfomation(ex, message), LogType.Exception);
+            return ExceptionMessage(ex);
         }
 
         /// <summary>
         ///   记录异常日志
         /// </summary>
-        /// <param name="e"> 异常 </param>
+        /// <param name="ex"> 异常 </param>
         /// <param name="message"> 日志详细信息 </param>
         /// <param name="formatArgs">格式化参数</param>
-        public static string Exception(Exception e, string message, params object[] formatArgs)
+        public static string Exception(Exception ex, string message, params object[] formatArgs)
         {
-            string re = ExceptionInfomation(e, FormatMessage(message, formatArgs), out string xml);
-            if (e != null)
-            {
-                message = e.Message;
-            }
-            Record(message, xml, LogType.Exception);
-            return re;
+            Record(message, ExceptionInfomation(ex, FormatMessage(message, formatArgs)), LogType.Exception);
+            return ExceptionMessage(ex);
         }
         #endregion
 
@@ -531,12 +520,6 @@ namespace Agebull.Common.Logging
             {
                 case null:
                     return "发生未处理异常";
-#if !NETSTANDARD2_0
-                case SqlException exception:
-                    return AgebullSystemException.SqlExceptionLevel(exception) > 16
-                        ? $"发生服务器错误,系统标识:{GetRequestId()}"
-                        : String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), exception.Message);
-#endif
                 case SystemException _:
                     return $"发生系统错误,系统标识:{GetRequestId()}";
                 case AgebullSystemException _:
@@ -555,84 +538,35 @@ namespace Agebull.Common.Logging
         /// </summary>
         /// <param name="ex"> </param>
         /// <param name="message"> </param>
-        /// <param name="xml"> </param>
         /// <returns> </returns>
-        public static string ExceptionInfomation(Exception ex, string message, out string xml)
+        public static string ExceptionInfomation(Exception ex, string message)
         {
-            string outmsg = "发生未处理异常";
-            string tag = "";
+            StringBuilder sb = new StringBuilder();
             if (ex != null)
             {
-                if (ex is AgebullSystemException)
+                switch (ex)
                 {
-                    tag = "系统致命错误";
-                    outmsg = $"发生内部错误,系统标识:{GetRequestId()}";
-                }
-                else if (ex is BugException)
-                {
-                    tag = "存在设计缺陷";
-                    outmsg = $"发生设计错误,系统标识:{GetRequestId()}";
-                }
-                else if (ex is AgebullBusinessException)
-                {
-                    tag = "业务逻辑错误";
-                    outmsg = String.Format("发生错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
-                }
-#if !NETSTANDARD2_0
-                else if (ex is SqlException exception)
-                {
-                    if (AgebullSystemException.SqlExceptionLevel(exception) > 16)
-                    {
-                        tag = "数据库致命错误(级别大于16)";
-                        outmsg = $"发生服务器错误,系统标识:{GetRequestId()}";
-                    }
-                    else
-                    {
-                        tag = "数据库一般错误(级别小等于16)";
-                        outmsg = String.Format("发生服务器错误,{1},系统标识:{0}", GetRequestId(), exception.Message);
-                    }
-                }
-#endif
-                else if (ex is SystemException)
-                {
-                    tag = "系统错误";
-                    outmsg = $"发生系统错误,系统标识:{GetRequestId()}";
-                }
-                else
-                {
-                    tag = "未知错误";
-                    outmsg = $"发生未知错误,系统标识:{GetRequestId()}";
+                    case AgebullSystemException _:
+                        sb.AppendLine("系统致命错误");
+                        break;
+                    case BugException _:
+                        sb.AppendLine("存在设计缺陷");
+                        break;
+                    case AgebullBusinessException _:
+                        sb.AppendLine("业务逻辑错误");
+                        break;
+                    case SystemException _:
+                        sb.AppendLine("系统错误");
+                        break;
+                    default:
+                        sb.AppendLine("发生异常");
+                        break;
                 }
             }
-            XElement element = new XElement("ExceptionInfomation",
-                                       new XElement("ID", GetRequestId()),
-                                       new XElement("Tag", tag),
-                                       new XElement("RecordType", "Exception"),
-                                       new XElement("OutMessage", outmsg));
             if (!string.IsNullOrWhiteSpace(message))
-            {
-                if (message[0] == '<')
-                {
-                    try
-                    {
-                        element.Add(new XElement("Tag", new XElement(message)));
-                    }
-                    catch
-                    {
-                        element.Add(new XElement("Message", message));
-                    }
-                }
-                else
-                {
-                    element.Add(new XElement("Message", message));
-                }
-            }
-            if (ex != null)
-            {
-                ReflectionHelper.SerializeException(ex, element);
-            }
-            xml = element.ToString(SaveOptions.None);
-            return outmsg;
+                sb.AppendLine(message);
+            sb.Append(ex);
+            return sb.ToString();
         }
         #endregion
 

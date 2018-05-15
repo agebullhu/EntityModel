@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -216,8 +216,10 @@ namespace Agebull.Common.Logging
                     //if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
                     //    Clipboard.SetText( MonitorItem.MonitorTexter?.ToString());
                 }
-                catch
-                { }
+                catch(Exception ex)
+                {
+                    SystemTrace(ex);
+                }
                 finally
                 {
                     InMonitor = false;
