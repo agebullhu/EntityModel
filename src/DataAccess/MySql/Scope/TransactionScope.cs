@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -9,7 +9,6 @@
 #region 引用
 
 using System;
-using Agebull.Common.Logging;
 
 #endregion
 

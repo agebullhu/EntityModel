@@ -1,12 +1,12 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-07
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-07
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System.Collections.Generic;
 
@@ -15,27 +15,27 @@ using System.Collections.Generic;
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-    ///     ±íÊ¾ÊµÌå½á¹¹
+    ///     è¡¨ç¤ºå®ä½“ç»“æ„
     /// </summary>
-    public sealed class EntitySturct
+    public sealed class EntitySturct : SimpleConfig
     {
         /// <summary>
-        ///     ÊôĞÔÃû³Æ
+        ///     å®ä½“åç§°
         /// </summary>
-        public string EntityName { get; set; }
+        public string EntityName { get => Name; set => Name = value; }
 
         /// <summary>
-        ///     ÊµÌåÀàĞÍ
+        ///     å®ä½“ç±»å‹
         /// </summary>
         public int EntityType { get; set; }
 
         /// <summary>
-        ///     Ö÷¼üÃû³Æ
+        ///     ä¸»é”®åç§°
         /// </summary>
         public string PrimaryKey { get; set; }
 
         /// <summary>
-        ///     ÊôĞÔ
+        ///     å±æ€§
         /// </summary>
         public Dictionary<int, PropertySturct> Properties { get; set; }
     }

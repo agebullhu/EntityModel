@@ -5,21 +5,21 @@ using Newtonsoft.Json;
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-    ///     配置基础
+    ///     閰嶇疆鍩虹
     /// </summary>
     [DataContract, JsonObject(MemberSerialization.OptIn)]
-    public class SimpleConfig : NotificationObject
+    public class SimpleConfig : NotificationObject, IConfig
     {
         /// <summary>
-        /// 名称
+        /// 鍚嶇О
         /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _name;
 
         /// <summary>
-        ///     名称
+        ///     鍚嶇О
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("名称")]
+        [IgnoreDataMember,JsonIgnore, Category("*璁捐"), DisplayName("鍚嶇О")]
         public string Name
         {
             get { return _name; }
@@ -36,18 +36,18 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     标题
+        ///     鏍囬
         /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _caption;
 
         /// <summary>
-        ///     标题
+        ///     鏍囬
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("标题")]
+        [IgnoreDataMember,JsonIgnore, Category("*璁捐"), DisplayName("鏍囬")]
         public string Caption
         {
-            get { return _caption ?? _name; }
+            get => _caption ?? _name;
             set
             {
                 if (_caption == value)
@@ -60,18 +60,18 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     说明
+        ///     璇存槑
         /// </summary>
         [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         protected string _description;
 
         /// <summary>
-        ///     说明
+        ///     璇存槑
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("说明")]
+        [IgnoreDataMember,JsonIgnore, Category("*璁捐"), DisplayName("璇存槑")]
         public string Description
         {
-            get { return _description ?? _caption ?? _name; }
+            get => _description ?? _caption ?? _name;
             set
             {
                 if (_description == value)

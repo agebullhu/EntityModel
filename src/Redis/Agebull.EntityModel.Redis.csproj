@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.0.0.11</Version>
+    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Version>2.0.0.13</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -14,7 +17,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.0.11</PackageVersion>
+    <PackageVersion>2.0.0.13</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
@@ -68,10 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
     <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
-    <ProjectReference Include="..\LogRecorder\Agebull.Common.LogRecorder.csproj" />
   </ItemGroup>
 
 

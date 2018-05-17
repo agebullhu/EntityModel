@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -104,29 +103,19 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     是否修改
         /// </summary>
-        bool IEditObject.IsModified
-        {
-            get { return __status != null && __status.IsModified; }
-        }
+        bool IEditObject.IsModified => __status != null && __status.IsModified;
 
         /// <summary>
         ///     是否新增
         /// </summary>
-        bool IEditObject.IsAdd
-        {
-            get { return __status != null && __status.IsNew; }
-        }
+        bool IEditObject.IsAdd => __status != null && __status.IsNew;
 
         /// <summary>
         ///     是否修改
         /// </summary>
         public bool FieldIsModified(int propertyIndex)
         {
-            if (IsReadOnly)
-            {
-                return false;
-            }
-            return __EntityStatus.FieldIsModified(propertyIndex);
+            return !IsReadOnly && __EntityStatus.FieldIsModified(propertyIndex);
         }
 
         /// <summary>
@@ -142,6 +131,7 @@ namespace Gboxt.Common.DataModel
             __EntityStatus.SetUnModify(propertyIndex);
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     设置为改变
         /// </summary>
@@ -194,14 +184,12 @@ namespace Gboxt.Common.DataModel
 
         #region 编辑方法
 
+        /// <inheritdoc />
         /// <summary>
         ///     是否已删除
         /// </summary>
         /// <returns></returns>
-        bool IEditObject.IsDelete
-        {
-            get { return __EntityStatus.IsDelete; }
-        }
+        bool IEditObject.IsDelete => __EntityStatus.IsDelete;
 
         /// <summary>
         ///     对象删除时的同步处理(只可重写,不可调用)
@@ -241,7 +229,6 @@ namespace Gboxt.Common.DataModel
         /// </remarks>
         public void LaterPeriodByModify(EntitySubsist subsist)
         {
-            BusinessGlobal.EntityEventProxy?.OnStatusChanged(__Struct.EntityType, subsist, this);
             OnLaterPeriodBySignleModified(subsist, __EntityStatus.ModifiedProperties);
         }
 
@@ -253,7 +240,7 @@ namespace Gboxt.Common.DataModel
         /// </remarks>
         public void DoLaterPeriodByAllModified()
         {
-            OnLaterPeriodBySignleModified(EntitySubsist.Added, __status == null ? null : __status.modifiedProperties);
+            OnLaterPeriodBySignleModified(EntitySubsist.Added, __status?.modifiedProperties);
         }
 
 

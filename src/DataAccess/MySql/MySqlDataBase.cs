@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -16,9 +16,7 @@ using MySql.Data.MySqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Agebull.Common.Base;
 using Agebull.Common.Logging;
-using Newtonsoft.Json.Serialization;
 using System.Data.Common;
 
 #endregion
@@ -28,7 +26,7 @@ namespace Gboxt.Common.DataModel.MySql
     /// <summary>
     ///     表示SQL SERVER数据库对象
     /// </summary>
-    public class MySqlDataBase : IDataBase
+    public class MySqlDataBase : SimpleConfig, IDataBase
     {
         #region 事务
 
@@ -92,19 +90,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public static MySqlDataBase DefaultDataBase
         {
-            get
-            {
-                if (_default != null)
-                {
-                    return _default;
-                }
-                //lock (LockData)
-                {
-                    //Trace.WriteLine("CreateDefaultFunc", "MySqlDataBase");
-                    return _default ?? (_default = CreateDefaultFunc());
-                }
-            }
-            set { _default = value; }
+            get => _default ?? (_default = CreateDefaultFunc());
+            set => _default = value;
         }
 
         /// <summary>
@@ -139,20 +126,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     连接对象
         /// </summary>
-        private MySqlConnection _connection;
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public MySqlConnection Connection
-        {
-            get { return _connection; }
-            internal set
-            {
-                _connection = value;
-                //Trace.WriteLine(this.GetHashCode(), "Connection");
-            }
-        }
+        public MySqlConnection Connection { get; internal set; }
 
         private static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
         /// <summary>
@@ -168,26 +142,26 @@ namespace Gboxt.Common.DataModel.MySql
                 //    //throw new Exception("已关闭的数据库对象不能再次使用");
                 //}
                 bool result = false;
-                if (_connection == null)
+                if (Connection == null)
                 {
                     result = true;
-                    _connection = new MySqlConnection(ConnectionString);
-                    Connections.Add(_connection);
+                    Connection = new MySqlConnection(ConnectionString);
+                    Connections.Add(Connection);
                     //Trace.WriteLine("Create Connection", "MySqlDataBase");
                 }
-                else if (string.IsNullOrEmpty(_connection.ConnectionString))
+                else if (string.IsNullOrEmpty(Connection.ConnectionString))
                 {
                     result = true;
                     //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
-                    _connection.ConnectionString = ConnectionString;
+                    Connection.ConnectionString = ConnectionString;
                 }
-                if (_connection.State == ConnectionState.Open)
+                if (Connection.State == ConnectionState.Open)
                 {
                     return result;
                 }
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened Connection", "MySqlDataBase");
-                _connection.Open();
+                Connection.Open();
             }
             return true;
         }
@@ -197,7 +171,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void Close()
         {
-            if (_connection == null)
+            if (Connection == null)
             {
                 return;
             }
@@ -205,19 +179,19 @@ namespace Gboxt.Common.DataModel.MySql
             {
                 lock (LockData)
                 {
-                    if (_connection.State == ConnectionState.Open)
+                    if (Connection.State == ConnectionState.Open)
                     {
                         //Trace.WriteLine("Close Connection", "MySqlDataBase");
-                        _connection.Close();
+                        Connection.Close();
                     }
-                    Connections.Remove(_connection);
+                    Connections.Remove(Connection);
                     LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
-                    _connection = null;
+                    Connection = null;
                 }
             }
             catch (Exception exception)
             {
-                _connection?.Dispose();
+                Connection?.Dispose();
                 Debug.WriteLine("Close Error", "MySqlDataBase");
                 LogRecorder.Error(exception.ToString());
             }
@@ -232,7 +206,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public MySqlConnection GetCurrentConnection()
         {
-            return _connection;
+            return Connection;
         }
 
         /// <summary>
@@ -240,7 +214,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void ClearCurrentConnection()
         {
-            _connection = null;
+            Connection = null;
         }
 
 
@@ -273,7 +247,7 @@ namespace Gboxt.Common.DataModel.MySql
                 return ExecuteInner(sql);
             }
         }
-        
+
         /// <summary>
         ///     执行SQL
         /// </summary>
@@ -287,7 +261,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             return ExecuteInner(sql, args.ToArray());
         }
-        
+
 
         /// <summary>
         ///     执行SQL
@@ -372,7 +346,7 @@ namespace Gboxt.Common.DataModel.MySql
                 return ExecuteScalarInner(sql);
             }
         }
-        
+
 
         /// <summary>
         ///     执行SQL
@@ -551,7 +525,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public MySqlCommand CreateCommand(string sql, MySqlParameter arg)
         {
-            return CreateCommand(sql, new [] {arg});
+            return CreateCommand(sql, new[] { arg });
         }
 
         /// <summary>
@@ -672,7 +646,7 @@ namespace Gboxt.Common.DataModel.MySql
                 Value = value
             };
         }
-        
+
         /// <summary>
         ///     生成Sql参数
         /// </summary>

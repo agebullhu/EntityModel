@@ -1,12 +1,12 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Collections;
@@ -17,7 +17,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Agebull.Common.Logging;
 using MySql.Data.MySqlClient;
 
 #endregion
@@ -25,21 +24,21 @@ using MySql.Data.MySqlClient;
 namespace Gboxt.Common.DataModel.MySql
 {
     /// <summary>
-    ///     SqlÊµÌå·ÃÎÊÀà
+    ///     Sqlå®ä½“è®¿é—®ç±»
     /// </summary>
-    /// <typeparam name="TData">ÊµÌå</typeparam>
-    public abstract partial class MySqlTable<TData>: IDataTable<TData>
+    /// <typeparam name="TData">å®ä½“</typeparam>
+    public abstract partial class MySqlTable<TData> : SimpleConfig, IDataTable<TData>
         where TData : EditDataObject, new()
     {
-        #region Êı¾İ¿â
+        #region æ•°æ®åº“
 
         /// <summary>
-        ///     ×Ô¶¯Êı¾İÁ¬½Ó¶ÔÏó
+        ///     è‡ªåŠ¨æ•°æ®è¿æ¥å¯¹è±¡
         /// </summary>
         private MySqlDataBase _dataBase;
 
         /// <summary>
-        ///     ×Ô¶¯Êı¾İÁ¬½Ó¶ÔÏó
+        ///     è‡ªåŠ¨æ•°æ®è¿æ¥å¯¹è±¡
         /// </summary>
         public MySqlDataBase DataBase
         {
@@ -49,41 +48,41 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ×Ô¶¯Êı¾İÁ¬½Ó¶ÔÏó
+        ///     è‡ªåŠ¨æ•°æ®è¿æ¥å¯¹è±¡
         /// </summary>
         IDataBase IDataTable<TData>.DataBase => DataBase;
 
         /// <summary>
-        ///     Éè¼ÆÊ±µÄÖ÷¼ü×Ö¶Î
+        ///     è®¾è®¡æ—¶çš„ä¸»é”®å­—æ®µ
         /// </summary>
         string IDataTable<TData>.PrimaryKey => PrimaryKey;
 
         #endregion
 
-        #region Êı¾İ½á¹¹
+        #region æ•°æ®ç»“æ„
 
         /// <summary>
-        ///     ÊÇ·ñ×÷Îª»ùÀà´æÔÚµÄ
+        ///     æ˜¯å¦ä½œä¸ºåŸºç±»å­˜åœ¨çš„
         /// </summary>
         public bool IsBaseClass { get; set; }
 
         /// <summary>
-        ///     ±íÃû
+        ///     è¡¨å
         /// </summary>
         public string TableName => ReadTableName;
 
         /// <summary>
-        ///     ×Ö¶Î×Öµä(ÔËĞĞÊ±)
+        ///     å­—æ®µå­—å…¸(è¿è¡Œæ—¶)
         /// </summary>
         public Dictionary<string, string> FieldDictionary => OverrideFieldMap ?? FieldMap;
 
         /// <summary>
-        ///     Ö÷¼ü×Ö¶Î(¿É¶¯Ì¬¸²¸ÇPrimaryKey)
+        ///     ä¸»é”®å­—æ®µ(å¯åŠ¨æ€è¦†ç›–PrimaryKey)
         /// </summary>
         private string _keyField;
 
         /// <summary>
-        ///     Ö÷¼ü×Ö¶Î(¿É¶¯Ì¬¸²¸ÇPrimaryKey)
+        ///     ä¸»é”®å­—æ®µ(å¯åŠ¨æ€è¦†ç›–PrimaryKey)
         /// </summary>
         public string KeyField
         {
@@ -98,52 +97,52 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region ¶Á
+        #region è¯»
 
-        #region ±éÀúËùÓĞ
+        #region éå†æ‰€æœ‰
 
         /// <summary>
-        ///     ±éÀúËùÓĞ
+        ///     éå†æ‰€æœ‰
         /// </summary>
         public void FeachAll(Action<TData> action, Action<List<TData>> end)
         {
-            //Debug.WriteLine(typeof(TData).Name, "¶ÔÏó");
+            //Debug.WriteLine(typeof(TData).Name, "å¯¹è±¡");
             var list = All();
-            //Debug.WriteLine(list.Count, "ÊıÁ¿");
+            //Debug.WriteLine(list.Count, "æ•°é‡");
             if (list.Count == 0)
                 return;
             //DateTime s = DateTime.Now;
             list.ForEach(p => p.DoLaterPeriodByAllModified());
             list.ForEach(action);
             end(list);
-            //Debug.WriteLine((DateTime.Now - s).TotalSeconds, "ÓÃÊ±");
-            //Debug.WriteLine((DateTime.Now - s).TotalSeconds / list.Count, "¾ùÊ±");
+            //Debug.WriteLine((DateTime.Now - s).TotalSeconds, "ç”¨æ—¶");
+            //Debug.WriteLine((DateTime.Now - s).TotalSeconds / list.Count, "å‡æ—¶");
         }
 
         #endregion
 
-        #region ²éÑ¯Ìõ¼şÏà¹Ø(°üº¬lambda±àÒë)
+        #region æŸ¥è¯¢æ¡ä»¶ç›¸å…³(åŒ…å«lambdaç¼–è¯‘)
 
         /// <summary>
-        ///     ±àÒë²éÑ¯Ìõ¼ş
+        ///     ç¼–è¯‘æŸ¥è¯¢æ¡ä»¶
         /// </summary>
-        /// <param name="lambda">Ìõ¼ş</param>
+        /// <param name="lambda">æ¡ä»¶</param>
         public ConditionItem Compile(Expression<Func<TData, bool>> lambda)
         {
             return PredicateConvert.Convert(FieldDictionary, lambda);
         }
 
         /// <summary>
-        ///     ±àÒë²éÑ¯Ìõ¼ş
+        ///     ç¼–è¯‘æŸ¥è¯¢æ¡ä»¶
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         public ConditionItem Compile(LambdaItem<TData> lambda)
         {
             return PredicateConvert.Convert(FieldDictionary, lambda);
         }
 
         /// <summary>
-        ///     È¡ÊôĞÔÃû³Æ
+        ///     å–å±æ€§åç§°
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
@@ -155,7 +154,7 @@ namespace Gboxt.Common.DataModel.MySql
                 return expression.Member.Name;
             var body = action.Body as UnaryExpression;
             if (body == null)
-                throw new Exception("±í´ïÊ½Ì«¸´ÔÓ");
+                throw new Exception("è¡¨è¾¾å¼å¤ªå¤æ‚");
 
             expression = (MemberExpression)body.Operand;
             return expression.Member.Name;
@@ -163,31 +162,31 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region Ê×ĞĞ
+        #region é¦–è¡Œ
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData First()
         {
             return LoadFirst();
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData FirstOrDefault()
         {
             return LoadFirst();
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData FirstOrDefault(object id)
         {
             return LoadByPrimaryKey(id);
@@ -195,20 +194,20 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData First(object id)
         {
             return LoadByPrimaryKey(id);
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData First(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -217,11 +216,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -231,9 +230,9 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public TData First(string condition, MySqlParameter[] args)
         {
             return LoadFirst(condition, args);
@@ -241,10 +240,10 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -254,11 +253,11 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData FirstOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -268,11 +267,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="condition">²éÑ¯Ìõ¼ş</param>
-        /// <param name="args">²ÎÊı</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="condition">æŸ¥è¯¢æ¡ä»¶</param>
+        /// <param name="args">å‚æ•°</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData FirstOrDefault(string condition, MySqlParameter[] args)
         {
             return LoadFirst(condition, args);
@@ -280,31 +279,31 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region Î²ĞĞ
+        #region å°¾è¡Œ
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData Last()
         {
             return LoadLast();
         }
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData LastOrDefault()
         {
             return LoadLast();
         }
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData Last(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -313,11 +312,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData Last(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -327,9 +326,9 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public TData Last(string condition, MySqlParameter[] args)
         {
             return LoadLast(condition, args);
@@ -337,10 +336,10 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData LastOrDefault(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -350,11 +349,11 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData LastOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -364,11 +363,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="condition">²éÑ¯Ìõ¼ş</param>
-        /// <param name="args">²ÎÊı</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="condition">æŸ¥è¯¢æ¡ä»¶</param>
+        /// <param name="args">å‚æ•°</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData LastOrDefault(string condition, MySqlParameter[] args)
         {
             return LoadLast(condition, args);
@@ -379,19 +378,19 @@ namespace Gboxt.Common.DataModel.MySql
         #region Select
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public List<TData> Select()
         {
             return LoadDataInner();
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Êı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ•°æ®</returns>
         public List<TData> Select(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -399,11 +398,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         public List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -417,9 +416,9 @@ namespace Gboxt.Common.DataModel.MySql
         #region All
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         public List<TData> All()
         {
             return LoadDataInner();
@@ -427,16 +426,16 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         public List<TData> All(string condition, MySqlParameter[] args)
         {
             return LoadDataInner(condition, args);
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> All<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy,
             bool desc)
@@ -446,11 +445,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         public List<TData> All(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -461,11 +460,11 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <param name="orderBys">ÅÅĞò</param>
-        /// <returns>Êı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <param name="orderBys">æ’åº</param>
+        /// <returns>æ•°æ®</returns>
         public List<TData> All(LambdaItem<TData> lambda, params string[] orderBys)
         {
             var convert = Compile(lambda);
@@ -474,11 +473,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <param name="orderBys">ÅÅĞò</param>
-        /// <returns>Êı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <param name="orderBys">æ’åº</param>
+        /// <returns>æ•°æ®</returns>
         public List<TData> All(Expression<Func<TData, bool>> lambda, params string[] orderBys)
         {
             var convert = Compile(lambda);
@@ -491,10 +490,10 @@ namespace Gboxt.Common.DataModel.MySql
         #region Where
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public List<TData> Where(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -502,11 +501,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -518,12 +517,12 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
 
-        #region ¾ÛºÏº¯ÊıÖ§³Ö
+        #region èšåˆå‡½æ•°æ”¯æŒ
 
         #region Collect
 
         /// <summary>
-        ///     »ã×Ü·½·¨
+        ///     æ±‡æ€»æ–¹æ³•
         /// </summary>
         public object Collect(string fun, string field, string condition, params MySqlParameter[] args)
         {
@@ -532,7 +531,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     »ã×Ü·½·¨
+        ///     æ±‡æ€»æ–¹æ³•
         /// </summary>
         public object Collect(string fun, string field, Expression<Func<TData, bool>> lambda)
         {
@@ -545,7 +544,7 @@ namespace Gboxt.Common.DataModel.MySql
         #region Exist
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
         public bool Exist()
         {
@@ -553,7 +552,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
         public bool Exist(string condition, params MySqlParameter[] args)
         {
@@ -561,10 +560,10 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚ´ËÖ÷¼üµÄÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ­¤ä¸»é”®çš„æ•°æ®
         /// </summary>
         /// <param name="id">id</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public bool ExistPrimaryKey<T>(T id)
         {
             return ExistInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(id));
@@ -575,7 +574,7 @@ namespace Gboxt.Common.DataModel.MySql
         #region Count
 
         /// <summary>
-        ///     ×ÜÊı
+        ///     æ€»æ•°
         /// </summary>
         public long Count()
         {
@@ -583,16 +582,16 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ×ÜÊı
+        ///     æ€»æ•°
         /// </summary>
         public long Count(string condition, params DbParameter[] args)
         {
-            var obj = CollectInner("Count", "*", condition, args.Cast< MySqlParameter>().ToArray());
+            var obj = CollectInner("Count", "*", condition, args.Cast<MySqlParameter>().ToArray());
             return obj == DBNull.Value || obj == null ? 0L : Convert.ToInt64(obj);
         }
 
         /// <summary>
-        ///     ×ÜÊı
+        ///     æ€»æ•°
         /// </summary>
         public long Count(string condition, params MySqlParameter[] args)
         {
@@ -601,10 +600,10 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public long Count(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -613,10 +612,10 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public long Count(LambdaItem<TData> lambda)
         {
             var convert = Compile(lambda);
@@ -625,11 +624,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public long Count(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -642,12 +641,12 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="condition">²éÑ¯±í´ïÊ½</param>
+        /// <param name="condition">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="args"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public long Count<TValue>(Expression<Func<TData, TValue>> field, string condition, params MySqlParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
@@ -659,7 +658,7 @@ namespace Gboxt.Common.DataModel.MySql
         #region SUM
 
         /// <summary>
-        ///     »ã×Ü
+        ///     æ±‡æ€»
         /// </summary>
         public decimal Sum(string field)
         {
@@ -668,7 +667,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     »ã×Ü
+        ///     æ±‡æ€»
         /// </summary>
         public decimal Sum(string field, string condition, params MySqlParameter[] args)
         {
@@ -682,18 +681,18 @@ namespace Gboxt.Common.DataModel.MySql
         #region Any
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public bool Any()
         {
             return ExistInner();
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public bool Any(string condition, MySqlParameter[] args)
         {
             return ExistInner(condition, args);
@@ -701,10 +700,10 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public bool Any(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -713,11 +712,11 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public bool Any(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -736,11 +735,11 @@ namespace Gboxt.Common.DataModel.MySql
         #region Sum
 
         /// <summary>
-        ///     ºÏ¼Æ
+        ///     åˆè®¡
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <param name="condition2">Ìõ¼ş2£¬Ä¬ÈÏÎª¿Õ</param>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <param name="condition2">æ¡ä»¶2ï¼Œé»˜è®¤ä¸ºç©º</param>
         public decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
             string condition2 = null)
         {
@@ -756,12 +755,12 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ºÏ¼Æ
+        ///     åˆè®¡
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
             Expression<Func<TData, bool>> b)
         {
@@ -775,12 +774,12 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ºÏ¼Æ
+        ///     åˆè®¡
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="condition">²éÑ¯±í´ïÊ½</param>
+        /// <param name="condition">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="args"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public decimal Sum<TValue>(Expression<Func<TData, TValue>> field, string condition,
             params MySqlParameter[] args)
         {
@@ -791,10 +790,10 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region ÊµÏÖ
+        #region å®ç°
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
         protected bool ExistInner(string condition = null, MySqlParameter args = null)
         {
@@ -802,7 +801,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
         protected bool ExistInner(string condition, MySqlParameter[] args)
         {
@@ -811,7 +810,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ×ÜÊı¾İÁ¿
+        ///     æ€»æ•°æ®é‡
         /// </summary>
         protected long CountInner(string condition = null, MySqlParameter args = null)
         {
@@ -820,7 +819,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ×ÜÊı¾İÁ¿
+        ///     æ€»æ•°æ®é‡
         /// </summary>
         protected object CollectInner(string fun, string field, string condition, params MySqlParameter[] args)
         {
@@ -835,10 +834,10 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region ·ÖÒ³¶ÁÈ¡
+        #region åˆ†é¡µè¯»å–
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit)
         {
@@ -846,7 +845,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit, string condition, params MySqlParameter[] args)
         {
@@ -854,7 +853,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
@@ -863,7 +862,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
         {
@@ -872,7 +871,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
         {
@@ -880,14 +879,14 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, order, desc, condition, args.Cast<MySqlParameter>().ToArray());
         }
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> LoadData(int page, int limit, string order, string condition, params MySqlParameter[] args)
         {
@@ -895,7 +894,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData(int page, int limit, string order, string condition, params MySqlParameter[] args)
         {
@@ -903,7 +902,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field,
             Expression<Func<TData, bool>> lambda)
@@ -912,7 +911,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
             Expression<Func<TData, bool>> lambda)
@@ -922,7 +921,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         public List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
             LambdaItem<TData> lambda)
@@ -933,14 +932,14 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
-        /// <param name="page">Ò³ºÅ(´Ó1¿ªÊ¼)</param>
-        /// <param name="limit">Ã¿Ò³ĞĞÊı(Ğ¡ÓÚ²»·ÖÒ³£©</param>
-        /// <param name="order">ÅÅĞò×Ö¶Î</param>
-        /// <param name="desc">ÊÇ·ñ·´Ğò</param>
-        /// <param name="condition">²éÑ¯Ìõ¼ş</param>
-        /// <param name="args">²éÑ¯²ÎÊı</param>
+        /// <param name="page">é¡µå·(ä»1å¼€å§‹)</param>
+        /// <param name="limit">æ¯é¡µè¡Œæ•°(å°äºä¸åˆ†é¡µï¼‰</param>
+        /// <param name="order">æ’åºå­—æ®µ</param>
+        /// <param name="desc">æ˜¯å¦ååº</param>
+        /// <param name="condition">æŸ¥è¯¢æ¡ä»¶</param>
+        /// <param name="args">æŸ¥è¯¢å‚æ•°</param>
         /// <returns></returns>
         public List<TData> PageData(int page, int limit, string order, bool desc, string condition,
             params MySqlParameter[] args)
@@ -979,14 +978,14 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region µ¥ÁĞ¶ÁÈ¡
-        
+        #region å•åˆ—è¯»å–
+
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         public TField LoadValue<TField>(Expression<Func<TData, TField>> field, Expression<Func<TData, bool>> lambda)
         {
             var fn = GetPropertyName(field);
@@ -996,11 +995,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>å†…å®¹</returns>
         public object Read<TField, TKey>(Expression<Func<TData, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
@@ -1009,24 +1008,24 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>å†…å®¹</returns>
         public TField LoadValue<TField, TKey>(Expression<Func<TData, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
             var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, key));
             return vl == DBNull.Value || vl == null ? default(TField) : (TField)vl;
         }
-        
+
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         public List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
             Expression<Func<TData, bool>> lambda)
         {
@@ -1054,11 +1053,11 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         public List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition)
         {
             var field = GetPropertyName(fieldExpression);
@@ -1068,12 +1067,12 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="parse">×ª»»Êı¾İÀàĞÍ·½·¨</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="parse">è½¬æ¢æ•°æ®ç±»å‹æ–¹æ³•</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         public List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
             Func<object, TField> parse, Expression<Func<TData, bool>> lambda)
         {
@@ -1084,7 +1083,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         public object LoadValue(string field, string condition, params MySqlParameter[] args)
         {
@@ -1092,7 +1091,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Öµ
+        ///     è¯»å–å€¼
         /// </summary>
         protected object LoadValueInner(string field, string condition, params MySqlParameter[] args)
         {
@@ -1106,7 +1105,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¶ÁÈ¡¶à¸öÖµ
+        ///     è¯»å–å¤šä¸ªå€¼
         /// </summary>
         protected List<object> LoadValuesInner(string field, string condition, params MySqlParameter[] args)
         {
@@ -1132,13 +1131,13 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region Êı¾İ¶ÁÈ¡
+        #region æ•°æ®è¯»å–
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public TData LoadData(object id)
         {
             return LoadByPrimaryKey(id);
@@ -1146,7 +1145,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     È«±í¶ÁÈ¡
+        ///     å…¨è¡¨è¯»å–
         /// </summary>
         public List<TData> LoadData()
         {
@@ -1155,7 +1154,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     Ìõ¼ş¶ÁÈ¡
+        ///     æ¡ä»¶è¯»å–
         /// </summary>
         public List<TData> LoadData(string condition, params MySqlParameter[] args)
         {
@@ -1163,7 +1162,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Ö÷¼ü¶ÁÈ¡
+        ///     ä¸»é”®è¯»å–
         /// </summary>
         public virtual TData LoadByPrimaryKey(object key)
         {
@@ -1171,7 +1170,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Ö÷¼ü¶ÁÈ¡
+        ///     ä¸»é”®è¯»å–
         /// </summary>
         public List<TData> LoadByPrimaryKeies(IEnumerable keies)
         {
@@ -1190,7 +1189,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         public TData LoadFirst(string condition = null)
         {
@@ -1198,7 +1197,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         public TData LoadFirst(string condition, params MySqlParameter[] args)
         {
@@ -1206,7 +1205,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         public TData LoadFirst(string foreignKey, object key)
         {
@@ -1214,7 +1213,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Î²ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–å°¾è¡Œ
         /// </summary>
         public TData LoadLast(string condition = null)
         {
@@ -1222,7 +1221,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Î²ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–å°¾è¡Œ
         /// </summary>
         public TData LoadLast(string condition, params MySqlParameter[] args)
         {
@@ -1230,7 +1229,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Î²ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–å°¾è¡Œ
         /// </summary>
         public TData LoadLast(string foreignKey, object key)
         {
@@ -1238,7 +1237,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         public List<TData> LoadByForeignKey(string foreignKey, object key)
         {
@@ -1246,7 +1245,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÖØĞÂ¶ÁÈ¡
+        ///     é‡æ–°è¯»å–
         /// </summary>
         public void ReLoad(TData entity)
         {
@@ -1258,7 +1257,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÖØĞÂ¶ÁÈ¡
+        ///     é‡æ–°è¯»å–
         /// </summary>
         public void ReLoad(ref TData entity)
         {
@@ -1271,12 +1270,12 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region ÔØÈëÊÂ¼ş
+        #region è½½å…¥äº‹ä»¶
 
         /// <summary>
-        ///     ÔØÈëÊı¾İ
+        ///     è½½å…¥æ•°æ®
         /// </summary>
-        /// <param name="entity">¶ÁÈ¡Êı¾İµÄÊµÌå</param>
+        /// <param name="entity">è¯»å–æ•°æ®çš„å®ä½“</param>
         private TData EntityLoaded(TData entity)
         {
             entity = OnEntityLoaded(entity);
@@ -1285,7 +1284,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÔØÈëºóµÄÍ¬²½´¦Àí
+        ///     è½½å…¥åçš„åŒæ­¥å¤„ç†
         /// </summary>
         /// <param name="entity"></param>
         protected virtual TData OnEntityLoaded(TData entity)
@@ -1294,15 +1293,15 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     Êı¾İÔØÈëÊ±¸øÍâ²¿µÄ´¦Àí·½·¨
+        ///     æ•°æ®è½½å…¥æ—¶ç»™å¤–éƒ¨çš„å¤„ç†æ–¹æ³•
         /// </summary>
         public Action<TData> OnLoadAction;
 
         /// <summary>
-        ///     ÔØÈëÊı¾İ
+        ///     è½½å…¥æ•°æ®
         /// </summary>
-        /// <param name="reader">Êı¾İ¶ÁÈ¡Æ÷</param>
-        /// <returns>¶ÁÈ¡Êı¾İµÄÊµÌå</returns>
+        /// <param name="reader">æ•°æ®è¯»å–å™¨</param>
+        /// <returns>è¯»å–æ•°æ®çš„å®ä½“</returns>
         private TData LoadEntity(MySqlDataReader reader)
         {
             var entity = new TData();
@@ -1317,7 +1316,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÖØĞÂÔØÈë
+        ///     é‡æ–°è½½å…¥
         /// </summary>
         private void ReLoadInner(TData entity)
         {
@@ -1344,7 +1343,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¶ÁÈ¡Ê×ĞĞ
+        ///     è¯»å–é¦–è¡Œ
         /// </summary>
         protected TData LoadFirstInner(string condition = null, MySqlParameter args = null)
         {
@@ -1352,7 +1351,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Ê×ĞĞ
+        ///     è¯»å–é¦–è¡Œ
         /// </summary>
         protected TData LoadFirstInner(string condition, MySqlParameter[] args)
         {
@@ -1375,7 +1374,7 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         /// <summary>
-        ///     ¶ÁÈ¡Î²ĞĞ
+        ///     è¯»å–å°¾è¡Œ
         /// </summary>
         protected TData LoadLastInner(string condition = null, MySqlParameter args = null)
         {
@@ -1383,7 +1382,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡Î²ĞĞ
+        ///     è¯»å–å°¾è¡Œ
         /// </summary>
         protected TData LoadLastInner(string condition, MySqlParameter[] args)
         {
@@ -1405,7 +1404,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡È«²¿
+        ///     è¯»å–å…¨éƒ¨
         /// </summary>
         protected List<TData> LoadDataInner(string condition = null, MySqlParameter args = null)
         {
@@ -1413,7 +1412,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡È«²¿
+        ///     è¯»å–å…¨éƒ¨
         /// </summary>
         protected List<TData> LoadDataInner(string condition, MySqlParameter[] args)
         {
@@ -1421,7 +1420,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡È«²¿
+        ///     è¯»å–å…¨éƒ¨
         /// </summary>
         protected List<TData> LoadDataInner(string condition, MySqlParameter[] args, string orderBy)
         {
@@ -1443,7 +1442,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡È«²¿(SQLÓï¾äÊÇÖØĞ´µÄ,×Ö¶ÎÃû³ÆºÍË³ĞòÓëÉè¼ÆÊ±ÏàÍ¬)
+        ///     è¯»å–å…¨éƒ¨(SQLè¯­å¥æ˜¯é‡å†™çš„,å­—æ®µåç§°å’Œé¡ºåºä¸è®¾è®¡æ—¶ç›¸åŒ)
         /// </summary>
         protected List<TData> LoadDataBySql(string sql, MySqlParameter[] args)
         {
@@ -1465,7 +1464,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¶ÁÈ¡´æ´¢¹ı³Ì
+        ///     è¯»å–å­˜å‚¨è¿‡ç¨‹
         /// </summary>
         public List<TData> LoadDataByProcedure(string procedure, MySqlParameter[] args)
         {
@@ -1491,12 +1490,12 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region Ğ´
+        #region å†™
 
-        #region ÄÚ²¿Ğ´Ïà¹Ø
+        #region å†…éƒ¨å†™ç›¸å…³
 
         /// <summary>
-        ///     ±£´æ
+        ///     ä¿å­˜
         /// </summary>
         private void SaveInner(TData entity)
         {
@@ -1509,9 +1508,9 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¸üĞÂÊı¾İ
+        ///     æ›´æ–°æ•°æ®
         /// </summary>
-        /// <param name="entity">¸üĞÂÊı¾İµÄÊµÌå</param>
+        /// <param name="entity">æ›´æ–°æ•°æ®çš„å®ä½“</param>
         protected bool InsertInner(TData entity)
         {
             PrepareSave(entity, DataOperatorType.Insert);
@@ -1537,9 +1536,9 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ²åÈëÊı¾İ
+        ///     æ’å…¥æ•°æ®
         /// </summary>
-        /// <param name="entity">²åÈëÊı¾İµÄÊµÌå</param>
+        /// <param name="entity">æ’å…¥æ•°æ®çš„å®ä½“</param>
         private void UpdateInner(TData entity)
         {
             if (UpdateByMidified && !entity.__EntityStatus.IsModified)
@@ -1561,7 +1560,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     É¾³ı
+        ///     åˆ é™¤
         /// </summary>
         private int DeleteInner(TData entity)
         {
@@ -1575,7 +1574,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     É¾³ı
+        ///     åˆ é™¤
         /// </summary>
         private int DeleteInner(string condition, params MySqlParameter[] args)
         {
@@ -1583,18 +1582,18 @@ namespace Gboxt.Common.DataModel.MySql
                 return 0;
             if (!string.IsNullOrEmpty(condition))
                 return DataBase.Execute(CreateDeleteSql(condition), args);
-            throw new ArgumentException(@"É¾³ıÌõ¼ş²»ÄÜÎª¿Õ,ÒòÎª²»ÔÊĞíÖ´ĞĞÈ«±íÉ¾³ı", GetType().FullName);
+            throw new ArgumentException(@"åˆ é™¤æ¡ä»¶ä¸èƒ½ä¸ºç©º,å› ä¸ºä¸å…è®¸æ‰§è¡Œå…¨è¡¨åˆ é™¤", GetType().FullName);
         }
 
         #endregion
 
-        #region ÊÂ¼ş
+        #region äº‹ä»¶
 
         /// <summary>
-        ///     ±£´æÇ°´¦Àí(Insert/Update/Delete)
+        ///     ä¿å­˜å‰å¤„ç†(Insert/Update/Delete)
         /// </summary>
-        /// <param name="entity">ÊµÌå</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="entity">å®ä½“</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         protected void PrepareSave(TData entity, DataOperatorType operatorType)
         {
             if (!IsBaseClass)
@@ -1614,12 +1613,12 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ±£´æÍê³ÉºóÆÚ´¦Àí(Insert/Update/Delete)
+        ///     ä¿å­˜å®ŒæˆåæœŸå¤„ç†(Insert/Update/Delete)
         /// </summary>
-        /// <param name="entity">ÊµÌå</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="entity">å®ä½“</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         /// <remarks>
-        ///     ¶Ôµ±Ç°¶ÔÏóµÄÊôĞÔµÄ¸ü¸Ä,Çë×ÔĞĞ±£´æ,·ñÔò½«¶ªÊ§
+        ///     å¯¹å½“å‰å¯¹è±¡çš„å±æ€§çš„æ›´æ”¹,è¯·è‡ªè¡Œä¿å­˜,å¦åˆ™å°†ä¸¢å¤±
         /// </remarks>
         private void EndSaved(TData entity, DataOperatorType operatorType)
         {
@@ -1644,10 +1643,10 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-        #region Êı¾İ²Ù×÷
+        #region æ•°æ®æ“ä½œ
 
         /// <summary>
-        ///     ±£´æÊı¾İ
+        ///     ä¿å­˜æ•°æ®
         /// </summary>
         public void Save(IEnumerable<TData> entities)
         {
@@ -1663,7 +1662,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ±£´æÊı¾İ
+        ///     ä¿å­˜æ•°æ®
         /// </summary>
         public void Save(TData entity)
         {
@@ -1678,7 +1677,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¸üĞÂÊı¾İ
+        ///     æ›´æ–°æ•°æ®
         /// </summary>
         public void Update(TData entity)
         {
@@ -1694,7 +1693,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ¸üĞÂÊı¾İ
+        ///     æ›´æ–°æ•°æ®
         /// </summary>
         public void Update(IEnumerable<TData> entities)
         {
@@ -1710,7 +1709,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ²åÈëĞÂÊı¾İ
+        ///     æ’å…¥æ–°æ•°æ®
         /// </summary>
         public bool Insert(TData entity)
         {
@@ -1728,7 +1727,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ²åÈëĞÂÊı¾İ
+        ///     æ’å…¥æ–°æ•°æ®
         /// </summary>
         public void Insert(IEnumerable<TData> entities)
         {
@@ -1747,7 +1746,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         public void Delete(IEnumerable<TData> entities)
         {
@@ -1764,7 +1763,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         public int Delete(TData entity)
         {
@@ -1781,7 +1780,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         public int Delete(object id)
         {
@@ -1792,7 +1791,7 @@ namespace Gboxt.Common.DataModel.MySql
         }
 
         /// <summary>
-        ///     ÎïÀíÉ¾³ıÊı¾İ
+        ///     ç‰©ç†åˆ é™¤æ•°æ®
         /// </summary>
         public bool PhysicalDelete(object id)
         {
@@ -1817,7 +1816,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         public int DeletePrimaryKey(object key)
         {
@@ -1828,11 +1827,11 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Çå³ıËùÓĞÊı¾İ
+        ///     æ¸…é™¤æ‰€æœ‰æ•°æ®
         /// </summary>
         public void Clear()
         {
-            throw new Exception("ÅúÁ¿É¾³ı¹¦ÄÜ±»½ûÓÃ");
+            throw new Exception("æ‰¹é‡åˆ é™¤åŠŸèƒ½è¢«ç¦ç”¨");
             //using (MySqlDataBaseScope.CreateScope(DataBase))
             //{
             //    DataBase.Clear(WriteTableName);
@@ -1840,22 +1839,22 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼şÉ¾³ı
+        ///     æ¡ä»¶åˆ é™¤
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         public int Delete(Expression<Func<TData, bool>> lambda)
         {
-            //throw new Exception("ÅúÁ¿É¾³ı¹¦ÄÜ±»½ûÓÃ");
+            //throw new Exception("æ‰¹é‡åˆ é™¤åŠŸèƒ½è¢«ç¦ç”¨");
             var convert = Compile(lambda);
             return Delete(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
-        ///     Ç¿ÖÆÎïÀíÉ¾³ı
+        ///     å¼ºåˆ¶ç‰©ç†åˆ é™¤
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñÉ¾³ı³É¹¦</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦åˆ é™¤æˆåŠŸ</returns>
         public int Destroy(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -1875,13 +1874,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼şÉ¾³ı
+        ///     æ¡ä»¶åˆ é™¤
         /// </summary>
         public int Delete(string condition, params MySqlParameter[] args)
         {
-            //throw new Exception("ÅúÁ¿É¾³ı¹¦ÄÜ±»½ûÓÃ");
+            //throw new Exception("æ‰¹é‡åˆ é™¤åŠŸèƒ½è¢«ç¦ç”¨");
             if (string.IsNullOrWhiteSpace(condition))
-                throw new ArgumentException(@"É¾³ıÌõ¼ş²»ÄÜÎª¿Õ,ÒòÎª²»ÔÊĞíÖ´ĞĞÈ«±íÉ¾³ı", GetType().FullName);
+                throw new ArgumentException(@"åˆ é™¤æ¡ä»¶ä¸èƒ½ä¸ºç©º,å› ä¸ºä¸å…è®¸æ‰§è¡Œå…¨è¡¨åˆ é™¤", GetType().FullName);
             int cnt;
             using (MySqlDataBaseScope.CreateScope(DataBase))
             {
@@ -1898,10 +1897,10 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
         #endregion
 
-        #region Ìõ¼ş¸üĞÂ
+        #region æ¡ä»¶æ›´æ–°
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
         public void SaveValue(string field, object value, string[] conditionFiles, object[] values)
         {
@@ -1911,38 +1910,38 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(string field, object value, object key)
         {
             return SetValueInner(field, value, $"`{PrimaryKey}`='{key}'", CreateFieldParameter(KeyField, key));
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <param name="args">Ìõ¼ş²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(string field, object value, string condition, params MySqlParameter[] args)
         {
             return SetValueInner(field, value, condition, args);
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <param name="args">Ìõ¼ş²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(Expression<Func<TData, bool>> field, bool value, string condition,
             params MySqlParameter[] args)
         {
@@ -1950,13 +1949,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <param name="args">Ìõ¼ş²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(Expression<Func<TData, Enum>> field, Enum value, string condition,
             params MySqlParameter[] args)
         {
@@ -1964,13 +1963,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <param name="args">Ìõ¼ş²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue<TField>(Expression<Func<TData, TField>> field, TField value, string condition,
             params MySqlParameter[] args)
         {
@@ -1978,23 +1977,23 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     È«Á¿¸üĞÂ
+        ///     å…¨é‡æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue<TField>(Expression<Func<TData, TField>> field, TField value)
         {
             return SetValueInner(GetPropertyName(field), value, null, null);
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue<TField>(Expression<Func<TData, TField>> field, TField value,
             Expression<Func<TData, bool>> lambda)
         {
@@ -2003,13 +2002,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <param name="args">Ìõ¼ş²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         private int SetValueInner(string field, object value, string condition, params MySqlParameter[] args)
         {
             Debug.Assert(FieldDictionary.ContainsKey(field));
@@ -2037,10 +2036,10 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
         #endregion
 
-        #region ¼òµ¥¸üĞÂ
+        #region ç®€å•æ›´æ–°
 
         /// <summary>
-        ///     Óë¸üĞÂÍ¬Ê±Ö´ĞĞµÄSQL(¸üĞÂÖ®Ç°Á¢¼´Ö´ĞĞ)
+        ///     ä¸æ›´æ–°åŒæ—¶æ‰§è¡Œçš„SQL(æ›´æ–°ä¹‹å‰ç«‹å³æ‰§è¡Œ)
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
@@ -2050,7 +2049,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Óë¸üĞÂÍ¬Ê±Ö´ĞĞµÄSQL(¸üĞÂÖ®ºóÁ¢¼´Ö´ĞĞ)
+        ///     ä¸æ›´æ–°åŒæ—¶æ‰§è¡Œçš„SQL(æ›´æ–°ä¹‹åç«‹å³æ‰§è¡Œ)
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
@@ -2060,11 +2059,11 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     ×Ô¶¨Òå¸üĞÂ£¨¸üĞÂ±í´ïÊ½×ÔĞ´£©
+        ///     è‡ªå®šä¹‰æ›´æ–°ï¼ˆæ›´æ–°è¡¨è¾¾å¼è‡ªå†™ï¼‰
         /// </summary>
-        /// <param name="expression">¸üĞÂSQL±í´ïÊ½</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="expression">æ›´æ–°SQLè¡¨è¾¾å¼</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(string expression, Expression<Func<TData, bool>> condition)
         {
             var convert = Compile(condition);
@@ -2086,12 +2085,12 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     ×Ô¶¨Òå¸üĞÂ£¨¸üĞÂ±í´ïÊ½×ÔĞ´£©
+        ///     è‡ªå®šä¹‰æ›´æ–°ï¼ˆæ›´æ–°è¡¨è¾¾å¼è‡ªå†™ï¼‰
         /// </summary>
-        /// <param name="expression">¸üĞÂSQL±í´ïÊ½</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <param name="args">²ÎÊı</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="expression">æ›´æ–°SQLè¡¨è¾¾å¼</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <param name="args">å‚æ•°</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue(string expression, Expression<Func<TData, bool>> condition, params MySqlParameter[] args)
         {
             var convert = Compile(condition);
@@ -2126,12 +2125,12 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetValue<TField, TKey>(Expression<Func<TData, TField>> fieldExpression, TField value, TKey key)
         {
             var parameters = new List<MySqlParameter>
@@ -2152,11 +2151,11 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
 
         /// <summary>
-        ///     Éè¼Æ×Ö¶Î°´×Ô¶¨Òå±í´ïÊ½¸üĞÂÖµ
+        ///     è®¾è®¡å­—æ®µæŒ‰è‡ªå®šä¹‰è¡¨è¾¾å¼æ›´æ–°å€¼
         /// </summary>
-        /// <param name="valueExpression">ÖµµÄSQL·½Ê½</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="valueExpression">å€¼çš„SQLæ–¹å¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         public int SetCoustomValue<TKey>(string valueExpression, TKey key)
         {
             var condition = PrimaryKeyConditionSQL;
@@ -2181,54 +2180,54 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
         #endregion
 
-        #region ´¥·¢Æ÷Ö§³Ö
+        #region è§¦å‘å™¨æ”¯æŒ
 
         /// <summary>
-        ///     ±£´æÇ°´¦Àí
+        ///     ä¿å­˜å‰å¤„ç†
         /// </summary>
-        /// <param name="entity">±£´æµÄ¶ÔÏó</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="entity">ä¿å­˜çš„å¯¹è±¡</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         private void OnPrepareSave(TData entity, DataOperatorType operatorType)
         {
             OnPrepareSave(operatorType, entity);
-            DataUpdateHandler.OnPrepareSave(entity, operatorType);
+            DataUpdateHandler.OnPrepareSave(DataBase.Name, Name, entity, operatorType);
         }
 
         /// <summary>
-        ///     ±£´æÍê³ÉºóÆÚ´¦Àí
+        ///     ä¿å­˜å®ŒæˆåæœŸå¤„ç†
         /// </summary>
-        /// <param name="entity">±£´æµÄ¶ÔÏó</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="entity">ä¿å­˜çš„å¯¹è±¡</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         private void OnDataSaved(TData entity, DataOperatorType operatorType)
         {
             OnDataSaved(operatorType, entity);
-            DataUpdateHandler.OnDataSaved(entity, operatorType);
+            DataUpdateHandler.OnDataSaved(DataBase.Name,Name, entity, operatorType);
         }
 
         /// <summary>
-        ///     ¸üĞÂÓï¾äÇ°´¦Àí(µ¥¸öÊµÌå²Ù×÷²»Òı·¢)
+        ///     æ›´æ–°è¯­å¥å‰å¤„ç†(å•ä¸ªå®ä½“æ“ä½œä¸å¼•å‘)
         /// </summary>
-        /// <param name="condition">Ö´ĞĞÌõ¼ş</param>
-        /// <param name="args">²ÎÊıÖµ</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="condition">æ‰§è¡Œæ¡ä»¶</param>
+        /// <param name="args">å‚æ•°å€¼</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         private void OnOperatorExecuting(string condition, IEnumerable<MySqlParameter> args, DataOperatorType operatorType)
         {
             var sqlParameters = args as MySqlParameter[] ?? args.ToArray();
             OnOperatorExecuting(operatorType, condition, sqlParameters);
-            DataUpdateHandler.OnOperatorExecuting(TableId, condition, sqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecuting(DataBase.Name, Name, TableId, condition, sqlParameters, operatorType);
         }
 
         /// <summary>
-        ///     ¸üĞÂÓï¾äºó´¦Àí(µ¥¸öÊµÌå²Ù×÷²»Òı·¢)
+        ///     æ›´æ–°è¯­å¥åå¤„ç†(å•ä¸ªå®ä½“æ“ä½œä¸å¼•å‘)
         /// </summary>
-        /// <param name="condition">Ö´ĞĞÌõ¼ş</param>
-        /// <param name="args">²ÎÊıÖµ</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="condition">æ‰§è¡Œæ¡ä»¶</param>
+        /// <param name="args">å‚æ•°å€¼</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         private void OnOperatorExecutd(string condition, IEnumerable<MySqlParameter> args, DataOperatorType operatorType)
         {
             var mySqlParameters = args as MySqlParameter[] ?? args.ToArray();
             OnOperatorExecutd(operatorType, condition, mySqlParameters);
-            DataUpdateHandler.OnOperatorExecutd(TableId, condition, mySqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecutd(DataBase.Name, Name, TableId, condition, mySqlParameters, operatorType);
         }
 
         #endregion
@@ -2236,10 +2235,10 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         #endregion
 
 
-        #region Éú³ÉÃüÁî¶ÔÏó
+        #region ç”Ÿæˆå‘½ä»¤å¯¹è±¡
 
         /// <summary>
-        ///     Éú³ÉÃüÁî
+        ///     ç”Ÿæˆå‘½ä»¤
         /// </summary>
         protected MySqlCommand CreateLoadCommand(string condition, params MySqlParameter[] args)
         {
@@ -2247,7 +2246,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Éú³ÉÃüÁî
+        ///     ç”Ÿæˆå‘½ä»¤
         /// </summary>
         protected MySqlCommand CreateLoadCommand(string condition, string order, params MySqlParameter[] args)
         {
@@ -2256,13 +2255,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Éú³ÉÔØÈëÃüÁî
+        ///     ç”Ÿæˆè½½å…¥å‘½ä»¤
         /// </summary>
-        /// <param name="order">ÅÅĞò×Ö¶Î</param>
-        /// <param name="desc">ÊÇ·ñµ¹Ğò</param>
-        /// <param name="condition">Êı¾İÌõ¼ş</param>
-        /// <param name="args">Ìõ¼şÖĞµÄ²ÎÊı</param>
-        /// <returns>ÔØÈëÃüÁî</returns>
+        /// <param name="order">æ’åºå­—æ®µ</param>
+        /// <param name="desc">æ˜¯å¦å€’åº</param>
+        /// <param name="condition">æ•°æ®æ¡ä»¶</param>
+        /// <param name="args">æ¡ä»¶ä¸­çš„å‚æ•°</param>
+        /// <returns>è½½å…¥å‘½ä»¤</returns>
         protected MySqlCommand CreateLoadCommand(string order, bool desc, string condition,
             params MySqlParameter[] args)
         {
@@ -2274,13 +2273,13 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
         #endregion
 
-        #region ×Ö¶ÎµÄ²ÎÊı°ïÖú
+        #region å­—æ®µçš„å‚æ•°å¸®åŠ©
 
         /// <summary>
-        ///     µÃµ½×Ö¶ÎµÄMySqlDbTypeÀàĞÍ
+        ///     å¾—åˆ°å­—æ®µçš„MySqlDbTypeç±»å‹
         /// </summary>
-        /// <param name="field">×Ö¶ÎÃû³Æ</param>
-        /// <returns>²ÎÊı</returns>
+        /// <param name="field">å­—æ®µåç§°</param>
+        /// <returns>å‚æ•°</returns>
         protected virtual MySqlDbType GetDbType(string field)
         {
             return MySqlDbType.VarString;
@@ -2290,35 +2289,35 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         private string _primaryConditionSQL;
 
         /// <summary>
-        ///     Ö÷¼üµÄÌõ¼ş²¿·ÖSQL
+        ///     ä¸»é”®çš„æ¡ä»¶éƒ¨åˆ†SQL
         /// </summary>
         public string PrimaryKeyConditionSQL => _primaryConditionSQL ??
                                                 (_primaryConditionSQL = FieldConditionSQL(PrimaryKey));
 
         /// <summary>
-        ///     Éú³É¶à¸ö×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå¤šä¸ªå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="fields">Éú³É²ÎÊıµÄ×Ö¶Î</param>
+        /// <param name="fields">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
         public MySqlParameter[] CreateFieldsParameters(params string[] fields)
         {
             if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞ×Ö¶ÎÓÃÓÚÉú³É²ÎÊı", nameof(fields));
+                throw new ArgumentException(@"æ²¡æœ‰å­—æ®µç”¨äºç”Ÿæˆå‚æ•°", nameof(fields));
             return fields.Select(field => new MySqlParameter(field, GetDbType(field))).ToArray();
         }
 
         /// <summary>
-        ///     Éú³É¶à¸ö×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå¤šä¸ªå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="fields">Éú³É²ÎÊıµÄ×Ö¶Î</param>
-        /// <param name="values">Éú³É²ÎÊıµÄÖµ(³¤¶ÈºÍ×Ö¶Î³¤¶È±ØĞëÒ»ÖÂ)</param>
+        /// <param name="fields">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
+        /// <param name="values">ç”Ÿæˆå‚æ•°çš„å€¼(é•¿åº¦å’Œå­—æ®µé•¿åº¦å¿…é¡»ä¸€è‡´)</param>
         public MySqlParameter[] CreateFieldsParameters(string[] fields, object[] values)
         {
             if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞ×Ö¶ÎÓÃÓÚÉú³É²ÎÊı", nameof(fields));
+                throw new ArgumentException(@"æ²¡æœ‰å­—æ®µç”¨äºç”Ÿæˆå‚æ•°", nameof(fields));
             if (values == null || values.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞÖµÓÃÓÚÉú³É²ÎÊı", nameof(values));
+                throw new ArgumentException(@"æ²¡æœ‰å€¼ç”¨äºç”Ÿæˆå‚æ•°", nameof(values));
             if (values.Length != fields.Length)
-                throw new ArgumentException(@"ÖµµÄ³¤¶ÈºÍ×Ö¶Î³¤¶È±ØĞëÒ»ÖÂ", nameof(values));
+                throw new ArgumentException(@"å€¼çš„é•¿åº¦å’Œå­—æ®µé•¿åº¦å¿…é¡»ä¸€è‡´", nameof(values));
             var res = new MySqlParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
                 res[i] = CreateFieldParameter(fields[i], values[i]);
@@ -2326,47 +2325,47 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Éú³É×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="field">Éú³É²ÎÊıµÄ×Ö¶Î</param>
+        /// <param name="field">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
         public MySqlParameter CreateFieldParameter(string field)
         {
             return new MySqlParameter(field, GetDbType(field));
         }
 
         /// <summary>
-        ///     Éú³É×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="field">Éú³É²ÎÊıµÄ×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
+        /// <param name="field">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
         public MySqlParameter CreateFieldParameter(string field, object value)
         {
             return MySqlDataBase.CreateParameter(field, value, GetDbType(field));
         }
 
         /// <summary>
-        ///     Éú³É×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="field">Éú³É²ÎÊıµÄ×Ö¶Î</param>
-        /// <param name="entity">È¡ÖµµÄÊµÌå</param>
+        /// <param name="field">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
+        /// <param name="entity">å–å€¼çš„å®ä½“</param>
         public MySqlParameter CreateFieldParameter(string field, TData entity)
         {
             return CreateFieldParameter(field, entity.GetValue(field));
         }
 
         /// <summary>
-        ///     Éú³É×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆå­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="field">Éú³É²ÎÊıµÄ×Ö¶Î</param>
-        /// <param name="entity">È¡ÖµµÄÊµÌå</param>
-        /// <param name="entityField">È¡ÖµµÄ×Ö¶Î</param>
+        /// <param name="field">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
+        /// <param name="entity">å–å€¼çš„å®ä½“</param>
+        /// <param name="entityField">å–å€¼çš„å­—æ®µ</param>
         public MySqlParameter CreateFieldParameter(string field, DataObjectBase entity, string entityField)
         {
             return CreateFieldParameter(field, entity.GetValue(entityField));
         }
 
         /// <summary>
-        ///     Éú³ÉÖ÷¼ü×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆä¸»é”®å­—æ®µçš„å‚æ•°
         /// </summary>
         public MySqlParameter CreatePimaryKeyParameter()
         {
@@ -2374,18 +2373,18 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Éú³ÉÖ÷¼ü×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆä¸»é”®å­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="value">Ö÷¼üÖµ</param>
+        /// <param name="value">ä¸»é”®å€¼</param>
         public MySqlParameter CreatePimaryKeyParameter(object value)
         {
             return MySqlDataBase.CreateParameter(KeyField, value, GetDbType(KeyField));
         }
 
         /// <summary>
-        ///     Éú³ÉÖ÷¼ü×Ö¶ÎµÄ²ÎÊı
+        ///     ç”Ÿæˆä¸»é”®å­—æ®µçš„å‚æ•°
         /// </summary>
-        /// <param name="entity">È¡ÖµµÄÊµÌå</param>
+        /// <param name="entity">å–å€¼çš„å®ä½“</param>
         public MySqlParameter CreatePimaryKeyParameter(TData entity)
         {
             return MySqlDataBase.CreateParameter(KeyField, entity.GetValue(KeyField),
@@ -2394,15 +2393,15 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
 
         /// <summary>
-        ///     Á¬½Ó×Ö¶ÎÌõ¼ş
+        ///     è¿æ¥å­—æ®µæ¡ä»¶
         /// </summary>
-        /// <param name="isAnd">ÊÇ·ñÓÃAND×éºÏ</param>
-        /// <param name="fields">Éú³É²ÎÊıµÄ×Ö¶Î</param>
+        /// <param name="isAnd">æ˜¯å¦ç”¨ANDç»„åˆ</param>
+        /// <param name="fields">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
         /// <returns>ConditionItem</returns>
         public ConditionItem CreateConditionItem(bool isAnd, params string[] fields)
         {
             if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞ×Ö¶ÎÓÃÓÚÉú³É×éºÏÌõ¼ş", nameof(fields));
+                throw new ArgumentException(@"æ²¡æœ‰å­—æ®µç”¨äºç”Ÿæˆç»„åˆæ¡ä»¶", nameof(fields));
             return new ConditionItem
             {
                 ConditionSql = FieldConditionSQL(isAnd, fields),
@@ -2411,16 +2410,16 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         }
 
         /// <summary>
-        ///     Á¬½Ó×Ö¶ÎÌõ¼ş
+        ///     è¿æ¥å­—æ®µæ¡ä»¶
         /// </summary>
-        /// <param name="isAnd">ÊÇ·ñÓÃAND×éºÏ</param>
-        /// <param name="fields">Éú³É²ÎÊıµÄ×Ö¶Î</param>
-        /// <param name="values">Éú³É²ÎÊıµÄÖµ(³¤¶ÈºÍ×Ö¶Î³¤¶È±ØĞëÒ»ÖÂ)</param>
+        /// <param name="isAnd">æ˜¯å¦ç”¨ANDç»„åˆ</param>
+        /// <param name="fields">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
+        /// <param name="values">ç”Ÿæˆå‚æ•°çš„å€¼(é•¿åº¦å’Œå­—æ®µé•¿åº¦å¿…é¡»ä¸€è‡´)</param>
         /// <returns>ConditionItem</returns>
         public ConditionItem CreateConditionItem(bool isAnd, string[] fields, object[] values)
         {
             if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞ×Ö¶ÎÓÃÓÚÉú³É×éºÏÌõ¼ş", nameof(fields));
+                throw new ArgumentException(@"æ²¡æœ‰å­—æ®µç”¨äºç”Ÿæˆç»„åˆæ¡ä»¶", nameof(fields));
             return new ConditionItem
             {
                 ConditionSql = FieldConditionSQL(isAnd, fields),
@@ -2432,14 +2431,14 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
         #region SQL
 
-        #region ¸üĞÂ
+        #region æ›´æ–°
 
         /// <summary>
-        ///     Éú³É¸üĞÂµÄSQLÓï¾ä
+        ///     ç”Ÿæˆæ›´æ–°çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="expression">×Ö¶Î¸üĞÂÓï¾ä</param>
-        /// <param name="convert">¸üĞÂÌõ¼ş</param>
-        /// <returns>¸üĞÂµÄSQLÓï¾ä</returns>
+        /// <param name="expression">å­—æ®µæ›´æ–°è¯­å¥</param>
+        /// <param name="convert">æ›´æ–°æ¡ä»¶</param>
+        /// <returns>æ›´æ–°çš„SQLè¯­å¥</returns>
         private string CreateUpdateSql(string expression, ConditionItem convert)
         {
             return CreateUpdateSql(expression, convert.ConditionSql);
@@ -2447,11 +2446,11 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
 
         /// <summary>
-        ///     Éú³É¸üĞÂµÄSQL
+        ///     ç”Ÿæˆæ›´æ–°çš„SQL
         /// </summary>
-        /// <param name="valueExpression">¸üĞÂ±í´ïÊ½(SQL)</param>
-        /// <param name="condition">¸üĞÂÌõ¼ş</param>
-        /// <returns>¸üĞÂµÄSQL</returns>
+        /// <param name="valueExpression">æ›´æ–°è¡¨è¾¾å¼(SQL)</param>
+        /// <param name="condition">æ›´æ–°æ¡ä»¶</param>
+        /// <returns>æ›´æ–°çš„SQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
             return $@"{BeforeUpdateSql(condition)}
@@ -2463,25 +2462,25 @@ UPDATE `{WriteTableName}`
 
 
         /// <summary>
-        ///     Éú³É¸üĞÂµÄSQL
+        ///     ç”Ÿæˆæ›´æ–°çš„SQL
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <param name="parameters">²ÎÊıÁĞ±í</param>
-        /// <returns>¸üĞÂµÄSQL</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <param name="parameters">å‚æ•°åˆ—è¡¨</param>
+        /// <returns>æ›´æ–°çš„SQL</returns>
         private string CreateUpdateSql(string field, object value, string condition, IList<MySqlParameter> parameters)
         {
             return CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
         }
 
         /// <summary>
-        ///     Éú³Éµ¥¸ö×Ö¶Î¸üĞÂµÄSQL
+        ///     ç”Ÿæˆå•ä¸ªå­—æ®µæ›´æ–°çš„SQL
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="parameters">²ÎÊıÁĞ±í</param>
-        /// <returns>µ¥¸ö×Ö¶Î¸üĞÂµÄSQL</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="parameters">å‚æ•°åˆ—è¡¨</param>
+        /// <returns>å•ä¸ªå­—æ®µæ›´æ–°çš„SQL</returns>
         private string FileUpdateSql(string field, object value, IList<MySqlParameter> parameters)
         {
             field = FieldDictionary[field];
@@ -2502,15 +2501,15 @@ UPDATE `{WriteTableName}`
 
         #endregion
 
-        #region ÔØÈë
+        #region è½½å…¥
 
         /// <summary>
-        /// »ù±¾Ìõ¼ş³õÊ¼»¯Íê³ÉµÄ±êÊ¶
+        /// åŸºæœ¬æ¡ä»¶åˆå§‹åŒ–å®Œæˆçš„æ ‡è¯†
         /// </summary>
         private bool BaseConditionInited = false;
 
         /// <summary>
-        ///  ³õÊ¼»¯»ù±¾Ìõ¼ş
+        ///  åˆå§‹åŒ–åŸºæœ¬æ¡ä»¶
         /// </summary>
         /// <returns></returns>
         protected virtual void InitBaseCondition()
@@ -2518,7 +2517,7 @@ UPDATE `{WriteTableName}`
         }
 
         /// <summary>
-        ///     µÃµ½¿ÉÕıÈ·Æ´½ÓµÄSQLÌõ¼şÓï¾ä£¨¿ÉÄÜÊÇÃ»ÓĞ£©
+        ///     å¾—åˆ°å¯æ­£ç¡®æ‹¼æ¥çš„SQLæ¡ä»¶è¯­å¥ï¼ˆå¯èƒ½æ˜¯æ²¡æœ‰ï¼‰
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
@@ -2543,12 +2542,12 @@ WHERE ({BaseCondition}) AND ({condition})";
         }
 
         /// <summary>
-        ///     Éú³É»ã×ÜµÄSQLÓï¾ä
+        ///     ç”Ÿæˆæ±‡æ€»çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="fun">»ã×Üº¯ÊıÃû³Æ</param>
-        /// <param name="field">»ã×Ü×Ö¶Î</param>
-        /// <param name="condition">»ã×ÜÌõ¼ş</param>
-        /// <returns>»ã×ÜµÄSQLÓï¾ä</returns>
+        /// <param name="fun">æ±‡æ€»å‡½æ•°åç§°</param>
+        /// <param name="field">æ±‡æ€»å­—æ®µ</param>
+        /// <param name="condition">æ±‡æ€»æ¡ä»¶</param>
+        /// <returns>æ±‡æ€»çš„SQLè¯­å¥</returns>
         private string CreateCollectSql(string fun, string field, string condition)
         {
             if (field != "*")
@@ -2558,11 +2557,11 @@ WHERE ({BaseCondition}) AND ({condition})";
         }
 
         /// <summary>
-        ///     Éú³ÉÔØÈë×Ö¶ÎÖµµÄSQLÓï¾ä
+        ///     ç”Ÿæˆè½½å…¥å­—æ®µå€¼çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <returns>ÔØÈë×Ö¶ÎÖµµÄSQLÓï¾ä</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <returns>è½½å…¥å­—æ®µå€¼çš„SQLè¯­å¥</returns>
         private string CreateLoadValueSql(string field, string condition)
         {
             Debug.Assert(FieldDictionary.ContainsKey(field));
@@ -2570,11 +2569,11 @@ WHERE ({BaseCondition}) AND ({condition})";
         }
 
         /// <summary>
-        ///     Éú³ÉÔØÈëÖµµÄSQL
+        ///     ç”Ÿæˆè½½å…¥å€¼çš„SQL
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="convert">Ìõ¼ş</param>
-        /// <returns>ÔØÈë×Ö¶ÎÖµµÄSQLÓï¾ä</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="convert">æ¡ä»¶</param>
+        /// <returns>è½½å…¥å­—æ®µå€¼çš„SQLè¯­å¥</returns>
         private string CreateLoadValuesSql(string field, ConditionItem convert)
         {
             return $@"SELECT `{FieldDictionary[field]}` 
@@ -2582,11 +2581,11 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         }
 
         /// <summary>
-        ///     Éú³ÉÔØÈëµÄSQLÓï¾ä
+        ///     ç”Ÿæˆè½½å…¥çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="condition">Êı¾İÌõ¼ş</param>
-        /// <param name="order">ÅÅĞò×Ö¶Î</param>
-        /// <returns>ÔØÈëµÄSQLÓï¾ä</returns>
+        /// <param name="condition">æ•°æ®æ¡ä»¶</param>
+        /// <param name="order">æ’åºå­—æ®µ</param>
+        /// <returns>è½½å…¥çš„SQLè¯­å¥</returns>
         private StringBuilder CreateLoadSql(string condition, string order)
         {
             var sql = new StringBuilder();
@@ -2604,13 +2603,13 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         }
 
         /// <summary>
-        ///     Éú³É·ÖÒ³µÄSQL
+        ///     ç”Ÿæˆåˆ†é¡µçš„SQL
         /// </summary>
-        /// <param name="page">Ò³ºÅ</param>
-        /// <param name="pageSize">Ã¿Ò³¼¸ĞĞ(Ç¿ÖÆ´óÓÚ0,Ğ¡ÓÚ500ĞĞ)</param>
-        /// <param name="order">ÅÅĞò×Ö¶Î</param>
-        /// <param name="desc">ÊÇ·ñµ¹Ğò</param>
-        /// <param name="condition">Êı¾İÌõ¼ş</param>
+        /// <param name="page">é¡µå·</param>
+        /// <param name="pageSize">æ¯é¡µå‡ è¡Œ(å¼ºåˆ¶å¤§äº0,å°äº500è¡Œ)</param>
+        /// <param name="order">æ’åºå­—æ®µ</param>
+        /// <param name="desc">æ˜¯å¦å€’åº</param>
+        /// <param name="condition">æ•°æ®æ¡ä»¶</param>
         /// <returns></returns>
         private string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
@@ -2639,23 +2638,23 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
         #endregion
 
-        #region É¾³ı
+        #region åˆ é™¤
 
         /// <summary>
-        ///     Éú³ÉÉ¾³ıµÄSQLÓï¾ä
+        ///     ç”Ÿæˆåˆ é™¤çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="condition">É¾³ıÌõ¼ş</param>
-        /// <returns>É¾³ıµÄSQLÓï¾ä</returns>
+        /// <param name="condition">åˆ é™¤æ¡ä»¶</param>
+        /// <returns>åˆ é™¤çš„SQLè¯­å¥</returns>
         private string CreateDeleteSql(string condition)
         {
             return $@"{DeleteSqlCode} WHERE {condition};{AfterUpdateSql(condition)}";
         }
 
         /// <summary>
-        ///     Éú³ÉÉ¾³ıµÄSQLÓï¾ä
+        ///     ç”Ÿæˆåˆ é™¤çš„SQLè¯­å¥
         /// </summary>
-        /// <param name="convert">É¾³ıÌõ¼ş</param>
-        /// <returns>É¾³ıµÄSQLÓï¾ä</returns>
+        /// <param name="convert">åˆ é™¤æ¡ä»¶</param>
+        /// <returns>åˆ é™¤çš„SQLè¯­å¥</returns>
         private string CreateDeleteSql(ConditionItem convert)
         {
             return CreateDeleteSql(convert.ConditionSql);
@@ -2663,14 +2662,14 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
         #endregion
 
-        #region ×Ö¶ÎÌõ¼ş
+        #region å­—æ®µæ¡ä»¶
 
         /// <summary>
-        ///     ÓÃÔÚÌõ¼şÖĞµÄ×Ö¶ÎÌõ¼ş
+        ///     ç”¨åœ¨æ¡ä»¶ä¸­çš„å­—æ®µæ¡ä»¶
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="expression">Ìõ¼ş±í´ïÊ½</param>
-        /// <returns>×Ö¶ÎÌõ¼ş</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="expression">æ¡ä»¶è¡¨è¾¾å¼</param>
+        /// <returns>å­—æ®µæ¡ä»¶</returns>
         public string FieldConditionSQL(string field, string expression = "=")
         {
             Debug.Assert(FieldDictionary.ContainsKey(field));
@@ -2678,14 +2677,14 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         }
 
         /// <summary>
-        ///     ×éºÏÌõ¼şSQL
+        ///     ç»„åˆæ¡ä»¶SQL
         /// </summary>
-        /// <param name="isAnd">ÊÇ·ñÓÃAND×éºÏ</param>
-        /// <param name="conditions">Ìõ¼ş</param>
+        /// <param name="isAnd">æ˜¯å¦ç”¨ANDç»„åˆ</param>
+        /// <param name="conditions">æ¡ä»¶</param>
         public string JoinConditionSQL(bool isAnd, params string[] conditions)
         {
             if (conditions == null || conditions.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞÌõ¼şÓÃÓÚ×éºÏ", nameof(conditions));
+                throw new ArgumentException(@"æ²¡æœ‰æ¡ä»¶ç”¨äºç»„åˆ", nameof(conditions));
             var sql = new StringBuilder();
             sql.AppendFormat(@"({0})", conditions[0]);
             for (var idx = 1; idx < conditions.Length; idx++)
@@ -2694,14 +2693,14 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         }
 
         /// <summary>
-        ///     Á¬½Ó×Ö¶ÎÌõ¼şSQL
+        ///     è¿æ¥å­—æ®µæ¡ä»¶SQL
         /// </summary>
-        /// <param name="isAnd">ÊÇ·ñÓÃAND×éºÏ</param>
-        /// <param name="fields">Éú³É²ÎÊıµÄ×Ö¶Î</param>
+        /// <param name="isAnd">æ˜¯å¦ç”¨ANDç»„åˆ</param>
+        /// <param name="fields">ç”Ÿæˆå‚æ•°çš„å­—æ®µ</param>
         public string FieldConditionSQL(bool isAnd, params string[] fields)
         {
             if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"Ã»ÓĞ×Ö¶ÎÓÃÓÚÉú³É×éºÏÌõ¼ş", nameof(fields));
+                throw new ArgumentException(@"æ²¡æœ‰å­—æ®µç”¨äºç”Ÿæˆç»„åˆæ¡ä»¶", nameof(fields));
             var sql = new StringBuilder();
             sql.AppendFormat(@"({0})", FieldConditionSQL(fields[0]));
             for (var idx = 1; idx < fields.Length; idx++)
@@ -2713,10 +2712,10 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
         #endregion
 
-        #region Êı¾İĞ£ÑéÖ§³Ö
+        #region æ•°æ®æ ¡éªŒæ”¯æŒ
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
@@ -2740,7 +2739,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         }
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
@@ -2763,7 +2762,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         }
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>

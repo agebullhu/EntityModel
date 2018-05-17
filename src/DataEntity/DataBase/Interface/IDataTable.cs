@@ -1,12 +1,12 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Collections;
@@ -19,16 +19,16 @@ using System.Linq.Expressions;
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-    ///     SqlÊµÌå·ÃÎÊÀà
+    ///     Sqlå®ä½“è®¿é—®ç±»
     /// </summary>
-    /// <typeparam name="TData">ÊµÌå</typeparam>
-    public interface IDataTable<TData>
+    /// <typeparam name="TData">å®ä½“</typeparam>
+    public interface IDataTable<TData>: IConfig
         where TData : EditDataObject, new()
     {
-        #region Êı¾İ¿â
+        #region æ•°æ®åº“
         
         /// <summary>
-        ///     ×Ô¶¯Êı¾İÁ¬½Ó¶ÔÏó
+        ///     è‡ªåŠ¨æ•°æ®è¿æ¥å¯¹è±¡
         /// </summary>
         IDataBase DataBase
         {
@@ -37,30 +37,30 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region Êı¾İ½á¹¹
+        #region æ•°æ®ç»“æ„
         
         /// <summary>
-        ///     ×Ö¶Î×Öµä(ÔËĞĞÊ±)
+        ///     å­—æ®µå­—å…¸(è¿è¡Œæ—¶)
         /// </summary>
         Dictionary<string, string> FieldDictionary { get; }
 
         /// <summary>
-        ///     ±íµÄÎ¨Ò»±êÊ¶
+        ///     è¡¨çš„å”¯ä¸€æ ‡è¯†
         /// </summary>
         int TableId { get; }
         /// <summary>
-        ///     Éè¼ÆÊ±µÄÖ÷¼ü×Ö¶Î
+        ///     è®¾è®¡æ—¶çš„ä¸»é”®å­—æ®µ
         /// </summary>
         string PrimaryKey { get; }
 
         #endregion
 
-        #region ¶Á
+        #region è¯»
 
-        #region ±éÀúËùÓĞ
+        #region éå†æ‰€æœ‰
 
         /// <summary>
-        ///     ±éÀúËùÓĞ
+        ///     éå†æ‰€æœ‰
         /// </summary>
 
         void FeachAll(Action<TData> action, Action<List<TData>> end);
@@ -68,112 +68,112 @@ namespace Gboxt.Common.DataModel
         #endregion
         
 
-        #region Ê×ĞĞ
+        #region é¦–è¡Œ
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData First();
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData FirstOrDefault();
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData FirstOrDefault(object id);
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData First(object id);
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData First(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
         
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData FirstOrDefault(Expression<Func<TData, bool>> lambda);
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData FirstOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
         
         #endregion
 
-        #region Î²ĞĞ
+        #region å°¾è¡Œ
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData Last();
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData LastOrDefault();
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData Last(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData Last(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData LastOrDefault(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ÔØÈëÎ²ĞĞ
+        ///     è½½å…¥å°¾è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÎ²ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥å°¾è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData LastOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
         
         #endregion
@@ -181,24 +181,24 @@ namespace Gboxt.Common.DataModel
         #region Select
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         List<TData> Select();
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Êı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ•°æ®</returns>
         List<TData> Select(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
@@ -206,40 +206,40 @@ namespace Gboxt.Common.DataModel
         #region All
 
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         List<TData> All();
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> All<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy,
             bool desc);
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Êı¾İ</returns>
+        /// <returns>æ•°æ®</returns>
         List<TData> All(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
         
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <param name="orderBys">ÅÅĞò</param>
-        /// <returns>Êı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <param name="orderBys">æ’åº</param>
+        /// <returns>æ•°æ®</returns>
         List<TData> All(Expression<Func<TData, bool>> lambda, params string[] orderBys);
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> PageData(int page, int limit, string order,bool desc, string condition, params DbParameter[] args);
         #endregion
@@ -247,29 +247,29 @@ namespace Gboxt.Common.DataModel
         #region Where
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         List<TData> Where(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
 
 
-        #region ¾ÛºÏº¯ÊıÖ§³Ö
+        #region èšåˆå‡½æ•°æ”¯æŒ
 
         #region Collect
 
         /// <summary>
-        ///     »ã×Ü·½·¨
+        ///     æ±‡æ€»æ–¹æ³•
         /// </summary>
         object Collect(string fun, string field, Expression<Func<TData, bool>> lambda);
 
@@ -278,15 +278,15 @@ namespace Gboxt.Common.DataModel
         #region Exist
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
         bool Exist();
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚ´ËÖ÷¼üµÄÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ­¤ä¸»é”®çš„æ•°æ®
         /// </summary>
         /// <param name="id">id</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         bool ExistPrimaryKey<T>(T id);
 
         #endregion
@@ -294,7 +294,7 @@ namespace Gboxt.Common.DataModel
         #region Count
 
         /// <summary>
-        ///     ×ÜÊı
+        ///     æ€»æ•°
         /// </summary>
         long Count();
         
@@ -303,7 +303,7 @@ namespace Gboxt.Common.DataModel
         #region SUM
 
         /// <summary>
-        ///     »ã×Ü
+        ///     æ±‡æ€»
         /// </summary>
         decimal Sum(string field);
         
@@ -313,25 +313,25 @@ namespace Gboxt.Common.DataModel
         #region Any
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         bool Any();
 
         /// <summary>
-        ///     ÊÇ·ñ´æÔÚÊı¾İ
+        ///     æ˜¯å¦å­˜åœ¨æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         bool Any(Expression<Func<TData, bool>> lambda);
 
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         bool Any(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
@@ -339,23 +339,23 @@ namespace Gboxt.Common.DataModel
         #region Count
 
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         long Count(Expression<Func<TData, bool>> lambda);
         
         /// <summary>
-        ///     ¼ÆÊı
+        ///     è®¡æ•°
         /// </summary>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         long Count(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
 
         /// <summary>
-        ///     ×ÜÊı
+        ///     æ€»æ•°
         /// </summary>
         long Count(string condition, params DbParameter[] args);
         #endregion
@@ -363,21 +363,21 @@ namespace Gboxt.Common.DataModel
         #region Sum
 
         /// <summary>
-        ///     ºÏ¼Æ
+        ///     åˆè®¡
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <param name="condition2">Ìõ¼ş2£¬Ä¬ÈÏÎª¿Õ</param>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <param name="condition2">æ¡ä»¶2ï¼Œé»˜è®¤ä¸ºç©º</param>
         decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
             string condition2 = null);
 
         /// <summary>
-        ///     ºÏ¼Æ
+        ///     åˆè®¡
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="a">²éÑ¯±í´ïÊ½</param>
+        /// <param name="a">æŸ¥è¯¢è¡¨è¾¾å¼</param>
         /// <param name="b"></param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
             Expression<Func<TData, bool>> b);
         
@@ -387,127 +387,127 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region ·ÖÒ³¶ÁÈ¡
+        #region åˆ†é¡µè¯»å–
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> PageData(int page, int limit);
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda);
         
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field,
             Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
+        ///     åˆ†é¡µè¯»å–
         /// </summary>
         List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
             Expression<Func<TData, bool>> lambda);
 
         #endregion
 
-        #region µ¥ÁĞ¶ÁÈ¡
+        #region å•åˆ—è¯»å–
         
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         TField LoadValue<TField>(Expression<Func<TData, TField>> field, Expression<Func<TData, bool>> lambda);
         
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>å†…å®¹</returns>
         TField LoadValue<TField, TKey>(Expression<Func<TData, TField>> field, TKey key);
         
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
             Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="condition">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="condition">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition);
 
         /// <summary>
-        ///     ¶ÁÈ¡Ò»¸ö×Ö¶Î
+        ///     è¯»å–ä¸€ä¸ªå­—æ®µ
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="parse">×ª»»Êı¾İÀàĞÍ·½·¨</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>ÄÚÈİ</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="parse">è½¬æ¢æ•°æ®ç±»å‹æ–¹æ³•</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>å†…å®¹</returns>
         List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
             Func<object, TField> parse, Expression<Func<TData, bool>> lambda);
         
         #endregion
 
-        #region Êı¾İ¶ÁÈ¡
+        #region æ•°æ®è¯»å–
 
         /// <summary>
-        ///     ÔØÈëÊ×ĞĞ
+        ///     è½½å…¥é¦–è¡Œ
         /// </summary>
-        /// <param name="id">Ö÷¼ü</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="id">ä¸»é”®</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         TData LoadData(object id);
 
         /// <summary>
-        ///     È«±í¶ÁÈ¡
+        ///     å…¨è¡¨è¯»å–
         /// </summary>
         List<TData> LoadData();
 
         /// <summary>
-        ///     Ö÷¼ü¶ÁÈ¡
+        ///     ä¸»é”®è¯»å–
         /// </summary>
         TData LoadByPrimaryKey(object key);
 
         /// <summary>
-        ///     Ö÷¼ü¶ÁÈ¡
+        ///     ä¸»é”®è¯»å–
         /// </summary>
         List<TData> LoadByPrimaryKeies(IEnumerable keies);
 
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         TData LoadFirst(string condition = null);
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         TData LoadFirst(string foreignKey, object key);
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Î²ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–å°¾è¡Œ
         /// </summary>
         TData LoadLast(string condition = null);
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Î²ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–å°¾è¡Œ
         /// </summary>
         TData LoadLast(string foreignKey, object key);
 
         /// <summary>
-        ///     Èç¹û´æÔÚµÄ»°¶ÁÈ¡Ê×ĞĞ
+        ///     å¦‚æœå­˜åœ¨çš„è¯è¯»å–é¦–è¡Œ
         /// </summary>
         List<TData> LoadByForeignKey(string foreignKey, object key);
         
@@ -517,135 +517,135 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region Ğ´
+        #region å†™
         
-        #region Êı¾İ²Ù×÷
+        #region æ•°æ®æ“ä½œ
 
         /// <summary>
-        ///     ±£´æÊı¾İ
+        ///     ä¿å­˜æ•°æ®
         /// </summary>
         void Save(IEnumerable<TData> entities);
 
         /// <summary>
-        ///     ±£´æÊı¾İ
+        ///     ä¿å­˜æ•°æ®
         /// </summary>
         void Save(TData entity);
 
         /// <summary>
-        ///     ¸üĞÂÊı¾İ
+        ///     æ›´æ–°æ•°æ®
         /// </summary>
         void Update(TData entity);
 
         /// <summary>
-        ///     ¸üĞÂÊı¾İ
+        ///     æ›´æ–°æ•°æ®
         /// </summary>
         void Update(IEnumerable<TData> entities);
 
         /// <summary>
-        ///     ²åÈëĞÂÊı¾İ
+        ///     æ’å…¥æ–°æ•°æ®
         /// </summary>
         bool Insert(TData entity);
 
         /// <summary>
-        ///     ²åÈëĞÂÊı¾İ
+        ///     æ’å…¥æ–°æ•°æ®
         /// </summary>
         void Insert(IEnumerable<TData> entities);
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         void Delete(IEnumerable<TData> entities);
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         int Delete(TData entity);
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         int Delete(object id);
         
 
         /// <summary>
-        ///     É¾³ıÊı¾İ
+        ///     åˆ é™¤æ•°æ®
         /// </summary>
         int DeletePrimaryKey(object key);
 
         /// <summary>
-        ///     Çå³ıËùÓĞÊı¾İ
+        ///     æ¸…é™¤æ‰€æœ‰æ•°æ®
         /// </summary>
         void Clear();
 
         /// <summary>
-        ///     Ìõ¼şÉ¾³ı
+        ///     æ¡ä»¶åˆ é™¤
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>Èç¹ûÓĞÔØÈëÊ×ĞĞ,·ñÔò·µ»Ø¿Õ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>å¦‚æœæœ‰è½½å…¥é¦–è¡Œ,å¦åˆ™è¿”å›ç©º</returns>
         int Delete(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
-        ///     Ç¿ÖÆÎïÀíÉ¾³ı
+        ///     å¼ºåˆ¶ç‰©ç†åˆ é™¤
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñÉ¾³ı³É¹¦</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦åˆ é™¤æˆåŠŸ</returns>
         int Destroy(Expression<Func<TData, bool>> lambda);
         
         #endregion
 
-        #region Ìõ¼ş¸üĞÂ
+        #region æ¡ä»¶æ›´æ–°
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
         void SaveValue(string field, object value, string[] conditionFiles, object[] values);
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         int SetValue(string field, object value, object key);
 
         /// <summary>
-        ///     È«Á¿¸üĞÂ
+        ///     å…¨é‡æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         int SetValue<TField>(Expression<Func<TData, TField>> field, TField value);
 
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="field">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="lambda">Ìõ¼ş</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="field">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="lambda">æ¡ä»¶</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         int SetValue<TField>(Expression<Func<TData, TField>> field, TField value,
             Expression<Func<TData, bool>> lambda);
         
         #endregion
 
-        #region ¼òµ¥¸üĞÂ
+        #region ç®€å•æ›´æ–°
         
         /// <summary>
-        ///     Ìõ¼ş¸üĞÂ
+        ///     æ¡ä»¶æ›´æ–°
         /// </summary>
-        /// <param name="fieldExpression">×Ö¶Î</param>
-        /// <param name="value">Öµ</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="fieldExpression">å­—æ®µ</param>
+        /// <param name="value">å€¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         int SetValue<TField, TKey>(Expression<Func<TData, TField>> fieldExpression, TField value, TKey key);
 
         /// <summary>
-        ///     Éè¼Æ×Ö¶Î°´×Ô¶¨Òå±í´ïÊ½¸üĞÂÖµ
+        ///     è®¾è®¡å­—æ®µæŒ‰è‡ªå®šä¹‰è¡¨è¾¾å¼æ›´æ–°å€¼
         /// </summary>
-        /// <param name="valueExpression">ÖµµÄSQL·½Ê½</param>
-        /// <param name="key">Ö÷¼ü</param>
-        /// <returns>¸üĞÂĞĞÊı</returns>
+        /// <param name="valueExpression">å€¼çš„SQLæ–¹å¼</param>
+        /// <param name="key">ä¸»é”®</param>
+        /// <returns>æ›´æ–°è¡Œæ•°</returns>
         int SetCoustomValue<TKey>(string valueExpression, TKey key);
 
         #endregion
@@ -653,10 +653,10 @@ namespace Gboxt.Common.DataModel
         #endregion
 
 
-        #region Êı¾İĞ£ÑéÖ§³Ö
+        #region æ•°æ®æ ¡éªŒæ”¯æŒ
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
@@ -665,7 +665,7 @@ namespace Gboxt.Common.DataModel
         bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val,Expression<Func<TData, bool>> condition);
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
@@ -674,7 +674,7 @@ namespace Gboxt.Common.DataModel
         bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val, object key);
 
         /// <summary>
-        ///     ¼ì²éÖµµÄÎ¨Ò»ĞÔ
+        ///     æ£€æŸ¥å€¼çš„å”¯ä¸€æ€§
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>

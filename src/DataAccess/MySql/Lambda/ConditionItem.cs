@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -8,9 +8,7 @@
 
 #region 引用
 
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using MySql.Data.MySqlClient;
 using System.Linq;
 

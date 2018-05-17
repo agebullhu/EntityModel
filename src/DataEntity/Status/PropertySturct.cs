@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -17,27 +17,18 @@ namespace Gboxt.Common.DataModel
     /// <summary>
     ///     表示属性结构
     /// </summary>
-    public sealed class PropertySturct
+    public sealed class PropertySturct : SimpleConfig
     {
         /// <summary>
         ///     标题
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get => Caption; set => Caption = value; }
 
         /// <summary>
         ///     属性名称
         /// </summary>
-        public string PropertyName { get; set; }
-
-        /// <summary>
-        ///     属性名称
-        /// </summary>
-        public string Name
-        {
-            get { return PropertyName; }
-            set { PropertyName = value; }
-        }
-
+        public string PropertyName { get=>Name; set=>Name=value; }
+        
         /// <summary>
         ///     字段名称
         /// </summary>

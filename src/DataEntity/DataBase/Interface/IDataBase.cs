@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -19,7 +19,7 @@ namespace Gboxt.Common.DataModel
     /// <summary>
     ///     表示数据库对象
     /// </summary>
-    public interface IDataBase : IDisposable
+    public interface IDataBase : IConfig, IDisposable
     {
         /// <summary>
         /// 生成数据库使用范围

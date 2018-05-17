@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Agebull.Common.Base;
 using MySql.Data.MySqlClient;
 
 namespace Gboxt.Common.DataModel.MySql

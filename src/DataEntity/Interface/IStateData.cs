@@ -1,4 +1,4 @@
-﻿// // /*****************************************************
+// // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
 // // 作者:
 // // 工程:Agebull.DataModel
@@ -39,18 +39,5 @@ namespace Gboxt.Common.DataModel
         {
             return data.DataState == DataStateType.Delete;
         }
-    }
-    /// <summary>
-    /// 实体事件代理
-    /// </summary>
-    public interface IEntityEventProxy
-    {
-        /// <summary>
-        /// 状态修改事件
-        /// </summary>
-        /// <param name="entityType">实体类型Id</param>
-        /// <param name="type">状态类型</param>
-        /// <param name="data">对应实体</param>
-        void OnStatusChanged(int entityType, EntitySubsist type,NotificationObject data);
     }
 }
