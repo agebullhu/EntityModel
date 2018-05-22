@@ -1,12 +1,12 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-07
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-07
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Collections.Generic;
@@ -16,79 +16,79 @@ using System.Collections.Generic;
 namespace Gboxt.Common.SystemModel
 {
     /// <summary>
-    ///     È¨ÏŞ²Ù×÷ºóÆÚ×¢Èë¶ÔÏó
+    ///     æƒé™æ“ä½œåæœŸæ³¨å…¥å¯¹è±¡
     /// </summary>
     public interface IPowerChecker
     {
         /// <summary>
-        /// ±£´æÒ³ÃæµÄ¶¯×÷
+        /// ä¿å­˜é¡µé¢çš„åŠ¨ä½œ
         /// </summary>
         void SavePageAction(long pageid, string name, string title, string action,string type);
 
         /// <summary>
-        /// ÖØĞÂÔØÈëÓÃ»§ĞÅÏ¢
+        /// é‡æ–°è½½å…¥ç”¨æˆ·ä¿¡æ¯
         /// </summary>
         void ReloadLoginUserInfo();
 
         /// <summary>
-        /// ÖØĞÂÔØÈëÓÃ»§ĞÅÏ¢
+        /// é‡æ–°è½½å…¥ç”¨æˆ·ä¿¡æ¯
         /// </summary>
         void ReloadLoginUserInfo(Guid uid);
 
         /// <summary>
-        ///     ÔØÈëÒ³ÃæÅäÖÃ
+        ///     è½½å…¥é¡µé¢é…ç½®
         /// </summary>
-        /// <param name="url">²»°üº¬ÓòÃûµÄÏà¶Ôurl</param>
-        /// <returns>Ò³ÃæÅäÖÃ</returns>
+        /// <param name="url">ä¸åŒ…å«åŸŸåçš„ç›¸å¯¹url</param>
+        /// <returns>é¡µé¢é…ç½®</returns>
         IPageItem LoadPageConfig(string url);
 
         /// <summary>
-        ///     ÔØÈëÒ³Ãæ¹ØÁªµÄ°´Å¥ÅäÖÃ
+        ///     è½½å…¥é¡µé¢å…³è”çš„æŒ‰é’®é…ç½®
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
-        /// <param name="page">Ò³Ãæ,²»ÄÜÎª¿Õ</param>
-        /// <returns>°´Å¥ÅäÖÃ¼¯ºÏ</returns>
-        List<string> LoadPageButtons(ILoginUser loginUser, IPageItem page);
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
+        /// <param name="page">é¡µé¢,ä¸èƒ½ä¸ºç©º</param>
+        /// <returns>æŒ‰é’®é…ç½®é›†åˆ</returns>
+        List<string> LoadPageButtons(Gboxt.Common.SystemModel.ILoginUser loginUser, IPageItem page);
 
         /// <summary>
-        ///     ÔØÈëÒ³Ãæ¹ØÁªµÄ°´Å¥ÅäÖÃ
+        ///     è½½å…¥é¡µé¢å…³è”çš„æŒ‰é’®é…ç½®
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
-        /// <param name="page">Ò³Ãæ</param>
-        /// <param name="action">¶¯×÷</param>
-        /// <returns>ÊÇ·ñ¿ÉÖ´ĞĞÒ³Ãæ¶¯×÷</returns>
-        bool CanDoAction(ILoginUser loginUser, IPageItem page, string action);
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
+        /// <param name="page">é¡µé¢</param>
+        /// <param name="action">åŠ¨ä½œ</param>
+        /// <returns>æ˜¯å¦å¯æ‰§è¡Œé¡µé¢åŠ¨ä½œ</returns>
+        bool CanDoAction(Gboxt.Common.SystemModel.ILoginUser loginUser, IPageItem page, string action);
 
         /// <summary>
-        ///     ÔØÈëÓÃ»§µÄ½ÇÉ«È¨ÏŞ
+        ///     è½½å…¥ç”¨æˆ·çš„è§’è‰²æƒé™
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
         /// <returns></returns>
-        List<IRolePower> LoadUserPowers(ILoginUser loginUser);
+        List<IRolePower> LoadUserPowers(Gboxt.Common.SystemModel.ILoginUser loginUser);
 
         /// <summary>
-        ///     ÔØÈëÓÃ»§µÄµ¥Ò³½ÇÉ«È¨ÏŞ
+        ///     è½½å…¥ç”¨æˆ·çš„å•é¡µè§’è‰²æƒé™
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
-        /// <param name="page">Ò³Ãæ</param>
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
+        /// <param name="page">é¡µé¢</param>
         /// <returns></returns>
-        IRolePower LoadPagePower(ILoginUser loginUser, IPageItem page);
+        IRolePower LoadPagePower(Gboxt.Common.SystemModel.ILoginUser loginUser, IPageItem page);
 
         /// <summary>
-        ///     ±£´æÓÃ»§µÄ²éÑ¯ÀúÊ·
+        ///     ä¿å­˜ç”¨æˆ·çš„æŸ¥è¯¢å†å²
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
-        /// <param name="page">¹ØÁªÒ³Ãæ</param>
-        /// <param name="args">²éÑ¯²ÎÊı</param>
-        void SaveQueryHistory(ILoginUser loginUser, IPageItem page, Dictionary<string, string> args);
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
+        /// <param name="page">å…³è”é¡µé¢</param>
+        /// <param name="args">æŸ¥è¯¢å‚æ•°</param>
+        void SaveQueryHistory(Gboxt.Common.SystemModel.ILoginUser loginUser, IPageItem page, Dictionary<string, string> args);
 
         /// <summary>
-        ///     ¶ÁÈ¡ÓÃ»§µÄ²éÑ¯ÀúÊ·
+        ///     è¯»å–ç”¨æˆ·çš„æŸ¥è¯¢å†å²
         /// </summary>
-        /// <param name="loginUser">µÇÂ¼ÓÃ»§</param>
-        /// <param name="page">¹ØÁªÒ³Ãæ</param>
-        /// <returns>·µ»ØµÄÊÇ²ÎÊı×ÖµäµÄJSON¸ñÊ½µÄÎÄ±¾</returns>
-        string LoadQueryHistory(ILoginUser loginUser, IPageItem page);
+        /// <param name="loginUser">ç™»å½•ç”¨æˆ·</param>
+        /// <param name="page">å…³è”é¡µé¢</param>
+        /// <returns>è¿”å›çš„æ˜¯å‚æ•°å­—å…¸çš„JSONæ ¼å¼çš„æ–‡æœ¬</returns>
+        string LoadQueryHistory(Gboxt.Common.SystemModel.ILoginUser loginUser, IPageItem page);
     }
 
 }

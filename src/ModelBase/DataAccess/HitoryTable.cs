@@ -1,23 +1,23 @@
 using System;
+using Gboxt.Common.DataModel.Extends;
 
 namespace Gboxt.Common.DataModel.MySql
 {
+    /// <inheritdoc />
     /// <summary>
-    /// Êı¾İ×´Ì¬»ùÀà
+    /// æ•°æ®çŠ¶æ€åŸºç±»
     /// </summary>
-    /// <typeparam name="TData">ÊµÌå</typeparam>
+    /// <typeparam name="TData">å®ä½“</typeparam>
     public abstract class HitoryTable<TData> : DataStateTable<TData>
-        where TData : EditDataObject, IStateData, IHistoryData, IIdentityData, new()
+        where TData : EditDataObject, IStateData, Gboxt.Common.DataModel.Extends.IHistoryData, IIdentityData, new()
     {
         /// <summary>
-        /// Óë¸üĞÂÍ¬Ê±Ö´ĞĞµÄSQL
+        /// ä¸æ›´æ–°åŒæ—¶æ‰§è¡Œçš„SQL
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
         protected override string AfterUpdateSql(string condition)
         {
-            if (BusinessContext.Current.IsSystemMode)
-                return null;
             var filter= string.IsNullOrEmpty(condition) ? null : " WHERE " + condition;
             return $@"UPDATE `{WriteTableName}` 
 SET {FieldDictionary["LastReviserID"]}={BusinessContext.Current.LoginUserId},
@@ -25,16 +25,24 @@ SET {FieldDictionary["LastReviserID"]}={BusinessContext.Current.LoginUserId},
         }
         
         /// <summary>
-        ///     ±£´æÇ°´¦Àí
+        ///     ä¿å­˜å‰å¤„ç†
         /// </summary>
-        /// <param name="entity">±£´æµÄ¶ÔÏó</param>
-        /// <param name="operatorType">²Ù×÷ÀàĞÍ</param>
+        /// <param name="entity">ä¿å­˜çš„å¯¹è±¡</param>
+        /// <param name="operatorType">æ“ä½œç±»å‹</param>
         protected override void OnPrepareSave(DataOperatorType operatorType, TData entity)
         {
-            if (operatorType == DataOperatorType.Insert)
+            switch (operatorType)
             {
-                entity.AddDate = DateTime.Now;
-                entity.AuthorID = BusinessContext.Current.LoginUserId;
+                case DataOperatorType.Insert:
+                {
+                    entity.AddDate = DateTime.Now;
+                    entity.AuthorId = BusinessContext.Current.LoginUserId;
+                    break;
+                }
+                default:
+                    entity.LastModifyDate = DateTime.Now;
+                    entity.LastReviserId = BusinessContext.Current.LoginUserId;
+                    break;
             }
         }
     }

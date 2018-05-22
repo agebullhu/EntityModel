@@ -1,73 +1,73 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-07
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-07
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Gboxt.Common.DataModel.Extends
 {
     /// <summary>
-    ///     ±íÊ¾ÕâÌõÊı¾İ¼ÇÂ¼ĞŞ¸ÄÀúÊ·
+    ///     è¡¨ç¤ºè¿™æ¡æ•°æ®è®°å½•ä¿®æ”¹å†å²
     /// </summary>
     public interface IHistoryData
     {
         /// <summary>
-        ///     ×÷Õß
+        ///     ä½œè€…
         /// </summary>
         /// <value>int</value>
-        int AuthorID { get; set; }
+        long AuthorId { get; set; }
 
         /// <summary>
-        ///     ĞÂÔöÈÕÆÚ
+        ///     æ–°å¢æ—¥æœŸ
         /// </summary>
         /// <value>DateTime</value>
         DateTime AddDate { get; set; }
 
         /// <summary>
-        ///     ×îºóĞŞ¸ÄÕß
+        ///     æœ€åä¿®æ”¹è€…
         /// </summary>
         /// <value>int</value>
-        int LastReviserID { get; set; }
+        long LastReviserId { get; set; }
 
         /// <summary>
-        ///     ×îºóĞŞ¸ÄÈÕÆÚ
+        ///     æœ€åä¿®æ”¹æ—¥æœŸ
         /// </summary>
         /// <value>DateTime</value>
         DateTime LastModifyDate { get; set; }
     }
     /// <summary>
-    ///     ±íÊ¾ÕâÌõÊı¾İ¼ÇÂ¼ĞŞ¸ÄÀúÊ·
+    ///     è¡¨ç¤ºè¿™æ¡æ•°æ®è®°å½•ä¿®æ”¹å†å²
     /// </summary>
     public interface IHistory
     {
         /// <summary>
-        ///     ×÷Õß
+        ///     ä½œè€…
         /// </summary>
         /// <value>string</value>
         string Author { get; set; }
 
         /// <summary>
-        ///     ĞÂÔöÈÕÆÚ
+        ///     æ–°å¢æ—¥æœŸ
         /// </summary>
         /// <value>DateTime</value>
         DateTime AddDate { get; set; }
 
         /// <summary>
-        ///     ×îºóĞŞ¸ÄÕß
+        ///     æœ€åä¿®æ”¹è€…
         /// </summary>
         /// <value>string</value>
         string LastReviser { get; set; }
 
         /// <summary>
-        ///     ×îºóĞŞ¸ÄÈÕÆÚ
+        ///     æœ€åä¿®æ”¹æ—¥æœŸ
         /// </summary>
         /// <value>DateTime</value>
         DateTime LastModifyDate { get; set; }

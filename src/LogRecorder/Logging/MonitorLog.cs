@@ -1,9 +1,6 @@
 using System;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using Agebull.Common.Base;
 using Agebull.Common.Frame;
 

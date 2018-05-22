@@ -1,60 +1,60 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-07
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-07
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
 namespace Gboxt.Common.SystemModel
 {
     /// <summary>
-    ///     ±íÊ¾µÇÂ¼ÓÃ»§¶ÔÏó
+    ///     è¡¨ç¤ºç™»å½•ç”¨æˆ·å¯¹è±¡
     /// </summary>
     public interface ILoginUser
     {
         /// <summary>
-        ///     ÓÃ»§±êÊ¶
+        ///     ç”¨æˆ·æ ‡è¯†
         /// </summary>
         /// <remarks>
-        ///     ÓÃ»§±êÊ¶
+        ///     ç”¨æˆ·æ ‡è¯†
         /// </remarks>
-        int Id { get;  }
+        long Id { get;  }
 
         /// <summary>
-        ///     ÓÃ»§Ãû
+        ///     ç”¨æˆ·å
         /// </summary>
         /// <remarks>
-        ///     ÓÃ»§Ãû
+        ///     ç”¨æˆ·å
         /// </remarks>
         string UserName { get;  }
 
         /// <summary>
-        ///     ½ÇÉ«ID
+        ///     è§’è‰²ID
         /// </summary>
         /// <remarks>
-        ///     ½ÇÉ«ID
+        ///     è§’è‰²ID
         /// </remarks>
-        int RoleId { get; }
+        long RoleId { get; }
 
         /// <summary>
-        ///     »ú¹¹¼¶±ğ
+        ///     æœºæ„çº§åˆ«
         /// </summary>
         int DepartmentLevel { get; }
 
         /// <summary>
-        ///     ²¿ÃÅID
+        ///     éƒ¨é—¨ID
         /// </summary>
         /// <remarks>
-        ///     ²¿ÃÅID
+        ///     éƒ¨é—¨ID
         /// </remarks>
-        int DepartmentId { get; }
+        long DepartmentId { get; }
 
         /// <summary>
-        ///     ĞÕÃû
+        ///     å§“å
         /// </summary>
         /// <remarks>
-        ///     ĞÕÃû
+        ///     å§“å
         /// </remarks>
         string RealName { get; }
 

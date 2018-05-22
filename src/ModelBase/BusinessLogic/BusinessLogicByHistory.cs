@@ -1,31 +1,31 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
-using Gboxt.Common.DataModel.MySql;
+using Gboxt.Common.DataModel.Extends;
 
 #endregion
 
 namespace Gboxt.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// »ùÓÚÀúÊ·¼ÇÂ¼µÄÒµÎñÂß¼­»ùÀà
+    /// åŸºäºå†å²è®°å½•çš„ä¸šåŠ¡é€»è¾‘åŸºç±»
     /// </summary>
-    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
-    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
+    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
     public class BusinessLogicByHistory<TData, TAccess> : BusinessLogicByStateData<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, IHistoryData,  IStateData, new()
+        where TData : EditDataObject, IIdentityData, Gboxt.Common.DataModel.Extends.IHistoryData,  IStateData, new()
         where TAccess : class, IDataTable<TData>, new()
     {
         /// <summary>
-        ///     ÖØÖÃÊı¾İ×´Ì¬
+        ///     é‡ç½®æ•°æ®çŠ¶æ€
         /// </summary>
         /// <param name="data"></param>
         protected override bool DoResetState(TData data)
@@ -33,9 +33,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             if (data == null)
                 return false;
             data.AddDate = DateTime.MinValue;
-            data.AuthorID = 0;
+            data.AuthorId = 0;
             data.LastModifyDate = DateTime.MinValue;
-            data.LastReviserID = 0;
+            data.LastReviserId = 0;
             return base.DoResetState(data);
         }
     }

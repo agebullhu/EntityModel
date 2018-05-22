@@ -1,36 +1,35 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
-using Gboxt.Common.DataModel.MySql;
 
 #endregion
 
 namespace Gboxt.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// »ùÓÚÊı¾İ×´Ì¬µÄÒµÎñÂß¼­»ùÀà
+    /// åŸºäºæ•°æ®çŠ¶æ€çš„ä¸šåŠ¡é€»è¾‘åŸºç±»
     /// </summary>
-    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
-    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
+    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
     public class BusinessLogicByStateData<TData, TAccess> : UiBusinessLogicBase<TData, TAccess>
         where TData : EditDataObject, IIdentityData, IStateData, new()
         where TAccess : class, IDataTable<TData>, new()
     {
-        #region ÅúÁ¿²Ù×÷
+        #region æ‰¹é‡æ“ä½œ
 
 
         /// <summary>
-        ///     ÆôÓÃ¶ÔÏó
+        ///     å¯ç”¨å¯¹è±¡
         /// </summary>
         public bool Enable(string sels)
         {
@@ -38,7 +37,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ½ûÓÃ¶ÔÏó
+        ///     ç¦ç”¨å¯¹è±¡
         /// </summary>
         public bool Disable(string sels)
         {
@@ -46,7 +45,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ½ûÓÃ¶ÔÏó
+        ///     ç¦ç”¨å¯¹è±¡
         /// </summary>
         public bool Lock(string sels)
         {
@@ -54,21 +53,21 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         #endregion
 
-        #region Êı¾İ×´Ì¬Âß¼­
+        #region æ•°æ®çŠ¶æ€é€»è¾‘
 
         /// <summary>
-        ///     ÊÇ·ñ¿ÉÒÔÖ´ĞĞ±£´æ²Ù×÷
+        ///     æ˜¯å¦å¯ä»¥æ‰§è¡Œä¿å­˜æ“ä½œ
         /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
+        /// <param name="data">æ•°æ®</param>
+        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
+        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
         protected override bool CanSave(TData data, bool isAdd)
         {
             return !data.IsFreeze && data.DataState < DataStateType.Discard;
         }
 
         /// <summary>
-        ///     É¾³ı¶ÔÏóÇ°ÖÃ´¦Àí
+        ///     åˆ é™¤å¯¹è±¡å‰ç½®å¤„ç†
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
@@ -77,7 +76,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             return base.PrepareDelete(id);
         }
         /// <summary>
-        ///     É¾³ı¶ÔÏó²Ù×÷
+        ///     åˆ é™¤å¯¹è±¡æ“ä½œ
         /// </summary>
         protected override bool DoDelete(long id)
         {
@@ -85,13 +84,13 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 if (!Access.Any(p => p.Id == id && p.DataState == DataStateType.Delete))
                     return Access.SetValue(p => p.DataState, DataStateType.Delete, p => p.Id == id && p.DataState == DataStateType.None) > 0;
-                BusinessContext.Current.LastMessage = "²»ÔÊĞíËæÒâÖ´ĞĞÎïÀíÉ¾³ı²Ù×÷";
+                BusinessContext.Current.LastMessage = "ä¸å…è®¸éšæ„æ‰§è¡Œç‰©ç†åˆ é™¤æ“ä½œ";
                 return false;
             }
         }
 
         /// <summary>
-        ///     É¾³ı¶ÔÏóºóÖÃ´¦Àí
+        ///     åˆ é™¤å¯¹è±¡åç½®å¤„ç†
         /// </summary>
         protected override void OnDeleted(long id)
         {
@@ -105,14 +104,14 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region Êı¾İ×´Ì¬ĞŞ¸Ä
+        #region æ•°æ®çŠ¶æ€ä¿®æ”¹
 
         /// <summary>
-        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
+        ///     ä¿å­˜å®Œæˆåçš„æ“ä½œ
         /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
+        /// <param name="data">æ•°æ®</param>
+        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
+        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
         protected override bool LastSaved(TData data, bool isAdd)
         {
             if (unityStateChanged)
@@ -121,15 +120,15 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        /// ÊÇ·ñÍ³Ò»´¦Àí×´Ì¬±ä»¯
+        /// æ˜¯å¦ç»Ÿä¸€å¤„ç†çŠ¶æ€å˜åŒ–
         /// </summary>
         protected bool unityStateChanged = false;
 
         /// <summary>
-        ///     ×´Ì¬¸Ä±äºóµÄÍ³Ò»´¦Àí(unityStateChanged²»ÉèÖÃÎªtrueÊ±²»»á²úÉú×÷ÓÃ--»ùÓÚĞÔÄÜµÄ¿¼ÂÇ)
+        ///     çŠ¶æ€æ”¹å˜åçš„ç»Ÿä¸€å¤„ç†(unityStateChangedä¸è®¾ç½®ä¸ºtrueæ—¶ä¸ä¼šäº§ç”Ÿä½œç”¨--åŸºäºæ€§èƒ½çš„è€ƒè™‘)
         /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="cmd">ÃüÁî</param>
+        /// <param name="data">æ•°æ®</param>
+        /// <param name="cmd">å‘½ä»¤</param>
         protected void OnStateChanged(TData data, BusinessCommandType cmd)
         {
             if (!unityStateChanged) return;
@@ -139,10 +138,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
+        ///     å†…éƒ¨å‘½ä»¤æ‰§è¡Œå®Œæˆåçš„å¤„ç†
         /// </summary>
-        /// <param name="id">Êı¾İ</param>
-        /// <param name="cmd">ÃüÁî</param>
+        /// <param name="id">æ•°æ®</param>
+        /// <param name="cmd">å‘½ä»¤</param>
         protected sealed override void OnInnerCommand(long id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
@@ -150,7 +149,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             OnInnerCommand(Access.LoadByPrimaryKey(id), cmd);
         }
         /// <summary>
-        ///     ×´Ì¬¸Ä±äºóµÄÍ³Ò»´¦Àí(unityStateChanged²»ÉèÖÃÎªtrueÊ±²»»á²úÉú×÷ÓÃ--»ùÓÚĞÔÄÜµÄ¿¼ÂÇ)
+        ///     çŠ¶æ€æ”¹å˜åçš„ç»Ÿä¸€å¤„ç†(unityStateChangedä¸è®¾ç½®ä¸ºtrueæ—¶ä¸ä¼šäº§ç”Ÿä½œç”¨--åŸºäºæ€§èƒ½çš„è€ƒè™‘)
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -160,9 +159,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region ×´Ì¬´¦Àí
+        #region çŠ¶æ€å¤„ç†
         /// <summary>
-        ///     ÖØÖÃÊı¾İ×´Ì¬
+        ///     é‡ç½®æ•°æ®çŠ¶æ€
         /// </summary>
         /// <param name="data"></param>
         public bool ResetState(TData data)
@@ -178,7 +177,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ÖØÖÃÊı¾İ×´Ì¬
+        ///     é‡ç½®æ•°æ®çŠ¶æ€
         /// </summary>
         /// <param name="data"></param>
         protected virtual bool DoResetState(TData data)
@@ -189,7 +188,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ÖØÖÃÊı¾İ×´Ì¬
+        ///     é‡ç½®æ•°æ®çŠ¶æ€
         /// </summary>
         /// <param name="id"></param>
         public virtual bool Reset(int id)
@@ -198,7 +197,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ÆôÓÃ¶ÔÏó
+        ///     å¯ç”¨å¯¹è±¡
         /// </summary>
         public virtual bool Enable(int id)
         {
@@ -211,21 +210,21 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ½ûÓÃ¶ÔÏó
+        ///     ç¦ç”¨å¯¹è±¡
         /// </summary>
         public virtual bool Disable(int id)
         {
             return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable);
         }
         /// <summary>
-        ///     ÆúÓÃ¶ÔÏó
+        ///     å¼ƒç”¨å¯¹è±¡
         /// </summary>
         public virtual bool Discard(int id)
         {
             return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None);
         }
         /// <summary>
-        ///     Ëø¶¨¶ÔÏó
+        ///     é”å®šå¯¹è±¡
         /// </summary>
         public virtual bool Lock(int id)
         {
@@ -243,7 +242,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ĞŞ¸Ä×´Ì¬
+        ///     ä¿®æ”¹çŠ¶æ€
         /// </summary>
         protected bool SetDataState(int id, DataStateType state, Expression<Func<TData, bool>> filter)
         {

@@ -1,40 +1,39 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-24
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-24
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
-using System.Web;
-using Agebull.Common.DataModel;
 using Agebull.Common.Logging;
+using Gboxt.Common.DataModel.BusinessLogic;
 using Gboxt.Common.DataModel.MySql;
 using Gboxt.Common.SystemModel;
+using Microsoft.Extensions.DependencyInjection;
 
 #endregion
 
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-    ///     ÎªÒµÎñ´¦ÀíÉÏÏÂÎÄ¶ÔÏó
+    ///     ä¸ºä¸šåŠ¡å¤„ç†ä¸Šä¸‹æ–‡å¯¹è±¡
     /// </summary>
     public class BusinessContext : IDisposable
     {
-        #region È«¾ÖÏûÏ¢
+        #region å…¨å±€æ¶ˆæ¯
 
         private readonly StringBuilder _messageBuilder = new StringBuilder();
 
         private string _lastMessage;
 
         /// <summary>
-        ///     ×îºóÒ»¸öµÄ²Ù×÷ÏûÏ¢
+        ///     æœ€åä¸€ä¸ªçš„æ“ä½œæ¶ˆæ¯
         /// </summary>
         public string LastMessage
         {
@@ -45,12 +44,12 @@ namespace Gboxt.Common.DataModel
                     return;
                 _lastMessage = value;
                 if (_messageBuilder.Length > 0)
-                    _messageBuilder.Append("£»");
+                    _messageBuilder.Append("ï¼›");
                 _messageBuilder.Append(value);
             }
         }
         /// <summary>
-        /// È¡ËùÓĞÏûÏ¢
+        /// å–æ‰€æœ‰æ¶ˆæ¯
         /// </summary>
         /// <returns></returns>
         public string GetFullMessage()
@@ -59,7 +58,7 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     ×îºóÒ»¸öµÄ´íÎóÏûÏ¢ID
+        ///     æœ€åä¸€ä¸ªçš„é”™è¯¯æ¶ˆæ¯ID
         /// </summary>
         public int LastError
         {
@@ -68,92 +67,61 @@ namespace Gboxt.Common.DataModel
         }
         
         #endregion 
-
-        #region ÒÀÀµ¶ÔÏó×Öµä
-
-        /// <summary>
-        ///     ÒÀÀµ¶ÔÏó×Öµä
-        /// </summary>
-        public DependencyObjects DependencyObjects { get; } = new DependencyObjects();
-
-        #endregion
-
-        #region È¨ÏŞ¶ÔÏó
+        
+        #region æƒé™å¯¹è±¡
 
         /// <summary>
-        ///     ÊÇ·ñ¹¤×÷ÔÚ²»°²È«Ä£Ê½ÏÂ
+        ///     æ˜¯å¦å·¥ä½œåœ¨ä¸å®‰å…¨æ¨¡å¼ä¸‹
         /// </summary>
         public bool IsUnSafeMode { get; set; }
 
         /// <summary>
-        ///     ÊÇ·ñ¹¤×÷ÔÚÏµÍ³Ä£Ê½ÏÂ
+        ///     æ˜¯å¦å·¥ä½œåœ¨ç³»ç»Ÿæ¨¡å¼ä¸‹
         /// </summary>
         public bool IsSystemMode { get;set; }
-
+        
         /// <summary>
-        ///     ºóÆÚ×¢ÈëµÄÉú³ÉIPowerChecker¶ÔÏóµÄ·½·¨
+        ///     å½“å‰ç™»å½•çš„ç”¨æˆ·
         /// </summary>
-        public static Func<IPowerChecker> CreatePowerChecker { private get; set; }
-
-        /// <summary>
-        ///     Î´ÈÏÖ¤ÓÃ»§
-        /// </summary>
-        public static ILoginUser Anymouse
+        public Gboxt.Common.SystemModel.ILoginUser LoginUser
         {
-            get;
-            set;
+            get => _loginUser ?? (_loginUser = IocHelper.Provider.GetService<Gboxt.Common.SystemModel.ILoginUser>());
+            set => _loginUser = value;
         }
 
         /// <summary>
-        ///     ÏµÍ³ÓÃ»§
+        ///     å½“å‰ç™»å½•çš„ç”¨æˆ·ID
         /// </summary>
-        public static ILoginUser SystemUser
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        ///     µ±Ç°µÇÂ¼µÄÓÃ»§
-        /// </summary>
-        public ILoginUser LoginUser
-        {
-            get { return IsSystemMode ? SystemUser  : _loginUser ?? Anymouse; }
-            set { _loginUser = value; }
-        }
+        public long LoginUserId => LoginUser?.Id ?? -1;
 
         /// <summary>
-        ///     µ±Ç°µÇÂ¼µÄÓÃ»§ID
-        /// </summary>
-        public int LoginUserId => LoginUser?.Id ?? -1;
-
-        /// <summary>
-        ///     µ±Ç°Ò³Ãæ½ÚµãÅäÖÃ
+        ///     å½“å‰é¡µé¢èŠ‚ç‚¹é…ç½®
         /// </summary>
         public IPageItem PageItem { get; set; }
 
         /// <summary>
-        ///     È¨ÏŞĞ£Ñé¶ÔÏó
+        ///     æƒé™æ ¡éªŒå¯¹è±¡
         /// </summary>
         private IPowerChecker _powerChecker;
 
 
         /// <summary>
-        ///     È¨ÏŞĞ£Ñé¶ÔÏó
+        ///     æƒé™æ ¡éªŒå¯¹è±¡
         /// </summary>
-        public IPowerChecker PowerChecker => _powerChecker ?? (_powerChecker = CreatePowerChecker());
+        public IPowerChecker PowerChecker => _powerChecker ?? (_powerChecker = IocHelper.Provider.GetService<IPowerChecker>());
 
         /// <summary>
-        ///     ÓÃ»§µÄ½ÇÉ«È¨ÏŞ
+        ///     ç”¨æˆ·çš„è§’è‰²æƒé™
         /// </summary>
         private List<IRolePower> _powers;
 
         /// <summary>
-        ///     ÓÃ»§µÄ½ÇÉ«È¨ÏŞ
+        ///     ç”¨æˆ·çš„è§’è‰²æƒé™
         /// </summary>
         public List<IRolePower> Powers => _powers ?? (_powers = PowerChecker.LoadUserPowers(LoginUser));
 
         /// <summary>
-        /// µ±Ç°Ò³ÃæÈ¨ÏŞÉèÖÃ
+        /// å½“å‰é¡µé¢æƒé™è®¾ç½®
         /// </summary>
         public IRolePower CurrentPagePower
         {
@@ -161,9 +129,9 @@ namespace Gboxt.Common.DataModel
             set;
         }
         /// <summary>
-        /// ÔÚµ±Ç°Ò³Ãæ¼ì²éÊÇ·ñ¿ÉÒÔÖ´ĞĞ²Ù×÷
+        /// åœ¨å½“å‰é¡µé¢æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡Œæ“ä½œ
         /// </summary>
-        /// <param name="action">²Ù×÷</param>
+        /// <param name="action">æ“ä½œ</param>
         /// <returns></returns>
         public bool CanDoCurrentPageAction(string action)
         {
@@ -171,26 +139,27 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        /// ÓÃ»§ÁîÅÆ
+        /// ç”¨æˆ·ä»¤ç‰Œ
         /// </summary>
         public Guid Tooken { get; set; }
 
         /// <summary>
-        /// ÓÃ»§ÁîÅÆÊÇ·ñ±£´æÔÚCOOKIEÖĞ;
+        /// ç”¨æˆ·ä»¤ç‰Œæ˜¯å¦ä¿å­˜åœ¨COOKIEä¸­;
         /// </summary>
         public bool WorkByCookie { get; set; }
 
         #endregion
 
-        #region Ïß³Ìµ¥Àı
+        #region çº¿ç¨‹å•ä¾‹
 
         /// <summary>
-        ///     Ïß³Ìµ¥Àı¶ÔÏó
+        ///     çº¿ç¨‹å•ä¾‹å¯¹è±¡
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         [ThreadStatic] internal static BusinessContext _current;
 
         /// <summary>
-        ///     È¡µÃ»òÉèÖÃÏß³Ìµ¥Àı¶ÔÏó£¬µ±Ç°¶ÔÏó²»´æÔÚÊ±£¬»á×Ô¶¯¹¹¼ÜÒ»¸ö
+        ///     å–å¾—æˆ–è®¾ç½®çº¿ç¨‹å•ä¾‹å¯¹è±¡ï¼Œå½“å‰å¯¹è±¡ä¸å­˜åœ¨æ—¶ï¼Œä¼šè‡ªåŠ¨æ„æ¶ä¸€ä¸ª
         /// </summary>
         public static BusinessContext Current
         {
@@ -200,10 +169,10 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region ¹¹ÔìÓëÎö¹¹
+        #region æ„é€ ä¸ææ„
 
         /// <summary>
-        ///     ¹¹Ôì
+        ///     æ„é€ 
         /// </summary>
         public BusinessContext()
         {
@@ -212,31 +181,31 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     È¡µÃµ±Ç°µÄÉÏÏÂÎÄ¶ÔÏó
+        ///     å–å¾—å½“å‰çš„ä¸Šä¸‹æ–‡å¯¹è±¡
         /// </summary>
-        /// <returns>Èç¹ûµ±Ç°µÄÉÏÏÂÎÄ¶ÔÏóÎªnull,ÔòÎªnull</returns>
+        /// <returns>å¦‚æœå½“å‰çš„ä¸Šä¸‹æ–‡å¯¹è±¡ä¸ºnull,åˆ™ä¸ºnull</returns>
         internal static BusinessContext GetCurrentContext()
         {
             return _current;
         }
 
         /// <summary>
-        ///     ¹¹½¨Ò»¸öÉÏÏÂÎÄ¶ÔÏó·½·¨µÄºóÆÚ×¢Èë
+        ///     æ„å»ºä¸€ä¸ªä¸Šä¸‹æ–‡å¯¹è±¡æ–¹æ³•çš„åæœŸæ³¨å…¥
         /// </summary>
-        /// <returns>ÉÏÏÂÎÄ¶ÔÏó</returns>
+        /// <returns>ä¸Šä¸‹æ–‡å¯¹è±¡</returns>
         public static Func<BusinessContext> CreateFunc;
 
         /// <summary>
-        ///     ¹¹½¨Ò»¸öÉÏÏÂÎÄ¶ÔÏó
+        ///     æ„å»ºä¸€ä¸ªä¸Šä¸‹æ–‡å¯¹è±¡
         /// </summary>
-        /// <returns>ÉÏÏÂÎÄ¶ÔÏó</returns>
+        /// <returns>ä¸Šä¸‹æ–‡å¯¹è±¡</returns>
         public static BusinessContext CreateContext()
         {
             return CreateFunc != null ? CreateFunc() : new BusinessContext();
         }
 
         /// <summary>
-        ///     Îö¹¹
+        ///     ææ„
         /// </summary>
         ~BusinessContext()
         {
@@ -244,14 +213,14 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     ÊÇ·ñÕıÈ·Îö¹¹µÄ±ê¼Ç
+        ///     æ˜¯å¦æ­£ç¡®ææ„çš„æ ‡è®°
         /// </summary>
         private bool _isDisposed;
 
-        private ILoginUser _loginUser;
+        private Gboxt.Common.SystemModel.ILoginUser _loginUser;
 
         /// <summary>
-        ///     Ö´ĞĞÓëÊÍ·Å»òÖØÖÃ·ÇÍĞ¹Ü×ÊÔ´Ïà¹ØµÄÓ¦ÓÃ³ÌĞò¶¨ÒåµÄÈÎÎñ¡£
+        ///     æ‰§è¡Œä¸é‡Šæ”¾æˆ–é‡ç½®éæ‰˜ç®¡èµ„æºç›¸å…³çš„åº”ç”¨ç¨‹åºå®šä¹‰çš„ä»»åŠ¡ã€‚
         /// </summary>
         /// <filterpriority>2</filterpriority>
         public void Dispose()
@@ -260,7 +229,7 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     Ö´ĞĞÓëÊÍ·Å»òÖØÖÃ·ÇÍĞ¹Ü×ÊÔ´Ïà¹ØµÄÓ¦ÓÃ³ÌĞò¶¨ÒåµÄÈÎÎñ¡£
+        ///     æ‰§è¡Œä¸é‡Šæ”¾æˆ–é‡ç½®éæ‰˜ç®¡èµ„æºç›¸å…³çš„åº”ç”¨ç¨‹åºå®šä¹‰çš„ä»»åŠ¡ã€‚
         /// </summary>
         /// <filterpriority>2</filterpriority>
         private void DoDispose()

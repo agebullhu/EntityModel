@@ -1,12 +1,12 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-07
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-07
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 
@@ -15,78 +15,78 @@ using System;
 namespace Gboxt.Common.DataModel
 {
     /// <summary>
-        ///     ±íÊ¾ÕâÌõÊı¾İÖ§³ÖÉóºË
-        /// </summary>
-        public interface IAuditData
+    ///     è¡¨ç¤ºè¿™æ¡æ•°æ®æ”¯æŒå®¡æ ¸
+    /// </summary>
+    public interface IAuditData
     {
         /// <summary>
-        ///     ÉóºË×´Ì¬
+        ///     å®¡æ ¸çŠ¶æ€
         /// </summary>
         /// <value>AuditStateType</value>
         AuditStateType AuditState { get; set; }
 
         /// <summary>
-        ///     ÉóºËÈË
+        ///     å®¡æ ¸äºº
         /// </summary>
         /// <value>string</value>
-        int AuditorId { get; set; }
+        long AuditorId { get; set; }
 
 
         /// <summary>
-        ///     ÉóºËÈÕÆÚ
+        ///     å®¡æ ¸æ—¥æœŸ
         /// </summary>
         /// <value>DateTime</value>
         DateTime AuditDate { get; set; }
 
         /// <summary>
-        ///     ÉóºËÈË(½öÓÃÓÚ½çÃæ)
+        ///     å®¡æ ¸äºº(ä»…ç”¨äºç•Œé¢)
         /// </summary>
         /// <value>string</value>
         string ToUsers { get; set; }
 
         /// <summary>
-        ///     ÄÜ·ñÉóºË(½öÓÃÓÚ½çÃæ)
+        ///     èƒ½å¦å®¡æ ¸(ä»…ç”¨äºç•Œé¢)
         /// </summary>
         /// <value>bool</value>
         bool CanAudit { get; set; }
     }
 
     /// <summary>
-    ///     ÉóºË×´Ì¬ÀàĞÍ
+    ///     å®¡æ ¸çŠ¶æ€ç±»å‹
     /// </summary>
     public enum AuditStateType
     {
         /// <summary>
-        ///     ²İ¸å
+        ///     è‰ç¨¿
         /// </summary>
         None,
 
         /// <summary>
-        ///     ·´ÉóºË
+        ///     åå®¡æ ¸
         /// </summary>
         Again,
 
         /// <summary>
-        ///     Ìá½»ÉóºË
+        ///     æäº¤å®¡æ ¸
         /// </summary>
         Submit,
 
         /// <summary>
-        ///     ÉóºË²»Í¨¹ı
+        ///     å®¡æ ¸ä¸é€šè¿‡
         /// </summary>
         Deny,
 
         /// <summary>
-        ///     ÉóºËÍ¨¹ı
+        ///     å®¡æ ¸é€šè¿‡
         /// </summary>
         Pass,
 
         /// <summary>
-        ///     ½áÊø
+        ///     ç»“æŸ
         /// </summary>
         End,
         /// <summary>
-        /// ²»ÕıÈ·µÄ×´Ì¬
+        /// ä¸æ­£ç¡®çš„çŠ¶æ€
         /// </summary>
         Error
     }
@@ -94,33 +94,33 @@ namespace Gboxt.Common.DataModel
     public static class AuditStateTypeHelper
     {
         /// <summary>
-        ///     µ½ÖĞÎÄÃû³Æ
+        ///     åˆ°ä¸­æ–‡åç§°
         /// </summary>
-        /// <param name="state">ÉóºË×´Ì¬ÀàĞÍ</param>
-        /// <returns>ÖĞÎÄÃû³Æ</returns>
+        /// <param name="state">å®¡æ ¸çŠ¶æ€ç±»å‹</param>
+        /// <returns>ä¸­æ–‡åç§°</returns>
         public static string ToChiness(this AuditStateType state)
         {
             switch (state)
             {
                 case AuditStateType.Submit:
-                    return "Ìá½»ÉóºË";
+                    return "æäº¤å®¡æ ¸";
                 case AuditStateType.Deny:
-                    return "ÒÑ·ñ¾ö";
+                    return "å·²å¦å†³";
                 case AuditStateType.Pass:
-                    return "ÒÑÍ¨¹ı";
+                    return "å·²é€šè¿‡";
                 case AuditStateType.Again:
-                    return "·´ÉóºË";
+                    return "åå®¡æ ¸";
                 case AuditStateType.End:
-                    return "½áÊø";
+                    return "ç»“æŸ";
                 case AuditStateType.None:
-                    return "²İ¸å";
+                    return "è‰ç¨¿";
                 default:
-                    return "´íÎó";
+                    return "é”™è¯¯";
             }
         }
 
         /// <summary>
-        ///     ÊÇ·ñ¿ÉÒÔÉóºË
+        ///     æ˜¯å¦å¯ä»¥å®¡æ ¸
         /// </summary>
         public static bool CanAudit(this IAuditData data)
         {
@@ -134,7 +134,7 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     ÊÇ·ñ¿ÉÒÔ·´ÉóºË
+        ///     æ˜¯å¦å¯ä»¥åå®¡æ ¸
         /// </summary>
         public static bool CanAgainAudit(this IAuditData data)
         {

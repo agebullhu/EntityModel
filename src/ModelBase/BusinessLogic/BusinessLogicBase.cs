@@ -1,52 +1,46 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ×÷Õß:
-// // ¹¤³Ì:Agebull.DataModel
-// // ½¨Á¢:2016-06-12
-// // ĞŞ¸Ä:2016-06-16
+// // ä½œè€…:
+// // å·¥ç¨‹:Agebull.DataModel
+// // å»ºç«‹:2016-06-12
+// // ä¿®æ”¹:2016-06-16
 // // *****************************************************/
 
-#region ÒıÓÃ
+#region å¼•ç”¨
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using MySql.Data.MySqlClient;
 using System.Linq.Expressions;
-using System.Web;
-using Agebull.Common.Logging;
-using Gboxt.Common.WebUI;
 
 #endregion
 
 namespace Gboxt.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// ÒµÎñÂß¼­¶ÔÏó»ùÀà
+    /// ä¸šåŠ¡é€»è¾‘å¯¹è±¡åŸºç±»
     /// </summary>
-    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
-    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
+    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
     public class BusinessLogicBase<TData, TAccess>
     where TData : EditDataObject, IIdentityData, new()
     where TAccess : class, IDataTable<TData>, new()
     {
-        #region »ù´¡Ö§³Ö¶ÔÏó
+        #region åŸºç¡€æ”¯æŒå¯¹è±¡
 
         /// <summary>
-        ///     ÊµÌåÀàĞÍ
+        ///     å®ä½“ç±»å‹
         /// </summary>
         public virtual int EntityType => 0;
 
         private TAccess _access;
 
         /// <summary>
-        ///     Êı¾İ·ÃÎÊ¶ÔÏó
+        ///     æ•°æ®è®¿é—®å¯¹è±¡
         /// </summary>
         public TAccess Access => _access ?? (_access = CreateAccess());
 
         /// <summary>
-        ///     Êı¾İ·ÃÎÊ¶ÔÏó
+        ///     æ•°æ®è®¿é—®å¯¹è±¡
         /// </summary>
         protected virtual TAccess CreateAccess()
         {
@@ -54,17 +48,17 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             return access;
         }
         /// <summary>
-        /// ¹¹Ôì
+        /// æ„é€ 
         /// </summary>
         protected BusinessLogicBase()
         {
         }
         #endregion
 
-        #region ±ãÀû²Ù×÷
+        #region ä¾¿åˆ©æ“ä½œ
 
         /// <summary>
-        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
+        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
         /// </summary>
         public bool DoByIds(string ids, Func<int, bool> func, Action onEnd = null)
         {
@@ -72,7 +66,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
+        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
         /// </summary>
         public bool LoopIds(string ids, Func<int, bool> func, Action onEnd = null)
         {
@@ -109,7 +103,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
+        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
         /// </summary>
         public bool DoByIds(string ids, Func<TData, bool> func, Action onEnd = null)
         {
@@ -117,7 +111,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
+        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
         /// </summary>
         public bool LoopIdsToData(string ids, Func<TData, bool> func, Action onEnd = null)
         {
@@ -155,10 +149,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         #endregion
 
-        #region ¶ÁÊı¾İ
+        #region è¯»æ•°æ®
 
         /// <summary>
-        ///     È¡µÃÁĞ±íÊı¾İ
+        ///     å–å¾—åˆ—è¡¨æ•°æ®
         /// </summary>
         public List<TData> All()
         {
@@ -166,17 +160,17 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         
         /// <summary>
-        ///     ¶ÁÈ¡Êı¾İ
+        ///     è¯»å–æ•°æ®
         /// </summary>
-        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
-        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
+        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
         public List<TData> All(Expression<Func<TData, bool>> lambda)
         {
             return Access.All(lambda);
         }
 
         /// <summary>
-        ///     ÔØÈëµ±Ç°²Ù×÷µÄÊı¾İ
+        ///     è½½å…¥å½“å‰æ“ä½œçš„æ•°æ®
         /// </summary>
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
         {
@@ -184,317 +178,13 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ÔØÈëµ±Ç°²Ù×÷µÄÊı¾İ
+        ///     è½½å…¥å½“å‰æ“ä½œçš„æ•°æ®
         /// </summary>
         public virtual TData Details(long id)
         {
             return id == 0 ? null : Access.LoadByPrimaryKey(id);
         }
 
-        #endregion
-    }
-
-    /// <summary>
-    /// Ö§³Ö½çÃæ²Ù×÷µÄÒµÎñÂß¼­¶ÔÏó»ùÀà
-    /// </summary>
-    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
-    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess> : BusinessLogicBase<TData, TAccess>
-    where TData : EditDataObject, IIdentityData, new()
-        where TAccess : class, IDataTable<TData>, new()
-    {
-        /// <summary>
-        /// µ±Ç°ÇëÇó
-        /// </summary>
-        public HttpRequest Request { get; set; }
-
-        #region ¶ÁÊı¾İ
-
-        /// <summary>
-        ///     È¡µÃÁĞ±íÊı¾İ
-        /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
-        {
-            return PageData(page, limit, null, false, condition, args);
-        }
-
-        /// <summary>
-        ///     È¡µÃÁĞ±íÊı¾İ
-        /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
-            params DbParameter[] args)
-        {
-            using (Access.DataBase.CreateDataBaseScope())
-            {
-                //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
-                {
-                    var data = Access.PageData(page, limit, sort, desc, condition, args);
-                    var count = (int)Access.Count(condition, args);
-                    return new EasyUiGridData<TData>
-                    {
-                        Data = data,
-                        Total = count
-                    };
-                }
-            }
-        }
-
-        /// <summary>
-        ///     ·ÖÒ³¶ÁÈ¡
-        /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
-        {
-            using (Access.DataBase.CreateDataBaseScope())
-            {
-                //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
-                {
-                    if (limit <= 0 || limit >= 999)
-                    {
-                        limit = 30;
-                    }
-                    var data = Access.PageData(page, limit, lambda);
-                    var count = (int)Access.Count(lambda);
-                    return new EasyUiGridData<TData>
-                    {
-                        Data = data,
-                        Total = count
-                    };
-                }
-            }
-        }
-        
-        #endregion
-
-        #region Ğ´Êı¾İ
-
-        /// <summary>
-        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="cmd">ÃüÁî</param>
-        protected virtual void OnInnerCommand(TData data, BusinessCommandType cmd)
-        {
-
-        }
-
-
-        /// <summary>
-        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
-        /// </summary>
-        /// <param name="id">Êı¾İ</param>
-        /// <param name="cmd">ÃüÁî</param>
-        protected virtual void OnInnerCommand(long id, BusinessCommandType cmd)
-        {
-
-        }
-
-
-        /// <summary>
-        ///     ÊÇ·ñ¿ÉÒÔÖ´ĞĞ±£´æ²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool CanSave(TData data, bool isAdd)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     ±£´æÇ°µÄ²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool PrepareSave(TData data, bool isAdd)
-        {
-            if (data.__IsFromUser && !PrepareSaveByUser(data, isAdd))
-                return false;
-            return OnSaving(data, isAdd);
-        }
-
-        /// <summary>
-        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool LastSaved(TData data, bool isAdd)
-        {
-            if (data.__IsFromUser && !LastSavedByUser(data, isAdd))
-                return false;
-            return OnSaved(data, isAdd);
-        }
-
-        /// <summary>
-        ///     ±»ÓÃ»§±à¼­µÄÊı¾İµÄ±£´æÇ°²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool PrepareSaveByUser(TData data, bool isAdd)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     ±»ÓÃ»§±à¼­µÄÊı¾İµÄ±£´æÇ°²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool LastSavedByUser(TData data, bool isAdd)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     ±£´æÇ°µÄ²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool OnSaving(TData data, bool isAdd)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
-        /// </summary>
-        /// <param name="data">Êı¾İ</param>
-        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
-        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
-        protected virtual bool OnSaved(TData data, bool isAdd)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     ĞÂÔö
-        /// </summary>
-        public virtual bool Save(TData data)
-        {
-            return data.Id == 0 ? AddNew(data) : Update(data);
-        }
-        /// <summary>
-        ///     ĞÂÔö
-        /// </summary>
-        public virtual bool AddNew(TData data)
-        {
-            using (var scope = Access.DataBase.CreateTransactionScope())
-            {
-                if (!CanSave(data, true))
-                {
-                    return false;
-                }
-                if (!PrepareSave(data, true))
-                {
-                    return false;
-                }
-                if (!data.__EntityStatusNull && data.__EntityStatus.IsExist)
-                    Access.Update(data);
-                else
-                    Access.Insert(data);
-                var result = LastSaved(data, true);
-                scope.SetState(true);
-                return result;
-            }
-        }
-
-        /// <summary>
-        ///     ¸üĞÂ¶ÔÏó
-        /// </summary>
-        public virtual bool Update(TData data)
-        {
-            if (data.Id == 0)
-            {
-                return AddNew(data);
-            }
-            using (var scope = Access.DataBase.CreateTransactionScope())
-            {
-                if (!CanSave(data, true))
-                {
-                    return false;
-                }
-                if (!PrepareSave(data, false))
-                {
-                    return false;
-                }
-                Access.Update(data);
-                var result = LastSaved(data, false);
-                scope.SetState(true);
-                return result;
-            }
-        }
-
-
-        #endregion
-
-        #region É¾³ı
-
-        /// <summary>
-        ///     É¾³ı¶ÔÏó
-        /// </summary>
-        public bool Delete(IEnumerable<long> lid)
-        {
-            using (Access.DataBase.CreateDataBaseScope())
-            using (var scope = Access.DataBase.CreateTransactionScope())
-            {
-                foreach (var id in lid)
-                {
-                    if (!Delete(id))
-                        return false;
-                }
-                scope.SetState(true);
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///     É¾³ı¶ÔÏó
-        /// </summary>
-        public bool Delete(long id)
-        {
-            using (var scope = Access.DataBase.CreateTransactionScope())
-            {
-                if (!PrepareDelete(id))
-                {
-                    return false;
-                }
-                if (!DoDelete(id))
-                    return false;
-                OnDeleted(id);
-                LogRecorder.MonitorTrace("Delete");
-                OnInnerCommand(id, BusinessCommandType.Delete);
-                scope.SetState(true);
-                return true;
-            }
-        }
-
-        /// <summary>
-        ///     É¾³ı¶ÔÏó²Ù×÷
-        /// </summary>
-        protected virtual bool DoDelete(long id)
-        {
-            return Access.DeletePrimaryKey(id) == 1;
-        }
-
-        /// <summary>
-        ///     É¾³ı¶ÔÏóÇ°ÖÃ´¦Àí
-        /// </summary>
-        protected virtual bool PrepareDelete(long id)
-        {
-            return true;
-        }
-
-        /// <summary>
-        ///     É¾³ı¶ÔÏóºóÖÃ´¦Àí
-        /// </summary>
-        protected virtual void OnDeleted(long id)
-        {
-
-        }
         #endregion
     }
 }

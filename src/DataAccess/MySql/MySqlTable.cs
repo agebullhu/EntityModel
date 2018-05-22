@@ -2647,7 +2647,9 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <returns>删除的SQL语句</returns>
         private string CreateDeleteSql(string condition)
         {
-            return $@"{DeleteSqlCode} WHERE {condition};{AfterUpdateSql(condition)}";
+            return $@"{BeforeUpdateSql(condition)}
+{DeleteSqlCode} WHERE {condition};
+{AfterUpdateSql(condition)}";
         }
 
         /// <summary>
