@@ -290,10 +290,10 @@ namespace Agebull.Common.Logging
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static MonitorStepScope CreateScope(string name)
+        public static MonitorScope CreateScope(string name)
         {
             LogRecorder.BeginMonitor(name);
-            return new MonitorStepScope();
+            return new MonitorScope();
         }
 
         /// <summary>
