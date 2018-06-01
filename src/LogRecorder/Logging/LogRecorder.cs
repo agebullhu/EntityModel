@@ -9,7 +9,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -46,7 +45,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 是否开启SQL日志
         /// </summary>
-        public static LogLevel LogLevel { get; set; }= (LogLevel)Enum.Parse(typeof(LogLevel),ConfigurationManager.AppSettings["LogLevel"] ?? "Trace");
+        public static LogLevel LogLevel { get; set; } = (LogLevel)Enum.Parse(typeof(LogLevel), ConfigurationManager.AppSettings["LogLevel"] ?? "Trace");
 
         /// <summary>
         ///   消息跟踪器
@@ -96,7 +95,7 @@ namespace Agebull.Common.Logging
         /// 日志状态
         /// </summary>
         public static LogRecorderStatus State { get; private set; }
-        
+
         /// <summary>
         /// 取请求ID的方法
         /// </summary>
@@ -105,7 +104,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 取请求ID
         /// </summary>
-        public static string  GetRequestId()
+        public static string GetRequestId()
         {
             return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
         }
@@ -146,40 +145,52 @@ namespace Agebull.Common.Logging
             Recorder = BaseRecorder = new TxtRecorder();
             Recorder.Initialize();
             _isTextRecorder = true;
-            if (LogByTask)
+            _logThread = new Thread(WriteRecordLoop)
             {
-                Task.Factory.StartNew(WriteRecordLoop);
-            }
-            else
-            {
-                var logThread = new Thread(WriteRecordLoop)
-                {
-                    IsBackground = true,
-                    Priority = ThreadPriority.BelowNormal
-                };
-                logThread.Start();
-            }
+                IsBackground = true,
+                Priority = LogByTask ? ThreadPriority.Normal : ThreadPriority.BelowNormal
+            };
+            _logThread.Start();
         }
+
+        private static Thread _logThread;
         /// <summary>
         ///   初始化
         /// </summary>
         public static void Initialize()
         {
             State = LogRecorderStatus.Initialized;
+            if (!_isTextRecorder)
+                Recorder?.Initialize();
         }
+
+        /// <summary>
+        /// 注册记录器
+        /// </summary>
+        /// <typeparam name="TLogRecorder"></typeparam>
+        public static void Regist<TLogRecorder>() where TLogRecorder : class, ILogRecorder, new()
+        {
+            Recorder?.Shutdown();
+            Recorder = new TLogRecorder();
+            _isTextRecorder = false;
+            if (State >= LogRecorderStatus.Initialized)
+                Recorder.Initialize();
+        }
+
         /// <summary>
         ///   初始化
         /// </summary>
         /// <param name="record"> </param>
+        [Obsolete]
         public static void Initialize(ILogRecorder record)
         {
+            State = LogRecorderStatus.Initialized;
             if (record != null)
             {
                 Recorder = record;
                 _isTextRecorder = record is TxtRecorder;
                 Recorder.Initialize();
             }
-            State = LogRecorderStatus.Initialized;
         }
 
         /// <summary>
@@ -187,9 +198,9 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
+            State = LogRecorderStatus.Shutdown;
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
-            State = LogRecorderStatus.Shutdown;
             Recorder.Shutdown();
         }
         #endregion
@@ -475,7 +486,7 @@ namespace Agebull.Common.Logging
         public static void RecordException(Exception exception, out string message)
         {
             message = ExceptionMessage(exception);
-            string msg =ExceptionInfomation(exception, null);
+            string msg = ExceptionInfomation(exception, null);
             string title = "异常";
             if (exception != null)
             {
@@ -668,7 +679,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 待写入的日志信息集合
         /// </summary>
-        private static readonly MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
+        private static MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
 
         /// <summary>
         /// 日志序号
@@ -721,7 +732,7 @@ namespace Agebull.Common.Logging
                     {
                         Listener.Trace(info);
                     }
-                    else if(TraceToConsole)
+                    else if (TraceToConsole)
                     {
                         SystemTrace(info.Message);
                     }
@@ -746,6 +757,8 @@ namespace Agebull.Common.Logging
                     SystemTrace("日志写入发生错误", ex);
                 }
             }
+
+            _logThread = null;
         }
 
 

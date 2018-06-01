@@ -56,6 +56,14 @@ namespace Agebull.Common.Logging
         }
 
         /// <summary>
+        /// 阻止外部构造
+        /// </summary>
+        internal TxtRecorder()
+        {
+
+        }
+
+        /// <summary>
         ///   停止
         /// </summary>
         public void Shutdown()
