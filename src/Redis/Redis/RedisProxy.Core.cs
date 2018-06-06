@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Threading;
+using Agebull.Common.Logging;
 using Gboxt.Common.DataModel;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -22,29 +23,14 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static RedisProxy()
         {
-            var c = ConfigurationManager.AppSettings["RedisConnectionString"].Split(',', ':');
-            Address = c[0];
-            Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
-            //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);
-            //if (PoolSize < 100)
-            //    PoolSize = 100;
-            if (c.Length > 2)
-                PassWord = c[2];
+            connectString = ConfigurationManager.AppSettings["RedisConnectionString"];
         }
 
         /// <summary>
         /// 地址
         /// </summary>
-        static readonly string Address;
+        static readonly string connectString;
 
-        /// <summary>
-        /// 密码
-        /// </summary>
-        static readonly string PassWord;
-        /// <summary>
-        /// 端口
-        /// </summary>
-        public static readonly int Port;
         /*// <summary>
         /// 空闲连接数
         /// </summary>
@@ -151,11 +137,22 @@ namespace Agebull.Common.DataModel.Redis
             {
                 if (connect == null)
                 {
-                    connect = ConnectionMultiplexer.Connect($"{Address}:{Port}");
+                    connect = ConnectionMultiplexer.Connect(connectString);
                 }
-                if (_client != null && _db == db)
+                if(_client == null)
+                    return _client = connect.GetDatabase(db); 
+
+                if (_db == db)
                     return _client;
-                return connect.GetDatabase(db);
+                
+                _client = connect.GetDatabase(db);
+
+                return _client;
+            }
+            catch (Exception ex)
+            {
+                LogRecorder.Exception(ex, connectString);
+                throw;
             }
             finally
             {
