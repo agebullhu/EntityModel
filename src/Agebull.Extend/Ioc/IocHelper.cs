@@ -1,30 +1,26 @@
 using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Agebull.Common.Ioc
 {
     /// <summary>
-    ///  简单的依赖注入器
+    ///  简单的依赖注入器(框架内部使用,请不要调用)
     /// </summary>
     public class IocHelper
     {
         /// <summary>
-        /// 已注册对象
+        /// 依赖注入代理
         /// </summary>
-        public static Dictionary<Type, Func<object>> InterfaceDictionary = new Dictionary<Type, Func<object>>();
+        public IServiceProvider Provider => _provider;
+
+        private static IServiceProvider _provider;
 
         /// <summary>
-        /// 注册接口实现
+        /// 注册IOC代理
         /// </summary>
-        /// <typeparam name="TInterface"></typeparam>
-        /// <typeparam name="TClass"></typeparam>
-        public static void Regist<TInterface, TClass>()
-            where TClass : class, new()
+        public static void SetServiceProvider(IServiceProvider provider)
         {
-            if (InterfaceDictionary.ContainsKey(typeof(TInterface)))
-                InterfaceDictionary[typeof(TInterface)] = () => new TClass();
-            else
-                InterfaceDictionary.Add(typeof(TInterface), () => new TClass());
+            _provider = provider;
         }
 
         /// <summary>
@@ -35,9 +31,24 @@ namespace Agebull.Common.Ioc
         public static TInterface Create<TInterface>()
             where TInterface : class
         {
-            if (InterfaceDictionary.ContainsKey(typeof(TInterface)))
-                return InterfaceDictionary[typeof(TInterface)]() as TInterface;
-            throw new Exception($"接口{typeof(TInterface)}，所需要的实现没有注册");
+           if(_provider == null)
+               throw new NotSupportedException("IocHelper的Provider对象为空,是否忘记调用SetServiceProvider对象了");
+            return _provider.GetService<TInterface>();
+        }
+
+        /// <summary>
+        /// 生成接口实例(如果没有注册则使用默认实现)
+        /// </summary>
+        /// <typeparam name="TInterface"></typeparam>
+        /// <typeparam name="TDefault"></typeparam>
+        /// <returns></returns>
+        public static TInterface CreateBut<TInterface,TDefault>()
+            where TInterface : class
+            where TDefault : class, TInterface,new()
+        {
+            if (_provider == null)
+                throw new NotSupportedException("IocHelper的Provider对象为空,是否忘记调用SetServiceProvider对象了");
+            return _provider.GetService<TInterface>() ?? new TDefault();
         }
     }
 }

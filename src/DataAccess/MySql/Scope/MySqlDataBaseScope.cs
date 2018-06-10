@@ -37,7 +37,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             //Trace.WriteLine("Create MySqlDataBaseScope", "MySqlDataBase");
             _dataBase = dataBase;
-            MySqlDataBase.DefaultDataBase = dataBase;
+            MySqlDataBase.DataBase = dataBase;
             if (dataBase.Open())
             {
                 _isHereOpen = true;

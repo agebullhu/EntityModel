@@ -8,14 +8,16 @@ namespace Gboxt.Common.DataModel.MySql
     ///     修改读取字段范围
     /// </summary>
     /// <typeparam name="TEntity">实体对象</typeparam>
-    public sealed class MySqlReaderScope<TEntity> : ScopeBase
+    /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
+    public sealed class MySqlReaderScope<TEntity, TMySqlDataBase> : ScopeBase
         where TEntity : EditDataObject, new()
+        where TMySqlDataBase : MySqlDataBase
     {
-        private readonly MySqlTable<TEntity> _table;
+        private readonly MySqlTable<TEntity, TMySqlDataBase> _table;
         private readonly string _fields;
         private readonly Action<MySqlDataReader, TEntity> _loadAction;
 
-        private MySqlReaderScope(MySqlTable<TEntity> table, string fields, Action<MySqlDataReader, TEntity> loadAction)
+        private MySqlReaderScope(MySqlTable<TEntity, TMySqlDataBase> table, string fields, Action<MySqlDataReader, TEntity> loadAction)
         {
             if (string.IsNullOrWhiteSpace(fields))
                 fields = null;
@@ -33,9 +35,9 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="fields">字段</param>
         /// <param name="loadAction">读取方法</param>
         /// <returns>读取对象范围</returns>
-        public static MySqlReaderScope<TEntity> CreateScope(MySqlTable<TEntity> table, string fields, Action<MySqlDataReader, TEntity> loadAction)
+        public static MySqlReaderScope<TEntity, TMySqlDataBase> CreateScope(MySqlTable<TEntity, TMySqlDataBase> table, string fields, Action<MySqlDataReader, TEntity> loadAction)
         {
-            return new MySqlReaderScope<TEntity>(table, fields, loadAction);
+            return new MySqlReaderScope<TEntity, TMySqlDataBase>(table, fields, loadAction);
         }
 
         /// <summary>

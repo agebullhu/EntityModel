@@ -19,8 +19,10 @@ namespace Gboxt.Common.DataModel.MySql
     /// 数据状态基类
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
-    public abstract class DataStateTable<TData> : MySqlTable<TData>
+    /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
+    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>
         where TData : EditDataObject, IStateData, IIdentityData, new()
+        where TMySqlDataBase : MySqlDataBase
     {
         /// <summary>
         ///     删除的SQL语句
@@ -37,7 +39,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public virtual bool ResetState(int id)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 var sql = $@"UPDATE `{WriteTableName}` 
 SET {ResetStateFileSqlCode} 
@@ -51,7 +53,7 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 var convert = Compile(lambda);
                 var sql = $@"UPDATE `{WriteTableName}` 

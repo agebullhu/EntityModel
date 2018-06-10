@@ -510,15 +510,25 @@ namespace Gboxt.Common.DataModel
         ///     如果存在的话读取首行
         /// </summary>
         List<TData> LoadByForeignKey(string foreignKey, object key);
-        
+
 
         #endregion
-        
+
+        #region 动态虚化
+
+
+        /// <summary>
+        ///     切换读取的表
+        /// </summary>
+        /// <returns>之前的动态读取的表名</returns>
+        string SetDynamicReadTable(string table);
+
+        #endregion
 
         #endregion
 
         #region 写
-        
+
         #region 数据操作
 
         /// <summary>

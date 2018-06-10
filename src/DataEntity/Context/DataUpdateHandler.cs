@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Agebull.Common.Ioc;
 using Newtonsoft.Json;
 
 namespace Gboxt.Common.DataModel.MySql
@@ -18,6 +19,17 @@ namespace Gboxt.Common.DataModel.MySql
     /// </summary>
     public static class DataUpdateHandler
     {
+        /// <summary>
+        /// 事件代理
+        /// </summary>
+        public static IEntityEventProxy EventProxy
+        {
+            get;
+        }
+        static DataUpdateHandler()
+        {
+            EventProxy = IocHelper.Create<IEntityEventProxy>();
+        }
         /// <summary>
         ///     更新注入处理器
         /// </summary>
@@ -90,8 +102,7 @@ namespace Gboxt.Common.DataModel.MySql
                     foreach (var trigger in Triggers[0])
                         trigger.OnDataSaved(data, operatorType);
             }
-            BusinessGlobal.EntityEventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
-
+            EventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
         }
 
         /// <summary>
@@ -139,7 +150,7 @@ namespace Gboxt.Common.DataModel.MySql
                     foreach (var trigger in Triggers[0])
                         trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
             }
-            BusinessGlobal.EntityEventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
+            EventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
         }
     }
 }

@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using Agebull.Common.Logging;
 using System.Data.Common;
+using Agebull.Common.Ioc;
 
 #endregion
 
@@ -48,7 +49,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// 生成数据库使用范围
         /// </summary>
         /// <returns></returns>
-        IDisposable IDataBase.CreateDataBaseScope() => MySqlDataBaseScope.CreateScope(this);
+        IDisposable IDataBase.CreateDataBaseScope() => throw new NotSupportedException("此方法已不再支持");
 
         /// <summary>
         /// 生成事务范围
@@ -88,16 +89,11 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     连接对象
         /// </summary>
-        public static MySqlDataBase DefaultDataBase
+        public static MySqlDataBase DataBase
         {
-            get => _default ?? (_default = CreateDefaultFunc());
+            get => _default ?? (_default = IocHelper.Create<MySqlDataBase>());
             set => _default = value;
         }
-
-        /// <summary>
-        ///     生成缺省数据库访问对象的方法
-        /// </summary>
-        public static Func<MySqlDataBase> CreateDefaultFunc { get; set; }
 
         #endregion
 
@@ -595,11 +591,11 @@ namespace Gboxt.Common.DataModel.MySql
                     Value = Convert.ToInt32(value)
                 };
             }
-            if (value is bool)
+            if (value is bool b)
             {
                 return new MySqlParameter(parameterName, MySqlDbType.Byte)
                 {
-                    Value = (bool)value ? (byte)1 : (byte)0
+                    Value = b ? (byte)1 : (byte)0
                 };
             }
             return CreateParameter(parameterName, value, ToSqlDbType(csharpType));
@@ -615,32 +611,27 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns>参数</returns>
         public static MySqlParameter CreateParameter(string parameterName, object value, MySqlDbType type)
         {
-            if (value == null)
+            switch (value)
             {
-                return new MySqlParameter(parameterName, MySqlDbType.VarChar)
-                {
-                    Value = DBNull.Value
-                };
+                case null:
+                    return new MySqlParameter(parameterName, MySqlDbType.VarChar)
+                    {
+                        Value = DBNull.Value
+                    };
+                case string s:
+                    return CreateParameter(parameterName, s);
+                case Enum _:
+                    return new MySqlParameter(parameterName, MySqlDbType.Int32)
+                    {
+                        Value = Convert.ToInt32(value)
+                    };
+                case bool _:
+                    return new MySqlParameter(parameterName, MySqlDbType.Byte)
+                    {
+                        Value = (bool)value ? (byte)1 : (byte)0
+                    };
             }
-            var s = value as string;
-            if (s != null)
-            {
-                return CreateParameter(parameterName, s);
-            }
-            if (value is Enum)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.Int32)
-                {
-                    Value = Convert.ToInt32(value)
-                };
-            }
-            if (value is bool)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.Byte)
-                {
-                    Value = (bool)value ? (byte)1 : (byte)0
-                };
-            }
+
             return new MySqlParameter(parameterName, type)
             {
                 Value = value

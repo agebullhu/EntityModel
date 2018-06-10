@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Agebull.Common.Ioc;
 using MySql.Data.MySqlClient;
 
 #endregion
@@ -27,8 +28,10 @@ namespace Gboxt.Common.DataModel.MySql
     ///     Sql实体访问类
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
-    public abstract partial class MySqlTable<TData> : SimpleConfig, IDataTable<TData>
+    /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
+    public abstract partial class MySqlTable<TData, TMySqlDataBase> : SimpleConfig, IDataTable<TData>
         where TData : EditDataObject, new()
+        where TMySqlDataBase : MySqlDataBase
     {
         #region 数据库
 
@@ -42,8 +45,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public MySqlDataBase DataBase
         {
-            get => _dataBase ?? (_dataBase = MySqlDataBase.DefaultDataBase ??
-                                             (_dataBase = MySqlDataBase.DefaultDataBase = CreateDefaultDataBase()));
+            get => _dataBase ?? (_dataBase = IocHelper.Create<TMySqlDataBase>());
             set => _dataBase = value;
         }
 
@@ -149,11 +151,9 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns></returns>
         public static string GetPropertyName<T>(Expression<Func<TData, T>> action)
         {
-            var expression = action.Body as MemberExpression;
-            if (expression != null)
+            if (action.Body is MemberExpression expression)
                 return expression.Member.Name;
-            var body = action.Body as UnaryExpression;
-            if (body == null)
+            if (!(action.Body is UnaryExpression body))
                 throw new Exception("表达式太复杂");
 
             expression = (MemberExpression)body.Operand;
@@ -824,7 +824,7 @@ namespace Gboxt.Common.DataModel.MySql
         protected object CollectInner(string fun, string field, string condition, params MySqlParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -960,7 +960,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = DataBase.CreateCommand(sql, args))
                 {
@@ -1034,7 +1034,7 @@ namespace Gboxt.Common.DataModel.MySql
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
                 {
@@ -1097,7 +1097,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
 
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -1111,7 +1111,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = DataBase.CreateCommand(sql, args))
                 {
@@ -1176,7 +1176,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             var list = new List<TData>();
             var par = CreatePimaryKeyParameter();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 foreach (var key in keies)
                 {
@@ -1249,7 +1249,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void ReLoad(TData entity)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 ReLoadInner(entity);
             }
@@ -1261,7 +1261,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void ReLoad(ref TData entity)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 ReLoadInner(entity);
             }
@@ -1356,7 +1356,7 @@ namespace Gboxt.Common.DataModel.MySql
         protected TData LoadFirstInner(string condition, MySqlParameter[] args)
         {
             TData entity = null;
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = CreateLoadCommand(condition, args))
                 {
@@ -1387,7 +1387,7 @@ namespace Gboxt.Common.DataModel.MySql
         protected TData LoadLastInner(string condition, MySqlParameter[] args)
         {
             TData entity = null;
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
                 {
@@ -1425,7 +1425,7 @@ namespace Gboxt.Common.DataModel.MySql
         protected List<TData> LoadDataInner(string condition, MySqlParameter[] args, string orderBy)
         {
             var results = new List<TData>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = CreateLoadCommand(condition, orderBy, args))
                 {
@@ -1447,7 +1447,7 @@ namespace Gboxt.Common.DataModel.MySql
         protected List<TData> LoadDataBySql(string sql, MySqlParameter[] args)
         {
             var results = new List<TData>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = DataBase.CreateCommand(sql, args))
                 {
@@ -1469,7 +1469,7 @@ namespace Gboxt.Common.DataModel.MySql
         public List<TData> LoadDataByProcedure(string procedure, MySqlParameter[] args)
         {
             var results = new List<TData>();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var cmd = DataBase.CreateCommand(procedure, args))
                 {
@@ -1650,7 +1650,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void Save(IEnumerable<TData> entities)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1666,7 +1666,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void Save(TData entity)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1681,7 +1681,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void Update(TData entity)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1697,7 +1697,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void Update(IEnumerable<TData> entities)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1713,7 +1713,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public bool Insert(TData entity)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1732,7 +1732,7 @@ namespace Gboxt.Common.DataModel.MySql
         public void Insert(IEnumerable<TData> entities)
         {
             var datas = entities as TData[] ?? entities.ToArray();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1751,7 +1751,7 @@ namespace Gboxt.Common.DataModel.MySql
         public void Delete(IEnumerable<TData> entities)
         {
             var datas = entities as TData[] ?? entities.ToArray();
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1768,7 +1768,7 @@ namespace Gboxt.Common.DataModel.MySql
         public int Delete(TData entity)
         {
             int cnt;
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1784,7 +1784,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public int Delete(object id)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 return Delete(LoadByPrimaryKey(id));
             }
@@ -1800,7 +1800,7 @@ namespace Gboxt.Common.DataModel.MySql
             OnOperatorExecuting(condition, new[] { para }, DataOperatorType.Delete);
 
             bool result;
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1820,7 +1820,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         /// </summary>
         public int DeletePrimaryKey(object key)
         {
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 return Delete(LoadByPrimaryKey(key));
             }
@@ -1832,7 +1832,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
         public void Clear()
         {
             throw new Exception("批量删除功能被禁用");
-            //using (MySqlDataBaseScope.CreateScope(DataBase))
+            ////using (MySqlDataBaseScope.CreateScope(DataBase))
             //{
             //    DataBase.Clear(WriteTableName);
             //}
@@ -1860,7 +1860,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
             var convert = Compile(lambda);
             int cnt;
             OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.Delete);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -1882,7 +1882,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
             if (string.IsNullOrWhiteSpace(condition))
                 throw new ArgumentException(@"删除条件不能为空,因为不允许执行全表删除", GetType().FullName);
             int cnt;
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2021,7 +2021,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
             int result;
             OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2070,7 +2070,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
             var sql = CreateUpdateSql(expression, convert);
             int result;
             OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.Update);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2098,7 +2098,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
 
             int result;
             OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.Update);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2138,7 +2138,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
                 CreateFieldParameter(KeyField, key)
             };
             var sql = CreateUpdateSql(GetPropertyName(fieldExpression), value, PrimaryKeyConditionSQL, parameters);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2166,7 +2166,7 @@ WHERE {condition}", CreatePimaryKeyParameter(id)) == 1;
             };
             int result;
             OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
-            using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 using (var scope = TransactionScope.CreateScope(DataBase))
                 {
@@ -2506,7 +2506,7 @@ UPDATE `{WriteTableName}`
         /// <summary>
         /// 基本条件初始化完成的标识
         /// </summary>
-        private bool BaseConditionInited = false;
+        private bool _baseConditionInited;
 
         /// <summary>
         ///  初始化基本条件
@@ -2523,10 +2523,10 @@ UPDATE `{WriteTableName}`
         /// <returns></returns>
         protected string ContitionSqlCode(string condition)
         {
-            if (!BaseConditionInited)
+            if (!_baseConditionInited)
             {
                 InitBaseCondition();
-                BaseConditionInited = true;
+                _baseConditionInited = true;
             }
 
             if (string.IsNullOrWhiteSpace(BaseCondition))

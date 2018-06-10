@@ -17,15 +17,9 @@ using System.Linq;
 
 namespace Gboxt.Common.DataModel.MySql
 {
-    partial class MySqlTable<TData>
+    partial class MySqlTable<TData, TMySqlDataBase>
     {
         #region 数据库
-
-        /// <summary>
-        ///     构造一个缺省可用的数据库对象
-        /// </summary>
-        /// <returns></returns>
-        protected abstract MySqlDataBase CreateDefaultDataBase();
 
         /// <summary>
         /// 按修改更新
@@ -125,8 +119,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         protected string ContextLoadFields
         {
-            get { return _contextReadFields ?? FullLoadFields; }
-            set { _contextReadFields = string.IsNullOrWhiteSpace(value) ? null : value; }
+            get => _contextReadFields ?? FullLoadFields;
+            set => _contextReadFields = string.IsNullOrWhiteSpace(value) ? null : value;
         }
         /// <summary>
         ///     当前上下文读取的表名

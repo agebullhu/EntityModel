@@ -14,12 +14,12 @@ namespace Gboxt.Common.DataModel.MySql
     ///     修改读取对象范围
     /// </summary>
     /// <typeparam name="TEntity">实体对象</typeparam>
-    public sealed class MySqlReadTableScope<TEntity> : ScopeBase
+    public sealed class ReadTableScope<TEntity> : ScopeBase
         where TEntity : EditDataObject, new()
     {
-        private readonly MySqlTable<TEntity> _table;
+        private readonly IDataTable<TEntity> _table;
         private readonly string _oldName;
-        private MySqlReadTableScope(MySqlTable<TEntity> table, string name)
+        private ReadTableScope(IDataTable<TEntity> table, string name)
         {
             _table = table;
             _oldName = table.SetDynamicReadTable(name);
@@ -31,9 +31,9 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="table">作用的表对象</param>
         /// <param name="name">表名</param>
         /// <returns>读取对象范围</returns>
-        public static MySqlReadTableScope<TEntity> CreateScope(MySqlTable<TEntity> table, string name)
+        public static ReadTableScope<TEntity> CreateScope(IDataTable<TEntity> table, string name)
         {
-            return new MySqlReadTableScope<TEntity>(table, name);
+            return new ReadTableScope<TEntity>(table, name);
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>2.0.2.1</Version>
+    <Version>2.0.3</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -18,7 +18,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.2.1</PackageVersion>
+    <PackageVersion>2.0.3</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
@@ -62,6 +62,10 @@
     <None Remove="Interface\**" />
     <None Remove="SQLite\**" />
     <None Remove="SqlServer\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="MySql\Scope\MySqlDataBaseScope.cs" />
+    <Compile Remove="MySql\Scope\MySqlDataTableScope.cs" />
   </ItemGroup>
 
   <ItemGroup>

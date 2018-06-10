@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using Agebull.Common.Ioc;
 
 #endregion
 
@@ -142,9 +143,9 @@ namespace Agebull.Common.Logging
         /// </summary>
         static LogRecorder()
         {
-            Recorder = BaseRecorder = new TxtRecorder();
-            Recorder.Initialize();
             _isTextRecorder = true;
+            Recorder = BaseRecorder = new TxtRecorder();
+            BaseRecorder.Initialize();
             _logThread = new Thread(WriteRecordLoop)
             {
                 IsBackground = true,
@@ -160,37 +161,12 @@ namespace Agebull.Common.Logging
         public static void Initialize()
         {
             State = LogRecorderStatus.Initialized;
-            if (!_isTextRecorder)
-                Recorder?.Initialize();
-        }
-
-        /// <summary>
-        /// 注册记录器
-        /// </summary>
-        /// <typeparam name="TLogRecorder"></typeparam>
-        public static void Regist<TLogRecorder>() where TLogRecorder : class, ILogRecorder, new()
-        {
-            Recorder?.Shutdown();
-            Recorder = new TLogRecorder();
+            var recorder = IocHelper.Create<ILogRecorder>();
+            if (recorder == null)
+                return;
             _isTextRecorder = false;
-            if (State >= LogRecorderStatus.Initialized)
-                Recorder.Initialize();
-        }
-
-        /// <summary>
-        ///   初始化
-        /// </summary>
-        /// <param name="record"> </param>
-        [Obsolete]
-        public static void Initialize(ILogRecorder record)
-        {
-            State = LogRecorderStatus.Initialized;
-            if (record != null)
-            {
-                Recorder = record;
-                _isTextRecorder = record is TxtRecorder;
-                Recorder.Initialize();
-            }
+            Recorder = recorder;
+            Recorder.Initialize();
         }
 
         /// <summary>
@@ -198,10 +174,10 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
-            State = LogRecorderStatus.Shutdown;
+            Recorder.Shutdown();
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
-            Recorder.Shutdown();
+            State = LogRecorderStatus.Shutdown;
         }
         #endregion
 
