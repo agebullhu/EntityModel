@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using Agebull.Common.Configuration;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Threading;
 using Agebull.Common.Logging;
 using Gboxt.Common.DataModel;
@@ -14,53 +13,17 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
-    public class RedisProxy : IDisposable
+    public class StackExchangeRedis : IDisposable, IRedis
     {
         #region 配置
 
         /// <summary>
         /// 静态构造
         /// </summary>
-        static RedisProxy()
+        static StackExchangeRedis()
         {
-            connectString = ConfigurationManager.AppSettings["RedisConnectionString"];
+            ConnectString = ConfigurationManager.ConnectionStrings.GetStr("Redis","127.0.0.1:6379");
         }
-
-        /// <summary>
-        /// 地址
-        /// </summary>
-        static readonly string connectString;
-
-        /*// <summary>
-        /// 空闲连接数
-        /// </summary>
-        private static readonly int PoolSize;*/
-
-        /// <summary>
-        /// 系统数据
-        /// </summary>
-        public const int DbSystem = 15;
-
-        /// <summary>
-        /// 上下文数据
-        /// </summary>
-        public const int DbContext = 11;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbWebCache = 14;
-
-        /// <summary>
-        /// 权限数据
-        /// </summary>
-        public const int DbAuthority = 13;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbComboCache = 12;
-
 
         #endregion
 
@@ -79,10 +42,11 @@ namespace Agebull.Common.DataModel.Redis
         /// 锁对象
         /// </summary>
         private static readonly object LockObj = new object();
+
         /// <summary>
         /// 使用哪个数据库
         /// </summary>
-        private readonly int _db;
+        private int _db;
 
         /// <summary>
         /// 当前数据库
@@ -92,10 +56,17 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 构造
         /// </summary>
-        /// <param name="db"></param>
-        public RedisProxy(int db = 0)
+        public StackExchangeRedis()
         {
-            _db = db;
+            connect = ConnectionMultiplexer.Connect(ConnectString);
+        }
+
+        /// <summary>
+        /// 原始对象,在不够用时扩展
+        /// </summary>
+        T IRedis.Original<T>()
+        {
+            return Client as T;
         }
 
         /*// <summary>
@@ -106,7 +77,7 @@ namespace Agebull.Common.DataModel.Redis
         /// 空闲的
         /// </summary>
         private static readonly Dictionary<int, List<RedisClient>> Idle = new Dictionary<int, List<RedisClient>>();*/
-        private ConnectionMultiplexer connect;
+        private readonly ConnectionMultiplexer connect;
         /// <summary>
         /// 客户端类
         /// </summary>
@@ -124,34 +95,37 @@ namespace Agebull.Common.DataModel.Redis
             }
         }
         /// <summary>
-        /// 更改
+        /// 连接字符串,默认为ConnectStrings节的Redis
         /// </summary>
-        internal IDatabase ChangeDb(int db)
+        public static string ConnectString { get; set; }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// 更改Db
+        /// </summary>
+        public void ChangeDb(int db)
         {
-            return CreateClient(db);
+            CreateClient(db);
         }
+
         private IDatabase CreateClient(int db)
         {
             Monitor.Enter(LockObj);
             try
             {
-                if (connect == null)
-                {
-                    connect = ConnectionMultiplexer.Connect(connectString);
-                }
-                if(_client == null)
-                    return _client = connect.GetDatabase(db); 
+                if (_client == null)
+                    return _client = connect.GetDatabase(db);
 
                 if (_db == db)
                     return _client;
-                
-                _client = connect.GetDatabase(db);
 
+                _client = connect.GetDatabase(db);
+                _db = db;
                 return _client;
             }
             catch (Exception ex)
             {
-                LogRecorder.Exception(ex, connectString);
+                LogRecorder.Exception(ex, ConnectString);
                 throw;
             }
             finally
@@ -572,7 +546,7 @@ namespace Agebull.Common.DataModel.Redis
         }
 
         #endregion
-        
+
 
         #region 其它扩展
         /// <summary>

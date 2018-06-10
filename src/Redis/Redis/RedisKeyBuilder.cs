@@ -9,6 +9,31 @@ namespace Agebull.Common.Redis
     public class RedisKeyBuilder
     {
         /// <summary>
+        /// 系统数据
+        /// </summary>
+        public const int DbSystem = 15;
+
+        /// <summary>
+        /// 上下文数据
+        /// </summary>
+        public const int DbContext = 11;
+
+        /// <summary>
+        /// WEB端的缓存
+        /// </summary>
+        public const int DbWebCache = 14;
+
+        /// <summary>
+        /// 权限数据
+        /// </summary>
+        public const int DbAuthority = 13;
+
+        /// <summary>
+        /// WEB端的缓存
+        /// </summary>
+        public const int DbComboCache = 12;
+
+        /// <summary>
         /// 系统分区
         /// </summary>
         public const string SystemRegion = "sy";

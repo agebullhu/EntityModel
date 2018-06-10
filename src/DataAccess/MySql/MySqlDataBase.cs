@@ -10,7 +10,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using Agebull.Common.Configuration;
 using System.Data;
 using MySql.Data.MySqlClient;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ namespace Gboxt.Common.DataModel.MySql
     /// <summary>
     ///     表示SQL SERVER数据库对象
     /// </summary>
-    public class MySqlDataBase : SimpleConfig, IDataBase
+    public abstract class MySqlDataBase : SimpleConfig, IDataBase
     {
         #region 事务
 
@@ -44,12 +44,6 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
         #region 引用范围
-
-        /// <summary>
-        /// 生成数据库使用范围
-        /// </summary>
-        /// <returns></returns>
-        IDisposable IDataBase.CreateDataBaseScope() => throw new NotSupportedException("此方法已不再支持");
 
         /// <summary>
         /// 生成事务范围
@@ -114,10 +108,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// 读取连接字符串
         /// </summary>
         /// <returns></returns>
-        protected virtual string LoadConnectionStringSetting()
-        {
-            return ConfigurationManager.ConnectionStrings["default"].ConnectionString;
-        }
+        protected abstract string LoadConnectionStringSetting();
 
         /// <summary>
         ///     连接对象

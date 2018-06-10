@@ -9,7 +9,7 @@
 #region 引用
 
 using System;
-using System.Configuration;
+using Agebull.Common.Configuration;
 using System.Runtime.Serialization;
 
 #endregion
@@ -152,26 +152,26 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region 数据版本管理
+        //#region 数据版本管理
 
-        private static byte _version;
+        //private static byte _version;
 
-        /// <summary>
-        ///     实体格式版本号
-        /// </summary>
-        public static byte EntityVersion
-        {
-            get
-            {
-                if (_version > 0)
-                {
-                    return _version;
-                }
-                var ev = ConfigurationManager.AppSettings["EntityVersion"];
-                return _version = string.IsNullOrWhiteSpace(ev) ? (byte) 1 : byte.Parse(ev);
-            }
-        }
+        ///// <summary>
+        /////     实体格式版本号
+        ///// </summary>
+        //public static byte EntityVersion
+        //{
+        //    get
+        //    {
+        //        if (_version > 0)
+        //        {
+        //            return _version;
+        //        }
+        //        var ev = ConfigurationManager.AppSettings["EntityVersion"];
+        //        return _version = string.IsNullOrWhiteSpace(ev) ? (byte) 1 : byte.Parse(ev);
+        //    }
+        //}
         
-        #endregion
+        //#endregion
     }
 }

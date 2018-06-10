@@ -6,7 +6,7 @@
 #region
 
 using System;
-using System.Configuration;
+using Agebull.Common.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -36,10 +36,12 @@ namespace Agebull.Common.Logging
             {
                 if (string.IsNullOrWhiteSpace(LogPath))
                 {
-                    var cfgpath = ConfigurationManager.AppSettings["LogPath"];
+                    var sec = ConfigurationManager.Get("LogRecorder");
+                    var cfgpath = sec["txtPath"];
                     if (string.IsNullOrWhiteSpace(cfgpath))
                     {
                         cfgpath = Path.Combine(Environment.CurrentDirectory, "logs");
+                        sec["txtPath"] = cfgpath;
                     }
                     LogPath = cfgpath;
                 }
@@ -47,7 +49,6 @@ namespace Agebull.Common.Logging
                 {
                     Directory.CreateDirectory(LogPath);
                 }
-                Console.WriteLine($"LogPath:{LogPath}");
             }
             catch (Exception ex)
             {

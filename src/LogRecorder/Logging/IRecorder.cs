@@ -5,7 +5,6 @@
 
 #region
 
-using System ;
 using Agebull.Common.Base;
 
 #endregion

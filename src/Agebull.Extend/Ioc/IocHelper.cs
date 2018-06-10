@@ -16,6 +16,28 @@ namespace Agebull.Common.Ioc
         private static IServiceProvider _provider;
 
         /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        /// <param name="service"></param>
+        public static void SetServiceCollection(IServiceCollection service)
+        {
+            if (_serviceCollection != null)
+            {
+                foreach (var dod in _serviceCollection)
+                    service.Add(dod);
+            }
+            _serviceCollection = service;
+        }
+
+        private static IServiceCollection _serviceCollection;
+
+        /// <summary>
+        /// 全局依赖
+        /// </summary>
+        public static IServiceCollection ServiceCollection =>
+            _serviceCollection ?? (_serviceCollection = new ServiceCollection());
+
+        /// <summary>
         /// 注册IOC代理
         /// </summary>
         public static void SetServiceProvider(IServiceProvider provider)

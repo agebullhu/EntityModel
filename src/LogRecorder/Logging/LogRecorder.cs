@@ -5,11 +5,11 @@
 #region
 
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using Agebull.Common.Ioc;
+using Agebull.Common.Configuration;
 
 #endregion
 
@@ -23,30 +23,24 @@ namespace Agebull.Common.Logging
         #region 对象
 
         /// <summary>
-        /// 是否用Task而非线程方式后台记录日志
-        /// </summary>
-        public static bool LogByTask { get; set; } = (ConfigurationManager.AppSettings["LogByTask"] ?? "False").ToLower() == "true";
-
-
-        /// <summary>
         /// 是否将日志输出到控制台
         /// </summary>
-        public static bool TraceToConsole { get; set; } = (ConfigurationManager.AppSettings["TraceToConsole"] ?? "False").ToLower() == "true";
+        public static bool TraceToConsole { get; set; }
 
         /// <summary>
         /// 是否开启跟踪日志
         /// </summary>
-        public static bool LogMonitor { get; set; } = (ConfigurationManager.AppSettings["LogMonitor"] ?? "False").ToLower() == "true";
+        public static bool LogMonitor { get; set; }
 
         /// <summary>
         /// 是否开启SQL日志
         /// </summary>
-        public static bool LogDataSql { get; set; } = (ConfigurationManager.AppSettings["LogSql"] ?? "False").ToLower() == "true";
+        public static bool LogDataSql { get; set; }
 
         /// <summary>
-        /// 是否开启SQL日志
+        /// 日志等级
         /// </summary>
-        public static LogLevel LogLevel { get; set; } = (LogLevel)Enum.Parse(typeof(LogLevel), ConfigurationManager.AppSettings["LogLevel"] ?? "Trace");
+        public static LogLevel Level { get; set; }
 
         /// <summary>
         ///   消息跟踪器
@@ -149,7 +143,7 @@ namespace Agebull.Common.Logging
             _logThread = new Thread(WriteRecordLoop)
             {
                 IsBackground = true,
-                Priority = LogByTask ? ThreadPriority.Normal : ThreadPriority.BelowNormal
+                Priority = ThreadPriority.BelowNormal
             };
             _logThread.Start();
         }
@@ -160,13 +154,24 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Initialize()
         {
+            var sec = ConfigurationManager.Get("LogRecorder");
+            if (sec != null)
+            {
+                TraceToConsole = sec.GetBool("console");
+                LogMonitor = sec.GetBool("monitor");
+                LogDataSql = sec.GetBool("sql");
+                Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
+            }
+
             State = LogRecorderStatus.Initialized;
             var recorder = IocHelper.Create<ILogRecorder>();
-            if (recorder == null)
-                return;
-            _isTextRecorder = false;
-            Recorder = recorder;
-            Recorder.Initialize();
+            if (recorder != null)
+            {
+                _isTextRecorder = false;
+                Recorder = recorder;
+                Recorder.Initialize();
+            }
+            BaseRecorder.Initialize();
         }
 
         /// <summary>
@@ -262,7 +267,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void Trace(LogType type, string name, string message, params object[] formatArgs)
         {
-            if (LogLevel.Trace >= LogLevel)
+            if (LogLevel.Trace >= Level)
                 Record(name, FormatMessage(message, formatArgs), type);
         }
         ///<summary>
@@ -357,7 +362,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void RecordStackTrace(string title)
         {
-            if (LogLevel.Trace >= LogLevel)
+            if (LogLevel.Trace >= Level)
                 Record("堆栈跟踪:" + title, StackTraceInfomation(title), LogType.Trace);
         }
 
@@ -370,7 +375,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void Trace(bool recordStackTrace, string message, params object[] formatArgs)
         {
-            if (LogLevel.Trace >= LogLevel)
+            if (LogLevel.Trace >= Level)
                 RecordInner("调试", FormatMessage(message, formatArgs), LogType.Trace);
         }
 
@@ -382,7 +387,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void Trace(string message, params object[] formatArgs)
         {
-            if (LogLevel.Trace >= LogLevel)
+            if (LogLevel.Trace >= Level)
                 RecordInner("调试", FormatMessage(message, formatArgs), LogType.Trace);
         }
         /// <summary>
@@ -392,7 +397,7 @@ namespace Agebull.Common.Logging
         [Conditional("TRACE")]
         public static void Trace(object obj)
         {
-            if (LogLevel.Trace >= LogLevel)
+            if (LogLevel.Trace >= Level)
                 RecordInner("调试", obj == null ? "NULL" : obj.ToString(), LogType.Trace);
         }
 
@@ -599,7 +604,7 @@ namespace Agebull.Common.Logging
                     level = LogLevel.System;
                     break;
             }
-            if (level >= LogLevel)
+            if (level >= Level)
                 RecordInner(name, FormatMessage(msg, formatArgs), type, typeName);
         }
 
@@ -642,7 +647,7 @@ namespace Agebull.Common.Logging
                     level = LogLevel.System;
                     break;
             }
-            if (level >= LogLevel)
+            if (level >= Level)
                 RecordInner(name, msg, type, typeName);
         }
 
@@ -655,7 +660,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 待写入的日志信息集合
         /// </summary>
-        private static MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
+        private static readonly MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
 
         /// <summary>
         /// 日志序号
