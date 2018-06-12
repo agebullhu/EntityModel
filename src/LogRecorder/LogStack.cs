@@ -18,12 +18,12 @@ namespace System.Linq
     /// </summary>
     /// <typeparam name="T"> </typeparam>
     [Serializable]
-    public sealed class FixStack<T>
+    internal sealed class LogStack<T>
     {
         /// <summary>
         /// 构造
         /// </summary>
-        public FixStack()
+        public LogStack()
         {
             IsEmpty = true;
         }
@@ -73,15 +73,6 @@ namespace System.Linq
         /// </remarks>
         public bool FixStackBottom { get; private set; }
 
-        /// <summary>
-        ///   自动转换
-        /// </summary>
-        /// <param name="stack"> </param>
-        /// <returns> </returns>
-        public static implicit operator T(FixStack<T> stack)
-        {
-            return stack.Current;
-        }
         /// <summary>
         ///   配置固定值(只第一次调用有效果)
         /// </summary>
@@ -191,8 +182,7 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (_value != null)
-                    _value.Remove(value);
+                _value?.Remove(value);
             }
         }
 
@@ -203,134 +193,6 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                IsEmpty = _value.Count == 0;
-                Current = IsEmpty
-                    ? FixValue
-                    : _value[_value.Count - 1];
-            }
-        }
-    }
-
-    /// <summary>
-    ///   表示一个栈底为固定值的栈
-    /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    public class FixStack2<T>
-            where T : struct
-    {
-        /// <summary>
-        /// 构造
-        /// </summary>
-        public FixStack2()
-        {
-            IsEmpty = true;
-        }
-        private List<T> _value = new List<T>();
-
-        /// <summary>
-        ///   当前
-        /// </summary>
-        public T Current { get; private set; }
-
-        /// <summary>
-        ///  栈是否为空
-        /// </summary>
-        public bool IsEmpty { get; private set; }
-
-        /// <summary>
-        ///   固定
-        /// </summary>
-        public T FixValue { get; private set; }
-
-        /// <summary>
-        ///   栈底为固定值,即保证最后栈中总有一个值
-        /// </summary>
-        /// <remarks>
-        ///   当调用了SetDefault后为真
-        /// </remarks>
-        public bool FixStackBottom { get; private set; }
-
-        /// <summary>
-        ///   自动转换
-        /// </summary>
-        /// <param name="stack"> </param>
-        /// <returns> </returns>
-        public static implicit operator T(FixStack2<T> stack)
-        {
-            return stack.Current;
-        }
-
-        /// <summary>
-        ///   配置固定值(只第一次调用有效果)
-        /// </summary>
-        /// <param name="value"> </param>
-        public void SetFix(T value)
-        {
-            using (ThreadLockScope.Scope(this))
-            {
-                if (FixStackBottom)
-                {
-                    return;
-                }
-                FixStackBottom = true;
-                FixValue = Current = value;
-            }
-        }
-
-        /// <summary>
-        ///   入栈
-        /// </summary>
-        /// <param name="value"> </param>
-        public void Push(T value)
-        {
-            using (ThreadLockScope.Scope(this))
-            {
-                IsEmpty = false;
-                _value.Add(value);
-                Current = value;
-            }
-        }
-
-        /// <summary>
-        ///  当前再入栈
-        /// </summary>
-        /// <remarks>目的是和其它人做相同次数的入栈和出栈</remarks>
-        public void PushCurrent()
-        {
-            using (ThreadLockScope.Scope(this))
-            {
-                IsEmpty = false;
-                _value.Add(Current);
-            }
-        }
-        /// <summary>
-        /// 清栈
-        /// </summary>
-        public void Clear()
-        {
-            using (ThreadLockScope.Scope(this))
-            {
-                _value = new List<T>();
-                Current = FixValue;
-            }
-        }
-        /// <summary>
-        /// 栈深
-        /// </summary>
-        public int StackCount => _value.Count;
-
-        /// <summary>
-        ///   出栈
-        /// </summary>
-        public void Pop()
-        {
-            using (ThreadLockScope.Scope(this))
-            {
-                if (_value.Count == 0)
-                {
-                    return;
-                }
-                _value.RemoveAt(_value.Count - 1);
                 IsEmpty = _value.Count == 0;
                 Current = IsEmpty
                     ? FixValue

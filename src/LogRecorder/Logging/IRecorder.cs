@@ -5,6 +5,7 @@
 
 #region
 
+using System.Collections.Generic;
 using Agebull.Common.Base;
 
 #endregion
@@ -24,13 +25,19 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   停止
         /// </summary>
-        void Shutdown() ;
+        void Shutdown();
 
         /// <summary>
         ///   记录日志
         /// </summary>
         /// <param name="info"> 日志消息 </param>
-        void RecordLog(RecordInfo info) ;
+        void RecordLog(RecordInfo info);
+
+        /// <summary>
+        ///   记录日志
+        /// </summary>
+        /// <param name="infos"> 日志消息 </param>
+        void RecordLog(List<RecordInfo> infos);
     }
 
     /// <summary>

@@ -6,8 +6,10 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
 
@@ -126,7 +128,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static string GetMachineName()
         {
-            return GetRequestIdFunc?.Invoke() ?? "Local";
+            return GetMachineNameFunc?.Invoke() ?? "Local";
         }
         #endregion
 
@@ -140,15 +142,9 @@ namespace Agebull.Common.Logging
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();
             BaseRecorder.Initialize();
-            _logThread = new Thread(WriteRecordLoop)
-            {
-                IsBackground = true,
-                Priority = ThreadPriority.BelowNormal
-            };
-            _logThread.Start();
+            Task.Factory.StartNew(WriteRecordLoop);
         }
 
-        private static Thread _logThread;
         /// <summary>
         ///   初始化
         /// </summary>
@@ -165,7 +161,7 @@ namespace Agebull.Common.Logging
 
             State = LogRecorderStatus.Initialized;
             var recorder = IocHelper.Create<ILogRecorder>();
-            if (recorder != null)
+            if (recorder != null && recorder != BaseRecorder)
             {
                 _isTextRecorder = false;
                 Recorder = recorder;
@@ -179,10 +175,17 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
-            Recorder.Shutdown();
+            State = LogRecorderStatus.Shutdown;
+            syncSlim.Wait();
+            if (RecordInfos.Line1.Count > 0)
+                BaseRecorder.RecordLog(RecordInfos.Line1);
+            if (RecordInfos.Line2.Count > 0)
+                BaseRecorder.RecordLog(RecordInfos.Line2);
+
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
-            State = LogRecorderStatus.Shutdown;
+            Recorder.Shutdown();
+
         }
         #endregion
 
@@ -202,8 +205,10 @@ namespace Agebull.Common.Logging
                     return def ?? "None";
                 case LogType.Plan:
                     return "Plan";
-                case LogType.Trace:
+                case LogType.Debug:
                     return "Debug";
+                case LogType.Trace:
+                    return "Trace";
                 case LogType.Message:
                     return "Message";
                 case LogType.Warning:
@@ -220,8 +225,8 @@ namespace Agebull.Common.Logging
                     return "Request";
                 case LogType.DataBase:
                     return "DataBase";
-                case LogType.WcfMessage:
-                    return "WcfMessage";
+                case LogType.NetWork:
+                    return "NetWork";
             }
         }
         /// <summary>
@@ -264,19 +269,6 @@ namespace Agebull.Common.Logging
         ///<param name="name"> </param>
         ///<param name="message"> 消息 </param>
         ///<param name="formatArgs"> 格式化的参数 </param>
-        [Conditional("TRACE")]
-        public static void Trace(LogType type, string name, string message, params object[] formatArgs)
-        {
-            if (LogLevel.Trace >= Level)
-                Record(name, FormatMessage(message, formatArgs), type);
-        }
-        ///<summary>
-        ///  记录一般日志
-        ///</summary>
-        ///<param name="type"> 日志类型(SG) </param>
-        ///<param name="name"> </param>
-        ///<param name="message"> 消息 </param>
-        ///<param name="formatArgs"> 格式化的参数 </param>
         public static void Record(LogType type, string name, string message, params object[] formatArgs)
         {
             Record(name, type, null, message, formatArgs);
@@ -300,7 +292,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void Record(string type, string message, params object[] formatArgs)
         {
-            Record(type, LogType.None, null, message, formatArgs);
+            Record(type, LogType.Message, null, message, formatArgs);
         }
 
         ///<summary>
@@ -308,10 +300,11 @@ namespace Agebull.Common.Logging
         ///</summary>
         ///<param name="message"> 日志详细信息 </param>
         ///<param name="formatArgs"> 格式化的参数 </param>
-        [Conditional("TRACE")]
+
         public static void RecordDataLog(string message, params object[] formatArgs)
         {
-            Record("数据日志", LogType.DataBase, null, message, formatArgs);
+            if (LogDataSql)
+                Record("DataLog", LogType.DataBase, null, message, formatArgs);
         }
 
         ///<summary>
@@ -321,7 +314,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void RecordLoginLog(string message, params object[] formatArgs)
         {
-            Record("登录日志", LogType.Login, null, message, formatArgs);
+            Record("Login", LogType.Login, null, message, formatArgs);
         }
 
         ///<summary>
@@ -329,10 +322,10 @@ namespace Agebull.Common.Logging
         ///</summary>
         ///<param name="message"> 日志详细信息 </param>
         ///<param name="formatArgs"> 格式化的参数 </param>
-        [Conditional("TRACE")]
+
         public static void RecordRequestLog(string message, params object[] formatArgs)
         {
-            Record("网络请求", LogType.Request, null, message, formatArgs);
+            Record("Request", LogType.Request, null, message, formatArgs);
         }
 
         ///<summary>
@@ -340,10 +333,10 @@ namespace Agebull.Common.Logging
         ///</summary>
         ///<param name="message"> 日志详细信息 </param>
         ///<param name="formatArgs"> 格式化的参数 </param>
-        [Conditional("TRACE")]
-        public static void RecordWcfLog(string message, params object[] formatArgs)
+
+        public static void RecordNetLog(string message, params object[] formatArgs)
         {
-            Record("WCF消息", LogType.WcfMessage, null, message, formatArgs);
+            Record("NetWork", LogType.NetWork, null, message, formatArgs);
         }
 
         ///<summary>
@@ -353,52 +346,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void Message(string message, params object[] formatArgs)
         {
-            Record("消息", LogType.Message, null, message, formatArgs);
-        }
-        /// <summary>
-        ///   记录堆栈跟踪
-        /// </summary>
-        /// <param name="title"> 标题 </param>
-        [Conditional("TRACE")]
-        public static void RecordStackTrace(string title)
-        {
-            if (LogLevel.Trace >= Level)
-                Record("堆栈跟踪:" + title, StackTraceInfomation(title), LogType.Trace);
-        }
-
-        ///<summary>
-        ///  写入调试日志
-        ///</summary>
-        ///<param name="recordStackTrace"> 记录堆栈信息吗 </param>
-        ///<param name="message"> 日志详细信息 </param>
-        ///<param name="formatArgs"> 格式化的参数 </param>
-        [Conditional("TRACE")]
-        public static void Trace(bool recordStackTrace, string message, params object[] formatArgs)
-        {
-            if (LogLevel.Trace >= Level)
-                RecordInner("调试", FormatMessage(message, formatArgs), LogType.Trace);
-        }
-
-        /// <summary>
-        ///   写入调试日志
-        /// </summary>
-        /// <param name="message"> 日志详细信息 </param>
-        /// <param name="formatArgs">格式化参数</param>
-        [Conditional("TRACE")]
-        public static void Trace(string message, params object[] formatArgs)
-        {
-            if (LogLevel.Trace >= Level)
-                RecordInner("调试", FormatMessage(message, formatArgs), LogType.Trace);
-        }
-        /// <summary>
-        ///   写入调试日志
-        /// </summary>
-        /// <param name="obj"> 记录对象 </param>
-        [Conditional("TRACE")]
-        public static void Trace(object obj)
-        {
-            if (LogLevel.Trace >= Level)
-                RecordInner("调试", obj == null ? "NULL" : obj.ToString(), LogType.Trace);
+            Record("Message", LogType.Message, null, message, formatArgs);
         }
 
         /// <summary>
@@ -407,7 +355,7 @@ namespace Agebull.Common.Logging
         /// <param name="msg"> 消息 </param>
         public static void SystemLog(string msg)
         {
-            Record("系统", msg, LogType.System);
+            Record("System", msg, LogType.System);
         }
 
         /// <summary>
@@ -417,7 +365,7 @@ namespace Agebull.Common.Logging
         /// <param name="formatArgs">格式化参数</param>
         public static void SystemLog(string message, params object[] formatArgs)
         {
-            Record("系统", FormatMessage(message, formatArgs), LogType.System);
+            Record("System", FormatMessage(message, formatArgs), LogType.System);
         }
 
         /// <summary>
@@ -426,7 +374,7 @@ namespace Agebull.Common.Logging
         /// <param name="msg"> 消息 </param>
         public static void PlanLog(string msg)
         {
-            Record("计划", msg, LogType.Plan);
+            Record("Plan", msg, LogType.Plan);
         }
 
         ///<summary>
@@ -436,7 +384,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void RecordMessage(string message, params object[] formatArgs)
         {
-            Record("消息", LogType.Message, null, message, formatArgs);
+            Record("Message", LogType.Message, null, message, formatArgs);
         }
 
         ///<summary>
@@ -446,7 +394,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void Warning(string message, params object[] formatArgs)
         {
-            Record("警告", LogType.Warning, null, message, formatArgs);
+            Record("Warning", LogType.Warning, null, message, formatArgs);
         }
 
         ///<summary>
@@ -456,7 +404,7 @@ namespace Agebull.Common.Logging
         ///<param name="formatArgs"> 格式化的参数 </param>
         public static void Error(string message, params object[] formatArgs)
         {
-            Record("错误", LogType.Error, null, message, formatArgs);
+            Record("Error", LogType.Error, null, message, formatArgs);
         }
 
         /// <summary>
@@ -468,7 +416,7 @@ namespace Agebull.Common.Logging
         {
             message = ExceptionMessage(exception);
             string msg = ExceptionInfomation(exception, null);
-            string title = "异常";
+            string title = "Exception";
             if (exception != null)
             {
                 title = exception.Message;
@@ -498,6 +446,124 @@ namespace Agebull.Common.Logging
             Record(message, ExceptionInfomation(ex, FormatMessage(message, formatArgs)), LogType.Exception);
             return ExceptionMessage(ex);
         }
+        #endregion
+
+        #region 跟踪
+
+        /// <summary>
+        ///   记录堆栈跟踪
+        /// </summary>
+        /// <param name="title"> 标题 </param>
+
+        public static void RecordStackTrace(string title)
+        {
+            if (LogLevel.Trace >= Level)
+                Record("StackTrace:", StackTraceInfomation(title), LogType.Trace);
+        }
+
+        ///<summary>
+        ///  写入调试日志
+        ///</summary>
+        ///<param name="recordStackTrace"> 记录堆栈信息吗 </param>
+        ///<param name="message"> 日志详细信息 </param>
+        ///<param name="formatArgs"> 格式化的参数 </param>
+
+        public static void Trace(bool recordStackTrace, string message, params object[] formatArgs)
+        {
+            if (LogLevel.Trace >= Level)
+                RecordInner(LogLevel.Trace, "Trace", FormatMessage(message, formatArgs), LogType.Trace);
+
+        }
+
+        /// <summary>
+        ///   写入调试日志
+        /// </summary>
+        /// <param name="message"> 日志详细信息 </param>
+        /// <param name="formatArgs">格式化参数</param>
+
+        public static void Trace(string message, params object[] formatArgs)
+        {
+            if (LogLevel.Trace >= Level)
+                RecordInner(LogLevel.Trace, "Trace", FormatMessage(message, formatArgs), LogType.Trace);
+        }
+        /// <summary>
+        ///   写入调试日志
+        /// </summary>
+        /// <param name="obj"> 记录对象 </param>
+
+        public static void Trace(object obj)
+        {
+            if (LogLevel.Trace >= Level)
+                RecordInner(LogLevel.Trace, "Trace", obj == null ? "NULL" : obj.ToString(), LogType.Trace);
+        }
+
+        ///<summary>
+        ///  记录一般日志
+        ///</summary>
+        ///<param name="type"> 日志类型(SG) </param>
+        ///<param name="name"> </param>
+        ///<param name="message"> 消息 </param>
+        ///<param name="formatArgs"> 格式化的参数 </param>
+
+        public static void Trace(LogType type, string name, string message, params object[] formatArgs)
+        {
+            if (LogLevel.Trace >= Level)
+                Record(name, FormatMessage(message, formatArgs), type);
+        }
+
+        #endregion
+
+        #region 调试
+
+        ///<summary>
+        ///  写入调试日志
+        ///</summary>
+        ///<param name="recordStackDebug"> 记录堆栈信息吗 </param>
+        ///<param name="message"> 日志详细信息 </param>
+        ///<param name="formatArgs"> 格式化的参数 </param>
+
+        public static void Debug(bool recordStackDebug, string message, params object[] formatArgs)
+        {
+            if (LogLevel.Debug >= Level)
+                RecordInner(LogLevel.Debug, "Debug", StackTraceInfomation(FormatMessage(message, formatArgs)), LogType.Debug);
+        }
+
+        /// <summary>
+        ///   写入调试日志
+        /// </summary>
+        /// <param name="message"> 日志详细信息 </param>
+        /// <param name="formatArgs">格式化参数</param>
+
+        public static void Debug(string message, params object[] formatArgs)
+        {
+            if (LogLevel.Debug >= Level)
+                RecordInner(LogLevel.Debug, "Debug", FormatMessage(message, formatArgs), LogType.Debug);
+        }
+        /// <summary>
+        ///   写入调试日志
+        /// </summary>
+        /// <param name="obj"> 记录对象 </param>
+
+        public static void Debug(object obj)
+        {
+            if (LogLevel.Debug >= Level)
+                RecordInner(LogLevel.Debug, "Debug", obj == null ? "NULL" : obj.ToString(), LogType.Debug);
+        }
+
+        ///<summary>
+        ///  记录一般日志
+        ///</summary>
+        ///<param name="type"> 日志类型(SG) </param>
+        ///<param name="name"> </param>
+        ///<param name="message"> 消息 </param>
+        ///<param name="formatArgs"> 格式化的参数 </param>
+
+        public static void Debug(LogType type, string name, string message, params object[] formatArgs)
+        {
+            if (LogLevel.Debug >= Level)
+                Record(name, FormatMessage(message, formatArgs), type);
+        }
+
         #endregion
 
         #region 异常
@@ -586,7 +652,7 @@ namespace Agebull.Common.Logging
                         level = LogLevel.System;
                     break;
                 case LogType.Login:
-                case LogType.WcfMessage:
+                case LogType.NetWork:
                 case LogType.Message:
                 case LogType.Request:
                 case LogType.Trace:
@@ -604,8 +670,7 @@ namespace Agebull.Common.Logging
                     level = LogLevel.System;
                     break;
             }
-            if (level >= Level)
-                RecordInner(name, FormatMessage(msg, formatArgs), type, typeName);
+            RecordInner(level, name, FormatMessage(msg, formatArgs), type, typeName);
         }
 
         /// <summary>
@@ -620,19 +685,17 @@ namespace Agebull.Common.Logging
             LogLevel level = LogLevel.None;
             switch (type)
             {
-                case LogType.Monitor:
-                    if (LogMonitor)
-                        level = LogLevel.System;
+                case LogType.Debug:
+                    level = LogLevel.Debug;
                     break;
                 case LogType.DataBase:
-                    if (LogDataSql)
-                        level = LogLevel.System;
-                    break;
+                case LogType.Monitor:
                 case LogType.Login:
-                case LogType.WcfMessage:
+                case LogType.NetWork:
                 case LogType.Message:
                 case LogType.Request:
                 case LogType.Trace:
+                case LogType.Plan:
                     level = LogLevel.Trace;
                     break;
                 case LogType.Warning:
@@ -643,12 +706,10 @@ namespace Agebull.Common.Logging
                     level = LogLevel.Error;
                     break;
                 case LogType.System:
-                case LogType.Plan:
                     level = LogLevel.System;
                     break;
             }
-            if (level >= Level)
-                RecordInner(name, msg, type, typeName);
+            RecordInner(level, name, msg, type, typeName);
         }
 
 
@@ -656,11 +717,12 @@ namespace Agebull.Common.Logging
 
         #region 内部真实记录
 
+        private static SemaphoreSlim syncSlim = new SemaphoreSlim(1);
 
         /// <summary>
         /// 待写入的日志信息集合
         /// </summary>
-        private static readonly MulitToOneQueue<RecordInfo> RecordInfos = new MulitToOneQueue<RecordInfo>();
+        private static readonly LogQueue RecordInfos = new LogQueue();
 
         /// <summary>
         /// 日志序号
@@ -670,18 +732,23 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   记录日志
         /// </summary>
+        /// <param name="level"> 所在等级 </param>
         /// <param name="name"> 原始的消息 </param>
         /// <param name="msg"> 处理后的消息 </param>
         /// <param name="type"> 日志类型 </param>
         /// <param name="typeName"> 类型名称 </param>
-        private static void RecordInner(string name, string msg, LogType type, string typeName = null)
+        internal static void RecordInner(LogLevel level, string name, string msg, LogType type, string typeName = null)
         {
+            if (level < Level)
+                return;
             if (type == LogType.None)
             {
-                type = LogType.Trace;
+                type = LogType.Message;
             }
+
             RecordInfos.Push(new RecordInfo
             {
+                Local = InRecording,
                 RequestID = GetRequestId(),
                 Machine = GetMachineName(),
                 User = GetUserName(),
@@ -699,58 +766,62 @@ namespace Agebull.Common.Logging
         /// </summary>
         private static void WriteRecordLoop()
         {
+            bool doTrace = Listener != null || TraceToConsole;
+            SystemTrace("日志开始");
             while (State != LogRecorderStatus.Shutdown)
             {
-                if (!RecordInfos.StartProcess(out var info, 100))
+                //Thread.Sleep(10);//让子弹飞一会
+                var items = RecordInfos.Switch();
+                if (items.Count == 0)
+                {
+                    Thread.Sleep(50);
                     continue;
-                RecordInfos.EndProcess();
-                info.Index = ++_id;
-                if (_id == ulong.MaxValue)
-                    _id = 1;
-                try
-                {
-                    if (Listener != null)
-                    {
-                        Listener.Trace(info);
-                    }
-                    else if (TraceToConsole)
-                    {
-                        SystemTrace(info.Message);
-                    }
                 }
-                catch (Exception ex)
+
+                var array = items.ToList();
+                items.Clear();
+                foreach (var info in array)
                 {
-                    SystemTrace("日志侦听器发生错误", ex);
+                    info.Index = ++_id;
+                    if (_id == ulong.MaxValue)
+                        _id = 1;
+                    if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
+                        BaseRecorder.RecordLog(info);
+                    if (doTrace)
+                        DoTrace(info);
                 }
                 try
                 {
-                    if (InRecording)
-                    {
-                        BaseRecorder.RecordLog(info);
-                        return;
-                    }
-                    if (!_isTextRecorder && info.Type > LogType.System)
-                        BaseRecorder.RecordLog(info);
-                    Recorder.RecordLog(info);
+                    Recorder.RecordLog(array);
                 }
                 catch (Exception ex)
                 {
                     SystemTrace("日志写入发生错误", ex);
                 }
+                GC.Collect();
             }
 
-            _logThread = null;
+            SystemTrace("日志结束");
+            syncSlim.Release();
         }
 
-
-        /// <summary>
-        /// 写入系统跟踪
-        /// </summary>
-        /// <param name="arg"></param>
-        [Conditional("TRACE")]
-        public static void SystemTrace(object arg)
+        private static void DoTrace(RecordInfo info)
         {
-            Console.WriteLine(arg);
+            try
+            {
+                if (Listener != null)
+                {
+                    Listener.Trace(info);
+                }
+                else if (TraceToConsole)
+                {
+                    SystemTrace(info.TypeName, info.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                SystemTrace("日志侦听器发生错误", ex);
+            }
         }
 
         /// <summary>
@@ -758,10 +829,10 @@ namespace Agebull.Common.Logging
         /// </summary>
         /// <param name="title"></param>
         /// <param name="arg"></param>
-        [Conditional("TRACE")]
-        public static void SystemTrace(string title, object arg)
+        internal static void SystemTrace(string title, params object[] arg)
         {
-            Console.WriteLine($"{title}:{arg}");
+            lock (BaseRecorder)
+                Console.WriteLine($"[LogRecorder] {title} {arg.LinkToString(" > ")}");
         }
 
         #endregion

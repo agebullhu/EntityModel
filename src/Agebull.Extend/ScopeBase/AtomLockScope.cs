@@ -33,7 +33,7 @@ namespace Agebull.Common
         /// <returns> 锁定范围，如果之前已锁定则为空 </returns>
         public static AtomLockScope CreateLock(object al, string name = null)
         {
-            string ln = string.Format("{0}_{1}_{2}", al.GetType().FullName, al.GetHashCode(), name);
+            string ln = $"{al.GetType().FullName}_{al.GetHashCode()}_{name}";
             if (AtomLocks.Contains(ln))
             {
                 return null;

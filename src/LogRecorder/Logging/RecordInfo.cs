@@ -8,6 +8,11 @@ namespace Agebull.Common.Logging
     public class RecordInfo
     {
         /// <summary>
+        /// 本地日志
+        /// </summary>
+        public bool Local;
+
+        /// <summary>
         /// 时间
         /// </summary>
         public DateTime Time;

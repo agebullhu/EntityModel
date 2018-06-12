@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.Common.ModelBase</AssemblyTitle>
-    <Version>2.0.1.1</Version>
+    <Version>2.1.2.3</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -25,7 +25,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.0.1.1</PackageVersion>
+    <PackageVersion>2.1.2.3</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -66,20 +66,19 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Web" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Excel\**" />
+    <Compile Remove="Ioc\**" />
     <Compile Remove="Page\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
     <Compile Remove="Type\**" />
     <EmbeddedResource Remove="Excel\**" />
+    <EmbeddedResource Remove="Ioc\**" />
     <EmbeddedResource Remove="Page\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Type\**" />
     <None Remove="Excel\**" />
+    <None Remove="Ioc\**" />
     <None Remove="Page\**" />
     <None Remove="Properties\PublishProfiles\**" />
     <None Remove="Type\**" />

@@ -11,8 +11,36 @@ namespace Agebull.Common.Configuration
     {
         #region 实例
 
-        private IConfiguration _configuration;
+        /// <summary>
+        /// 配置对象
+        /// </summary>
+        public IConfigurationSection Configuration { get; private set; }
 
+        /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        public ConfigurationManager Child(string section)
+        {
+            return new ConfigurationManager
+            {
+                Configuration = Configuration.GetSection(section)
+            };
+        }
+
+        /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        public TConfiguration Child<TConfiguration>(string section)
+        {
+            var sec = Configuration.GetSection(section);
+
+            return sec.Exists() ? sec.Get<TConfiguration>() : default(TConfiguration);
+        }
+
+        /// <summary>
+        /// 是否为空
+        /// </summary>
+        public bool IsEmpty => Configuration == null || !Configuration.Exists();
 
         /// <summary>
         /// 取配置
@@ -21,10 +49,10 @@ namespace Agebull.Common.Configuration
         /// <returns>配置内容</returns>
         public string this[string key]
         {
-            get => key == null ? null : _configuration[key];
+            get => key == null ? null : Configuration[key];
             set
             {
-                if (key != null) _configuration[key] = value;
+                if (key != null) Configuration[key] = value;
             }
         }
 
@@ -32,11 +60,20 @@ namespace Agebull.Common.Configuration
         ///   得到文本值
         /// </summary>
         /// <param name="key"> 键 </param>
-        /// <param name="def"> 缺省值（不存在或不合理时使用） </param>
+        /// <param name="def"> 缺省值（不存在会回写） </param>
         /// <returns> 文本值 </returns>
-        public string GetStr(string key, string def = "")
+        public string GetStr(string key, string def)
         {
-            return this[key] ?? def;
+            if (key == null)
+            {
+                return def;
+            }
+            string value = this[key];
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return this[key]=def;
+            }
+            return value;
         }
 
         /// <summary>
@@ -211,7 +248,7 @@ namespace Agebull.Common.Configuration
         /// </summary>
         public static ConfigurationManager AppSettings = new ConfigurationManager
         {
-            _configuration = Root.GetSection("AppSettings")
+            Configuration = Root.GetSection("AppSettings")
         };
 
         #endregion
@@ -223,7 +260,7 @@ namespace Agebull.Common.Configuration
         /// </summary>
         public static ConfigurationManager ConnectionStrings = new ConfigurationManager
         {
-            _configuration = Root.GetSection("ConnectionStrings")
+            Configuration = Root.GetSection("ConnectionStrings")
         };
 
 
@@ -234,7 +271,7 @@ namespace Agebull.Common.Configuration
         {
             return new ConfigurationManager
             {
-                _configuration = Root.GetSection(section)
+                Configuration = Root.GetSection(section)
             };
         }
 
@@ -262,9 +299,28 @@ namespace Agebull.Common.Configuration
                 if (_builder != null)
                     return _builder;
                 _builder = new ConfigurationBuilder();
+                _builder.SetBasePath(Directory.GetCurrentDirectory());
                 string file = Path.Combine(Environment.CurrentDirectory, "appsettings.json");
                 if (File.Exists(file))
                     _builder.AddJsonFile("appsettings.json");
+                else
+                {
+                    file = Path.Combine(Environment.CurrentDirectory, "appSettings.json");
+                    if (File.Exists(file))
+                        _builder.AddJsonFile("appSettings.json");
+                    else
+                    {
+                        file = Path.Combine(Environment.CurrentDirectory, "AppSettings.json");
+                        if (File.Exists(file))
+                            _builder.AddJsonFile("AppSettings.json");
+                        else
+                        {
+                            file = Path.Combine(Environment.CurrentDirectory, "Appsettings.json");
+                            if (File.Exists(file))
+                                _builder.AddJsonFile("Appsettings.json");
+                        }
+                    }
+                }
                 return _builder;
             }
             set => _builder = value;
@@ -275,11 +331,8 @@ namespace Agebull.Common.Configuration
         /// </summary>
         public static void Load(string jsonFile)
         {
-            if (_builder == null)
-            {
-                _builder = new ConfigurationBuilder();
-            }
-            _builder.AddJsonFile(jsonFile);
+            Builder.AddJsonFile(jsonFile);
+            _root = Builder.Build();
         }
         private static IConfigurationRoot _root;
 

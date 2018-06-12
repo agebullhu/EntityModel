@@ -1,17 +1,16 @@
 // 所在工程：Agebull.EntityModel
 // 整理用户：bull2
 // 建立时间：2012-08-13 5:35
-// 整理时间：2012-08-30 3:12
+// 整理时间：2018年6月12日, AM 12:25:44
 
 #region
 
 using System;
+using System.Collections.Generic;
 using Agebull.Common.Configuration;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Text;
-using Agebull.Common.Frame;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -34,17 +33,14 @@ namespace Agebull.Common.Logging
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(LogPath))
+                var sec = ConfigurationManager.Get("LogRecorder");
+                var cfgpath = sec["txtPath"];
+                if (string.IsNullOrWhiteSpace(cfgpath))
                 {
-                    var sec = ConfigurationManager.Get("LogRecorder");
-                    var cfgpath = sec["txtPath"];
-                    if (string.IsNullOrWhiteSpace(cfgpath))
-                    {
-                        cfgpath = Path.Combine(Environment.CurrentDirectory, "logs");
-                        sec["txtPath"] = cfgpath;
-                    }
-                    LogPath = cfgpath;
+                    cfgpath = Path.Combine(Environment.CurrentDirectory, "logs");
+                    sec["txtPath"] = cfgpath;
                 }
+                LogPath = cfgpath;
                 if (LogPath != null && !Directory.Exists(LogPath))
                 {
                     Directory.CreateDirectory(LogPath);
@@ -52,8 +48,9 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("日志记录:TextRecorder.Initialize", ex);
+                LogRecorder.SystemTrace("TextRecorder.Initialize", ex);
             }
+            Trace.Listeners.Add(this);
         }
 
         /// <summary>
@@ -69,6 +66,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public void Shutdown()
         {
+            DisposeWriters();
         }
 
         /// <summary>
@@ -79,130 +77,108 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   记录日志
         /// </summary>
+        /// <param name="infos"> 日志消息 </param>
+        public void RecordLog(List<RecordInfo> infos)
+        {
+            foreach (var info in infos)
+                RecordLog(info);
+        }
+
+        /// <summary>
+        ///   记录日志
+        /// </summary>
         /// <param name="info"> 日志消息 </param>
         public void RecordLog(RecordInfo info)
         {
-#if CLIENT
-            RecordLog(info.gID, info.Message, info.TypeName);
-#else
+            string name;
+            string log;
             switch (info.Type)
             {
+                case LogType.NetWork:
                 case LogType.System:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "system");
-                    break;
-                case LogType.Login:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "user");
+                    name = "system";
                     break;
                 case LogType.Request:
-                case LogType.WcfMessage:
-                case LogType.Trace:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "trace");
+                case LogType.Login:
+                    name = "user";
                     break;
                 case LogType.DataBase:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "sql");
+                    name = "sql";
                     break;
                 case LogType.Warning:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "warning");
-                    break;
-                case LogType.Error:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "error");
+                    name = "warning";
                     break;
                 case LogType.Exception:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "exception");
+                case LogType.Error:
+                    name = "error";
                     break;
                 case LogType.Plan:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "plan");
+                    name = "plan";
                     break;
                 case LogType.Monitor:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "monitor");
+                    name = "monitor";
+                    break;
+                case LogType.Trace:
+                case LogType.Debug:
+                    name = "trace";
+                    return;
+                default:
+                    name = "info";
+                    break;
+            }
+
+            switch (info.Type)
+            {
+                case LogType.Trace:
+                case LogType.Debug:
+                    log = $@"[{info.Time:u}] ({info.Machine}-{info.RequestID}):{info.Message}";
+                    break;
+                case LogType.DataBase:
+                    log = $@"/*{info.Machine}:{info.RequestID}:{info.Time:u}*/
+{info.Message}";
+                    break;
+                case LogType.Monitor:
+                    log = info.Message;
                     break;
                 default:
-                    RecordLog(info.RequestID, info.Message, info.TypeName, info.User, "info");
+                    log = JsonConvert.SerializeObject(info, Formatting.Indented);
                     break;
             }
-#endif
-        }
 
-        /// <summary>
-        ///   记录日志
-        /// </summary>
-        /// <param name="id"> 标识 </param>
-        /// <param name="msg"> 消息 </param>
-        /// <param name="type"> 日志类型 </param>
-        /// <param name="user"> 当前操作者 </param>
-        /// <param name="name"> 标识的文件后缀(如.error,则文件名可能为 20160602.error.log) </param>
-        private void RecordLog(string id, string msg, string type, string user = null, string name = null)
-        {
-            string log = type == "DataBase"
-                ? $@"
-/*Date:{ DateTime.Now.ToString(CultureInfo.InvariantCulture)}
-RQID:{id}*/
-{msg}"
-                : $@"
-RQID:{id}
-Date:{DateTime.Now.ToString(CultureInfo.InvariantCulture)}
-Type:{type}
-User:{user}
-{msg}";
+
             try
             {
-                //if (!Directory.Exists(LogPath))
-                //{
-                //    Directory.CreateDirectory(LogPath);
-                //}
-                string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyyMMdd}.{name ?? "info"}.log");
-
-                //using (ThreadLockScope.Scope(this))
-                {
-                    File.AppendAllText(ph, log, Encoding.UTF8);
-                }
+                StreamWriter writer = GetWriter(name);
+                writer.WriteLine(log);
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("日志记录:TextRecorder.RecordLog4", ex);
+                LogRecorder.SystemTrace("TextRecorder.RecordLog4", ex);
             }
         }
-
-        /// <summary>
-        ///   记录跟踪信息
-        /// </summary>
-        /// <param name="message"> </param>
-        /// <param name="type"></param>
-        public static void RecordTrace(string message, string type = "trace")
-        {
-            try
-            {
-                Recorder.RecordTraceInner(message, type);
-            }
-            catch (Exception ex)
-            {
-                LogRecorder.SystemTrace("日志记录:TextRecorder.RecordLog1", ex);
-            }
-        }
-
         /// <summary>
         ///   记录日志
         /// </summary>
-        private void RecordTraceInner(string msg, string type = "trace")
+        private void WriteFile(string log, string type)
         {
-            if (!Directory.Exists(LogPath))
+            try
             {
-                Directory.CreateDirectory(LogPath);
+                StreamWriter writer = GetWriter(type);
+                writer.WriteLine(log);
             }
-            string ph = Path.Combine(LogPath, $"{DateTime.Today:yyyy-MM-dd}.{DateTime.Now.Hour / 2}.{type.Trim('.')}.log");
-
-            using (ThreadLockScope.Scope(this))
+            catch (Exception ex)
             {
-                File.AppendAllText(ph, msg + "\n", Encoding.UTF8);
+                LogRecorder.SystemTrace("TextRecorder.WriteFile", ex);
             }
         }
+
         /// <summary>
         ///   写消息--Trace
         /// </summary>
         /// <param name="message"> </param>
         public override void Write(string message)
         {
-            RecordLog(LogRecorder.GetRequestId(), message, LogRecorder.TypeToString(LogType.Trace));
+            WriteFile($"[{DateTime.Now.ToShortTimeString()}] {message}", "trace");
         }
 
         /// <summary>
@@ -211,7 +187,67 @@ User:{user}
         /// <param name="message"> </param>
         public override void WriteLine(string message)
         {
-            RecordLog(LogRecorder.GetRequestId(), message, LogRecorder.TypeToString(LogType.Trace));
+            WriteFile($"[{DateTime.Now.ToShortTimeString()}] {message}", "trace");
         }
+
+        #region 文件列表
+
+        /// <summary>
+        /// 当前记录的时间点
+        /// </summary>
+        private long _recordTimePoint;
+
+        /// <summary>
+        /// 当前记录的时间点
+        /// </summary>
+        private void CheckTimePoint()
+        {
+            var now = DateTime.Today.Year * 1000000 + DateTime.Today.Month * 10000 + DateTime.Today.Day * 100 +
+                      (DateTime.Now.Hour / 2);
+            if (now == _recordTimePoint) return;
+            foreach (var w in _writers.Values)
+            {
+                w.Flush();
+                w.Dispose();
+            }
+            _writers.Clear();
+            _recordTimePoint = now;
+        }
+
+        /// <summary>
+        /// 所有写入的文件句柄
+        /// </summary>
+        private readonly Dictionary<string, StreamWriter> _writers =
+            new Dictionary<string, StreamWriter>(StringComparer.OrdinalIgnoreCase);
+
+        private StreamWriter GetWriter(string sub)
+        {
+            CheckTimePoint();
+            if (_writers.TryGetValue(sub, out var writer))
+                return writer;
+            string ph = Path.Combine(LogPath, $"{_recordTimePoint}.{sub}.log");
+            var file = new FileStream(ph, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+
+            writer = new StreamWriter(file) { AutoFlush = true };
+
+            _writers.Add(sub, writer);
+
+            return writer;
+        }
+
+        /// <summary>
+        /// 任务结束,环境销毁
+        /// </summary>
+        private void DisposeWriters()
+        {
+            foreach (var writer in _writers.Values)
+            {
+                writer.Flush();
+                writer.Dispose();
+            }
+            _writers.Clear();
+        }
+
+        #endregion
     }
 }

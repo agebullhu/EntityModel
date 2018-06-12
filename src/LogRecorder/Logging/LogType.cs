@@ -8,7 +8,11 @@
         /// <summary>
         ///   无
         /// </summary>
-        None ,
+        None,
+        /// <summary>
+        ///   调试
+        /// </summary>
+        Debug,
 
         /// <summary>
         ///   登录消息
@@ -21,9 +25,9 @@
         Request ,
 
         /// <summary>
-        ///   WCF消息
+        ///   网络相关的消息
         /// </summary>
-        WcfMessage ,
+        NetWork,
 
         /// <summary>
         ///   数据库

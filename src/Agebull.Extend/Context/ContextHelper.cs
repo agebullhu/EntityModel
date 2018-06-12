@@ -43,7 +43,7 @@ namespace Agebull.Common
             //#endif
             //            }
             //var ctx = new AsyncLocal<T>();
-            
+
             object value;
             name = $"{name}_{Thread.CurrentThread.ManagedThreadId}";
             lock (Contexts)

@@ -1,248 +1,232 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using Agebull.Common.Base;
 
 namespace Agebull.Common.Logging
 {
     /// <summary>
-    /// 侦测信息
-    /// </summary>
-    [Serializable]
-    class MonitorData
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public FixStack<MonitorItem> Stack;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public StringBuilder Texter;
-
-        /// <summary>
-        /// 侦测吗
-        /// </summary>
-        public bool InMonitor;
-    }
-
-    /// <summary>
-    /// 侦测信息
+    ///     跟踪信息
     /// </summary>
     [Serializable]
     internal class MonitorItem
     {
-        //[ThreadStatic] private static MonitorData data;
-        private static AsyncLocal<MonitorData> dataLocal = new AsyncLocal<MonitorData>();
-        private static MonitorData Data
-        {
-            get
-            {
-                //return dataLocal.Value;
-                ////return data ?? (data = new MonitorData());
-                //var sync = new AsyncLocal<MonitorData>();
-                return dataLocal.Value ?? (dataLocal.Value = new MonitorData());
-            }
-        }
+        /// <summary>
+        ///     记录堆栈
+        /// </summary>
+        internal LogStack<MonitorData> Stack = new LogStack<MonitorData>();
+
+        public readonly StringBuilder Texter = new StringBuilder();
+
 
         /// <summary>
-        /// 侦测吗
+        ///     侦测开关
         /// </summary>
-        internal static bool InMonitor
+        internal bool InMonitor;
+
+        /// <summary>
+        ///     开始检测资源
+        /// </summary>
+        public void BeginMonitor(string title)
         {
-            get { return Data.InMonitor; }
-            set
+            if (!InMonitor)
+                Begin(title);
+            else
+                BeginStep(title);
+        }
+
+
+        private void Begin(string title)
+        {
+            Stack.SetFix(new MonitorData
             {
-                if (value)
+                Title = title
+            });
+            InMonitor = true;
+#if !NETSTANDARD2_0
+            if (!AppDomain.MonitoringIsEnabled)
+                AppDomain.MonitoringIsEnabled = true;
+#endif
+            {
+                Stack.SetFix(new MonitorData
                 {
-                    if (Data.InMonitor)
-                        return;
-                    Data.InMonitor = true;
-                }
-                else
+                    Title = title
+                });
+                Texter.AppendLine(
+                    $"<<RequestId:{LogRecorder.GetRequestId()}>>*<<Machine:{LogRecorder.GetMachineName()}>>");
+                Texter.Append(' ', 24);
+                Texter.Append("标题");
+                Texter.Append(' ', 24);
+                Texter.Append("|状态|   时间   |   用 时(ms)   |");
+#if !NETSTANDARD2_0
+                Texter.Append("|  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");
+#endif
+                Write(title, 0);
+            }
+        }
+
+        /// <summary>
+        ///     刷新资源检测
+        /// </summary>
+        internal void BeginStep(string title)
+        {
+            Stack.Push(new MonitorData
+            {
+                Title = title
+            });
+            Write(title, 1);
+        }
+
+        /// <summary>
+        ///     刷新资源检测
+        /// </summary>
+        public void Flush(string title, bool number = false)
+        {
+            Stack.Current.Coll();
+            Stack.Current.FlushMessage();
+            Write(title, 4);
+            Stack.Current.Flush();
+        }
+
+        /// <summary>
+        ///     刷新资源检测
+        /// </summary>
+        public string End()
+        {
+            try
+            {
+                MonitorData pre = null;
+                while (Stack.StackCount > 0)
                 {
-                    Data.InMonitor = false;
+                    Stack.Current.Coll(pre);
+                    Stack.Current.EndMessage();
+                    Write(Stack.Current.Title, 2);
+                    pre = Stack.Current;
+                    Stack.Pop();
                 }
+                Stack.Current.Coll(pre);
+                Stack.FixValue.EndMessage();
+                Write(Stack.FixValue.Title ?? "Monitor", 3);
+                return Texter.ToString();
             }
-        }
-        
-        internal static FixStack<MonitorItem> MonitorStack
-        {
-            get
+            catch (Exception ex)
             {
-                return Data.Stack;
+                LogRecorder.SystemTrace("EndMonitor", ex);
+                return null;
             }
-            set
+            finally
             {
-                Data.Stack = value;
+                Texter.Clear();
+                InMonitor = false;
             }
         }
-        /// <summary>
-        /// 监视的文本写入器
-        /// </summary>
-        internal static StringBuilder MonitorTexter
+
+        internal void Write(string title, int type, bool showMonitorValue = true)
         {
-            get { return Data.Texter; }
-            set { Data.Texter = value; }
+            Texter.AppendLine();
+            var cnt = Stack.StackCount;
+            switch (type)
+            {
+                case 0:
+                case 1:
+                    if (cnt > 0)
+                        Texter.Append('│', cnt);
+                    Texter.Append('┌');
+                    break;
+                //if (cnt > 0)
+                //    Texter.Append('│', cnt);
+                //Texter.Append('┬');
+                //break;
+                case 2:
+                    if (cnt > 1)
+                        Texter.Append('│', cnt - 1);
+                    Texter.Append("├┴");
+                    break;
+                case 3:
+                    if (cnt > 0)
+                        Texter.Append('│', cnt);
+                    Texter.Append('└');
+                    break;
+                default:
+                    if (cnt > 0)
+                        Texter.Append('│', cnt);
+                    Texter.Append("├─");
+                    cnt++;
+                    break;
+            }
+
+            if (string.IsNullOrWhiteSpace(title))
+                title = "*";
+            Texter.Append(title);
+            if (!showMonitorValue) return;
+            var l = cnt * 2 + title.GetLen();
+            if (l < 50)
+                Texter.Append(' ', 50 - l);
+            Texter.Append(Stack.Current.Message);
+
         }
 
-#if !NETSTANDARD2_0
-        /// <summary>
-        /// 内存分配
-        /// </summary>
-        public long TotalAllocatedMemorySize, MonitoringTotalAllocatedMemorySize;
-        /// <summary>
-        /// 内存占用
-        /// </summary>
-        public long TotalSurvivedMemorySize, MonitoringSurvivedMemorySize;
-        /// <summary>
-        /// 处理器时间
-        /// </summary>
-        public TimeSpan MonitoringTotalProcessorTime;
-        /// <summary>
-        /// 总处理器时间
-        /// </summary>
-        public double TotalProcessorTime;
-
-#endif
-        /// <summary>
-        /// 文本
-        /// </summary>
-        public string Title, Space, message;
-        /// <summary>
-        /// 测试计数
-        /// </summary>
-        public int NumberA, NumberB, NumberC;
 
         /// <summary>
-        /// 总处理器时间
+        ///     刷新资源检测
         /// </summary>
-        public double TotalTime;
-
-        /// <summary>
-        /// 起止时间
-        /// </summary>
-        public DateTime startTime, preTime;
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        public MonitorItem(string title, string space = "")
+        public void EndStepMonitor()
         {
-            Space = space;
-            Title = title;
-
-            NumberA = 0;
-            NumberB = 0;
-            NumberC = 0;
-            TotalTime = 0F;
-#if !NETSTANDARD2_0
-            TotalProcessorTime = 0F;
-            TotalSurvivedMemorySize = 0;
-            TotalAllocatedMemorySize = 0;
-
-
-            message =
-                $"|开始| {DateTime.Now:HH:mm:ss} |       -       |     -    |     -    |{(AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize / 1048576F).ToFixLenString(10, 3)}|    -     |{(AppDomain.CurrentDomain.MonitoringSurvivedMemorySize / 1048576F).ToFixLenString(10, 3)}|";
-#else
-            message = $"|开始| {DateTime.Now:HH:mm:ss} |";
-#endif
-
-            startTime = DateTime.Now;
-            Flush();
+            if (Stack.FixValue == Stack.Current)
+            {
+                return;
+            }
+            Stack.Current.EndMessage();
+            Write(Stack.Current.Title, 2);
+            var pre = Stack.Current;
+            Stack.Pop();
+            Stack.Current.Coll(pre);
+            Stack.Current.Flush();
         }
+
+    }
+
+    /// <summary>
+    /// 根据步骤范围
+    /// </summary>
+    public class MonitorScope : ScopeBase
+    {
+        private bool _isStep;
         /// <summary>
-        /// 刷新消息
+        /// 生成范围
         /// </summary>
+        /// <param name="name"></param>
         /// <returns></returns>
-        public void FlushMessage()
+        public static MonitorScope CreateScope(string name)
         {
-            var a = DateTime.Now - preTime;
-#if !NETSTANDARD2_0
-            var b = AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime;
-            var c = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize - MonitoringTotalAllocatedMemorySize;
-            var d = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
-            var e = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize - MonitoringSurvivedMemorySize;
-            var f = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
-            message = string.Format("| ☆ |    -     |{0}|{1}|{2}|{3}|{4}|{5}|"//{6}|{7}|{8}|
-                , a.TotalMilliseconds.ToFixLenString(15, 2)
-                , b.TotalMilliseconds.ToFixLenString(10, 2)
-                , (c / 1024F).ToFixLenString(10, 3)
-                , (d / 1048576F).ToFixLenString(10, 3)
-                , (e / 1024F).ToFixLenString(10, 3)
-                , (f / 1048576F).ToFixLenString(10, 3)
-                , NumberA.ToFixLenString(10)
-                , NumberB.ToFixLenString(10)
-                , NumberC.ToFixLenString(10));
-#else
-            message = $"| ☆ |    -     |{a.TotalMilliseconds.ToFixLenString(15, 2)}|";
-#endif
+            var scope= new MonitorScope
+            {
+                _isStep = LogRecorder.Data.InMonitor
+            };
+            if (LogRecorder.Data.InMonitor)
+                LogRecorder.BeginStepMonitor(name);
+            else
+                LogRecorder.BeginMonitor(name);
+            return scope;
+        }
 
+        /// <summary>
+        /// 清理资源
+        /// </summary>
+        protected override void OnDispose()
+        {
+            if (_isStep)
+                LogRecorder.EndStepMonitor();
+            else
+                LogRecorder.EndMonitor();
+        }
+    }
 
-        }
-        /// <summary>
-        /// 收集信息
-        /// </summary>
-        /// <returns></returns>
-        public void Coll()
-        {
-            TotalTime += (DateTime.Now - preTime).TotalMilliseconds;
-#if !NETSTANDARD2_0
-            TotalProcessorTime += (AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime).TotalMilliseconds;
-            TotalSurvivedMemorySize += AppDomain.CurrentDomain.MonitoringSurvivedMemorySize - MonitoringSurvivedMemorySize;
-            TotalAllocatedMemorySize += AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize - MonitoringTotalAllocatedMemorySize;
-#endif
-        }
-        /// <summary>
-        /// 收集信息
-        /// </summary>
-        /// <returns></returns>
-        public void Coll(MonitorItem item)
-        {
-            TotalTime += item.TotalTime;
-#if !NETSTANDARD2_0
-            TotalProcessorTime += item.TotalProcessorTime;
-            TotalSurvivedMemorySize += item.TotalSurvivedMemorySize;
-            TotalAllocatedMemorySize += item.TotalAllocatedMemorySize;
-#endif
-        }
-        /// <summary>
-        /// 刷新消息
-        /// </summary>
-        /// <returns></returns>
-        public void Flush()
-        {
-#if !NETSTANDARD2_0
-            MonitoringTotalAllocatedMemorySize = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
-            MonitoringSurvivedMemorySize = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
-            MonitoringTotalProcessorTime = AppDomain.CurrentDomain.MonitoringTotalProcessorTime;
-#endif
-            preTime = DateTime.Now;
-        }
-        /// <summary>
-        /// 刷新资源检测
-        /// </summary>
-        public void EndMessage()
-        {
-            var a = DateTime.Now - startTime;
-#if !NETSTANDARD2_0
-            var d = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
-            var f = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
-            message = string.Format("|完成| {0:HH:mm:ss} |{1}/{10}|{2}|{3}|{4}|{5}|{6}|"//{7}|{8}|{9}|
-                , DateTime.Now, TotalTime.ToFixLenString(7, 1)
-                , TotalProcessorTime.ToFixLenString(10, 2)
-                , (TotalAllocatedMemorySize / 1024F).ToFixLenString(10, 3)
-                , (d / 1048576F).ToFixLenString(10, 3)
-                , (TotalSurvivedMemorySize / 1024F).ToFixLenString(10, 3)
-                , (f / 1048576F).ToFixLenString(10, 3)
-                , NumberA.ToFixLenString(10)
-                , NumberB.ToFixLenString(10)
-                , NumberC.ToFixLenString(10)
-                , a.TotalMilliseconds.ToFixLenString(7, 1));
-#else
-            message = $"|完成| {DateTime.Now:HH:mm:ss} |{TotalTime.ToFixLenString(7, 1)}/{a.TotalMilliseconds.ToFixLenString(7, 1)}|";
-#endif
-        }
+    /// <summary>
+    /// 根据步骤范围
+    /// </summary>
+    public class MonitorStepScope : MonitorScope
+    {
+
     }
 }

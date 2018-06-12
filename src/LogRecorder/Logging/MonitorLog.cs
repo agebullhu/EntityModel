@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using System.Text;
-using Agebull.Common.Base;
-using Agebull.Common.Frame;
+using System.Threading;
 
 namespace Agebull.Common.Logging
 {
@@ -12,13 +9,17 @@ namespace Agebull.Common.Logging
     partial class LogRecorder
     {
         /// <summary>
-        /// 侦测吗
+        /// 当前上下文数据
         /// </summary>
-        private static bool InMonitor
-        {
-            get { return MonitorItem.InMonitor; }
-            set { MonitorItem.InMonitor = value; }
-        }
+        private static readonly AsyncLocal<MonitorItem> DataLocal = new AsyncLocal<MonitorItem>();
+
+        [ThreadStatic]
+        private static MonitorItem _data;
+        /// <summary>
+        /// 当前范围数据
+        /// </summary>
+        internal static MonitorItem Data => _data ?? (_data = DataLocal.Value ?? (DataLocal.Value = new MonitorItem()));
+
         /// <summary>
         /// 开始检测资源
         /// </summary>
@@ -26,38 +27,9 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-
-            if (!InMonitor || MonitorItem.MonitorStack == null)
-                BeginMonitorInner(title);
-            else
-                BeginStepMonitorInner(title);
+            Data.BeginMonitor(title);
         }
-        /// <summary>
-        /// 锁定
-        /// </summary>
-        private static readonly object LockKey = new object();
 
-        static void BeginMonitorInner(string title)
-        {
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                InMonitor = true;
-#if !NETSTANDARD2_0
-                if (!AppDomain.MonitoringIsEnabled)
-                    AppDomain.MonitoringIsEnabled = true;
-#endif
-                MonitorItem.MonitorTexter = new StringBuilder();
-                StringBuilder sb = new StringBuilder();
-                sb.Append(' ', 24);
-                sb.Append("标题");
-                sb.Append(' ', 24);
-                sb.Append("|状态|   时间   |   用 时(ms)   |  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");//   计数A  |   计数B  |   计数C  |
-                ShowMinitor(sb.ToString());
-                MonitorItem.MonitorStack = new FixStack<MonitorItem>();
-                MonitorItem.MonitorStack.SetFix(new MonitorItem(title));
-                ShowMinitor(title, 0);
-            }
-        }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
@@ -65,26 +37,9 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            if (!InMonitor || MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
-            {
-                BeginMonitorInner(title);
-            }
-            else
-            {
-                BeginStepMonitorInner(title);
-            }
+            Data.BeginStep(title);
         }
-        /// <summary>
-        /// 刷新资源检测
-        /// </summary>
-        static void BeginStepMonitorInner(string title)
-        {
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                MonitorItem.MonitorStack.Push(new MonitorItem(title));
-                ShowMinitor(title, 1);
-            }
-        }
+
         /// <summary>
         /// 刷新资源检测
         /// </summary>
@@ -92,61 +47,9 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
-                    return;
-                MonitorItem.MonitorStack.Current.Coll();
-                if (MonitorItem.MonitorStack.StackCount == 0)
-                {
-                    EndMonitorInner();
-                    return;
-                }
-                MonitorItem.MonitorStack.Current.EndMessage();
-                ShowMinitor(MonitorItem.MonitorStack.Current.Title, 2);
-                MonitorItem pre = MonitorItem.MonitorStack.Current;
-                MonitorItem.MonitorStack.Pop();
-                MonitorItem.MonitorStack.Current.Coll(pre);
-                MonitorItem.MonitorStack.Current.Flush();
-            }
+            Data.EndStepMonitor();
         }
-        /// <summary>
-        /// 刷新资源检测
-        /// </summary>
-        public static void EndAllStepMonitor()
-        {
-            if (!LogMonitor)
-                return;
-            EndAllStepMonitorInner();
-        }
-        static void EndAllStepMonitorInner()
-        {
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                if (MonitorItem.MonitorStack.FixValue == MonitorItem.MonitorStack.Current)
-                {
-                    MonitorItem.MonitorStack.FixValue.Coll();
-                    return;
-                }
-                MonitorItem.MonitorStack.Current.Coll();
-                MonitorItem pre = MonitorItem.MonitorStack.Current;
-                MonitorItem.MonitorStack.Current.EndMessage();
-                ShowMinitor(MonitorItem.MonitorStack.Current.Title, 2);
-                MonitorItem.MonitorStack.Pop();
-                while (MonitorItem.MonitorStack.StackCount > 0)
-                {
-                    MonitorItem.MonitorStack.Current.Coll(pre);
-                    pre = MonitorItem.MonitorStack.Current;
-                    MonitorItem.MonitorStack.Current.EndMessage();
-                    ShowMinitor(MonitorItem.MonitorStack.Current.Title, 2);
-                    MonitorItem.MonitorStack.Pop();
-                }
-                if (pre != null)
-                {
-                    MonitorItem.MonitorStack.FixValue.Coll(pre);
-                }
-            }
-        }
+
         /// <summary>
         /// 显示监视跟踪
         /// </summary>
@@ -154,7 +57,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            ShowMinitor(message, 4, false);
+            Data.Write(message, 4, false);
         }
         /// <summary>
         /// 刷新资源检测
@@ -163,15 +66,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
-                    return;
-                MonitorItem.MonitorStack.Current.Coll();
-                MonitorItem.MonitorStack.Current.FlushMessage();
-                ShowMinitor(title, 4);
-                MonitorItem.MonitorStack.Current.Flush();
-            }
+            Data.Flush(title, number);
         }
         /// <summary>
         /// 刷新资源检测
@@ -180,7 +75,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            FlushMonitor(string.Format(fmt, args));
+            Data.Flush(string.Format(fmt, args));
         }
         /// <summary>
         /// 刷新资源检测
@@ -189,144 +84,12 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
-                    return;
-                EndAllStepMonitorInner();
-                EndMonitorInner();
-            }
-        }
-        static void EndMonitorInner()
-        {
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                try
-                {
-                    MonitorItem.MonitorStack.FixValue.EndMessage();
-                    string title = MonitorItem.MonitorStack.FixValue.Title ?? "Monitor";
-                    ShowMinitor(title, 3);
-                    string log = MonitorItem.MonitorTexter?.ToString();
+            var log = Data.End();
+            if (log != null)
+                RecordInner(LogLevel.Trace, "Monitor", log, LogType.Monitor);
+            _data = null;
+            DataLocal.Value = null;
 
-                    RecordInner(title, log, LogType.Monitor);
-
-                    //if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                    //    Clipboard.SetText( MonitorItem.MonitorTexter?.ToString());
-                }
-                catch(Exception ex)
-                {
-                    SystemTrace(ex);
-                }
-                finally
-                {
-                    InMonitor = false;
-
-                }
-            }
-        }
-        static void ShowMinitor(string title, int type, bool showMonitorValue = true)
-        {
-            if (MonitorItem.MonitorStack == null || MonitorItem.MonitorStack.Current == null)
-                return;
-            StringBuilder sb = new StringBuilder();
-            int cnt = MonitorItem.MonitorStack.StackCount;
-            switch (type)
-            {
-                case 0:
-                case 1:
-                    if (cnt > 0)
-                        sb.Append('│', cnt);
-                    sb.Append('┌');
-                    break;
-                //if (cnt > 0)
-                //    sb.Append('│', cnt);
-                //sb.Append('┬');
-                //break;
-                case 2:
-                    if (cnt > 1)
-                        sb.Append('│', cnt - 1);
-                    sb.Append("├┴");
-                    break;
-                case 3:
-                    if (cnt > 0)
-                        sb.Append('│', cnt);
-                    sb.Append('└');
-                    break;
-                default:
-                    if (cnt > 0)
-                        sb.Append('│', cnt);
-                    sb.Append("├─");
-                    cnt++;
-                    break;
-            }
-            if (string.IsNullOrWhiteSpace(title))
-                title = "*";
-            sb.Append(title);
-            if (showMonitorValue)
-            {
-                int l = cnt * 2 + title.GetLen();
-                if (l < 50)
-                    sb.Append(' ', 50 - l);
-                sb.Append(MonitorItem.MonitorStack.Current.message);
-            }
-            ShowMinitor(sb.ToString());
-        }
-        static void ShowMinitor(string msg)
-        {
-            SystemTrace(msg);
-            using (ThreadLockScope.Scope(LockKey))
-            {
-                MonitorItem.MonitorTexter?.AppendLine(msg);
-            }
-        }
-    }
-    /// <summary>
-    /// 根据步骤范围
-    /// </summary>
-    public class MonitorScope : ScopeBase
-    {
-        /// <summary>
-        /// 生成范围
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static MonitorScope CreateScope(string name)
-        {
-            LogRecorder.BeginMonitor(name);
-            return new MonitorScope();
-        }
-
-        /// <summary>
-        /// 清理资源
-        /// </summary>
-        protected override void OnDispose()
-        {
-            LogRecorder.EndMonitor();
-        }
-    }
-
-    /// <summary>
-    /// 根据步骤范围
-    /// </summary>
-    public class MonitorStepScope : ScopeBase
-    {
-        /// <summary>
-        /// 生成范围
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static MonitorStepScope CreateScope(string name)
-        {
-            LogRecorder.BeginStepMonitor(name);
-            return new MonitorStepScope();
-        }
-
-        /// <summary>
-        /// 清理资源
-        /// </summary>
-        protected override void OnDispose()
-        {
-            LogRecorder.EndStepMonitor();
         }
     }
 }
