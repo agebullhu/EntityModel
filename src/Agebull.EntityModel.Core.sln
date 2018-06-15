@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.LogRecorder"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{AC8BF8F2-AE1C-457C-8166-0EC471AF0FAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.ModelBase", "ModelBase\Agebull.Common.ModelBase.csproj", "{B95BFFA9-273E-4764-A23C-8A6B1B12D533}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,14 +65,6 @@ Global
 		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|x64.ActiveCfg = Release|Any CPU
 		{1643AD52-B84C-439B-933C-C1489C5431B7}.Release|x64.Build.0 = Release|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Debug|x64.Build.0 = Debug|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Release|x64.ActiveCfg = Release|Any CPU
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,7 +75,6 @@ Global
 		{C2B7B11A-C173-4A50-AA28-8721A53180D5} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
 		{EB3C3944-7332-4D88-B9E2-7948A0A60CF4} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
 		{1643AD52-B84C-439B-933C-C1489C5431B7} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
-		{B95BFFA9-273E-4764-A23C-8A6B1B12D533} = {AC8BF8F2-AE1C-457C-8166-0EC471AF0FAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F65055-833D-450A-80E3-D58986FBA4B6}
