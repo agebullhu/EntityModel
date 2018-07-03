@@ -7,27 +7,48 @@
 
 using System;
 using System.Collections.Generic;
-using Agebull.Common.Configuration;
 using System.Diagnostics;
 using System.IO;
-using Newtonsoft.Json;
+using Agebull.Common.Configuration;
 
 #endregion
 
 namespace Agebull.Common.Logging
 {
     /// <summary>
-    ///   文本记录器
+    ///     文本记录器
     /// </summary>
     public sealed class TxtRecorder : TraceListener, ILogRecorder
     {
         /// <summary>
-        ///   初始化
+        ///     初始化
         /// </summary>
         public static TxtRecorder Recorder = new TxtRecorder();
 
         /// <summary>
-        ///   初始化
+        ///     阻止外部构造
+        /// </summary>
+        internal TxtRecorder()
+        {
+        }
+
+        /// <summary>
+        ///     文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
+        /// </summary>
+        public static string LogPath { get; set; }
+
+        /// <summary>
+        /// 拆分日志的数量
+        /// </summary>
+        public static int SplitNumber { get; set; }
+
+        /// <summary>
+        /// 每日一个文件夹吗
+        /// </summary>
+        public static bool dayFolder { get; set; }
+
+        /// <summary>
+        ///     初始化
         /// </summary>
         public void Initialize()
         {
@@ -41,28 +62,21 @@ namespace Agebull.Common.Logging
                     sec["txtPath"] = cfgpath;
                 }
                 LogPath = cfgpath;
+                SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
+                dayFolder = sec.GetBool("dayFolder", true);
                 if (LogPath != null && !Directory.Exists(LogPath))
-                {
                     Directory.CreateDirectory(LogPath);
-                }
             }
             catch (Exception ex)
             {
                 LogRecorder.SystemTrace("TextRecorder.Initialize", ex);
             }
+
             Trace.Listeners.Add(this);
         }
 
         /// <summary>
-        /// 阻止外部构造
-        /// </summary>
-        internal TxtRecorder()
-        {
-
-        }
-
-        /// <summary>
-        ///   停止
+        ///     停止
         /// </summary>
         public void Shutdown()
         {
@@ -70,12 +84,7 @@ namespace Agebull.Common.Logging
         }
 
         /// <summary>
-        ///   文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
-        /// </summary>
-        public static string LogPath { get; set; }
-
-        /// <summary>
-        ///   记录日志
+        ///     记录日志
         /// </summary>
         /// <param name="infos"> 日志消息 </param>
         public void RecordLog(List<RecordInfo> infos)
@@ -85,7 +94,7 @@ namespace Agebull.Common.Logging
         }
 
         /// <summary>
-        ///   记录日志
+        ///     记录日志
         /// </summary>
         /// <param name="info"> 日志消息 </param>
         public void RecordLog(RecordInfo info)
@@ -95,85 +104,78 @@ namespace Agebull.Common.Logging
             switch (info.Type)
             {
                 case LogType.NetWork:
-                case LogType.System:
-                    name = "system";
-                    break;
+                case LogType.Plan:
                 case LogType.Request:
+                case LogType.System:
                 case LogType.Login:
-                    name = "user";
+                    name = "system";
+                    log =
+                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     break;
                 case LogType.DataBase:
                     name = "sql";
+                    log = $@"/*[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User}*/
+{info.Message}
+";
                     break;
                 case LogType.Warning:
+                    log =
+                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     name = "warning";
                     break;
-                case LogType.Exception:
                 case LogType.Error:
+                case LogType.Exception:
                     name = "error";
-                    break;
-                case LogType.Plan:
-                    name = "plan";
-                    break;
-                case LogType.Monitor:
-                    name = "monitor";
-                    break;
-                case LogType.Trace:
-                case LogType.Debug:
-                    name = "trace";
-                    return;
-                default:
-                    name = "info";
-                    break;
-            }
-
-            switch (info.Type)
-            {
-                case LogType.Trace:
-                case LogType.Debug:
-                    log = $@"[{info.Time:u}] ({info.Machine}-{info.RequestID}):{info.Message}";
-                    break;
-                case LogType.DataBase:
-                    log = $@"/*{info.Machine}:{info.RequestID}:{info.Time:u}*/
-{info.Message}";
+                    log =
+                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.ThreadID}-{info.RequestID}-{info.User} > 
+{info.Message}
+";
                     break;
                 case LogType.Monitor:
                     log = info.Message;
+                    name = "monitor";
                     break;
                 default:
-                    log = JsonConvert.SerializeObject(info, Formatting.Indented);
+                    name = "trace";
+                    log =
+                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     break;
             }
 
-
             try
             {
-                StreamWriter writer = GetWriter(name);
-                writer.WriteLine(log);
+                var writer = GetWriter(name);
+                writer.Size += log.Length;
+                writer.Stream.WriteLine(log);
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("TextRecorder.RecordLog4", ex);
+                LogRecorder.SystemTrace("TextRecorder.RecordLog4", name, ex);
             }
         }
+
         /// <summary>
-        ///   记录日志
+        ///     记录日志
         /// </summary>
         private void WriteFile(string log, string type)
         {
+            var info = GetWriter(type);
             try
             {
-                StreamWriter writer = GetWriter(type);
-                writer.WriteLine(log);
+                info.Size += log.Length;
+                info.Stream.WriteLine(log);
             }
             catch (Exception ex)
             {
                 LogRecorder.SystemTrace("TextRecorder.WriteFile", ex);
+                info.Stream.Dispose();
+                info.Stream.Close();
+                ResetFile(type, info);
             }
         }
 
         /// <summary>
-        ///   写消息--Trace
+        ///     写消息--Trace
         /// </summary>
         /// <param name="message"> </param>
         public override void Write(string message)
@@ -182,7 +184,7 @@ namespace Agebull.Common.Logging
         }
 
         /// <summary>
-        ///   写一行消息--Trace
+        ///     写一行消息--Trace
         /// </summary>
         /// <param name="message"> </param>
         public override void WriteLine(string message)
@@ -193,59 +195,91 @@ namespace Agebull.Common.Logging
         #region 文件列表
 
         /// <summary>
-        /// 当前记录的时间点
+        ///     当前记录的时间点
         /// </summary>
         private long _recordTimePoint;
 
+        private DateTime pointTime;
         /// <summary>
-        /// 当前记录的时间点
+        ///     当前记录的时间点
         /// </summary>
         private void CheckTimePoint()
         {
-            var now = DateTime.Today.Year * 1000000 + DateTime.Today.Month * 10000 + DateTime.Today.Day * 100 +
-                      (DateTime.Now.Hour / 2);
-            if (now == _recordTimePoint) return;
-            foreach (var w in _writers.Values)
+            var day = (DateTime.Today.Year << 16) + (DateTime.Today.Month << 8) + DateTime.Today.Day;
+            if (day == _recordTimePoint)
+                return;
+            pointTime = DateTime.Today;
+            if (dayFolder)
             {
-                w.Flush();
-                w.Dispose();
+                IOHelper.CheckPath(LogPath, $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}");
             }
-            _writers.Clear();
-            _recordTimePoint = now;
+            DisposeWriters(true);
+            _recordTimePoint = day;
         }
 
+        private class FileInfo
+        {
+            public int Size;
+            public int Index;
+            public StreamWriter Stream;
+        }
         /// <summary>
-        /// 所有写入的文件句柄
+        ///     所有写入的文件句柄
         /// </summary>
-        private readonly Dictionary<string, StreamWriter> _writers =
-            new Dictionary<string, StreamWriter>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, FileInfo> _writers = new Dictionary<string, FileInfo>();
 
-        private StreamWriter GetWriter(string sub)
+        private FileInfo GetWriter(string sub)
         {
             CheckTimePoint();
-            if (_writers.TryGetValue(sub, out var writer))
-                return writer;
-            string ph = Path.Combine(LogPath, $"{_recordTimePoint}.{sub}.log");
-            var file = new FileStream(ph, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-
-            writer = new StreamWriter(file) { AutoFlush = true };
-
-            _writers.Add(sub, writer);
-
-            return writer;
+            if (_writers.TryGetValue(sub, out var info) && info.Size < SplitNumber)
+            {
+                return info;
+            }
+            if (info == null)
+            {
+                _writers.Add(sub, info = new FileInfo());
+            }
+            ResetFile(sub, info);
+            return info;
         }
 
         /// <summary>
-        /// 任务结束,环境销毁
+        ///     任务结束,环境销毁
         /// </summary>
-        private void DisposeWriters()
+        private void DisposeWriters(bool reset = false)
         {
-            foreach (var writer in _writers.Values)
+            foreach (var info in _writers)
             {
-                writer.Flush();
-                writer.Dispose();
+                info.Value.Stream.Flush();
+                info.Value.Stream.Dispose();
+                if (!reset)
+                    continue;
+                ResetFile(info.Key, info.Value);
             }
             _writers.Clear();
+        }
+
+        private void ResetFile(string sub, FileInfo info)
+        {
+            info.Size = 0;
+            string fileName;
+            do
+            {
+                info.Index++;
+                fileName = dayFolder
+                    ? Path.Combine(LogPath,
+                        $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}",
+                        $"{sub}.{info.Index:D3}.log")
+                     : Path.Combine(LogPath,
+                        $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}.{sub}.{info.Index:D3}.log");
+            }
+            while (File.Exists(fileName));
+            var stream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+
+            info.Stream = new StreamWriter(stream)
+            {
+                AutoFlush = true
+            };
         }
 
         #endregion

@@ -717,7 +717,7 @@ namespace Agebull.Common.Logging
 
         #region 内部真实记录
 
-        private static SemaphoreSlim syncSlim = new SemaphoreSlim(1);
+        private static readonly SemaphoreSlim syncSlim = new SemaphoreSlim(1);
 
         /// <summary>
         /// 待写入的日志信息集合
@@ -768,6 +768,7 @@ namespace Agebull.Common.Logging
         {
             bool doTrace = Listener != null || TraceToConsole;
             SystemTrace("日志开始");
+            int cnt = 0;
             while (State != LogRecorderStatus.Shutdown)
             {
                 //Thread.Sleep(10);//让子弹飞一会
@@ -798,7 +799,11 @@ namespace Agebull.Common.Logging
                 {
                     SystemTrace("日志写入发生错误", ex);
                 }
-                GC.Collect();
+                if (++cnt == 24)
+                {
+                    GC.Collect();
+                    cnt = 0;
+                }
             }
 
             SystemTrace("日志结束");
