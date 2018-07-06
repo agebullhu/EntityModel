@@ -13,7 +13,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         /// 名称
         /// </summary>
-        [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [DataMember, JsonProperty("name",NullValueHandling = NullValueHandling.Ignore)]
         protected string _name;
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     标题
         /// </summary>
-        [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [DataMember, JsonProperty("caption", NullValueHandling = NullValueHandling.Ignore)]
         protected string _caption;
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     说明
         /// </summary>
-        [DataMember, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [DataMember, JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
         protected string _description;
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Gboxt.Common.DataModel
         [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("说明")]
         public string Description
         {
-            get => _description ?? _caption ?? _name;
+            get => _description;
             set
             {
                 if (_description == value)
