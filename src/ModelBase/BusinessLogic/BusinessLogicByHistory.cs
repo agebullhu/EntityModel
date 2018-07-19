@@ -21,7 +21,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicByHistory<TData, TAccess> : BusinessLogicByStateData<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, Gboxt.Common.DataModel.Extends.IHistoryData,  IStateData, new()
+        where TData : EditDataObject, IIdentityData, IHistoryData,  IStateData, new()
         where TAccess : class, IDataTable<TData>, new()
     {
         /// <summary>

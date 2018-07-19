@@ -36,8 +36,8 @@ namespace Gboxt.Common.DataModel
         public EntityLoadScope(EditDataObject entity)
         {
             _entity = entity;
-            _readOnly = entity.IsReadOnly;
-            entity.IsReadOnly = true;
+            _readOnly = entity.__IsReadOnly;
+            entity.__IsReadOnly = true;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         protected override void OnDispose()
         {
-            _entity.IsReadOnly = _readOnly;
+            _entity.__IsReadOnly = _readOnly;
         }
     }
 }

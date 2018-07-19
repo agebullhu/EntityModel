@@ -22,10 +22,10 @@ namespace Gboxt.Common.DataModel.MySql
             if (string.IsNullOrWhiteSpace(fields))
                 fields = null;
             _table = table;
-            _fields = table._contextReadFields;
-            _loadAction = table.ContentLoadAction;
-            table._contextReadFields = fields;
-            table.ContentLoadAction = loadAction;
+            _fields = table.DynamicReadFields ;
+            _loadAction = table.DynamicLoadAction;
+            table.DynamicReadFields = fields;
+            table.DynamicLoadAction = loadAction;
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         protected override void OnDispose()
         {
-            _table._contextReadFields = _fields;
-            _table.ContentLoadAction = _loadAction;
+            _table.DynamicReadFields = _fields;
+            _table.DynamicLoadAction = _loadAction;
         }
     }
 }

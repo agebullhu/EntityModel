@@ -94,10 +94,7 @@ namespace Gboxt.Common.DataModel
                 propertyChanged -= value;
                 propertyChanged += value;
             }
-            remove
-            {
-                propertyChanged -= value;
-            }
+            remove => propertyChanged -= value;
         }
 
         /// <summary>

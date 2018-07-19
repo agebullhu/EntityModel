@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq.Expressions;
 using Agebull.Common.Logging;
 
 namespace Gboxt.Common.DataModel.BusinessLogic
@@ -13,11 +16,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         where TAccess : class, IDataTable<TData>, new()
     {
         #region 读数据
-        /*
+        
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
+        public ApiPageResult<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, null, false, condition, args);
         }
@@ -25,7 +28,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
+        public ApiPageResult<TData> PageData(int page, int limit, string sort, bool desc, string condition,
             params DbParameter[] args)
         {
             using (Access.DataBase.CreateDataBaseScope())
@@ -34,10 +37,13 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 {
                     var data = Access.PageData(page, limit, sort, desc, condition, args);
                     var count = (int)Access.Count(condition, args);
-                    return new EasyUiGridData<TData>
+                    return new ApiPageResult<TData>
                     {
-                        Data = data,
-                        Total = count
+                        ResultData = new ApiPageData<TData>
+                        {
+                            RowCount= count,
+                            Rows = data
+                        }
                     };
                 }
             }
@@ -46,7 +52,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         /// <summary>
         ///     分页读取
         /// </summary>
-        public EasyUiGridData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
+        public ApiPageResult<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
             using (Access.DataBase.CreateDataBaseScope())
             {
@@ -58,15 +64,18 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                     }
                     var data = Access.PageData(page, limit, lambda);
                     var count = (int)Access.Count(lambda);
-                    return new EasyUiGridData<TData>
+                    return new ApiPageResult<TData>
                     {
-                        Data = data,
-                        Total = count
+                        ResultData = new ApiPageData<TData>
+                        {
+                            RowCount = count,
+                            Rows = data
+                        }
                     };
                 }
             }
         }
-        */
+        /* */
         #endregion
 
         #region 写数据
@@ -243,14 +252,16 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         public bool Delete(IEnumerable<long> lid)
         {
             using (Access.DataBase.CreateDataBaseScope())
-            using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                foreach (var id in lid)
+                using (var scope = Access.DataBase.CreateTransactionScope())
                 {
-                    if (!Delete(id))
-                        return false;
+                    foreach (var id in lid)
+                    {
+                        if (!Delete(id))
+                            return false;
+                    }
+                    scope.SetState(true);
                 }
-                scope.SetState(true);
             }
             return true;
         }

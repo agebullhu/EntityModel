@@ -5,8 +5,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
-    <AssemblyTitle>Agebull.Extends</AssemblyTitle>
-    <Version>2.1.6</Version>
+    <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
+    <Version>2.2.1.1</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -18,7 +18,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.1.6</PackageVersion>
+    <PackageVersion>2.2.1.1</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

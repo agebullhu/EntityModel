@@ -24,17 +24,26 @@ namespace Gboxt.Common.DataModel.MySql
         private readonly Dictionary<string, MySqlParameter> _parameters = new Dictionary<string, MySqlParameter>();
 
         /// <summary>
+        ///     参数列表(调用时生成数组,请只读调用,可以设置)
+        /// </summary>
+        public IEnumerable<MySqlParameter> MySqlParameter => _parameters.Values;
+
+        /// <summary>
         ///     条件
         /// </summary>
         public string ConditionSql { get; set; }
 
+        /// <summary>
+        ///     参数列表(调用时生成数组,请只读调用,可以设置)
+        /// </summary>
+        public bool HaseParameters => _parameters.Count > 0;
 
         /// <summary>
         ///     参数列表(调用时生成数组,请只读调用,可以设置)
         /// </summary>
         public MySqlParameter[] Parameters
         {
-            get { return _parameters.Values.ToArray(); }
+            get => _parameters.Values.ToArray();
             set
             {
                 _parameters.Clear();

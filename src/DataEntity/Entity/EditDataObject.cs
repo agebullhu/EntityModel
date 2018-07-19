@@ -115,7 +115,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         public bool FieldIsModified(int propertyIndex)
         {
-            return !IsReadOnly && __EntityStatus.FieldIsModified(propertyIndex);
+            return !__IsReadOnly && __EntityStatus.FieldIsModified(propertyIndex);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="propertyIndex"> 字段的名字 </param>
         public virtual void SetUnModify(int propertyIndex)
         {
-            if (IsReadOnly)
+            if (__IsReadOnly)
             {
                 return;
             }
@@ -148,7 +148,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="propertyIndex">属性</param>
         protected sealed override void RecordModifiedInner(int propertyIndex)
         {
-            if (!IsReadOnly && !__EntityStatus.Arrest.HasFlag(EditArrestMode.RecordChanged))
+            if (!__IsReadOnly && !__EntityStatus.Arrest.HasFlag(EditArrestMode.RecordChanged))
             {
                 __EntityStatus.RecordModified(propertyIndex);
             }
@@ -311,7 +311,7 @@ namespace Gboxt.Common.DataModel
         [IgnoreDataMember, Browsable(false), JsonIgnore]
         public bool __IsFromUser
         {
-            get { return (_x_entity_state_xx_ & 0x1) == 0x1; }
+            get => (_x_entity_state_xx_ & 0x1) == 0x1;
             set
             {
                 if (value)
@@ -325,10 +325,7 @@ namespace Gboxt.Common.DataModel
         ///     属性总量
         /// </summary>
         [IgnoreDataMember, Browsable(false), JsonIgnore]
-        public int __PropertyCount
-        {
-            get { return __Struct.Properties.Count; }
-        }
+        public int __PropertyCount => __Struct.Properties.Count;
 
         private Dictionary<string, string> _properties;
 

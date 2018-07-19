@@ -22,7 +22,7 @@ namespace Gboxt.Common.DataModel
         [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("名称")]
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 var now = !string.IsNullOrWhiteSpace(value) ? value.Trim() : null;

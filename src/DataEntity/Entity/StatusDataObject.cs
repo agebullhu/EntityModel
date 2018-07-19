@@ -34,35 +34,29 @@ namespace Gboxt.Common.DataModel
         ///     是否只读,用于在访问前__EntityStatus前防止构造__EntityStatus消耗内存
         /// </summary>
         [IgnoreDataMember, JsonIgnore]
-        private bool _isReadOnly;
+        private bool __isReadOnly;
 
         /// <summary>
         ///     是否只读,用于在访问前__EntityStatus前防止构造__EntityStatus消耗内存
         /// </summary>
         [Browsable(false), IgnoreDataMember, JsonIgnore]
-        public bool IsReadOnly
+        public bool __IsReadOnly
         {
-            get { return _isReadOnly; }
-            set { _isReadOnly = value; }
+            get => __isReadOnly;
+            set => __isReadOnly = value;
         }
 
         /// <summary>
         ///     状态对象为空
         /// </summary>
         [Browsable(false), IgnoreDataMember, JsonIgnore]
-        public bool __EntityStatusNull
-        {
-            get { return __status == null; }
-        }
+        public bool __EntityStatusNull => __status == null;
 
         /// <summary>
         ///     状态对象
         /// </summary>
         [Browsable(false), IgnoreDataMember, JsonIgnore]
-        public TStatus __EntityStatus
-        {
-            get { return __status ?? (__status = CreateStatus()); }
-        }
+        public TStatus __EntityStatus => __status ?? (__status = CreateStatus());
 
         /// <summary>
         ///     构建状态对象

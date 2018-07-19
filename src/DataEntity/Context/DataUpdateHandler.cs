@@ -12,7 +12,7 @@ using System.Linq;
 using Agebull.Common.Ioc;
 using Newtonsoft.Json;
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Gboxt.Common.DataModel
 {
     /// <summary>
     ///     数据更新处理器
@@ -22,13 +22,13 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         /// 事件代理
         /// </summary>
-        public static IEntityEventProxy EventProxy
+        public static ExtendEvents.IEntityEventProxy EventProxy
         {
             get;
         }
         static DataUpdateHandler()
         {
-            EventProxy = IocHelper.Create<IEntityEventProxy>();
+            EventProxy = IocHelper.Create<ExtendEvents.IEntityEventProxy>();
         }
         /// <summary>
         ///     更新注入处理器
@@ -67,11 +67,9 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     保存前处理
         /// </summary>
-        /// <param name="database">数据库类型</param>
-        /// <param name="entity">实体类型</param>
         /// <param name="data">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnPrepareSave(string database, string entity, EditDataObject data, DataOperatorType operatorType)
+        public static void OnPrepareSave(EditDataObject data, DataOperatorType operatorType)
         {
             if (_triggers == null)
                 return;
@@ -87,35 +85,29 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     保存完成后期处理
         /// </summary>
-        /// <param name="database">数据库类型</param>
-        /// <param name="entity">实体类型</param>
         /// <param name="data">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnDataSaved(string database, string entity, EditDataObject data, DataOperatorType operatorType)
+        public static void OnDataSaved(EditDataObject data, DataOperatorType operatorType)
         {
-            if (_triggers != null)
-            {
-                if (Triggers.ContainsKey(data.__Struct.EntityType))
-                    foreach (var trigger in Triggers[data.__Struct.EntityType])
-                        trigger.OnDataSaved(data, operatorType);
-                if (Triggers.ContainsKey(0))
-                    foreach (var trigger in Triggers[0])
-                        trigger.OnDataSaved(data, operatorType);
-            }
-            EventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
+            if (_triggers == null)
+                return;
+            if (Triggers.ContainsKey(data.__Struct.EntityType))
+                foreach (var trigger in Triggers[data.__Struct.EntityType])
+                    trigger.OnDataSaved(data, operatorType);
+            if (!Triggers.ContainsKey(0))
+                return;
+            foreach (var trigger in Triggers[0])
+                trigger.OnDataSaved(data, operatorType);
         }
 
         /// <summary>
         ///     更新语句前处理(单个实体操作不引发)
         /// </summary>
-        /// <param name="database">数据库类型</param>
-        /// <param name="entity">实体类型</param>
         /// <param name="entityId">实体类型ID</param>
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecuting(string database, string entity, int entityId, string condition, IEnumerable<DbParameter> args,
-            DataOperatorType operatorType)
+        public static void OnOperatorExecuting(int entityId, string condition, IEnumerable<DbParameter> args,DataOperatorType operatorType)
         {
             if (_triggers == null)
                 return;
@@ -123,7 +115,8 @@ namespace Gboxt.Common.DataModel.MySql
             if (Triggers.ContainsKey(entityId))
                 foreach (var trigger in Triggers[entityId])
                     trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
-            if (!Triggers.ContainsKey(0)) return;
+            if (!Triggers.ContainsKey(0))
+                return;
             foreach (var trigger in Triggers[0])
                 trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
         }
@@ -131,26 +124,22 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
-        /// <param name="database">数据库类型</param>
-        /// <param name="entity">实体类型</param>
         /// <param name="entityId">实体类型ID</param>
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecutd(string database, string entity, int entityId, string condition, IEnumerable<DbParameter> args,
-            DataOperatorType operatorType)
+        public static void OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args,DataOperatorType operatorType)
         {
-            if (_triggers != null)
-            {
-                var mySqlParameters = args as DbParameter[] ?? args.ToArray();
-                if (Triggers.ContainsKey(entityId))
-                    foreach (var trigger in Triggers[entityId])
-                        trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
-                if (Triggers.ContainsKey(0))
-                    foreach (var trigger in Triggers[0])
-                        trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
-            }
-            EventProxy?.OnStatusChanged(database, entity, DataOperatorType.Delete, JsonConvert.SerializeObject(entity));
+            if (_triggers == null)
+                return;
+            var mySqlParameters = args as DbParameter[] ?? args.ToArray();
+            if (Triggers.ContainsKey(entityId))
+                foreach (var trigger in Triggers[entityId])
+                    trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
+            if (!Triggers.ContainsKey(0))
+                return;
+            foreach (var trigger in Triggers[0])
+                trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
         }
     }
 }

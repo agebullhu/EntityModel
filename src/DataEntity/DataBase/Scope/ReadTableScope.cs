@@ -8,7 +8,7 @@
 
 using Agebull.Common.Base;
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Gboxt.Common.DataModel
 {
     /// <summary>
     ///     修改读取对象范围

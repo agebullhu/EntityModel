@@ -87,6 +87,11 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     批量更新
         /// </summary>
-        MulitUpdate
+        MulitUpdate,
+
+        /// <summary>
+        ///     批量删除
+        /// </summary>
+        MulitDelete
     }
 }

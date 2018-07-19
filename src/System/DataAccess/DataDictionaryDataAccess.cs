@@ -19,7 +19,7 @@ namespace Gboxt.Common.SystemModel.DataAccess
     /// <summary>
     ///     数据字典
     /// </summary>
-    sealed partial class DataDictionaryDataAccess : MySqlTable<DataDictionaryData>
+    sealed partial class DataDictionaryDataAccess : MySqlTable<DataDictionaryData, SystemDb>
     {
         /// <summary>
         /// 保存使用的SQL语句

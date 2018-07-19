@@ -21,11 +21,11 @@ namespace Gboxt.Common.DataModel
     /// </summary>
     public interface IDataBase : IConfig, IDisposable
     {
-        ///// <summary>
-        ///// 生成数据库使用范围
-        ///// </summary>
-        ///// <returns></returns>
-        //IDisposable CreateDataBaseScope();
+        /// <summary>
+        /// 生成数据库使用范围
+        /// </summary>
+        /// <returns></returns>
+        IDisposable CreateDataBaseScope();
 
         /// <summary>
         /// 生成事务范围

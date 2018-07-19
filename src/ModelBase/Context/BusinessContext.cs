@@ -9,13 +9,10 @@
 #region 引用
 
 using System;
-using System.Collections.Generic;
 using System.Text;
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
-using Gboxt.Common.DataModel.BusinessLogic;
-using Gboxt.Common.DataModel.MySql;
 using Gboxt.Common.SystemModel;
-using Microsoft.Extensions.DependencyInjection;
 
 #endregion
 
@@ -24,7 +21,7 @@ namespace Gboxt.Common.DataModel
     /// <summary>
     ///     为业务处理上下文对象
     /// </summary>
-    public class BusinessContext : IDisposable
+    public class BusinessContext : IDisposable, IBusinessContext
     {
         #region 全局消息
 
@@ -65,9 +62,9 @@ namespace Gboxt.Common.DataModel
             get;
             set;
         }
-        
-        #endregion 
-        
+
+        #endregion
+
         #region 权限对象
 
         /// <summary>
@@ -78,15 +75,15 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     是否工作在系统模式下
         /// </summary>
-        public bool IsSystemMode { get;set; }
-        
+        public bool IsSystemMode { get; set; }
+
         /// <summary>
         ///     当前登录的用户
         /// </summary>
-        public Gboxt.Common.SystemModel.ILoginUser LoginUser
+        public ILoginUser LoginUser
         {
-            get => _loginUser ?? (_loginUser = IocHelper.Provider.GetService<Gboxt.Common.SystemModel.ILoginUser>());
-            set => _loginUser = value;
+            get;
+            set;
         }
 
         /// <summary>
@@ -95,58 +92,10 @@ namespace Gboxt.Common.DataModel
         public long LoginUserId => LoginUser?.Id ?? -1;
 
         /// <summary>
-        ///     当前页面节点配置
-        /// </summary>
-        public IPageItem PageItem { get; set; }
-
-        /// <summary>
-        ///     权限校验对象
-        /// </summary>
-        private IPowerChecker _powerChecker;
-
-
-        /// <summary>
-        ///     权限校验对象
-        /// </summary>
-        public IPowerChecker PowerChecker => _powerChecker ?? (_powerChecker = IocHelper.Provider.GetService<IPowerChecker>());
-
-        /// <summary>
-        ///     用户的角色权限
-        /// </summary>
-        private List<IRolePower> _powers;
-
-        /// <summary>
-        ///     用户的角色权限
-        /// </summary>
-        public List<IRolePower> Powers => _powers ?? (_powers = PowerChecker.LoadUserPowers(LoginUser));
-
-        /// <summary>
-        /// 当前页面权限设置
-        /// </summary>
-        public IRolePower CurrentPagePower
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// 在当前页面检查是否可以执行操作
-        /// </summary>
-        /// <param name="action">操作</param>
-        /// <returns></returns>
-        public bool CanDoCurrentPageAction(string action)
-        {
-            return PowerChecker == null || PowerChecker.CanDoAction(LoginUser, PageItem, action);
-        }
-
-        /// <summary>
         /// 用户令牌
         /// </summary>
-        public Guid Tooken { get; set; }
+        public string UserToken { get; set; }
 
-        /// <summary>
-        /// 用户令牌是否保存在COOKIE中;
-        /// </summary>
-        public bool WorkByCookie { get; set; }
 
         #endregion
 
@@ -156,12 +105,12 @@ namespace Gboxt.Common.DataModel
         ///     线程单例对象
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        [ThreadStatic] internal static BusinessContext _current;
+        [ThreadStatic] internal static IBusinessContext _current;
 
         /// <summary>
         ///     取得或设置线程单例对象，当前对象不存在时，会自动构架一个
         /// </summary>
-        public static BusinessContext Current
+        public static IBusinessContext Current
         {
             get => _current ?? CreateContext();
             internal set => _current = value;
@@ -184,24 +133,18 @@ namespace Gboxt.Common.DataModel
         ///     取得当前的上下文对象
         /// </summary>
         /// <returns>如果当前的上下文对象为null,则为null</returns>
-        internal static BusinessContext GetCurrentContext()
+        internal static IBusinessContext GetCurrentContext()
         {
             return _current;
         }
 
         /// <summary>
-        ///     构建一个上下文对象方法的后期注入
-        /// </summary>
-        /// <returns>上下文对象</returns>
-        public static Func<BusinessContext> CreateFunc;
-
-        /// <summary>
         ///     构建一个上下文对象
         /// </summary>
         /// <returns>上下文对象</returns>
-        public static BusinessContext CreateContext()
+        internal static IBusinessContext CreateContext()
         {
-            return CreateFunc != null ? CreateFunc() : new BusinessContext();
+            return IocHelper.Create<IBusinessContext>();
         }
 
         /// <summary>
@@ -217,35 +160,31 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         private bool _isDisposed;
 
-        private Gboxt.Common.SystemModel.ILoginUser _loginUser;
-
         /// <summary>
         ///     执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
+            if (_isDisposed)
+            {
+                return;
+            }
+            _isDisposed = true;
             DoDispose();
+            GC.ReRegisterForFinalize(this);
+            if (_current == this)
+            {
+                _current = null;
+            }
         }
 
         /// <summary>
         ///     执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
         /// <filterpriority>2</filterpriority>
-        private void DoDispose()
+        protected virtual void DoDispose()
         {
-            if (_isDisposed)
-            {
-                return;
-            }
-            GC.ReRegisterForFinalize(this);
-            TransactionScope.EndAll();
-            LogRecorder.MonitorTrace("BusinessContext.DoDispose");
-            _isDisposed = true;
-            if (_current == this)
-            {
-                _current = null;
-            }
         }
 
         #endregion

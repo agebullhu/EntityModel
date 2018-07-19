@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using Agebull.Common.DataModel.Redis;
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.ProjectDeveloper.WebDomain.Models;
 using Gboxt.Common.DataModel;
@@ -406,7 +407,7 @@ namespace Agebull.Common.DataModel.SystemModel
                 IsFolder = true
             };
             var access = new PageItemDataAccess();
-            List<PageItemData> pages = access.All(p => p.ItemType <= PageItemType.Page);
+            var pages = access.All(p => p.ItemType <= PageItemType.Page);
             foreach (var folder in pages.Where(p => p.ItemType == PageItemType.Root).OrderBy(p => p.Index))
             {
                 var node = new EasyUiTreeNode

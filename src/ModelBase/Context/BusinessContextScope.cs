@@ -24,12 +24,12 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     上一个对象
         /// </summary>
-        private readonly BusinessContext _preContext;
+        private readonly IBusinessContext _preContext;
 
         /// <summary>
         ///     范围内对象
         /// </summary>
-        private readonly BusinessContext _nowContext;
+        private readonly IBusinessContext _nowContext;
 
         /// <summary>
         ///     构造

@@ -15,11 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.MySql",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.Redis", "Redis\Agebull.EntityModel.Redis.csproj", "{EB3C3944-7332-4D88-B9E2-7948A0A60CF4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{677DFB08-4083-4DC0-8620-9D418AD71FF0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.Common.LogRecorder", "LogRecorder\Agebull.Common.LogRecorder.csproj", "{1643AD52-B84C-439B-933C-C1489C5431B7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{AC8BF8F2-AE1C-457C-8166-0EC471AF0FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

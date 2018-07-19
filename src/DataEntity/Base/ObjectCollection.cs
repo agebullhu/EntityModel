@@ -131,7 +131,7 @@ namespace Agebull.Common.DataModel
                 statusChanged -= value;
                 statusChanged += value;
             }
-            remove { statusChanged -= value; }
+            remove => statusChanged -= value;
         }
 
         /// <summary>

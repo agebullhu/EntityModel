@@ -94,10 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
     <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
     <ProjectReference Include="..\LogRecorder\Agebull.Common.LogRecorder.csproj" />
-    <ProjectReference Include="..\Redis\Agebull.EntityModel.Redis.csproj" />
   </ItemGroup>
 
 </Project>

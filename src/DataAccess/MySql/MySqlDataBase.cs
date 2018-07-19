@@ -10,7 +10,6 @@
 
 using System;
 using System.Collections.Generic;
-using Agebull.Common.Configuration;
 using System.Data;
 using MySql.Data.MySqlClient;
 using System.Diagnostics;
@@ -44,6 +43,13 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
         #region 引用范围
+
+        /// <summary>
+        /// 生成数据库使用范围
+        /// </summary>
+        /// <returns></returns>
+        IDisposable IDataBase.CreateDataBaseScope() => MySqlDataBaseScope.CreateScope(this);
+
 
         /// <summary>
         /// 生成事务范围
@@ -830,7 +836,7 @@ namespace Gboxt.Common.DataModel.MySql
 
         #region 数据缓存
 
-        /// <summary>
+        /*// <summary>
         ///     缓存数据
         /// </summary>
         private readonly Dictionary<int, Dictionary<long, EditDataObject>> _dataCache =
@@ -880,7 +886,7 @@ namespace Gboxt.Common.DataModel.MySql
             }
             tableDatas.Add(id, data);
             return data;
-        }
+        }*/
 
 
         #endregion

@@ -65,10 +65,7 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     当前线程的当前范围
         /// </summary>
-        public static EditScope CurrentScope
-        {
-            get { return _currentScope; }
-        }
+        public static EditScope CurrentScope => _currentScope;
 
         /// <summary>
         ///     清理资源

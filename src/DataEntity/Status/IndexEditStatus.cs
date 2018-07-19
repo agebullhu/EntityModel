@@ -70,7 +70,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("阻止配置"), Category("运行时")]
         public EditArrestMode Arrest
         {
-            get { return _arrest; }
+            get => _arrest;
             set
             {
                 if (value == _arrest)
@@ -91,10 +91,7 @@ namespace Gboxt.Common.DataModel
         ///     修改的属性列表
         /// </summary>
         [ReadOnly(true), DisplayName("修改的属性列表"), Category("运行时")]
-        public byte[] ModifiedProperties
-        {
-            get { return modifiedProperties ?? (modifiedProperties = new byte[EditObject.__PropertyCount + 1]); }
-        }
+        public byte[] ModifiedProperties => modifiedProperties ?? (modifiedProperties = new byte[EditObject.__PropertyCount + 1]);
 
         /// <summary>
         ///     是否修改
@@ -125,7 +122,7 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         public void SetModified()
         {
-            EditObject.IsReadOnly = false;
+            EditObject.__IsReadOnly = false;
             for (var index = 0; index < ModifiedProperties.Length - 1; index++)
             {
                 ModifiedProperties[index] = 1;
@@ -277,7 +274,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否修改"), Category("运行时")]
         public bool IsModified
         {
-            get { return modifiedProperties != null && ModifiedProperties[EditObject.__PropertyCount] > 0; }
+            get => modifiedProperties != null && ModifiedProperties[EditObject.__PropertyCount] > 0;
             set
             {
                 if ((modifiedProperties != null && ModifiedProperties[EditObject.__PropertyCount] > 0 == value))
@@ -302,7 +299,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否已存在"), Category("运行时")]
         public bool IsExist
         {
-            get { return (_state & 0x4) == 0x4; }
+            get => (_state & 0x4) == 0x4;
             set
             {
                 //Trace.WriteLine(string.Format("{1} => IsNew:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);
@@ -324,7 +321,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否修改"), Category("运行时")]
         public bool IsNew
         {
-            get { return (_state & 0x1) == 0x1; }
+            get => (_state & 0x1) == 0x1;
             set
             {
                 //Trace.WriteLine(string.Format("{1} => IsNew:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);
@@ -364,7 +361,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否已删除"), Category("运行时")]
         public bool IsShadow
         {
-            get { return (_state & 0x5) == 0x5; }
+            get => (_state & 0x5) == 0x5;
             set
             {
                 //Trace.WriteLine(string.Format("{1} => IsShadow:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);
@@ -391,7 +388,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否已删除"), Category("运行时")]
         public bool IsDelete
         {
-            get { return (_state & 0x2) == 0x2; }
+            get => (_state & 0x2) == 0x2;
             set
             {
                 //Trace.WriteLine(string.Format("{1} => IsDelete:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);
@@ -419,7 +416,7 @@ namespace Gboxt.Common.DataModel
         [ReadOnly(true), DisplayName("是否需要保存"), Category("运行时")]
         public bool NeedSave
         {
-            get { return (_state & 0xF0) == 0xF0; }
+            get => (_state & 0xF0) == 0xF0;
             set
             {
                 //Trace.WriteLine(string.Format("{1} => NeedSave:{0}", value, EditObject.GetValue(EditObject.__Struct.PrimaryKey)), EditObject.GetType().Name);

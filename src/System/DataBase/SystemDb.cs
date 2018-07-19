@@ -8,7 +8,6 @@
 
 #region 引用
 
-using System.Configuration;
 using Gboxt.Common.DataModel.MySql;
 
 #endregion
@@ -52,7 +51,7 @@ namespace Gboxt.Common.SystemModel.DataAccess
         /// <returns></returns>
         protected override string LoadConnectionStringSetting()
         {
-            return ConfigurationManager.ConnectionStrings["MySql"].ConnectionString;
+            return ConfigurationManager.ConnectionStrings["MySql"];
         }
     }
 }

@@ -558,7 +558,10 @@ namespace Agebull.Common.DataModel.Redis
         public bool SetNx(string key, byte[] value = null)
         {
             var re = Client.Execute("SetNx", key, value ?? new byte[0]);
-            return !re.IsNull && (int)re == 1;
+            if (re.IsNull || (int) re != 1)
+                return false;
+            Client.KeyExpire(key, TimeSpan.FromMinutes(5));
+            return true;
         }
 
         /// <summary>

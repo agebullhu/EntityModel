@@ -17,7 +17,7 @@ namespace Gboxt.Common.SystemModel.DataAccess
     /// <summary>
     ///     用户的页面数据
     /// </summary>
-    sealed partial class PageDataDataAccess : MySqlTable<PageDataData>
+    sealed partial class PageDataDataAccess : MySqlTable<PageDataData, SystemDb>
     {
     }
 }

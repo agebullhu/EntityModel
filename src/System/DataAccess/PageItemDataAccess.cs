@@ -19,7 +19,7 @@ namespace Gboxt.Common.SystemModel.DataAccess
     /// <summary>
     ///     页面节点
     /// </summary>
-    sealed partial class PageItemDataAccess : MySqlTable<PageItemData>
+    sealed partial class PageItemDataAccess : MySqlTable<PageItemData, SystemDb>
     {
         ///// <summary>
         /////     保存完成后期处理(Insert或Update)
