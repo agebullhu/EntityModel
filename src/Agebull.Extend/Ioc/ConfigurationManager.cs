@@ -240,16 +240,33 @@ namespace Agebull.Common.Configuration
         }
         #endregion
 
-        #region AppSetting
+        #region 预定义对象
 
+        #region Root
+
+        private static IConfigurationRoot _root;
+
+        /// <summary>
+        /// 全局配置
+        /// </summary>
+        public static IConfiguration Root => _root ?? (_root = Builder.Build());
+
+        #endregion
+
+        #region AppSetting
 
         /// <summary>
         /// 显示式设置配置对象(依赖)
         /// </summary>
-        public static ConfigurationManager AppSettings = new ConfigurationManager
+        static ConfigurationManager _appSettings;
+
+        /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        public static ConfigurationManager AppSettings => _appSettings ?? (_appSettings = new ConfigurationManager
         {
             Configuration = Root.GetSection("AppSettings")
-        };
+        });
 
         #endregion
 
@@ -258,10 +275,15 @@ namespace Agebull.Common.Configuration
         /// <summary>
         /// 显示式设置配置对象(依赖)
         /// </summary>
-        public static ConfigurationManager ConnectionStrings = new ConfigurationManager
+        static ConfigurationManager _connectionStrings;
+
+        /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        public static ConfigurationManager ConnectionStrings => _connectionStrings ?? (_connectionStrings = new ConfigurationManager
         {
             Configuration = Root.GetSection("ConnectionStrings")
-        };
+        });
 
 
         /// <summary>
@@ -278,14 +300,9 @@ namespace Agebull.Common.Configuration
         #endregion
 
 
-        /// <summary>
-        /// 显示式设置配置对象(依赖)
-        /// </summary>
-        /// <param name="configuration"></param>
-        public static void SetConfiguration(IConfiguration configuration)
-        {
-            _builder.AddConfiguration(configuration);
-        }
+        #endregion
+
+        #region 配置文件组合
 
 
         private static ConfigurationBuilder _builder;
@@ -321,10 +338,34 @@ namespace Agebull.Common.Configuration
                         }
                     }
                 }
+                _root = null;
+                _appSettings = null;
+                _connectionStrings = null;
                 return _builder;
             }
             set => _builder = value;
         }
+
+        /// <summary>
+        /// 刷新
+        /// </summary>
+        private static void Flush()
+        {
+            _root = null;
+            _appSettings = null;
+            _connectionStrings = null;
+        }
+
+        /// <summary>
+        /// 显示式设置配置对象(依赖)
+        /// </summary>
+        /// <param name="configuration"></param>
+        public static void SetConfiguration(IConfiguration configuration)
+        {
+            Builder.AddConfiguration(configuration);
+            Flush();
+        }
+
 
         /// <summary>
         /// 载入配置文件
@@ -332,14 +373,13 @@ namespace Agebull.Common.Configuration
         public static void Load(string jsonFile)
         {
             Builder.AddJsonFile(jsonFile);
-            _root = Builder.Build();
+            Flush();
         }
-        private static IConfigurationRoot _root;
 
-        /// <summary>
-        /// 全局配置
-        /// </summary>
-        public static IConfiguration Root => _root ?? (_root = Builder.Build());
+        #endregion
+
+        #region 内容获取
+
 
         /// <summary>
         ///   得到文本值
@@ -435,5 +475,7 @@ namespace Agebull.Common.Configuration
             }
             ConnectionStrings[key] = connectionString;
         }
+
+        #endregion
     }
 }
