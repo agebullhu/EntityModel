@@ -208,7 +208,7 @@ namespace Gboxt.Common.DataModel
         #endregion
 
         #region 后期修改事件
-
+         
         /// <summary>
         ///     属性修改的后期处理(保存后)
         /// </summary>

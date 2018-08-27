@@ -186,7 +186,6 @@ namespace Gboxt.Common.DataModel
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class ApiResult<TData> : ApiResult, IApiResult<TData>
-        where TData : IApiResultData
     {
         /// <summary>
         /// 返回值

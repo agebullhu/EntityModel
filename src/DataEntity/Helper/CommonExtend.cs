@@ -34,12 +34,11 @@ namespace Gboxt.Common.DataModel
             {
                 return def;
             }
-            if (obj is decimal)
+            if (obj is decimal @decimal)
             {
-                return (decimal)obj;
+                return @decimal;
             }
-            decimal re;
-            return decimal.TryParse(obj.ToString().Trim(), out re) ? re : def;
+            return decimal.TryParse(obj.ToString().Trim(), out decimal re) ? re : def;
         }
 
         /// <summary>
@@ -54,8 +53,7 @@ namespace Gboxt.Common.DataModel
             {
                 return def;
             }
-            decimal re;
-            return decimal.TryParse(str.Trim(), out re) ? re : def;
+            return decimal.TryParse(str.Trim(), out decimal re) ? re : def;
         }
 
         /// <summary>
@@ -66,16 +64,15 @@ namespace Gboxt.Common.DataModel
         /// <returns>ÕûÊý</returns>
         public static int ToInteger(this object obj, int def = 0)
         {
-            if (obj == null)
+            switch (obj)
             {
-                return def;
+                case null:
+                    return def;
+                case int i:
+                    return i;
             }
-            if (obj is int)
-            {
-                return (int)obj;
-            }
-            int re;
-            return int.TryParse(obj.ToString().Trim(), out re) ? re : def;
+
+            return int.TryParse(obj.ToString().Trim(), out int re) ? re : def;
         }
 
         /// <summary>
@@ -90,8 +87,7 @@ namespace Gboxt.Common.DataModel
             {
                 return def;
             }
-            int re;
-            return int.TryParse(str.Trim(), out re) ? re : def;
+            return int.TryParse(str.Trim(), out int re) ? re : def;
         }
 
         /// <summary>

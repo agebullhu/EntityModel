@@ -115,11 +115,11 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         /// <returns></returns>
         protected abstract string LoadConnectionStringSetting();
-
+        MySqlConnection _connection;
         /// <summary>
         ///     连接对象
         /// </summary>
-        public MySqlConnection Connection { get; internal set; }
+        public MySqlConnection Connection => _connection ?? (_connection = InitConnection());
 
         private static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
         /// <summary>
@@ -135,63 +135,76 @@ namespace Gboxt.Common.DataModel.MySql
                 //    //throw new Exception("已关闭的数据库对象不能再次使用");
                 //}
                 bool result = false;
-                if (Connection == null)
+                if (_connection == null)
                 {
                     result = true;
-                    Connection = new MySqlConnection(ConnectionString);
-                    Connections.Add(Connection);
-                    //Trace.WriteLine("Create Connection", "MySqlDataBase");
+                    _connection = new MySqlConnection(ConnectionString);
+                    Connections.Add(_connection);
+                    //Trace.WriteLine("Create _connection", "MySqlDataBase");
                 }
-                else if (string.IsNullOrEmpty(Connection.ConnectionString))
+                else if (string.IsNullOrEmpty(_connection.ConnectionString))
                 {
                     result = true;
                     //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
-                    Connection.ConnectionString = ConnectionString;
+                    _connection.ConnectionString = ConnectionString;
                 }
-                if (Connection.State == ConnectionState.Open)
+                if (_connection.State == ConnectionState.Open)
                 {
                     return result;
                 }
                 //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened Connection", "MySqlDataBase");
-                Connection.Open();
+                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                _connection.Open();
             }
             return true;
         }
 
+        private MySqlConnection InitConnection()
+        {
+            lock (LockData)
+            {
+                var connection = new MySqlConnection(ConnectionString);
+                Connections.Add(_connection);
+                //Trace.WriteLine(_count++, "Open");
+                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                connection.Open();
+                return connection;
+            }
+        }
         /// <summary>
         ///     关闭连接
         /// </summary>
         public void Close()
         {
-            if (Connection == null)
+            if (_connection == null)
             {
                 return;
             }
-            try
+            lock (LockData)
             {
-                lock (LockData)
+                try
                 {
-                    if (Connection.State == ConnectionState.Open)
+                    if (_connection.State == ConnectionState.Open)
                     {
                         //Trace.WriteLine("Close Connection", "MySqlDataBase");
-                        Connection.Close();
+                        _connection.Close();
                     }
-                    Connections.Remove(Connection);
+                    Connections.Remove(_connection);
                     LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
-                    Connection = null;
+                    _connection = null;
+
                 }
-            }
-            catch (Exception exception)
-            {
-                Connection?.Dispose();
-                Debug.WriteLine("Close Error", "MySqlDataBase");
-                LogRecorder.Error(exception.ToString());
-            }
-            finally
-            {
-                if (_default == this)
-                    _default = null;
+                catch (Exception exception)
+                {
+                    _connection.Dispose();
+                    Debug.WriteLine("Close Error", "MySqlDataBase");
+                    LogRecorder.Error(exception.ToString());
+                }
+                finally
+                {
+                    if (_default == this)
+                        _default = null;
+                }
             }
         }
         /// <summary>
@@ -207,7 +220,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         public void ClearCurrentConnection()
         {
-            Connection = null;
+            _connection = null;
         }
 
 

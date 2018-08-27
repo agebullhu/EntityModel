@@ -6,6 +6,10 @@ namespace Gboxt.Common.DataModel
     public interface IConfig
     {
         /// <summary>
+        /// 语言使用名称
+        /// </summary>
+        string Name { get; set; }
+        /// <summary>
         /// 标题
         /// </summary>
         string Caption { get; set; }
@@ -13,9 +17,5 @@ namespace Gboxt.Common.DataModel
         /// 说明
         /// </summary>
         string Description { get; set; }
-        /// <summary>
-        /// 语言使用名称
-        /// </summary>
-        string Name { get; set; }
     }
 }

@@ -53,7 +53,6 @@ namespace Gboxt.Common.DataModel
         }
 
         #endregion
-
         #region 属性修改通知
 
         ///// <summary>

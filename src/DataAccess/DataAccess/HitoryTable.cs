@@ -22,9 +22,9 @@ namespace Gboxt.Common.DataModel.MySql
         protected override string AfterUpdateSql(string condition)
         {
             var context = IocHelper.Create<IBusinessContext>();
-            var filter= string.IsNullOrEmpty(condition) ? null : " WHERE " + condition;
+            var filter= string.IsNullOrEmpty(condition) ? null : "\r\nWHERE " + condition;
             return $@"UPDATE `{WriteTableName}` 
-SET {FieldDictionary["LastReviserID"]}={context.LoginUserId},
+SET `{FieldDictionary["LastReviserID"]}`={context.LoginUserId},
 {FieldDictionary["LastModifyDate"]}=NOW(){filter};";
         }
         
@@ -39,11 +39,9 @@ SET {FieldDictionary["LastReviserID"]}={context.LoginUserId},
             switch (operatorType)
             {
                 case DataOperatorType.Insert:
-                {
                     entity.AddDate = DateTime.Now;
                     entity.AuthorId = context.LoginUserId;
                     break;
-                }
                 default:
                     entity.LastModifyDate = DateTime.Now;
                     entity.LastReviserId = context.LoginUserId;

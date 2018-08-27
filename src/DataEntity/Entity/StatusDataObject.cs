@@ -56,7 +56,7 @@ namespace Gboxt.Common.DataModel
         ///     状态对象
         /// </summary>
         [Browsable(false), IgnoreDataMember, JsonIgnore]
-        public TStatus __EntityStatus => __status ?? (__status = CreateStatus());
+        public TStatus __EntityStatus => __status ?? (/*__isReadOnly ? null : */__status = CreateStatus());
 
         /// <summary>
         ///     构建状态对象

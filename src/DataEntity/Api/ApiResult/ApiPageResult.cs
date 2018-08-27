@@ -8,7 +8,7 @@ namespace Gboxt.Common.DataModel
     /// API返回分页信息
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class ApiPage : IApiResultData
+    public class ApiPage 
     {
         /// <summary>
         /// 当前页号（从1开始）

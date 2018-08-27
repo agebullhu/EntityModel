@@ -23,7 +23,6 @@ namespace Gboxt.Common.DataModel
     /// API返回基类
     /// </summary>
     public interface IApiResult<out TData> : IApiResult
-        where TData : IApiResultData
     {
         /// <summary>
         /// 返回值

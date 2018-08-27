@@ -101,6 +101,11 @@ namespace Gboxt.Common.DataModel
         public const int Unavailable = 503;
 
         /// <summary>
+        /// 未知的Token
+        /// </summary>
+        public const int Auth_UnknowToken = 40001;
+
+        /// <summary>
         /// 未知的RefreshToken
         /// </summary>
         public const int Auth_RefreshToken_Unknow = 40083;

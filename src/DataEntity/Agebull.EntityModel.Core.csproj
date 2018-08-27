@@ -66,6 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Api\ApiResult\IApiResultData.cs" />
     <Compile Remove="Base\TableSql.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
