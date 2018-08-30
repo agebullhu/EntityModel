@@ -250,6 +250,10 @@ namespace Agebull.Common.Configuration
         /// 全局配置
         /// </summary>
         public static IConfiguration Root => _root ?? (_root = Builder.Build());
+        /// <summary>
+        /// 基本目录
+        /// </summary>
+        public static string BasePath{ get; set; }
 
         #endregion
 
@@ -316,7 +320,7 @@ namespace Agebull.Common.Configuration
                 if (_builder != null)
                     return _builder;
                 _builder = new ConfigurationBuilder();
-                _builder.SetBasePath(Directory.GetCurrentDirectory());
+                _builder.SetBasePath(BasePath ?? Directory.GetCurrentDirectory());
                 string file = Path.Combine(Environment.CurrentDirectory, "appsettings.json");
                 if (File.Exists(file))
                     _builder.AddJsonFile("appsettings.json");
