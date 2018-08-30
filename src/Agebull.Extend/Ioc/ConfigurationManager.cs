@@ -227,7 +227,7 @@ namespace Agebull.Common.Configuration
         ///   配置一个配置内容
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="key"> </param>
+        /// <param name="key">名称</param>
         /// <param name="value"> </param>
         public void SetValue<T>(string key, T value) where T : struct
         {
@@ -440,7 +440,7 @@ namespace Agebull.Common.Configuration
         ///   配置一个配置内容
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="key"> </param>
+        /// <param name="key">名称</param>
         /// <param name="value"> </param>
         public static void SetAppSetting<T>(string key, T value) where T : struct
         {
@@ -455,11 +455,12 @@ namespace Agebull.Common.Configuration
         /// <summary>
         ///   获取连接串的节点信息
         /// </summary>
-        /// <param name="key"> </param>
+        /// <param name="key">名称</param>
+        /// <param name="def">找不到的缺省值</param>
         /// <returns> </returns>
-        public static string GetConnectionString(string key)
+        public static string GetConnectionString(string key,string def="")
         {
-            return key == null ? "" : ConnectionStrings[key];
+            return key == null ? def : ConnectionStrings[key];
         }
 
         /// <summary>

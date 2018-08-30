@@ -158,7 +158,13 @@ namespace Agebull.Common.Logging
                 LogDataSql = sec.GetBool("sql");
                 Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
             }
-
+#if NETSTANDARD2_0
+#else
+            if (LogMonitor)
+            {
+                AppDomain.MonitoringIsEnabled = true;
+            }
+#endif
             State = LogRecorderStatus.Initialized;
             var recorder = IocHelper.Create<ILogRecorder>();
             if (recorder != null && recorder != BaseRecorder)

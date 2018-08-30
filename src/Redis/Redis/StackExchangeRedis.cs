@@ -22,7 +22,7 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static StackExchangeRedis()
         {
-            ConnectString = ConfigurationManager.ConnectionStrings.GetStr("Redis","127.0.0.1:6379");
+            ConnectString = ConfigurationManager.GetConnectionString("Redis","127.0.0.1:6379");
         }
 
         #endregion
