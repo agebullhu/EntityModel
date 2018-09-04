@@ -30,8 +30,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="source">复制的源字段</param>
         public void CopyValue(IDataObject source)
         {
-            var entity = source as DataObjectBase;
-            if (entity != null)
+            if (source is DataObjectBase entity)
             {
                 CopyValueInner(entity);
             }
@@ -104,33 +103,45 @@ namespace Gboxt.Common.DataModel
         ///     复制值
         /// </summary>
         /// <param name="source">复制的源字段</param>
-        protected abstract void CopyValueInner(DataObjectBase source);
+        protected virtual void CopyValueInner(DataObjectBase source)
+        {
+        }
 
         /// <summary>
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
         /// <param name="value"></param>
-        protected abstract void SetValueInner(string property, object value);
+        protected virtual void SetValueInner(string property, object value)
+        {
+        }
 
         /// <summary>
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
-        protected abstract object GetValueInner(string property);
+        protected virtual object GetValueInner(string property)
+        {
+            return null;
+        }
 
         /// <summary>
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
         /// <param name="value"></param>
-        protected abstract void SetValueInner(int property, object value);
+        protected virtual void SetValueInner(int property, object value)
+        {
+        }
 
         /// <summary>
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
-        protected abstract object GetValueInner(int property);
+        protected virtual object GetValueInner(int property)
+        {
+            return null;
+        }
 
         /// <summary>
         ///     设置属性值
