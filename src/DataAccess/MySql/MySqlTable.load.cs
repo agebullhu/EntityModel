@@ -909,6 +909,129 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
+        #region 分页读取
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page(int page, int limit)
+        {
+            return Page(page, limit, KeyField, false, null, null);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page(int page, int limit, string condition, params MySqlParameter[] args)
+        {
+            return Page(page, limit, KeyField, false, condition, args);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData>  Page(int page, int limit, Expression<Func<TData, bool>> lambda)
+        {
+            var convert = Compile(lambda);
+            return Page(page, limit, KeyField, false, convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page(int page, int limit, LambdaItem<TData> lambda)
+        {
+            var convert = Compile(lambda);
+            return Page(page, limit, KeyField, false, convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
+        {
+            return Page(page, limit, order, desc, condition, args.Cast<MySqlParameter>().ToArray());
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page(int page, int limit, string order, string condition, params MySqlParameter[] args)
+        {
+            return Page(page, limit, order, false, condition, args);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page<TField>(int page, int limit, Expression<Func<TData, TField>> field,
+            Expression<Func<TData, bool>> lambda)
+        {
+            return Page(page, limit, field, false, lambda);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
+            Expression<Func<TData, bool>> lambda)
+        {
+            var convert = Compile(lambda);
+            return Page(page, limit, GetPropertyName(field), desc, convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> Page<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
+            LambdaItem<TData> lambda)
+        {
+            var convert = Compile(lambda);
+            return Page(page, limit, GetPropertyName(field), desc, convert.ConditionSql, convert.Parameters);
+        }
+
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        /// <param name="page">页号(从1开始)</param>
+        /// <param name="limit">每页行数(小于不分页）</param>
+        /// <param name="order">排序字段</param>
+        /// <param name="desc">是否反序</param>
+        /// <param name="condition">查询条件</param>
+        /// <param name="args">查询参数</param>
+        /// <returns></returns>
+        public ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition,
+            params MySqlParameter[] args)
+        {
+            if (page <= 0)
+                page = 1;
+            if (limit == 0)
+                limit = 20;
+            else if (limit == 9999)
+                limit = -1;
+            else if (limit > 500)
+                limit = 500;
+            return LoadPage(page, limit, order, desc, condition, args);
+        }
+
+        private ApiPageData<TData> LoadPage(int page, int limit, string order, bool desc, string condition,
+            MySqlParameter[] args)
+        {
+            var data = PageData(page, limit, order, desc, condition, args);
+            var count = (int)Count(condition, args);
+            return new ApiPageData<TData>
+            {
+                RowCount = count,
+                Rows = data,
+                PageIndex = page,
+                PageSize = limit,
+                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+            };
+        }
+
+        #endregion
+
         #region 单列读取
 
         /// <summary>
