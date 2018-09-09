@@ -18,11 +18,16 @@ namespace Agebull.Common.DataModel.Redis
         #region 配置
 
         /// <summary>
+        /// 不关闭
+        /// </summary>
+        bool IRedis.NoClose => true;
+
+        /// <summary>
         /// 静态构造
         /// </summary>
         static StackExchangeRedis()
         {
-            ConnectString = ConfigurationManager.GetConnectionString("Redis","127.0.0.1:6379");
+            ConnectString = ConfigurationManager.GetConnectionString("Redis", "127.0.0.1:6379");
         }
 
         #endregion
@@ -58,7 +63,27 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         public StackExchangeRedis()
         {
-            connect = ConnectionMultiplexer.Connect(ConnectString);
+            if (connect == null)
+                connect = ConnectionMultiplexer.Connect(ConnectString);
+            else
+            {
+                try
+                {
+                    connect.GetDatabase().Ping();
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        connect.Close();
+                        connect.Dispose();
+                    }
+                    catch
+                    {
+                    }
+                    connect = ConnectionMultiplexer.Connect(ConnectString);
+                }
+            }
         }
 
         /// <summary>
@@ -77,7 +102,8 @@ namespace Agebull.Common.DataModel.Redis
         /// 空闲的
         /// </summary>
         private static readonly Dictionary<int, List<RedisClient>> Idle = new Dictionary<int, List<RedisClient>>();*/
-        private readonly ConnectionMultiplexer connect;
+        private static ConnectionMultiplexer connect;
+
         /// <summary>
         /// 客户端类
         /// </summary>
@@ -138,18 +164,18 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
-            if (connect == null)
-                return;
-            Monitor.Enter(LockObj);
-            try
-            {
-                connect.Close();
-                connect.Dispose();
-            }
-            finally
-            {
-                Monitor.Exit(LockObj);
-            }
+            //if (connect == null)
+            //    return;
+            //Monitor.Enter(LockObj);
+            //try
+            //{
+            //    connect.Close();
+            //    connect.Dispose();
+            //}
+            //finally
+            //{
+            //    Monitor.Exit(LockObj);
+            //}
         }
 
 
@@ -164,6 +190,11 @@ namespace Agebull.Common.DataModel.Redis
         public void RemoveKey(string key)
         {
             Client.KeyDelete(key);
+        }
+
+        public void FindAndRemoveKey(string pattern)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -275,6 +306,18 @@ namespace Agebull.Common.DataModel.Redis
         #region 对象读写
 
         /// <summary>
+        /// 查找关删除KEY
+        /// </summary>
+        /// <param name="pattern">条件</param>
+        public List<T> GetAll<T>(string pattern)
+            where T : class
+        {
+            List<T> lists = new List<T>();
+
+            return lists;
+        }
+
+        /// <summary>
         /// 取值
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -373,9 +416,9 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="id">键的组合</param>
         /// <param name="def">默认值</param>
         /// <returns></returns>
-        public TData GetEntity<TData>(int id, TData def = null) where TData : class, new()
+        public TData GetEntity<TData>(long id, TData def = null) where TData : class, new()
         {
-            return id == 0 ? def ?? new TData() : Get<TData>(DataKey<TData>(id)) ?? def ?? new TData();
+            return id == 0 ? def ?? new TData() : Get<TData>(DataKeyBuilder.DataKey<TData>(id)) ?? def ?? new TData();
         }
 
         /// <summary>
@@ -398,7 +441,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public void SetEntity<TData>(TData data) where TData : class, IIdentityData
         {
-            Set(DataKey(data), data);
+            Set(DataKeyBuilder.DataKey(data), data);
         }
 
         /// <summary>
@@ -411,7 +454,7 @@ namespace Agebull.Common.DataModel.Redis
         public void CacheData<TData>(IEnumerable<TData> datas, Func<TData, string> keyFunc = null) where TData : class, IIdentityData, new()
         {
             if (keyFunc == null)
-                keyFunc = DataKey;
+                keyFunc = DataKeyBuilder.DataKey;
             var key = keyFunc(new TData());
             SetValue(key, DateTime.Now);
             foreach (var data in datas)
@@ -503,52 +546,42 @@ namespace Agebull.Common.DataModel.Redis
         
              */
 
-        /// <summary>
-        /// 默认的数据键名称生成器
-        /// </summary>
-        /// <typeparam name="TData">数据键</typeparam>
-        /// <param name="data">数据</param>
-        /// <returns>数据键名</returns>
-        public static string DataKey<TData>(TData data) where TData : class, IIdentityData
-        {
-            return $"data:{typeof(TData).Name.ToLower()}:{data.Id}";
-        }
-
-        /// <summary>
-        /// 默认的数据键名称生成器
-        /// </summary>
-        /// <typeparam name="TData">数据键</typeparam>
-        /// <param name="id">数据键</param>
-        /// <returns>数据键名</returns>
-        public static string DataKey<TData>(object id)
-        {
-            return $"data:{typeof(TData).Name.ToLower()}:{id}";
-        }
-        /// <summary>
-        /// 默认的数据键名称生成器
-        /// </summary>
-        /// <param name="type">数据</param>
-        /// <param name="id">数据键</param>
-        /// <returns>数据键名</returns>
-        public static string DataKey(string type, int id)
-        {
-            return $"data:{type.ToLower()}:{id}";
-        }
 
         /// <summary>
         ///     缓存这些对象
         /// </summary>
         /// <returns>数据</returns>
-        public void RemoveCache<TData>(int id)
+        public void RemoveCache<TData>(long id)
         {
             if (id > 0)
-                Client.KeyDelete(DataKey<TData>(id));
+                Client.KeyDelete(DataKeyBuilder.DataKey<TData>(id));
         }
 
         #endregion
 
 
         #region 其它扩展
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="last"></param>
+        /// <returns></returns>
+        public void SetTime(string key, DateTime last)
+        {
+            Client.KeyExpire(key, last);
+        }
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        public void SetTime(string key, TimeSpan span)
+        {
+            Client.KeyExpire(key, span);
+        }
         /// <summary>
         /// 如果值不存在，则写入，否则失败
         /// </summary>
@@ -558,7 +591,7 @@ namespace Agebull.Common.DataModel.Redis
         public bool SetNx(string key, byte[] value = null)
         {
             var re = Client.Execute("SetNx", key, value ?? new byte[0]);
-            if (re.IsNull || (int) re != 1)
+            if (re.IsNull || (int)re != 1)
                 return false;
             Client.KeyExpire(key, TimeSpan.FromMinutes(5));
             return true;

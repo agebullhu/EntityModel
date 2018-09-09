@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Description>WebApi支持</Description>
+    <AssemblyTitle>Agebull.WebApi.Fundtion</AssemblyTitle>
+    <Version>2.3.0.24</Version>
+    <!--monoandroid60;xamarinios10-->
+    <TargetFrameworks>net47</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Agebull.WebApi.Fundtion</AssemblyName>
+    <PackageId>Agebull.WebApi.Fundtion</PackageId>
+    <PackageTags>Agebull.WebApi.Fundtion</PackageTags>
+    <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
+    <PackageVersion>2.3.0.24</PackageVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <Product>Agebull.WebApi.Fundtion</Product>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <Copyright />
+    <PackageReleaseNotes>WebApi支持</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net47|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Redis\**" />
+    <EmbeddedResource Remove="Redis\**" />
+    <None Remove="Redis\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\EntityInfo.cs" />
+    <Compile Remove="Authority\SubjectionType.cs" />
+    <Compile Remove="Authority\UserProfile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc.zh-Hans" Version="5.2.6" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.WebHost.zh-Hans" Version="5.2.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
+    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\LogRecorder\Agebull.Common.LogRecorder.csproj" />
+    <ProjectReference Include="..\ModelBase\Agebull.WebApi.ModelBase.csproj" />
+    <ProjectReference Include="..\Redis\Agebull.EntityModel.Redis.csproj" />
+    <ProjectReference Include="..\Rpc.Abstractions\Agebull.Rpc.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

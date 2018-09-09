@@ -1,35 +1,41 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ä½œè€…:
-// // å·¥ç¨‹:Agebull.DataModel
-// // å»ºç«‹:2016-06-12
-// // ä¿®æ”¹:2016-06-16
+// // ×÷Õß:
+// // ¹¤³Ì:Agebull.DataModel
+// // ½¨Á¢:2016-06-12
+// // ĞŞ¸Ä:2016-06-16
 // // *****************************************************/
 
-#region å¼•ç”¨
+#region ÒıÓÃ
 
 using System;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
+using Agebull.Common.WebApi;
+using Gboxt.Common.DataModel;
+using Gboxt.Common.DataModel.MySql;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// åŸºäºæ•°æ®çŠ¶æ€çš„ä¸šåŠ¡é€»è¾‘åŸºç±»
+    /// »ùÓÚÊı¾İ×´Ì¬µÄÒµÎñÂß¼­»ùÀà
     /// </summary>
-    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
-    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
-    public class BusinessLogicByStateData<TData, TAccess> : UiBusinessLogicBase<TData, TAccess>
+    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
+    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TDatabase">Êı¾İ¿â¶ÔÏó</typeparam>
+    public class BusinessLogicByStateData<TData, TAccess, TDatabase>
+        : UiBusinessLogicBase<TData, TAccess, TDatabase>
         where TData : EditDataObject, IIdentityData, IStateData, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : DataStateTable<TData, TDatabase>, new()
+        where TDatabase : MySqlDataBase
     {
-        #region æ‰¹é‡æ“ä½œ
+        #region ÅúÁ¿²Ù×÷
 
 
         /// <summary>
-        ///     å¯ç”¨å¯¹è±¡
+        ///     ÆôÓÃ¶ÔÏó
         /// </summary>
         public bool Enable(string sels)
         {
@@ -37,7 +43,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ç¦ç”¨å¯¹è±¡
+        ///     ½ûÓÃ¶ÔÏó
         /// </summary>
         public bool Disable(string sels)
         {
@@ -45,7 +51,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ç¦ç”¨å¯¹è±¡
+        ///     ½ûÓÃ¶ÔÏó
         /// </summary>
         public bool Lock(string sels)
         {
@@ -53,21 +59,21 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         #endregion
 
-        #region æ•°æ®çŠ¶æ€é€»è¾‘
+        #region Êı¾İ×´Ì¬Âß¼­
 
         /// <summary>
-        ///     æ˜¯å¦å¯ä»¥æ‰§è¡Œä¿å­˜æ“ä½œ
+        ///     ÊÇ·ñ¿ÉÒÔÖ´ĞĞ±£´æ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected override bool CanSave(TData data, bool isAdd)
         {
             return !data.IsFreeze && data.DataState < DataStateType.Discard;
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡å‰ç½®å¤„ç†
+        ///     É¾³ı¶ÔÏóÇ°ÖÃ´¦Àí
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
@@ -76,21 +82,23 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             return base.PrepareDelete(id);
         }
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡æ“ä½œ
+        ///     É¾³ı¶ÔÏó²Ù×÷
         /// </summary>
         protected override bool DoDelete(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.DataState == DataStateType.Delete))
                     return Access.SetValue(p => p.DataState, DataStateType.Delete, p => p.Id == id && p.DataState == DataStateType.None) > 0;
-                BusinessContext.Current.LastMessage = "ä¸å…è®¸éšæ„æ‰§è¡Œç‰©ç†åˆ é™¤æ“ä½œ";
+                //if (BusinessContext.Context.CanDoCurrentPageAction("physical_delete"))
+                //    return Access.PhysicalDelete(id);
+                //BusinessContext.Context.LastMessage = "²»ÔÊĞíËæÒâÖ´ĞĞÎïÀíÉ¾³ı²Ù×÷";
                 return false;
             }
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡åç½®å¤„ç†
+        ///     É¾³ı¶ÔÏóºóÖÃ´¦Àí
         /// </summary>
         protected override void OnDeleted(long id)
         {
@@ -104,14 +112,14 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region æ•°æ®çŠ¶æ€ä¿®æ”¹
+        #region Êı¾İ×´Ì¬ĞŞ¸Ä
 
         /// <summary>
-        ///     ä¿å­˜å®Œæˆåçš„æ“ä½œ
+        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected override bool LastSaved(TData data, bool isAdd)
         {
             if (unityStateChanged)
@@ -120,15 +128,15 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        /// æ˜¯å¦ç»Ÿä¸€å¤„ç†çŠ¶æ€å˜åŒ–
+        /// ÊÇ·ñÍ³Ò»´¦Àí×´Ì¬±ä»¯
         /// </summary>
         protected bool unityStateChanged = false;
 
         /// <summary>
-        ///     çŠ¶æ€æ”¹å˜åçš„ç»Ÿä¸€å¤„ç†(unityStateChangedä¸è®¾ç½®ä¸ºtrueæ—¶ä¸ä¼šäº§ç”Ÿä½œç”¨--åŸºäºæ€§èƒ½çš„è€ƒè™‘)
+        ///     ×´Ì¬¸Ä±äºóµÄÍ³Ò»´¦Àí(unityStateChanged²»ÉèÖÃÎªtrueÊ±²»»á²úÉú×÷ÓÃ--»ùÓÚĞÔÄÜµÄ¿¼ÂÇ)
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="cmd">å‘½ä»¤</param>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="cmd">ÃüÁî</param>
         protected void OnStateChanged(TData data, BusinessCommandType cmd)
         {
             if (!unityStateChanged) return;
@@ -138,18 +146,18 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     å†…éƒ¨å‘½ä»¤æ‰§è¡Œå®Œæˆåçš„å¤„ç†
+        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
         /// </summary>
-        /// <param name="id">æ•°æ®</param>
-        /// <param name="cmd">å‘½ä»¤</param>
-        protected sealed override void OnInnerCommand(long id, BusinessCommandType cmd)
+        /// <param name="id">Êı¾İ</param>
+        /// <param name="cmd">ÃüÁî</param>
+        protected override void OnInnerCommand(long id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;
             OnInnerCommand(Access.LoadByPrimaryKey(id), cmd);
         }
         /// <summary>
-        ///     çŠ¶æ€æ”¹å˜åçš„ç»Ÿä¸€å¤„ç†(unityStateChangedä¸è®¾ç½®ä¸ºtrueæ—¶ä¸ä¼šäº§ç”Ÿä½œç”¨--åŸºäºæ€§èƒ½çš„è€ƒè™‘)
+        ///     ×´Ì¬¸Ä±äºóµÄÍ³Ò»´¦Àí(unityStateChanged²»ÉèÖÃÎªtrueÊ±²»»á²úÉú×÷ÓÃ--»ùÓÚĞÔÄÜµÄ¿¼ÂÇ)
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -159,9 +167,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region çŠ¶æ€å¤„ç†
+        #region ×´Ì¬´¦Àí
         /// <summary>
-        ///     é‡ç½®æ•°æ®çŠ¶æ€
+        ///     ÖØÖÃÊı¾İ×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         public bool ResetState(TData data)
@@ -177,7 +185,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é‡ç½®æ•°æ®çŠ¶æ€
+        ///     ÖØÖÃÊı¾İ×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         protected virtual bool DoResetState(TData data)
@@ -188,18 +196,18 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é‡ç½®æ•°æ®çŠ¶æ€
+        ///     ÖØÖÃÊı¾İ×´Ì¬
         /// </summary>
         /// <param name="id"></param>
-        public virtual bool Reset(int id)
+        public virtual bool Reset(long id)
         {
-            return SetDataState(id, DataStateType.None, p => p.Id == id && p.DataState >= DataStateType.Discard);
+            return SetDataState(id, DataStateType.None, p => p.Id == id);
         }
 
         /// <summary>
-        ///     å¯ç”¨å¯¹è±¡
+        ///     ÆôÓÃ¶ÔÏó
         /// </summary>
-        public virtual bool Enable(int id)
+        public virtual bool Enable(long id)
         {
             if (Access.LoadValue(p => p.IsFreeze, id))
             {
@@ -210,25 +218,25 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ç¦ç”¨å¯¹è±¡
+        ///     ½ûÓÃ¶ÔÏó
         /// </summary>
-        public virtual bool Disable(int id)
+        public virtual bool Disable(long id)
         {
             return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable);
         }
         /// <summary>
-        ///     å¼ƒç”¨å¯¹è±¡
+        ///     ÆúÓÃ¶ÔÏó
         /// </summary>
-        public virtual bool Discard(int id)
+        public virtual bool Discard(long id)
         {
             return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None);
         }
         /// <summary>
-        ///     é”å®šå¯¹è±¡
+        ///     Ëø¶¨¶ÔÏó
         /// </summary>
-        public virtual bool Lock(int id)
+        public virtual bool Lock(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
                     return false;
@@ -242,11 +250,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ä¿®æ”¹çŠ¶æ€
+        ///     ĞŞ¸Ä×´Ì¬
         /// </summary>
-        protected bool SetDataState(int id, DataStateType state, Expression<Func<TData, bool>> filter)
+        protected bool SetDataState(long id, DataStateType state, Expression<Func<TData, bool>> filter)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.ExistPrimaryKey(id) || !Access.Any(filter))
                     return false;

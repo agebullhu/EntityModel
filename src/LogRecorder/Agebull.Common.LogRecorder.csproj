@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>扩展日志记录器(日志装饰器),可支持Log4等,默认实现一个简单的文本记录器</Description>
     <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
-    <Version>2.2.3.0</Version>
+    <Version>2.3.0.23</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -25,7 +25,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.2.3.0</PackageVersion>
+    <PackageVersion>2.3.0.23</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -45,11 +45,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;DEBUG;NETSTANDARD2_0;DEBUG;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;RELEASE;NETSTANDARD2_0;RELEASE;NETSTANDARD2_0;RELEASE;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD;RELEASE;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">

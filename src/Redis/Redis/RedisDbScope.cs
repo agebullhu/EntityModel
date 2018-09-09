@@ -1,5 +1,5 @@
 using Agebull.Common.Base;
-using StackExchange.Redis;
+using NServiceKit.Redis;
 
 namespace Agebull.Common.DataModel.Redis
 {
@@ -9,7 +9,7 @@ namespace Agebull.Common.DataModel.Redis
     public class RedisDbScope : ScopeBase
     {
         private readonly RedisProxy _proxy;
-        private readonly IDatabase _client;
+        private readonly RedisClient _client;
 
         public static RedisDbScope CreateScope(RedisProxy proxy, long db)
         {

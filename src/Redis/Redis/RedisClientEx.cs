@@ -1,9 +1,10 @@
 using System;
+#if !NETSTANDARD
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ServiceStack;
-using ServiceStack.Redis;
+using NServiceKit.Redis;
+using NServiceKit.Text;
 
 namespace Agebull.Common.DataModel.Redis
 {
@@ -72,7 +73,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public long SAdd(byte[] setId, long value)
         {
-            return this.SendExpectLong(new[]
+            return SendExpectLong(new[]
             {
                 Commands.SAdd, 
                 setId,
@@ -98,7 +99,7 @@ namespace Agebull.Common.DataModel.Redis
             {
                 cmd[i + 2] = array[i].ToUtf8Bytes();
             }
-            return this.SendExpectLong(cmd);
+            return SendExpectLong(cmd);
         }
 
         /// <summary>
@@ -124,10 +125,10 @@ namespace Agebull.Common.DataModel.Redis
             }
         }
 
-        public static readonly byte[] cSScan = "SSCAN".ToUtf8Bytes();
-        public static readonly byte[] cMatch = "MATCH".ToUtf8Bytes();
-        public static readonly byte[] cAnyone = "*".ToUtf8Bytes();
-        public static readonly byte[] cCount = "COUNT".ToUtf8Bytes();
+        public static readonly byte[] cSScan = Encoding.UTF8.GetBytes("SSCAN");
+        public static readonly byte[] cMatch = Encoding.UTF8.GetBytes("MATCH");
+        public static readonly byte[] cAnyone = Encoding.UTF8.GetBytes("*");
+        public static readonly byte[] cCount = Encoding.UTF8.GetBytes("COUNT");
 
         /// <summary>
         /// 扫描Set
@@ -139,7 +140,7 @@ namespace Agebull.Common.DataModel.Redis
         public SetScanResult ScanSet(byte[] setId, long cursor, long count = 10L)
         {
             var cmd = new[] { cSScan, setId, cursor.ToUtf8Bytes(), cCount, count.ToUtf8Bytes() };//cMatch, cAnyone,
-            if (!this.SendCommand(cmd))
+            if (!SendCommand(cmd))
             {
                 Status = -1;
                 LastError = string.Join(" ", "SSCAN", Encoding.UTF8.GetString(setId), cursor, count);
@@ -156,17 +157,17 @@ namespace Agebull.Common.DataModel.Redis
 #if DEBUG
             if (line.type != 1)
             {
-                this.Status = 2;
+                Status = 2;
                 return result;
             }
             int lines;
             if (!int.TryParse(line.sValue, out lines) || lines <= 0)
             {
-                this.Status = 2;
+                Status = 2;
                 return result;
             }
 #endif
-            result.NextCursor = int.Parse(this.ReadString());
+            result.NextCursor = int.Parse(ReadString());
             var cnt = ReadNumber();
             for (int i = 0; i < cnt; i++)
             {
@@ -177,7 +178,7 @@ namespace Agebull.Common.DataModel.Redis
 #if DEBUG
                 if (line.type != 2)
                 {
-                    this.Status = 3;
+                    Status = 3;
                     return result;
                 }
 #endif
@@ -214,11 +215,11 @@ namespace Agebull.Common.DataModel.Redis
         /// <remarks>l或h值如果大于0xFFFFFF将被截断</remarks>>
         public long ZAdd(byte[] setId, byte[] dataId, long h, long l)
         {
-            return this.SendExpectLong(new[]
+            return SendExpectLong(new[]
             {
                 Commands.ZAdd, 
                 setId, 
-                string.Concat(h & 0xFFFFFF, '.', l & 0xFFFFFF).ToUtf8Bytes(),
+                Encoding.UTF8.GetBytes(string.Concat(h & 0xFFFFFF, '.', l & 0xFFFFFF)),
                 dataId
             });
         }
@@ -233,13 +234,13 @@ namespace Agebull.Common.DataModel.Redis
         /// <remarks>l或h值如果大于0xFFFFFF将被截断</remarks>>
         public List<long> ZRangeByScore(byte[] setId, long h, long l)
         {
-            var vl = string.Concat(h & 0xFFFFFF, '.', l & 0xFFFFFF).ToUtf8Bytes();
+            var vl = Encoding.UTF8.GetBytes(string.Concat(h & 0xFFFFFF, '.', l & 0xFFFFFF));
 
             var command = new[] { Commands.ZRangeByScore, setId, vl, vl };
-            var bytes = this.SendExpectMultiData(command);
+            var bytes = SendExpectMultiData(command);
             if (bytes == null || bytes.Length == 0)
                 return new List<long>();
-            return bytes.Select(bf => bf.Length == 4 ? ByteCommond.BytesToInt(bf) : ByteCommond.BytesToLong(bf)).ToList();
+            return bytes.Select(bf => bf.Length == 4 ? bf.BytesToInt() : bf.BytesToLong()).ToList();
         }
 
         /// <summary>
@@ -258,10 +259,10 @@ namespace Agebull.Common.DataModel.Redis
             }
             var command = new[] { Commands.ZScore, setId, dataId };
             h = 0;
-            if (!this.SendCommand(command))
+            if (!SendCommand(command))
             {
                 Status = -1;
-                LastError = string.Join(" ", "ZScore", Encoding.UTF8.GetString(setId), ByteCommond.BytesToLong(dataId));
+                LastError = string.Join(" ", "ZScore", Encoding.UTF8.GetString(setId), dataId.BytesToLong());
                 l = 0;
                 return false;
             }
@@ -298,14 +299,14 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         private int ReadNumber()
         {
-            int state = this.Bstream.ReadByte();
+            int state = Bstream.ReadByte();
             if (state == -1)
             {
                 Status = 1;
                 return -1;
             }
             if (state == '*')
-                return int.Parse(this.ReadLine());
+                return int.Parse(ReadLine());
             Status = 2;
             return -1;
         }
@@ -316,7 +317,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns>文本</returns>
         private string ReadString()
         {
-            int state = this.Bstream.ReadByte();
+            int state = Bstream.ReadByte();
             if (state == -1)
             {
                 Status = 1;
@@ -327,8 +328,8 @@ namespace Agebull.Common.DataModel.Redis
                 Status = 2;
                 return null;
             }
-            this.ReadLine();//长度
-            return this.ReadLine();//值
+            ReadLine();//长度
+            return ReadLine();//值
         }
 
         /// <summary>
@@ -376,7 +377,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns>false表示发生错误</returns>
         private bool ReadSingleLine(LineResult result)
         {
-            result.type = this.Bstream.ReadByte();
+            result.type = Bstream.ReadByte();
             if (result.type == -1)
             {
                 Status = 1;
@@ -386,22 +387,22 @@ namespace Agebull.Common.DataModel.Redis
             {
                 case ':':
                     result.type = 0;
-                    result.sValue = this.ReadLine();
+                    result.sValue = ReadLine();
                     return true;
                 case '-':
                     result.type = -2;
                     Status = 100;
-                    LastError = this.ReadLine();
+                    LastError = ReadLine();
                     return false;
                 case '*':
                     result.type = 1;
-                    result.sValue = this.ReadLine();
+                    result.sValue = ReadLine();
                     return true;
                 case '$':
                     result.type = 2;
                     {
                         int num;
-                        result.sValue = this.ReadLine();
+                        result.sValue = ReadLine();
                         if (result.sValue[0] == '-')
                         {
                             return true;
@@ -416,7 +417,7 @@ namespace Agebull.Common.DataModel.Redis
                         int offset = 0;
                         while (num > 0)
                         {
-                            int num3 = this.Bstream.Read(result.bValue, offset, num);
+                            int num3 = Bstream.Read(result.bValue, offset, num);
                             if (num3 <= 0)
                             {
                                 Status = -2;
@@ -426,7 +427,7 @@ namespace Agebull.Common.DataModel.Redis
                             offset += num3;
                             num -= num3;
                         }
-                        if ((this.Bstream.ReadByte() != 13) || (this.Bstream.ReadByte() != 10))
+                        if ((Bstream.ReadByte() != 13) || (Bstream.ReadByte() != 10))
                         {
                             Status = -3;
                             LastError = ("Invalid termination");
@@ -437,10 +438,11 @@ namespace Agebull.Common.DataModel.Redis
                 default:
                     Status = -1;
                     result.type = -3;
-                    LastError = "Unexpected reply: " + this.ReadLine();
+                    LastError = "Unexpected reply: " + ReadLine();
                     return false;
             }
         }
         #endregion
     }
 }
+#endif

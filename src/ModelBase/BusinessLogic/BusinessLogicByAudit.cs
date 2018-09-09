@@ -1,66 +1,61 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ä½œè€…:
-// // å·¥ç¨‹:Agebull.DataModel
-// // å»ºç«‹:2016-06-12
-// // ä¿®æ”¹:2016-06-16
+// // ×÷Õß:
+// // ¹¤³Ì:Agebull.DataModel
+// // ½¨Á¢:2016-06-12
+// // ĞŞ¸Ä:2016-06-16
 // // *****************************************************/
 
-#region å¼•ç”¨
+#region ÒıÓÃ
 
 using System;
+using Agebull.Common.Rpc;
+using Agebull.Common.WebApi;
 using Gboxt.Common.DataModel.Extends;
+using Gboxt.Common.DataModel.MySql;
+using Gboxt.Common.DataModel;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    ///     åŸºäºå®¡æ ¸æ‰©å±•çš„ä¸šåŠ¡é€»è¾‘åŸºç±»
+    ///     »ùÓÚÉóºËÀ©Õ¹µÄÒµÎñÂß¼­»ùÀà
     /// </summary>
-    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
-    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
-    public class BusinessLogicByAudit<TData, TAccess> : BusinessLogicByHistory<TData, TAccess>
+    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
+    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TDatabase">Êı¾İ¿â¶ÔÏó</typeparam>
+    public class BusinessLogicByAudit<TData, TAccess, TDatabase> 
+        : BusinessLogicByHistory<TData, TAccess, TDatabase>
         where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : HitoryTable<TData, TDatabase>, new()
+        where TDatabase : MySqlDataBase
     {
-        #region æ¶ˆæ¯
+        #region ÏûÏ¢
 
         /// <summary>
-        ///     å–æ¶ˆæ ¡éªŒ(å®¡æ ¸æ—¶æœ‰æ•ˆ)
+        ///     È¡ÏûĞ£Ñé(ÉóºËÊ±ÓĞĞ§)
         /// </summary>
         public bool CancelValidate { get; set; }
-        /// <summary>
-        /// å®Œæˆå®¡æ ¸ä¸”å·²å½’æ¡£çš„æ•°æ®ï¼Œä¸èƒ½è¿›è¡Œåå®¡æ ¸ï¼
-        /// </summary>
-        protected virtual string UnAuditMessageLock => "å®Œæˆå®¡æ ¸ä¸”å·²å½’æ¡£çš„æ•°æ®ï¼Œä¸èƒ½è¿›è¡Œåå®¡æ ¸ï¼";
-        /// <summary>
-        /// æœªé€šè¿‡å®¡æ ¸çš„æ•°æ®ï¼Œä¸èƒ½è¿›è¡Œåå®¡æ ¸ï¼
-        /// </summary>
-        protected virtual string UnAuditMessageNoSubmit => "æœªé€šè¿‡å®¡æ ¸çš„æ•°æ®ï¼Œä¸èƒ½è¿›è¡Œåå®¡æ ¸ï¼";
-        /// <summary>
-        /// å·²å®¡æ ¸ç»“æŸçš„æ•°æ®ä¸å¯ä»¥æäº¤ï¼
-        /// </summary>
-        protected virtual string SubmitMessage => "å·²å®¡æ ¸ç»“æŸçš„æ•°æ®ä¸å¯ä»¥æäº¤ï¼";
-        /// <summary>
-        /// ä»…å·²æäº¤æœªå®¡æ ¸çš„æ•°æ®å¯é€€å›ï¼
-        /// </summary>
-        protected virtual string BackMessage => "ä»…å·²æäº¤æœªå®¡æ ¸çš„æ•°æ®å¯é€€å›ï¼";
-        /// <summary>
-        /// å·²å®Œæˆå®¡æ ¸è¶…è¿‡ä¸‰ååˆ†é’Ÿçš„æ•°æ®ï¼Œæ— æ³•å†æ¬¡å®¡æ ¸ï¼
-        /// </summary>
-        protected virtual string AuditMessageReDo => "å·²å®Œæˆå®¡æ ¸è¶…è¿‡ä¸‰ååˆ†é’Ÿçš„æ•°æ®ï¼Œæ— æ³•å†æ¬¡å®¡æ ¸ï¼";
-        /// <summary>
-        /// ä»…å·²æäº¤æœªå®¡æ ¸çš„æ•°æ®å¯è¿›è¡Œå®¡æ ¸ï¼
-        /// </summary>
-        protected virtual string AuditMessage => "ä»…å·²æäº¤æœªå®¡æ ¸çš„æ•°æ®å¯è¿›è¡Œå®¡æ ¸ï¼";
+
+        protected virtual string unAuditMessageLock => "Íê³ÉÉóºËÇÒÒÑ¹éµµµÄÊı¾İ£¬²»ÄÜ½øĞĞ·´ÉóºË£¡";
+
+        protected virtual string unAuditMessageNoSubmit => "Î´Í¨¹ıÉóºËµÄÊı¾İ£¬²»ÄÜ½øĞĞ·´ÉóºË£¡";
+
+        protected virtual string SubmitMessage => "ÒÑÉóºË½áÊøµÄÊı¾İ²»¿ÉÒÔÌá½»£¡";
+
+        protected virtual string BackMessage => "½öÒÑÌá½»Î´ÉóºËµÄÊı¾İ¿ÉÍË»Ø£¡";
+
+        protected virtual string AuditMessageReDo => "ÒÑÍê³ÉÉóºË³¬¹ıÈıÊ®·ÖÖÓµÄÊı¾İ£¬ÎŞ·¨ÔÙ´ÎÉóºË£¡";
+
+        protected virtual string AuditMessage => "½öÒÑÌá½»Î´ÉóºËµÄÊı¾İ¿É½øĞĞÉóºË£¡";
 
         #endregion
 
-        #region æ‰¹é‡æ“ä½œ
+        #region ÅúÁ¿²Ù×÷
 
         /// <summary>
-        ///     æ‰¹é‡æäº¤
+        ///     ÅúÁ¿Ìá½»
         /// </summary>
         public bool Submit(string sels)
         {
@@ -68,7 +63,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰¹é‡é€€å›
+        ///     ÅúÁ¿ÍË»Ø
         /// </summary>
         public bool Back(string sels)
         {
@@ -76,7 +71,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰¹é‡é€šè¿‡
+        ///     ÅúÁ¿Í¨¹ı
         /// </summary>
         public bool AuditPass(string sels)
         {
@@ -84,7 +79,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰¹é‡æ‹‰å›
+        ///     ÅúÁ¿À­»Ø
         /// </summary>
         public bool Pullback(string sels)
         {
@@ -92,7 +87,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰¹é‡å¦å†³
+        ///     ÅúÁ¿·ñ¾ö
         /// </summary>
         public bool AuditDeny(string sels)
         {
@@ -100,14 +95,14 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰¹é‡åå®¡æ ¸
+        ///     ÅúÁ¿·´ÉóºË
         /// </summary>
         public bool UnAudit(string sels)
         {
             return DoByIds(sels, UnAuditInner);
         }
         /// <summary>
-        ///     æ‰¹é‡æ•°æ®æ ¡éªŒ
+        ///     ÅúÁ¿Êı¾İĞ£Ñé
         /// </summary>
         public bool Validate(string sels, Action<ValidateResult> putError)
         {
@@ -116,27 +111,27 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region å•ä¸ªæ“ä½œ
+        #region µ¥¸ö²Ù×÷
 
         /// <summary>
-        ///     æ•°æ®æ­£ç¡®æ€§æ ¡éªŒ
+        ///     Êı¾İÕıÈ·ĞÔĞ£Ñé
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Validate(int id)
+        public virtual bool Validate(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 return DoValidateInner(Details(id));
             }
         }
 
         /// <summary>
-        ///     å®¡æ ¸é€šè¿‡
+        ///     ÉóºËÍ¨¹ı
         /// </summary>
-        public bool AuditPass(int id)
+        public bool AuditPass(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 var data = Details(id);
                 if (data == null)
@@ -148,11 +143,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     å®¡æ ¸ä¸é€šè¿‡
+        ///     ÉóºË²»Í¨¹ı
         /// </summary>
-        public bool AuditDeny(int id)
+        public bool AuditDeny(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 var data = Details(id);
                 if (data == null)
@@ -166,11 +161,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     åå®¡æ ¸
+        ///     ·´ÉóºË
         /// </summary>
-        public bool UnAudit(int id)
+        public bool UnAudit(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 var data = Details(id);
                 if (data == null)
@@ -184,13 +179,13 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æäº¤å®¡æ ¸
+        ///     Ìá½»ÉóºË
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Submit(int id)
+        public bool Submit(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 var data = Details(id);
                 if (data == null)
@@ -204,13 +199,13 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é€€å›ç¼–è¾‘
+        ///     ÍË»Ø±à¼­
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Back(int id)
+        public bool Back(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 var data = Details(id);
                 if (data == null)
@@ -225,23 +220,23 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region çŠ¶æ€é‡è½½
+        #region ×´Ì¬ÖØÔØ
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡å‰ç½®å¤„ç†
+        ///     É¾³ı¶ÔÏóÇ°ÖÃ´¦Àí
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
             if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.None))
             {
-                BusinessContext.Current.LastMessage = "ä»…æœªè¿›è¡Œä»»ä½•å®¡æ ¸æ“ä½œçš„æ•°æ®å¯ä»¥è¢«åˆ é™¤";
+                ApiContext.Current.LastMessage = "½öÎ´½øĞĞÈÎºÎÉóºË²Ù×÷µÄÊı¾İ¿ÉÒÔ±»É¾³ı";
                 return false;
             }
             return base.PrepareDelete(id);
         }
 
         /// <summary>
-        ///     é‡ç½®æ•°æ®çŠ¶æ€
+        ///     ÖØÖÃÊı¾İ×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         protected override bool DoResetState(TData data)
@@ -255,12 +250,12 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ç¦ç”¨å¯¹è±¡
+        ///     ½ûÓÃ¶ÔÏó
         /// </summary>
-        public override bool Reset(int id)
+        public override bool Reset(long id)
         {
             ResetState(Access.First(id));
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
                 {
@@ -273,11 +268,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     ç¦ç”¨å¯¹è±¡
+        ///     ½ûÓÃ¶ÔÏó
         /// </summary>
-        public override bool Disable(int id)
+        public override bool Disable(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass ))
                 {
@@ -288,11 +283,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             }
         }
         /// <summary>
-        ///     å¼ƒç”¨å¯¹è±¡
+        ///     ÆúÓÃ¶ÔÏó
         /// </summary>
-        public override bool Discard(int id)
+        public override bool Discard(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState <= AuditStateType.Again))
                 {
@@ -303,11 +298,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             }
         }
         /// <summary>
-        ///     å¯ç”¨å¯¹è±¡
+        ///     ÆôÓÃ¶ÔÏó
         /// </summary>
-        public override bool Enable(int id)
+        public override bool Enable(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
                 {
@@ -319,11 +314,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         
         /// <summary>
-        ///     é”å®šå¯¹è±¡
+        ///     Ëø¶¨¶ÔÏó
         /// </summary>
-        public override bool Lock(int id)
+        public override bool Lock(long id)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
                     return false;
@@ -337,10 +332,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region åŸºæœ¬å®ç°
+        #region »ù±¾ÊµÏÖ
 
         /// <summary>
-        ///     å®¡æ ¸é€šè¿‡
+        ///     ÉóºËÍ¨¹ı
         /// </summary>
         protected bool AuditPassInner(TData data)
         {
@@ -348,7 +343,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     å®¡æ ¸ä¸é€šè¿‡
+        ///     ÉóºË²»Í¨¹ı
         /// </summary>
         protected bool AuditDenyInner(TData data)
         {
@@ -356,23 +351,23 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‹‰å›
+        ///     À­»Ø
         /// </summary>
         protected bool PullbackInner(TData data)
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                BusinessContext.Current.LastMessage = "å·²å®¡æ ¸å¤„ç†çš„æ•°æ®æ— æ³•æ‹‰å›";
+                ApiContext.Current.LastMessage = "ÒÑÉóºË´¦ÀíµÄÊı¾İÎŞ·¨À­»Ø";
                 return false;
             }
-            if (data.LastReviserId != BusinessContext.Current.LoginUserId)
+            if (data.LastReviserId != ApiContext.Current.LoginUserId)
             {
-                BusinessContext.Current.LastMessage = "ä¸æ˜¯æœ¬äººæäº¤çš„æ•°æ®æ— æ³•æ‹‰å›";
+                ApiContext.Current.LastMessage = "²»ÊÇ±¾ÈËÌá½»µÄÊı¾İÎŞ·¨À­»Ø";
                 return false;
             }
             if (data.LastModifyDate < DateTime.Now.AddMinutes(-10))
             {
-                BusinessContext.Current.LastMessage = "å·²æäº¤è¶…è¿‡ååˆ†é’Ÿçš„æ•°æ®æ— æ³•æ‹‰å›";
+                ApiContext.Current.LastMessage = "ÒÑÌá½»³¬¹ıÊ®·ÖÖÓµÄÊı¾İÎŞ·¨À­»Ø";
                 return false;
             }
             
@@ -384,11 +379,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     å®¡æ ¸
+        ///     ÉóºË
         /// </summary>
         protected bool AuditInner(TData data, bool pass)
         {
-            //BusinessContext.Current.IsSystemMode = true;
+            //ApiContext.Current.IsSystemMode = true;
             if (pass)
             {
                 AuditPrepare(data);
@@ -428,7 +423,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     åå®¡æ ¸
+        ///     ·´ÉóºË
         /// </summary>
         protected bool UnAuditInner(TData data)
         {
@@ -446,7 +441,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é€€å›ç¼–è¾‘
+        ///     ÍË»Ø±à¼­
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -454,12 +449,12 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                BusinessContext.Current.LastMessage = BackMessage;
+                ApiContext.Current.LastMessage = BackMessage;
                 return false;
             }
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
-                using (var scope = Access.DataBase.CreateTransactionScope())
+                using (var scope = TransactionScope.CreateScope(Access.DataBase))
                 {
                     if (!DoBack(data))
                     {
@@ -477,16 +472,16 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æäº¤å®¡æ ¸
+        ///     Ìá½»ÉóºË
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         protected bool SubmitInner(TData data)
         {
-            //BusinessContext.Current.IsSystemMode = true;
+            //ApiContext.Current.IsSystemMode = true;
             if (data == null || data.IsDeleted())
             {
-                BusinessContext.Current.LastMessage = "æ•°æ®ä¸å­˜åœ¨æˆ–å·²åˆ é™¤ï¼";
+                ApiContext.Current.LastMessage = "Êı¾İ²»´æÔÚ»òÒÑÉ¾³ı£¡";
                 return false;
             }
             if (data.AuditState == AuditStateType.Submit)
@@ -495,7 +490,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             }
             if (data.AuditState > AuditStateType.Submit)
             {
-                BusinessContext.Current.LastMessage = SubmitMessage;
+                ApiContext.Current.LastMessage = SubmitMessage;
                 return false;
             }
             
@@ -520,10 +515,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region å®¡æ‰¹æµç¨‹å®ç°
+        #region ÉóÅúÁ÷³ÌÊµÏÖ
 
         /// <summary>
-        ///     è®¾ç½®å®¡æ ¸çŠ¶æ€
+        ///     ÉèÖÃÉóºË×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         /// <param name="audit"></param>
@@ -536,12 +531,12 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 case AuditStateType.Pass:
                     state = DataStateType.Enable;
                     data.AuditDate = DateTime.Now;
-                    data.AuditorId = BusinessContext.Current.LoginUserId;
+                    data.AuditorId = ApiContext.Current.LoginUserId;
                     break;
                 case AuditStateType.Deny:
                     state = DataStateType.Discard;
                     data.AuditDate = DateTime.Now;
-                    data.AuditorId = BusinessContext.Current.LoginUserId;
+                    data.AuditorId = ApiContext.Current.LoginUserId;
                     break;
                 case AuditStateType.End:
                     data.IsFreeze = true;
@@ -551,14 +546,14 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             OnAuditStateChanged(data);
         }
         /// <summary>
-        ///     è®¾ç½®å®¡æ ¸çŠ¶æ€
+        ///     ÉèÖÃÉóºË×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         protected virtual void OnAuditStateChanged(TData data)
         {
         }
         /// <summary>
-        ///     èƒ½å¦é€šè¿‡å®¡æ ¸)çš„åˆ¤æ–­
+        ///     ÄÜ·ñÍ¨¹ıÉóºË)µÄÅĞ¶Ï
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -568,7 +563,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     èƒ½å¦è¿›è¡Œå®¡æ ¸çš„åˆ¤æ–­
+        ///     ÄÜ·ñ½øĞĞÉóºËµÄÅĞ¶Ï
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -576,7 +571,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         {
             if (data == null || data.IsDeleted())
             {
-                BusinessContext.Current.LastMessage = "æ•°æ®ä¸å­˜åœ¨æˆ–å·²åˆ é™¤ï¼";
+                ApiContext.Current.LastMessage = "Êı¾İ²»´æÔÚ»òÒÑÉ¾³ı£¡";
                 return false;
             }
             if (data.AuditState <= AuditStateType.Submit)
@@ -584,11 +579,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             if (data.LastModifyDate >= DateTime.Now.AddMinutes(-30) &&
                 (data.AuditState == AuditStateType.Pass || data.AuditState == AuditStateType.Deny))
                 return true;
-            BusinessContext.Current.LastMessage = AuditMessageReDo;
+            ApiContext.Current.LastMessage = AuditMessageReDo;
             return false;
         }
         /// <summary>
-        ///     æ•°æ®æ­£ç¡®æ€§æ ¡éªŒ
+        ///     Êı¾İÕıÈ·ĞÔĞ£Ñé
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -599,7 +594,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ•°æ®æ­£ç¡®æ€§æ ¡éªŒ
+        ///     Êı¾İÕıÈ·ĞÔĞ£Ñé
         /// </summary>
         /// <param name="data"></param>
         /// <param name="putError"></param>
@@ -611,7 +606,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ•°æ®æ­£ç¡®æ€§æ ¡éªŒ
+        ///     Êı¾İÕıÈ·ĞÔĞ£Ñé
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -621,7 +616,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ•°æ®æ­£ç¡®æ€§æ ¡éªŒ
+        ///     Êı¾İÕıÈ·ĞÔĞ£Ñé
         /// </summary>
         /// <param name="data"></param>
         /// <param name="putError"></param>
@@ -636,7 +631,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             if (!result.succeed)
             {
                 putError?.Invoke(result);
-                BusinessContext.Current.LastMessage = result.ToString();
+                ApiContext.Current.LastMessage = result.ToString();
                 return false;
             }
             return ValidateExtend(data);
@@ -644,7 +639,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     èƒ½å¦è¿›è¡Œåå®¡æ ¸çš„åˆ¤æ–­
+        ///     ÄÜ·ñ½øĞĞ·´ÉóºËµÄÅĞ¶Ï
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -652,12 +647,12 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         {
             if (data.IsFreeze)
             {
-                BusinessContext.Current.LastMessage = UnAuditMessageLock;
+                ApiContext.Current.LastMessage = unAuditMessageLock;
                 return false;
             }
             if (data.AuditState < AuditStateType.Deny)
             {
-                BusinessContext.Current.LastMessage = UnAuditMessageNoSubmit;
+                ApiContext.Current.LastMessage = unAuditMessageNoSubmit;
                 return false;
             }
             return true;
@@ -665,10 +660,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region å¯æ‰©å±•å¤„ç†
+        #region ¿ÉÀ©Õ¹´¦Àí
 
         /// <summary>
-        ///     å®¡æ ¸é€šè¿‡å‰çš„å‡†å¤‡
+        ///     ÉóºËÍ¨¹ıÇ°µÄ×¼±¸
         /// </summary>
         /// <param name="data"></param>
         protected virtual void AuditPrepare(TData data)
@@ -677,7 +672,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     æ‰§è¡Œåå®¡æ ¸çš„æ‰©å±•æµç¨‹
+        ///     Ö´ĞĞ·´ÉóºËµÄÀ©Õ¹Á÷³Ì
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -687,7 +682,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡Œåå®¡æ ¸å®Œæˆå
+        ///     Ö´ĞĞ·´ÉóºËÍê³Éºó
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -697,7 +692,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     æäº¤å®¡æ ¸
+        ///     Ìá½»ÉóºË
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -707,7 +702,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é€€å›é‡åš
+        ///     ÍË»ØÖØ×ö
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -717,7 +712,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     é€€å›å®Œæˆ
+        ///     ÍË»ØÍê³É
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -726,7 +721,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰©å±•æ•°æ®æ ¡éªŒ
+        ///     À©Õ¹Êı¾İĞ£Ñé
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -736,7 +731,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡Œå®¡æ ¸çš„æ‰©å±•æµç¨‹
+        ///     Ö´ĞĞÉóºËµÄÀ©Õ¹Á÷³Ì
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -745,7 +740,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡Œå®¡æ ¸çš„æ‰©å±•æµç¨‹
+        ///     Ö´ĞĞÉóºËµÄÀ©Õ¹Á÷³Ì
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -756,7 +751,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡Œå®¡æ ¸çš„æ‰©å±•æµç¨‹
+        ///     Ö´ĞĞÉóºËµÄÀ©Õ¹Á÷³Ì
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -767,7 +762,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡Œå®¡æ ¸çš„æ‰©å±•æµç¨‹
+        ///     Ö´ĞĞÉóºËµÄÀ©Õ¹Á÷³Ì
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>

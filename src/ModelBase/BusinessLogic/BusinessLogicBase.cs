@@ -1,46 +1,50 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ä½œè€…:
-// // å·¥ç¨‹:Agebull.DataModel
-// // å»ºç«‹:2016-06-12
-// // ä¿®æ”¹:2016-06-16
+// // ×÷Õß:
+// // ¹¤³Ì:Agebull.DataModel
+// // ½¨Á¢:2016-06-12
+// // ĞŞ¸Ä:2016-06-16
 // // *****************************************************/
 
-#region å¼•ç”¨
+#region ÒıÓÃ
 
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Gboxt.Common.DataModel;
+using Gboxt.Common.DataModel.MySql;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// ä¸šåŠ¡é€»è¾‘å¯¹è±¡åŸºç±»
+    /// ÒµÎñÂß¼­¶ÔÏó»ùÀà
     /// </summary>
-    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
-    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
-    public class BusinessLogicBase<TData, TAccess>
-    where TData : EditDataObject, IIdentityData, new()
-    where TAccess : class, IDataTable<TData>, new()
+    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
+    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TDatabase">Êı¾İ¿â¶ÔÏó</typeparam>
+    public class BusinessLogicBase<TData, TAccess,TDatabase>
+        where TData : EditDataObject, IIdentityData, new()
+        where TAccess : MySqlTable<TData, TDatabase>, new()
+        where TDatabase : MySqlDataBase
     {
-        #region åŸºç¡€æ”¯æŒå¯¹è±¡
+        #region »ù´¡Ö§³Ö¶ÔÏó
 
         /// <summary>
-        ///     å®ä½“ç±»å‹
+        ///     ÊµÌåÀàĞÍ
         /// </summary>
         public virtual int EntityType => 0;
 
         private TAccess _access;
 
         /// <summary>
-        ///     æ•°æ®è®¿é—®å¯¹è±¡
+        ///     Êı¾İ·ÃÎÊ¶ÔÏó
         /// </summary>
         public TAccess Access => _access ?? (_access = CreateAccess());
 
         /// <summary>
-        ///     æ•°æ®è®¿é—®å¯¹è±¡
+        ///     Êı¾İ·ÃÎÊ¶ÔÏó
         /// </summary>
         protected virtual TAccess CreateAccess()
         {
@@ -48,35 +52,35 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             return access;
         }
         /// <summary>
-        /// æ„é€ 
+        /// ¹¹Ôì
         /// </summary>
         protected BusinessLogicBase()
         {
         }
         #endregion
 
-        #region ä¾¿åˆ©æ“ä½œ
+        #region ±ãÀû²Ù×÷
 
         /// <summary>
-        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
+        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
         /// </summary>
-        public bool DoByIds(string ids, Func<int, bool> func, Action onEnd = null)
+        public bool DoByIds(string ids, Func<long, bool> func, Action onEnd = null)
         {
             return LoopIds(ids, func, onEnd);
         }
 
         /// <summary>
-        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
+        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
         /// </summary>
-        public bool LoopIds(string ids, Func<int, bool> func, Action onEnd = null)
+        public bool LoopIds(string ids, Func<long, bool> func, Action onEnd = null)
         {
             if (string.IsNullOrEmpty(ids))
             {
                 return false;
             }
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
-                using (var scope = Access.DataBase.CreateTransactionScope())
+                using (var scope = TransactionScope.CreateScope(Access.DataBase))
                 {
                     var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sids.Length == 0)
@@ -85,8 +89,8 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                     }
                     foreach (var sid in sids)
                     {
-                        int id;
-                        if (!int.TryParse(sid, out id))
+                        long id;
+                        if (!long.TryParse(sid, out id))
                         {
                             return false;
                         }
@@ -103,7 +107,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
+        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
         /// </summary>
         public bool DoByIds(string ids, Func<TData, bool> func, Action onEnd = null)
         {
@@ -111,7 +115,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     æ‰§è¡ŒIDç»„åˆå­—ä¸²çš„æ“ä½œï¼ˆæ¥è‡ªé¡µé¢çš„,å·ç»„åˆçš„IDï¼‰
+        ///     Ö´ĞĞID×éºÏ×Ö´®µÄ²Ù×÷£¨À´×ÔÒ³ÃæµÄ,ºÅ×éºÏµÄID£©
         /// </summary>
         public bool LoopIdsToData(string ids, Func<TData, bool> func, Action onEnd = null)
         {
@@ -119,9 +123,9 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return false;
             }
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
-                using (var scope = Access.DataBase.CreateTransactionScope())
+                using (var scope = TransactionScope.CreateScope(Access.DataBase))
                 {
                     var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sids.Length == 0)
@@ -130,8 +134,8 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                     }
                     foreach (var sid in sids)
                     {
-                        int id;
-                        if (!int.TryParse(sid, out id))
+                        long id;
+                        if (!long.TryParse(sid, out id))
                         {
                             return false;
                         }
@@ -149,28 +153,38 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
         #endregion
 
-        #region è¯»æ•°æ®
+        #region ¶ÁÊı¾İ
 
         /// <summary>
-        ///     å–å¾—åˆ—è¡¨æ•°æ®
+        ///     È¡µÃÁĞ±íÊı¾İ
         /// </summary>
         public List<TData> All()
         {
             return Access.All();
         }
-        
+
         /// <summary>
-        ///     è¯»å–æ•°æ®
+        ///     ¶ÁÈ¡Êı¾İ
         /// </summary>
-        /// <param name="lambda">æŸ¥è¯¢è¡¨è¾¾å¼</param>
-        /// <returns>æ˜¯å¦å­˜åœ¨æ•°æ®</returns>
+        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
+        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
+        public List<TData> All(LambdaItem<TData> lambda)
+        {
+            return Access.All(lambda);
+        }
+
+        /// <summary>
+        ///     ¶ÁÈ¡Êı¾İ
+        /// </summary>
+        /// <param name="lambda">²éÑ¯±í´ïÊ½</param>
+        /// <returns>ÊÇ·ñ´æÔÚÊı¾İ</returns>
         public List<TData> All(Expression<Func<TData, bool>> lambda)
         {
             return Access.All(lambda);
         }
 
         /// <summary>
-        ///     è½½å…¥å½“å‰æ“ä½œçš„æ•°æ®
+        ///     ÔØÈëµ±Ç°²Ù×÷µÄÊı¾İ
         /// </summary>
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
         {
@@ -178,7 +192,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     è½½å…¥å½“å‰æ“ä½œçš„æ•°æ®
+        ///     ÔØÈëµ±Ç°²Ù×÷µÄÊı¾İ
         /// </summary>
         public virtual TData Details(long id)
         {

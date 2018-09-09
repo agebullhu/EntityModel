@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Gboxt.Common.DataModel;
 
 namespace Agebull.Common.DataModel
 {
@@ -8,6 +9,37 @@ namespace Agebull.Common.DataModel
     /// </summary>
     public static class DataKeyBuilder
     {
+        /// <summary>
+        /// 默认的数据键名称生成器
+        /// </summary>
+        /// <typeparam name="TData">数据键</typeparam>
+        /// <param name="data">数据</param>
+        /// <returns>数据键名</returns>
+        public static string DataKey<TData>(TData data) where TData : class, IIdentityData
+        {
+            return $"data:{typeof(TData).Name.ToLower()}:{data.Id}";
+        }
+
+        /// <summary>
+        /// 默认的数据键名称生成器
+        /// </summary>
+        /// <typeparam name="TData">数据键</typeparam>
+        /// <param name="id">数据键</param>
+        /// <returns>数据键名</returns>
+        public static string DataKey<TData>(object id)
+        {
+            return $"data:{typeof(TData).Name.ToLower()}:{id}";
+        }
+        /// <summary>
+        /// 默认的数据键名称生成器
+        /// </summary>
+        /// <param name="type">数据</param>
+        /// <param name="id">数据键</param>
+        /// <returns>数据键名</returns>
+        public static string DataKey(string type, int id)
+        {
+            return $"data:{type.ToLower()}:{id}";
+        }
         /// <summary>
         /// 连接为Key
         /// </summary>

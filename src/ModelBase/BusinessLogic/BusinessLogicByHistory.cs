@@ -1,31 +1,35 @@
 // // /*****************************************************
 // // (c)2016-2016 Copy right www.gboxt.com
-// // ä½œè€…:
-// // å·¥ç¨‹:Agebull.DataModel
-// // å»ºç«‹:2016-06-12
-// // ä¿®æ”¹:2016-06-16
+// // ×÷Õß:
+// // ¹¤³Ì:Agebull.DataModel
+// // ½¨Á¢:2016-06-12
+// // ĞŞ¸Ä:2016-06-16
 // // *****************************************************/
 
-#region å¼•ç”¨
+#region ÒıÓÃ
 
 using System;
+using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.Extends;
+using Gboxt.Common.DataModel.MySql;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// åŸºäºå†å²è®°å½•çš„ä¸šåŠ¡é€»è¾‘åŸºç±»
+    /// »ùÓÚÀúÊ·¼ÇÂ¼µÄÒµÎñÂß¼­»ùÀà
     /// </summary>
-    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
-    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
-    public class BusinessLogicByHistory<TData, TAccess> : BusinessLogicByStateData<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, IHistoryData,  IStateData, new()
-        where TAccess : class, IDataTable<TData>, new()
+    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
+    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TDatabase">Êı¾İ¿â¶ÔÏó</typeparam>
+    public class BusinessLogicByHistory<TData, TAccess, TDatabase> : BusinessLogicByStateData<TData, TAccess, TDatabase>
+        where TData : EditDataObject, IStateData, IHistoryData, IIdentityData, new()
+        where TAccess : HitoryTable<TData, TDatabase>, new()
+        where TDatabase : MySqlDataBase
     {
         /// <summary>
-        ///     é‡ç½®æ•°æ®çŠ¶æ€
+        ///     ÖØÖÃÊı¾İ×´Ì¬
         /// </summary>
         /// <param name="data"></param>
         protected override bool DoResetState(TData data)

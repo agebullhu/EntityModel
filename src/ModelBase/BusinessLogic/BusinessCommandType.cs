@@ -1,4 +1,4 @@
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
     /// 逻辑内部命令类型

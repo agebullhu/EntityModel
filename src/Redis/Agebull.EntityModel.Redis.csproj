@@ -4,7 +4,7 @@
     <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <Version>2.2.3.0</Version>
+    <Version>2.3.0.23</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -17,7 +17,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.2.3.0</PackageVersion>
+    <PackageVersion>2.3.0.23</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
@@ -53,20 +53,18 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
   </ItemGroup>
-  
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
+    <PackageReference Include="NServiceKit.Redis" Version="1.0.20" />
+  </ItemGroup>
+
   <ItemGroup>
-    <Compile Remove="Redis\RedisClientEx.cs" />
     <Compile Remove="Redis\RedisDbScope.cs" />
-    <Compile Remove="Redis\RedisKeyBuilder.cs" />
-    <Compile Remove="Redis\RedisProxy.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>
 
 

@@ -15,10 +15,30 @@ namespace Agebull.Common.DataModel.Redis
         long CurrentDb { get; }
 
         /// <summary>
+        /// 不关闭
+        /// </summary>
+        bool NoClose { get; }
+
+        /// <summary>
         /// 原始对象,在不够用时扩展
         /// </summary>
         T Original<T>() where T : class;
-        
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="last"></param>
+        /// <returns></returns>
+        void SetTime(string key, DateTime last);
+
+        /// <summary>
+        /// 写值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        void SetTime(string key, TimeSpan span);
 
         /// <summary>
         /// 更改Db
@@ -33,6 +53,18 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         /// <param name="key"></param>
         void RemoveKey(string key);
+
+        /// <summary>
+        /// 查找关删除KEY
+        /// </summary>
+        /// <param name="pattern">条件</param>
+        void FindAndRemoveKey(string pattern);
+
+        /// <summary>
+        /// 查找关删除KEY
+        /// </summary>
+        /// <param name="pattern">条件</param>
+        List<T> GetAll<T>(string pattern) where T : class;
 
         /// <summary>
         /// 取文本
@@ -162,7 +194,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="id">键的组合</param>
         /// <param name="def">默认值</param>
         /// <returns></returns>
-        TData GetEntity<TData>(int id, TData def = null) where TData : class, new();
+        TData GetEntity<TData>(long id, TData def = null) where TData : class, new();
 
         /// <summary>
         /// 读缓存
@@ -194,7 +226,7 @@ namespace Agebull.Common.DataModel.Redis
         ///     缓存这些对象
         /// </summary>
         /// <returns>数据</returns>
-        void RemoveCache<TData>(int id);
+        void RemoveCache<TData>(long id);
 
         /// <summary>
         /// 如果值不存在，则写入，否则失败

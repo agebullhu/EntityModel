@@ -18,6 +18,7 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using Gboxt.Common.DataModel.ExtendEvents;
+using Agebull.Common.Rpc;
 
 #endregion
 

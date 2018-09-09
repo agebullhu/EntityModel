@@ -1,5 +1,6 @@
 using System;
-using Agebull.Common.Ioc;
+using Agebull.Common;
+using Agebull.Common.Rpc;
 using Gboxt.Common.DataModel.Extends;
 
 namespace Gboxt.Common.DataModel.MySql
@@ -21,10 +22,9 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns></returns>
         protected override string AfterUpdateSql(string condition)
         {
-            var context = IocHelper.Create<IBusinessContext>();
             var filter= string.IsNullOrEmpty(condition) ? null : "\r\nWHERE " + condition;
             return $@"UPDATE `{WriteTableName}` 
-SET `{FieldDictionary["LastReviserID"]}`={context.LoginUserId},
+SET `{FieldDictionary["LastReviserID"]}`={GlobalContext.Current.LoginUserId},
 {FieldDictionary["LastModifyDate"]}=NOW(){filter};";
         }
         
@@ -35,16 +35,15 @@ SET `{FieldDictionary["LastReviserID"]}`={context.LoginUserId},
         /// <param name="operatorType">操作类型</param>
         protected override void OnPrepareSave(DataOperatorType operatorType, TData entity)
         {
-            var context = IocHelper.Create<IBusinessContext>();
             switch (operatorType)
             {
                 case DataOperatorType.Insert:
                     entity.AddDate = DateTime.Now;
-                    entity.AuthorId = context.LoginUserId;
+                    entity.AuthorId = GlobalContext.Current.LoginUserId;
                     break;
                 default:
                     entity.LastModifyDate = DateTime.Now;
-                    entity.LastReviserId = context.LoginUserId;
+                    entity.LastReviserId = GlobalContext.Current.LoginUserId;
                     break;
             }
         }

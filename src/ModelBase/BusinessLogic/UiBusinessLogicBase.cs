@@ -1,60 +1,65 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
+using Gboxt.Common.DataModel;
+using Gboxt.Common.DataModel.MySql;
+using MySql.Data.MySqlClient;
 
-namespace Gboxt.Common.DataModel.BusinessLogic
+namespace Agebull.Common.DataModel.BusinessLogic
 {
     /// <summary>
-    /// æ”¯æŒç•Œé¢æ“ä½œçš„ä¸šåŠ¡é€»è¾‘å¯¹è±¡åŸºç±»
+    /// Ö§³Ö½çÃæ²Ù×÷µÄÒµÎñÂß¼­¶ÔÏó»ùÀà
     /// </summary>
-    /// <typeparam name="TData">æ•°æ®å¯¹è±¡</typeparam>
-    /// <typeparam name="TAccess">æ•°æ®è®¿é—®å¯¹è±¡</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess> : BusinessLogicBase<TData, TAccess>
+    /// <typeparam name="TData">Êı¾İ¶ÔÏó</typeparam>
+    /// <typeparam name="TAccess">Êı¾İ·ÃÎÊ¶ÔÏó</typeparam>
+    /// <typeparam name="TDatabase">Êı¾İ¿â¶ÔÏó</typeparam>
+    public class UiBusinessLogicBase<TData, TAccess, TDatabase> : BusinessLogicBase<TData, TAccess, TDatabase>
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : MySqlTable<TData, TDatabase>, new()
+        where TDatabase : MySqlDataBase
     {
-        #region è¯»æ•°æ®
-        
+
+        #region ¶ÁÊı¾İ
+
         /// <summary>
-        ///     å–å¾—åˆ—è¡¨æ•°æ®
+        ///     È¡µÃÁĞ±íÊı¾İ
         /// </summary>
-        public ApiPageResult<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
+        public ApiPageData<TData> PageData(int page, int limit, string condition, params MySqlParameter[] args)
         {
             return PageData(page, limit, null, false, condition, args);
         }
 
         /// <summary>
-        ///     å–å¾—åˆ—è¡¨æ•°æ®
+        ///     È¡µÃÁĞ±íÊı¾İ
         /// </summary>
-        public ApiPageResult<TData> PageData(int page, int limit, string sort, bool desc, string condition,
-            params DbParameter[] args)
+        public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
+            params MySqlParameter[] args)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
                 {
                     var data = Access.PageData(page, limit, sort, desc, condition, args);
                     var count = (int)Access.Count(condition, args);
-                    return new ApiPageResult<TData>
+                    return new ApiPageData<TData>
                     {
-                        ResultData = new ApiPageData<TData>
-                        {
-                            RowCount= count,
-                            Rows = data
-                        }
+                        RowCount = count,
+                        Rows = data,
+                        PageIndex = page,
+                        PageSize = limit,
+                        PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
                     };
                 }
             }
         }
 
         /// <summary>
-        ///     åˆ†é¡µè¯»å–
+        ///     ·ÖÒ³¶ÁÈ¡
         /// </summary>
-        public ApiPageResult<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
+        public ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
             {
                 //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
                 {
@@ -64,27 +69,51 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                     }
                     var data = Access.PageData(page, limit, lambda);
                     var count = (int)Access.Count(lambda);
-                    return new ApiPageResult<TData>
+                    return new ApiPageData<TData>
                     {
-                        ResultData = new ApiPageData<TData>
-                        {
-                            RowCount = count,
-                            Rows = data
-                        }
+                        RowCount = count,
+                        Rows = data,
+                        PageIndex = page,
+                        PageSize = limit,
+                        PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
                     };
                 }
             }
         }
-        /* */
-        #endregion
-
-        #region å†™æ•°æ®
 
         /// <summary>
-        ///     å†…éƒ¨å‘½ä»¤æ‰§è¡Œå®Œæˆåçš„å¤„ç†
+        ///     ·ÖÒ³¶ÁÈ¡
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="cmd">å‘½ä»¤</param>
+        public ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
+        {
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            {
+
+                if (limit <= 0 || limit >= 999)
+                {
+                    limit = 30;
+                }
+                var data = Access.PageData(page, limit, lambda);
+                var count = (int)Access.Count(lambda);
+                return new ApiPageData<TData>
+                {
+                    RowCount = count,
+                    Rows = data,
+                    PageIndex = page,
+                    PageSize = limit,
+                    PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+                };
+            }
+        }
+        #endregion
+
+        #region Ğ´Êı¾İ
+
+        /// <summary>
+        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
+        /// </summary>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="cmd">ÃüÁî</param>
         protected virtual void OnInnerCommand(TData data, BusinessCommandType cmd)
         {
 
@@ -92,10 +121,10 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     å†…éƒ¨å‘½ä»¤æ‰§è¡Œå®Œæˆåçš„å¤„ç†
+        ///     ÄÚ²¿ÃüÁîÖ´ĞĞÍê³ÉºóµÄ´¦Àí
         /// </summary>
-        /// <param name="id">æ•°æ®</param>
-        /// <param name="cmd">å‘½ä»¤</param>
+        /// <param name="id">Êı¾İ</param>
+        /// <param name="cmd">ÃüÁî</param>
         protected virtual void OnInnerCommand(long id, BusinessCommandType cmd)
         {
 
@@ -103,22 +132,22 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
 
         /// <summary>
-        ///     æ˜¯å¦å¯ä»¥æ‰§è¡Œä¿å­˜æ“ä½œ
+        ///     ÊÇ·ñ¿ÉÒÔÖ´ĞĞ±£´æ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool CanSave(TData data, bool isAdd)
         {
             return true;
         }
 
         /// <summary>
-        ///     ä¿å­˜å‰çš„æ“ä½œ
+        ///     ±£´æÇ°µÄ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool PrepareSave(TData data, bool isAdd)
         {
             if (data.__IsFromUser && !PrepareSaveByUser(data, isAdd))
@@ -127,11 +156,11 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     ä¿å­˜å®Œæˆåçš„æ“ä½œ
+        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool LastSaved(TData data, bool isAdd)
         {
             if (data.__IsFromUser && !LastSavedByUser(data, isAdd))
@@ -140,62 +169,62 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     è¢«ç”¨æˆ·ç¼–è¾‘çš„æ•°æ®çš„ä¿å­˜å‰æ“ä½œ
+        ///     ±»ÓÃ»§±à¼­µÄÊı¾İµÄ±£´æÇ°²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool PrepareSaveByUser(TData data, bool isAdd)
         {
             return true;
         }
 
         /// <summary>
-        ///     è¢«ç”¨æˆ·ç¼–è¾‘çš„æ•°æ®çš„ä¿å­˜å‰æ“ä½œ
+        ///     ±»ÓÃ»§±à¼­µÄÊı¾İµÄ±£´æÇ°²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool LastSavedByUser(TData data, bool isAdd)
         {
             return true;
         }
 
         /// <summary>
-        ///     ä¿å­˜å‰çš„æ“ä½œ
+        ///     ±£´æÇ°µÄ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool OnSaving(TData data, bool isAdd)
         {
             return true;
         }
 
         /// <summary>
-        ///     ä¿å­˜å®Œæˆåçš„æ“ä½œ
+        ///     ±£´æÍê³ÉºóµÄ²Ù×÷
         /// </summary>
-        /// <param name="data">æ•°æ®</param>
-        /// <param name="isAdd">æ˜¯å¦ä¸ºæ–°å¢</param>
-        /// <returns>å¦‚æœä¸ºå¦å°†é˜»æ­¢åç»­æ“ä½œ</returns>
+        /// <param name="data">Êı¾İ</param>
+        /// <param name="isAdd">ÊÇ·ñÎªĞÂÔö</param>
+        /// <returns>Èç¹ûÎª·ñ½«×èÖ¹ºóĞø²Ù×÷</returns>
         protected virtual bool OnSaved(TData data, bool isAdd)
         {
             return true;
         }
 
         /// <summary>
-        ///     æ–°å¢
+        ///     ĞÂÔö
         /// </summary>
         public virtual bool Save(TData data)
         {
             return data.Id == 0 ? AddNew(data) : Update(data);
         }
         /// <summary>
-        ///     æ–°å¢
+        ///     ĞÂÔö
         /// </summary>
         public virtual bool AddNew(TData data)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 if (!CanSave(data, true))
                 {
@@ -210,13 +239,14 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 else
                     Access.Insert(data);
                 var result = LastSaved(data, true);
+                OnInnerCommand(data, BusinessCommandType.Delete);
                 scope.SetState(true);
                 return result;
             }
         }
 
         /// <summary>
-        ///     æ›´æ–°å¯¹è±¡
+        ///     ¸üĞÂ¶ÔÏó
         /// </summary>
         public virtual bool Update(TData data)
         {
@@ -224,7 +254,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
             {
                 return AddNew(data);
             }
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 if (!CanSave(data, true))
                 {
@@ -236,6 +266,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
                 }
                 Access.Update(data);
                 var result = LastSaved(data, false);
+                OnInnerCommand(data, BusinessCommandType.Delete);
                 scope.SetState(true);
                 return result;
             }
@@ -244,34 +275,32 @@ namespace Gboxt.Common.DataModel.BusinessLogic
 
         #endregion
 
-        #region åˆ é™¤
+        #region É¾³ı
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡
+        ///     É¾³ı¶ÔÏó
         /// </summary>
         public bool Delete(IEnumerable<long> lid)
         {
-            using (Access.DataBase.CreateDataBaseScope())
+            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                using (var scope = Access.DataBase.CreateTransactionScope())
+                foreach (var id in lid)
                 {
-                    foreach (var id in lid)
-                    {
-                        if (!Delete(id))
-                            return false;
-                    }
-                    scope.SetState(true);
+                    if (!Delete(id))
+                        return false;
                 }
+                scope.SetState(true);
             }
             return true;
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡
+        ///     É¾³ı¶ÔÏó
         /// </summary>
         public bool Delete(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 if (!PrepareDelete(id))
                 {
@@ -288,15 +317,15 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡æ“ä½œ
+        ///     É¾³ı¶ÔÏó²Ù×÷
         /// </summary>
         protected virtual bool DoDelete(long id)
         {
-            return Access.DeletePrimaryKey(id) == 1;
+            return Access.DeletePrimaryKey(id);
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡å‰ç½®å¤„ç†
+        ///     É¾³ı¶ÔÏóÇ°ÖÃ´¦Àí
         /// </summary>
         protected virtual bool PrepareDelete(long id)
         {
@@ -304,7 +333,7 @@ namespace Gboxt.Common.DataModel.BusinessLogic
         }
 
         /// <summary>
-        ///     åˆ é™¤å¯¹è±¡åç½®å¤„ç†
+        ///     É¾³ı¶ÔÏóºóÖÃ´¦Àí
         /// </summary>
         protected virtual void OnDeleted(long id)
         {

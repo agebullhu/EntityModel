@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.2.4.0</Version>
+    <Version>2.3.0.23</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -18,7 +18,7 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.2.4.0</PackageVersion>
+    <PackageVersion>2.3.0.23</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -65,7 +65,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Api\ApiResult\IApiResultData.cs" />
     <Compile Remove="Base\TableSql.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -92,6 +91,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
     <ProjectReference Include="..\LogRecorder\Agebull.Common.LogRecorder.csproj" />
+    <ProjectReference Include="..\Rpc.Abstractions\Agebull.Rpc.Abstractions.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy   $(OutDir)$(TargetFileName) C:\Projects\Agebull\hotfix\ /y&#xD;&#xA;xcopy   $(OutDir)$(TargetName).pdb C:\Projects\Agebull\hotfix\ /y" />
