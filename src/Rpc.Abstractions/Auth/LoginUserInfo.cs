@@ -133,7 +133,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     角色
         /// </summary>
-        [JsonProperty("app", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("role", NullValueHandling = NullValueHandling.Ignore)]
         public string Role { get; set; }
 
         /// <summary>
