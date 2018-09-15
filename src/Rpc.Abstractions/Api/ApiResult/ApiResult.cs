@@ -146,7 +146,7 @@ namespace Gboxt.Common.DataModel
                 Status = new OperatorStatus
                 {
                     ErrorCode = errCode,
-                    ClientMessage = message
+                    ClientMessage = string.IsNullOrWhiteSpace(message)? ErrorCode.GetMessage(errCode):message
                 }
             };
         }
@@ -166,7 +166,7 @@ namespace Gboxt.Common.DataModel
                 Status = new OperatorStatus
                 {
                     ErrorCode = errCode,
-                    ClientMessage = message,
+                    ClientMessage = string.IsNullOrWhiteSpace(message) ? ErrorCode.GetMessage(errCode) : message,
                     InnerMessage = innerMessage
                 }
             };
@@ -217,7 +217,7 @@ namespace Gboxt.Common.DataModel
                 Status = new OperatorStatus
                 {
                     ErrorCode = errCode,
-                    ClientMessage = message
+                    ClientMessage = string.IsNullOrWhiteSpace(message) ? ErrorCode.GetMessage(errCode) : message
                 }
             };
         }
@@ -264,7 +264,7 @@ namespace Gboxt.Common.DataModel
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiResult<TData> ErrorResult(TData data)
+        public static ApiResult<TData> Succees(TData data)
         {
             return new ApiResult<TData>
             {
@@ -280,15 +280,7 @@ namespace Gboxt.Common.DataModel
         /// <returns></returns>
         public static ApiResult<TData> ErrorResult(int errCode)
         {
-            return new ApiResult<TData>
-            {
-                Success = false,
-                Status = new OperatorStatus
-                {
-                    ErrorCode = errCode,
-                    ClientMessage = ErrorCode.GetMessage(errCode)
-                }
-            };
+            return Error<TData>(errCode);
         }
 
         /// <summary>
@@ -299,16 +291,7 @@ namespace Gboxt.Common.DataModel
         /// <returns></returns>
         public static ApiResult<TData> ErrorResult(int errCode, string message)
         {
-            return new ApiResult<TData>
-            {
-                Success = false,
-                Status = new OperatorStatus
-                {
-                    ErrorCode = errCode,
-                    ClientMessage = message
-                }
-            };
+            return Error<TData>(errCode, message);
         }
-
     }
 }
