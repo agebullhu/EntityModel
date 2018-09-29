@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>业务模型支持</Description>
     <AssemblyTitle>Agebull.WebApi.ModelBase</AssemblyTitle>
-    <Version>2.3.1.1</Version>
+    <Version>2.3.2.17</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -25,9 +25,9 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.3.1.1</PackageVersion>
+    <PackageVersion>2.3.2.17</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>false</IncludeSource>
+    <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -63,6 +63,17 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Web" />
     <PackageReference Include="NPOI" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Interface\**" />
+    <EmbeddedResource Remove="Interface\**" />
+    <None Remove="Interface\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BusinessLogic\BusinessLogicByHistory.cs" />
+    <Compile Remove="WebSeitch\AjaxResult.cs" />
   </ItemGroup>
 
   <ItemGroup>

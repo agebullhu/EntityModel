@@ -8,6 +8,9 @@ using NServiceKit.Text;
 
 namespace Agebull.Common.DataModel.Redis
 {
+    /// <summary>
+    /// NServiceKit.Redis.RedisClient扩展
+    /// </summary>
     public class RedisClientEx : RedisClient
     {
         /// <summary>
@@ -18,26 +21,17 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 是否处于错误状态(可继续操作的)
         /// </summary>
-        public bool IsFailed
-        {
-            get { return Status != 0; }
-        }
+        public bool IsFailed => Status != 0;
 
         /// <summary>
         /// 是否处于错误状态
         /// </summary>
-        public bool IsError
-        {
-            get { return Status != 0; }
-        }
+        public bool IsError => Status != 0;
 
         /// <summary>
         /// 是否处于错误状态(不可继续操作的)
         /// </summary>
-        public bool IsBad
-        {
-            get { return Status < 0; }
-        }
+        public bool IsBad => Status < 0;
 
         /// <summary>
         /// 状态代码,仅0为正常,正数为逻辑问题,负数为致命问题
@@ -75,9 +69,9 @@ namespace Agebull.Common.DataModel.Redis
         {
             return SendExpectLong(new[]
             {
-                Commands.SAdd, 
+                Commands.SAdd,
                 setId,
-                value.ToUtf8Bytes() 
+                value.ToUtf8Bytes()
             });
         }
 
@@ -119,16 +113,13 @@ namespace Agebull.Common.DataModel.Redis
             /// <summary>
             /// 是否有数据
             /// </summary>
-            public bool HaseValue
-            {
-                get { return Values.Count > 0; }
-            }
+            public bool HaseValue => Values.Count > 0;
         }
 
-        public static readonly byte[] cSScan = Encoding.UTF8.GetBytes("SSCAN");
-        public static readonly byte[] cMatch = Encoding.UTF8.GetBytes("MATCH");
-        public static readonly byte[] cAnyone = Encoding.UTF8.GetBytes("*");
-        public static readonly byte[] cCount = Encoding.UTF8.GetBytes("COUNT");
+        static readonly byte[] cSScan = Encoding.UTF8.GetBytes("SSCAN");
+        static readonly byte[] cMatch = Encoding.UTF8.GetBytes("MATCH");
+        static readonly byte[] cAnyone = Encoding.UTF8.GetBytes("*");
+        static readonly byte[] cCount = Encoding.UTF8.GetBytes("COUNT");
 
         /// <summary>
         /// 扫描Set
@@ -217,8 +208,8 @@ namespace Agebull.Common.DataModel.Redis
         {
             return SendExpectLong(new[]
             {
-                Commands.ZAdd, 
-                setId, 
+                Commands.ZAdd,
+                setId,
                 Encoding.UTF8.GetBytes(string.Concat(h & 0xFFFFFF, '.', l & 0xFFFFFF)),
                 dataId
             });

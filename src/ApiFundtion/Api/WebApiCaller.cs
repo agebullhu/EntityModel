@@ -8,7 +8,6 @@ using System.Text;
 using System.Web;
 using Gboxt.Common.DataModel;
 using Agebull.Common.Rpc;
-using Agebull.Common.OAuth;
 
 namespace Agebull.Common.WebApi
 {
@@ -17,11 +16,6 @@ namespace Agebull.Common.WebApi
     /// </summary>
     public class WebApiCaller
 	{
-		/// <summary>
-		///     身份头
-		/// </summary>
-		private readonly string _beare;
-
 		/// <summary>
 		///     主机
 		/// </summary>
@@ -34,15 +28,14 @@ namespace Agebull.Common.WebApi
 		/// <summary>
 		///     身份头
 		/// </summary>
-		public string Bearer => _beare ?? $"${GlobalContext.RequestInfo.RequestId}";
+		public string Bearer { get; }
 
 		/// <summary>
 		///     构造
 		/// </summary>
 		public WebApiCaller()
 		{
-            if(GlobalContext.Customer == null)
-			GlobalContext.SetUser(LoginUserInfo.CreateAnymouse("?","*","*"));
+			GlobalContext.TryCheckByAnymouse();
 		}
 
 		/// <summary>
@@ -51,8 +44,7 @@ namespace Agebull.Common.WebApi
 		public WebApiCaller(string host)
 		{
 			Host = host;
-            if (GlobalContext.Customer == null)
-                GlobalContext.SetUser(LoginUserInfo.CreateAnymouse("?", "*", "*"));
+		    GlobalContext.TryCheckByAnymouse();
         }
 
 		/// <summary>
@@ -61,9 +53,8 @@ namespace Agebull.Common.WebApi
 		public WebApiCaller(string host, string beare)
 		{
 			Host = host;
-			_beare = beare;
-            if (GlobalContext.Customer == null)
-                GlobalContext.SetUser(LoginUserInfo.CreateAnymouse("?", "*", "*"));
+		    Bearer = beare;
+		    GlobalContext.TryCheckByAnymouse();
         }
 
 		/// <summary>
@@ -387,7 +378,10 @@ namespace Agebull.Common.WebApi
 			req.Method = "GET";
 			req.ContentType = "application/x-www-form-urlencoded";
 			req.Headers.Add(HttpRequestHeader.Authorization, ctx);
-			return GetResult(req);
+		    using (MonitorScope.CreateScope("Caller Remote"))
+		    {
+		        return GetResult(req);
+            }
 		}
 
 		/// <summary>
@@ -440,9 +434,12 @@ namespace Agebull.Common.WebApi
 			{
 				LogRecorder.Exception(ex);
 				LogRecorder.EndStepMonitor();
-				return ApiValueResult.ErrorResult(-3);
-			}
-			return GetResult(req);
+				return ErrorResult(-3);
+		    }
+		    using (MonitorScope.CreateScope("Caller Remote"))
+		    {
+		        return GetResult(req);
+		    }
 		}
 
 		/// <summary>
@@ -452,7 +449,7 @@ namespace Agebull.Common.WebApi
 		/// <returns></returns>
 		public ApiValueResult GetResult(HttpWebRequest req)
 		{
-			string jsonResult = default(string);
+			string jsonResult;
 			try
 			{
 				using (WebResponse response = req.GetResponse())
@@ -461,7 +458,7 @@ namespace Agebull.Common.WebApi
 					if (receivedStream2 == null)
 					{
 						LogRecorder.EndStepMonitor();
-						return ApiValueResult.ErrorResult(-1, "服务器无返回值");
+						return ErrorResult(-1, "服务器无返回值");
 					}
 					jsonResult = new StreamReader(receivedStream2).ReadToEnd();
 					receivedStream2.Dispose();
@@ -470,76 +467,85 @@ namespace Agebull.Common.WebApi
 			}
 			catch (WebException e3)
 			{
-				if (e3.Status != WebExceptionStatus.ProtocolError)
-				{
-					LogRecorder.EndStepMonitor();
-					switch (e3.Status)
-					{
-					case WebExceptionStatus.CacheEntryNotFound:
-						return ApiValueResult.ErrorResult(-3, "找不到指定的缓存项");
-					case WebExceptionStatus.ConnectFailure:
-						return ApiValueResult.ErrorResult(-3, "在传输级别无法联系远程服务点");
-					case WebExceptionStatus.ConnectionClosed:
-						return ApiValueResult.ErrorResult(-3, "过早关闭连接");
-					case WebExceptionStatus.KeepAliveFailure:
-						return ApiValueResult.ErrorResult(-3, "指定保持活动状态的标头的请求的连接意外关闭");
-					case WebExceptionStatus.MessageLengthLimitExceeded:
-						return ApiValueResult.ErrorResult(-3, "已收到一条消息的发送请求时超出指定的限制或从服务器接收响应");
-					case WebExceptionStatus.NameResolutionFailure:
-						return ApiValueResult.ErrorResult(-3, "名称解析程序服务或无法解析主机名");
-					case WebExceptionStatus.Pending:
-						return ApiValueResult.ErrorResult(-3, "内部异步请求处于挂起状态");
-					case WebExceptionStatus.PipelineFailure:
-						return ApiValueResult.ErrorResult(-3, "该请求是管线请求和连接被关闭之前收到响应");
-					case WebExceptionStatus.ProxyNameResolutionFailure:
-						return ApiValueResult.ErrorResult(-3, "名称解析程序服务无法解析代理服务器主机名");
-					case WebExceptionStatus.ReceiveFailure:
-						return ApiValueResult.ErrorResult(-3, "从远程服务器未收到完整的响应");
-					case WebExceptionStatus.RequestCanceled:
-						return ApiValueResult.ErrorResult(-3, "请求已取消");
-					case WebExceptionStatus.RequestProhibitedByCachePolicy:
-						return ApiValueResult.ErrorResult(-3, "缓存策略不允许该请求");
-					case WebExceptionStatus.RequestProhibitedByProxy:
-						return ApiValueResult.ErrorResult(-3, "由该代理不允许此请求");
-					case WebExceptionStatus.SecureChannelFailure:
-						return ApiValueResult.ErrorResult(-3, "使用 SSL 建立连接时出错");
-					case WebExceptionStatus.SendFailure:
-						return ApiValueResult.ErrorResult(-3, "无法与远程服务器发送一个完整的请求");
-					case WebExceptionStatus.ServerProtocolViolation:
-						return ApiValueResult.ErrorResult(-3, "服务器响应不是有效的 HTTP 响应");
-					case WebExceptionStatus.Timeout:
-						return ApiValueResult.ErrorResult(-3, "请求的超时期限内未不收到任何响应");
-					case WebExceptionStatus.TrustFailure:
-						LogRecorder.EndStepMonitor();
-						return ApiValueResult.ErrorResult(-3, "无法验证服务器证书");
-					default:
-						return ApiValueResult.ErrorResult(-3, "发生未知类型的异常");
-					}
-				}
-				string[] codes = e3.Message.Split(new[]{'(',')'}, StringSplitOptions.RemoveEmptyEntries);
+			    try
+			    {
+                    if (e3.Status != WebExceptionStatus.ProtocolError)
+                    {
+                        LogRecorder.EndStepMonitor();
+                        switch (e3.Status)
+                        {
+                            case WebExceptionStatus.CacheEntryNotFound:
+                                return ErrorResult(-3, "找不到指定的缓存项");
+                            case WebExceptionStatus.ConnectFailure:
+                                return ErrorResult(-3, "在传输级别无法联系远程服务点");
+                            case WebExceptionStatus.ConnectionClosed:
+                                return ErrorResult(-3, "过早关闭连接");
+                            case WebExceptionStatus.KeepAliveFailure:
+                                return ErrorResult(-3, "指定保持活动状态的标头的请求的连接意外关闭");
+                            case WebExceptionStatus.MessageLengthLimitExceeded:
+                                return ErrorResult(-3, "已收到一条消息的发送请求时超出指定的限制或从服务器接收响应");
+                            case WebExceptionStatus.NameResolutionFailure:
+                                return ErrorResult(-3, "名称解析程序服务或无法解析主机名");
+                            case WebExceptionStatus.Pending:
+                                return ErrorResult(-3, "内部异步请求处于挂起状态");
+                            case WebExceptionStatus.PipelineFailure:
+                                return ErrorResult(-3, "该请求是管线请求和连接被关闭之前收到响应");
+                            case WebExceptionStatus.ProxyNameResolutionFailure:
+                                return ErrorResult(-3, "名称解析程序服务无法解析代理服务器主机名");
+                            case WebExceptionStatus.ReceiveFailure:
+                                return ErrorResult(-3, "从远程服务器未收到完整的响应");
+                            case WebExceptionStatus.RequestCanceled:
+                                return ErrorResult(-3, "请求已取消");
+                            case WebExceptionStatus.RequestProhibitedByCachePolicy:
+                                return ErrorResult(-3, "缓存策略不允许该请求");
+                            case WebExceptionStatus.RequestProhibitedByProxy:
+                                return ErrorResult(-3, "由该代理不允许此请求");
+                            case WebExceptionStatus.SecureChannelFailure:
+                                return ErrorResult(-3, "使用 SSL 建立连接时出错");
+                            case WebExceptionStatus.SendFailure:
+                                return ErrorResult(-3, "无法与远程服务器发送一个完整的请求");
+                            case WebExceptionStatus.ServerProtocolViolation:
+                                return ErrorResult(-3, "服务器响应不是有效的 HTTP 响应");
+                            case WebExceptionStatus.Timeout:
+                                return ErrorResult(-3, "请求的超时期限内未不收到任何响应");
+                            case WebExceptionStatus.TrustFailure:
+                                LogRecorder.EndStepMonitor();
+                                return ErrorResult(-3, "无法验证服务器证书");
+                            default:
+                                return ErrorResult(-3, "发生未知类型的异常");
+                        }
+                    }
+                    string[] codes = e3.Message.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (codes.Length == 3 && int.TryParse(codes[1], out var s) && s == 404)
-                {
-                    return ApiValueResult.ErrorResult(-3, "服务器内部错误", "页面不存在");
+                    if (codes.Length == 3 && int.TryParse(codes[1], out var s) && s == 404)
+                    {
+                        return ErrorResult(-3, "服务器内部错误", "页面不存在");
+                    }
+                    using (WebResponse webResponse = e3.Response)
+                    {
+                        Stream receivedStream = webResponse.GetResponseStream();
+                        if (receivedStream == null)
+                        {
+                            LogRecorder.EndStepMonitor();
+                            return ErrorResult(-1, "服务器无返回值");
+                        }
+                        jsonResult = new StreamReader(receivedStream).ReadToEnd();
+                        receivedStream.Dispose();
+                        webResponse.Close();
+                    }
                 }
-                using (WebResponse webResponse = e3.Response)
-				{
-					Stream receivedStream = webResponse.GetResponseStream();
-					if (receivedStream == null)
-					{
-						LogRecorder.EndStepMonitor();
-						return ApiValueResult.ErrorResult(-1, "服务器无返回值");
-					}
-					jsonResult = new StreamReader(receivedStream).ReadToEnd();
-					receivedStream.Dispose();
-					webResponse.Close();
-				}
+			    catch (Exception e)
+			    {
+			        LogRecorder.Exception(e);
+			        LogRecorder.EndStepMonitor();
+			        return ErrorResult(-1, "未知错误", e.Message);
+                }
 			}
 			catch (Exception e2)
 			{
 				LogRecorder.Exception(e2);
 				LogRecorder.EndStepMonitor();
-				return ApiValueResult.ErrorResult(-1, "未知错误", e2.Message);
+				return ErrorResult(-1, "未知错误", e2.Message);
 			}
 			LogRecorder.MonitorTrace(jsonResult);
 			try
@@ -547,22 +553,26 @@ namespace Agebull.Common.WebApi
 				if (!string.IsNullOrWhiteSpace(jsonResult))
 				{
 					ApiResult baseResult = JsonConvert.DeserializeObject<ApiResult>(jsonResult);
-					return (!baseResult.Success) ? ApiValueResult.ErrorResult(baseResult.Status.ErrorCode, baseResult.Status.ClientMessage) : ApiValueResult.Succees(ReadResultData(jsonResult, "ResultData"));
+					return (!baseResult.Success) ? ErrorResult(baseResult.Status.ErrorCode, baseResult.Status.ClientMessage) : ApiValueResult.Succees(ReadResultData(jsonResult, "ResultData"));
 				}
-				return ApiValueResult.ErrorResult(-1);
+				return ErrorResult(-1);
 			}
 			catch (Exception e)
 			{
 				LogRecorder.Exception(e);
-				return ApiValueResult.ErrorResult(-1, "未知错误", e.Message);
-			}
-			finally
-			{
-				LogRecorder.EndStepMonitor();
+				return ErrorResult(-1, "未知错误", e.Message);
 			}
 		}
 
-		private static string ReadResultData(string json, string property)
+        private ApiValueResult ErrorResult(int code,string msg = null, string inner=null)
+	    {
+	        var result= ApiValueResult.ErrorResult(code, msg,inner);
+	        result.Status.Point += "-apiCaller";
+            return result;
+
+        }
+
+        private static string ReadResultData(string json, string property)
 		{
 			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0028: Expected O, but got Unknown

@@ -9,6 +9,7 @@ using Gboxt.Common.DataModel;
 using Agebull.Common.WebApi.Auth;
 using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
+using Agebull.Common.Rpc;
 
 namespace Agebull.Common.WebApi
 {
@@ -35,8 +36,8 @@ namespace Agebull.Common.WebApi
                 return;
 
             IocHelper.Update();
+            IocHelper.AddScoped<GlobalContext, BusinessContext>();
             IocHelper.AddSingleton<IGlobalContext, BusinessContext>(p => BusinessContext.Context);
-            IocHelper.AddScoped<ApiContext, BusinessContext>();
             IocHelper.Update();
 
             Environment.CurrentDirectory = ConfigurationManager.BasePath = HttpContext.Current.Server.MapPath("~");

@@ -18,6 +18,20 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         [JsonProperty("status")]
         IOperatorStatus Status { get; set; }
+
+        /// <summary>
+        ///     API请求标识
+        /// </summary>
+        [JsonProperty("requestId")]
+        string RequestId { get; set; }
+
+
+        /// <summary>
+        ///     API操作标识
+        /// </summary>
+        [JsonProperty("requestId")]
+        string OperatorId { get; set; }
+
     }
 
     /// <summary>

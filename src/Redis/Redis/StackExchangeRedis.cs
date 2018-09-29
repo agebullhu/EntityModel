@@ -71,15 +71,17 @@ namespace Agebull.Common.DataModel.Redis
                 {
                     connect.GetDatabase().Ping();
                 }
-                catch (Exception e)
+                catch (Exception e1)
                 {
+                    LogRecorder.Exception(e1, "StackExchangeRedis.ctor");
                     try
                     {
                         connect.Close();
                         connect.Dispose();
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        LogRecorder.Exception(e, "StackExchangeRedis.ctor");
                     }
                     connect = ConnectionMultiplexer.Connect(ConnectString);
                 }
@@ -192,6 +194,10 @@ namespace Agebull.Common.DataModel.Redis
             Client.KeyDelete(key);
         }
 
+        /// <summary>
+        /// É¾³ýKEY,Î´ÊµÏÖ
+        /// </summary>
+        /// <param name="pattern"></param>
         public void FindAndRemoveKey(string pattern)
         {
             throw new NotImplementedException();

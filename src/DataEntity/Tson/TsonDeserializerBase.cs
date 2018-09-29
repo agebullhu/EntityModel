@@ -5,6 +5,9 @@ using Agebull.Common.Base;
 
 namespace Agebull.Common.Tson
 {
+    /// <summary>
+    /// TSON反序列化器
+    /// </summary>
     public unsafe class TsonDeserializerBase : ScopeBase
     {
         /// <summary>

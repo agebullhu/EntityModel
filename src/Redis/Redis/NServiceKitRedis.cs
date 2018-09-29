@@ -542,7 +542,7 @@ namespace Agebull.Common.DataModel.Redis
             Client.Db = db;
         }
 
-        bool IRedis.SetNx(string key, byte[] value = null)
+        bool IRedis.SetNx(string key, byte[] value)
         {
             return Client.SetNX(key,value) == 1;
         }

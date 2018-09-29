@@ -55,7 +55,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// 生成事务范围
         /// </summary>
         /// <returns></returns>
-        ITransactionScope IDataBase.CreateTransactionScope() => TransactionScope.CreateScope(this);
+        public ITransactionScope CreateTransactionScope() => TransactionScope.CreateScope(this);
 
         /// <summary>
         ///     引用数量
@@ -227,9 +227,17 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
+        protected virtual void DoDispose()
+        {
+        }
+
+
+        /// <summary>
+        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
+        /// </summary>
         public void Dispose()
         {
-            //Trace.WriteLine("Dispose", "MySqlDataBase");
+            DoDispose();
             Close();
             GC.ReRegisterForFinalize(this);
         }

@@ -6,7 +6,6 @@ using System.Text;
 using System.Web.Http;
 using Agebull.Common.DataModel.BusinessLogic;
 using Agebull.Common.Rpc;
-using Agebull.Common.WebApi;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 using MySql.Data.MySqlClient;
@@ -46,7 +45,7 @@ namespace Agebull.Common.WebApi
             if (result)
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                Message = name + "[" + no + "]唯一";
+                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -72,7 +71,10 @@ namespace Agebull.Common.WebApi
         #endregion
 
         #region API
-
+        /// <summary>
+        /// 实体类型
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("edit/eid")]
         //[ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Anymouse)]
@@ -84,16 +86,23 @@ namespace Agebull.Common.WebApi
                 PageId = PageItem?.Id ?? 0
             });
         }
-
+        /// <summary>
+        /// 列表数据
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("edit/list")]
         //[ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Anymouse)]
         public ApiResponseMessage List()
         {
-            InitForm();
+            
             var data = GetListData();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(data);
         }
 
@@ -104,10 +113,14 @@ namespace Agebull.Common.WebApi
         [Route("edit/details")]
         public ApiResponseMessage Details()
         {
-            InitForm();
+            
             var data = DoDetails();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(data);
         }
 
@@ -118,10 +131,14 @@ namespace Agebull.Common.WebApi
         [Route("edit/addnew")]
         public ApiResponseMessage AddNew()
         {
-            InitForm();
+            
             var data = DoAddNew();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(data);
         }
 
@@ -132,10 +149,14 @@ namespace Agebull.Common.WebApi
         [Route("edit/update")]
         public ApiResponseMessage Update()
         {
-            InitForm();
+            
             var data = DoUpdate();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(data);
         }
 
@@ -146,10 +167,14 @@ namespace Agebull.Common.WebApi
         [Route("edit/delete")]
         public ApiResponseMessage Delete()
         {
-            InitForm();
+            
             DoDelete();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -267,7 +292,6 @@ namespace Agebull.Common.WebApi
                     condition = $"({BaseQueryCondition}) AND ({condition})";
             }
 
-            BusinessContext .Context.IsUnSafeMode = true;
             var data = Business.PageData(page, rows, sort, desc, condition, args);
             if (OnListLoaded(data.Rows, data.RowCount))
             {
@@ -372,7 +396,6 @@ namespace Agebull.Common.WebApi
                     SetFailed("数据不存在");
                     return null;
                 }
-
                 OnDetailsLoaded(data, false);
             }
 
@@ -401,7 +424,7 @@ namespace Agebull.Common.WebApi
         {
             var data = new TData();
             //数据校验
-            InitForm();
+            
             var convert = new FormConvert(Arguments);
             ReadFormData(data, convert);
             data.__IsFromUser = true;
@@ -413,7 +436,7 @@ namespace Agebull.Common.WebApi
             //}
             if (!Business.AddNew(data))
             {
-                SetFailed( /*"数据不正确,保存失败<br/>" +*/ GlobalContext.Current.GetFullMessage());
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
                 return null;
             }
 
@@ -427,7 +450,7 @@ namespace Agebull.Common.WebApi
         {
             var data = Business.Details(ContextDataId) ?? new TData();
             //数据校验
-            InitForm();
+            
             var convert = new FormConvert(Arguments);
             ReadFormData(data, convert);
             data.__IsFromUser = true;
@@ -439,7 +462,7 @@ namespace Agebull.Common.WebApi
             //}
             if (!Business.Update(data))
             {
-                SetFailed( /*"数据不正确,保存失败<br/>" +*/ GlobalContext.Current.GetFullMessage());
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
                 return null;
             }
 
@@ -451,7 +474,7 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void DoDelete()
         {
-            InitForm();
+            
             var ids = GetArg("selects");
             if (string.IsNullOrEmpty(ids))
             {
@@ -466,8 +489,8 @@ namespace Agebull.Common.WebApi
                 return;
             }
 
-            if (Business.Delete(lid)) return;
-            SetFailed(GlobalContext.Current.GetFullMessage());
+            if (!Business.Delete(lid))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         #endregion

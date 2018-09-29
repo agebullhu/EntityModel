@@ -1,5 +1,4 @@
 using System;
-using Agebull.Common;
 using Agebull.Common.Rpc;
 using Gboxt.Common.DataModel.Extends;
 
@@ -22,10 +21,14 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns></returns>
         protected override string AfterUpdateSql(string condition)
         {
-            var filter= string.IsNullOrEmpty(condition) ? null : "\r\nWHERE " + condition;
-            return $@"UPDATE `{WriteTableName}` 
-SET `{FieldDictionary["LastReviserID"]}`={GlobalContext.Current.LoginUserId},
-{FieldDictionary["LastModifyDate"]}=NOW(){filter};";
+            var filter= string.IsNullOrEmpty(condition)
+                ? null 
+                : $@"
+WHERE {condition}";
+            return $@"
+UPDATE `{WriteTableName}` 
+SET `{FieldDictionary["LastReviserID"]}` = {GlobalContext.Current.LoginUserId},
+    `{FieldDictionary["LastModifyDate"]}` = NOW(){filter};";
         }
         
         /// <summary>

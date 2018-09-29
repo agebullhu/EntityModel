@@ -118,11 +118,14 @@ namespace Agebull.Common.DataModel.WebUI
 
         #endregion
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder})";
         }
-
+        /// <summary>
+        /// 空对象
+        /// </summary>
         public static EasyUiTreeNodeBase Empty = new EasyUiTreeNodeBase { ID = 0, Text = "-", Title = "-" };
     }
 
@@ -133,10 +136,16 @@ namespace Agebull.Common.DataModel.WebUI
     [JsonObject(MemberSerialization.OptIn)]
     public class EasyUiTreeNode : EasyUiTreeNodeBase
     {
+        /// <summary>
+        /// 构造
+        /// </summary>
         public EasyUiTreeNode()
         {
 
         }
+        /// <summary>
+        /// 构造
+        /// </summary>
         public EasyUiTreeNode(List<EasyUiTreeNode> children)
         {
             IsFolder = children != null && children.Count > 0;
@@ -169,8 +178,12 @@ namespace Agebull.Common.DataModel.WebUI
                 ? (Children.Count > 0 ? "open" : "closed")
                 : IsOpen.Value ? "open" : "closed");
 
+        /// <summary>
+        /// 空内容
+        /// </summary>
         public static EasyUiTreeNode EmptyNode = new EasyUiTreeNode { ID = 0, Text = "-", Title = "-", IsOpen = true };
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder},HaseChildren:{HaseChildren})";
@@ -216,6 +229,7 @@ namespace Agebull.Common.DataModel.WebUI
                 ? (Children.Count > 0 ? "open" : "closed")
                 : IsOpen.Value ? "open" : "closed";
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{Text}(IsOpen:{IsOpen},IsFolder:{IsFolder},HaseChildren:{HaseChildren})";

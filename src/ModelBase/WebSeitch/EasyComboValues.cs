@@ -17,12 +17,21 @@ namespace Agebull.Common.DataModel.WebUI
     /// <summary>
     /// 支持Easy combobox的键值对象
     /// </summary>
-    public class EasyComboValues 
+    public class EasyComboValues
     {
+        /// <summary>
+        /// 构造
+        /// </summary>
         public EasyComboValues()
         {
         }
-        
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="extend"></param>
+        /// <param name="tag"></param>
         public EasyComboValues(object key, object value, object extend = null, object tag = null)
         {
             Key = key;
@@ -30,7 +39,9 @@ namespace Agebull.Common.DataModel.WebUI
             Extend = extend?.ToString();
             Tag = tag?.ToString();
         }
-
+        /// <summary>
+        /// 空内容
+        /// </summary>
         public static readonly EasyComboValues Empty = new EasyComboValues
         {
             Key = 0,

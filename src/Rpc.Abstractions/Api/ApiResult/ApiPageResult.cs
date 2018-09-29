@@ -32,6 +32,12 @@ namespace Gboxt.Common.DataModel
         /// </summary>
         [JsonProperty("rowCount")]
         public int RowCount { get; set; }
+
+        /// <summary>
+        ///     总行数
+        /// </summary>
+        [JsonProperty("total", Required = Required.Always)]
+        public int Total => RowCount;
     }
 
     /// <summary>

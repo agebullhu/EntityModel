@@ -7,33 +7,29 @@ using Agebull.Common.AppManage;
 using Agebull.Common.OAuth;
 using Agebull.Common.Rpc;
 using Agebull.Common.WebApi.Auth;
+using Gboxt.Common.DataModel;
 
 namespace Agebull.Common.WebApi
 {
+    /// <summary>
+    /// ApiController扩展
+    /// </summary>
     public abstract class ApiControlerEx : ApiController
     {
-        #region 状态
-
         /// <summary>
-        ///     结果状态
+        /// 构造
         /// </summary>
-        public int State { get; set; } = 2;
+        protected ApiControlerEx()
+        {
+            GlobalContext.Current.IsManageMode = true;
+        }
+
+        #region 状态
 
         /// <summary>
         ///     是否操作失败
         /// </summary>
-        protected bool IsFailed { get; set; }
-
-        /// <summary>
-        ///     操作消息
-        /// </summary>
-        protected string Message { get; set; }
-
-        /// <summary>
-        ///     操作消息
-        /// </summary>
-        protected string Message2 { get; set; }
-
+        protected bool IsFailed => GlobalContext.Current.LastState != ErrorCode.Success;
 
         /// <summary>
         ///     设置当前操作失败
@@ -41,8 +37,8 @@ namespace Agebull.Common.WebApi
         /// <param name="message"></param>
         protected void SetFailed(string message)
         {
-            IsFailed = true;
-            Message = message;
+            GlobalContext.Current.LastState = ErrorCode.LogicalError;
+            GlobalContext.Current.LastMessage = message;
         }
 
         #endregion
@@ -73,7 +69,7 @@ namespace Agebull.Common.WebApi
         ///     当前登录用户
         /// </summary>
         protected ILoginUserInfo LoginUser => GlobalContext.Current.User;
-        
+
         #endregion
 
         #region 参数解析
@@ -97,26 +93,27 @@ namespace Agebull.Common.WebApi
                 return _arguments;
             _arguments = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             InitQuery();
+            InitForm();
             return _arguments;
         }
 
         /// <summary>
         ///     初始化查询字符串
         /// </summary>
-        protected void InitForm()
+        private void InitForm()
         {
-            var args = Arguments;
+            var args = _arguments;
             var task = Request.Content.ReadAsStringAsync();
             task.Wait();
             var form = task.Result;
             if (string.IsNullOrWhiteSpace(form))
                 return;
-            var values = form.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries);
+            var values = form.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var value in values)
             {
                 if (string.IsNullOrWhiteSpace(value))
                     continue;
-                var words = value.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+                var words = value.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                 var key = HttpUtility.UrlDecode(words[0]);
                 if (key == null)
                     continue;
@@ -136,15 +133,15 @@ namespace Agebull.Common.WebApi
             var query = Request.RequestUri.OriginalString;
             if (string.IsNullOrWhiteSpace(query))
                 return;
-            var us = query.Split(new[] {'?'}, 2, StringSplitOptions.RemoveEmptyEntries);
+            var us = query.Split(new[] { '?' }, 2, StringSplitOptions.RemoveEmptyEntries);
             if (us.Length == 1)
                 return;
-            var values = us[1].Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries);
+            var values = us[1].Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var value in values)
             {
                 if (string.IsNullOrWhiteSpace(value))
                     continue;
-                var words = value.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+                var words = value.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                 var key = HttpUtility.UrlDecode(words[0]);
                 if (key == null)
                     continue;
@@ -303,7 +300,7 @@ namespace Agebull.Common.WebApi
             var value = GetArgValue(name);
 
             if (string.IsNullOrEmpty(value) || value == "undefined" || value == "null") return new int[0];
-            return value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            return value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
         }
 
         /// <summary>
@@ -429,7 +426,7 @@ namespace Agebull.Common.WebApi
             var value = GetArgValue(name);
 
             if (string.IsNullOrEmpty(value) || value == "undefined" || value == "null") return new long[0];
-            return value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
+            return value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
         }
 
         /// <summary>

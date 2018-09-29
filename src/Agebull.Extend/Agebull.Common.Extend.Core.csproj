@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>一些常用的基础功能扩展</Description>
     <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
-    <Version>2.3.1.1</Version>
+    <Version>2.3.2.16</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -25,9 +25,9 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.3.1.1</PackageVersion>
+    <PackageVersion>2.3.2.16</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>false</IncludeSource>
+    <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -67,8 +67,11 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Context\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
+    <EmbeddedResource Remove="Context\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+    <None Remove="Context\**" />
     <None Remove="Properties\PublishProfiles\**" />
   </ItemGroup>
   <ItemGroup>

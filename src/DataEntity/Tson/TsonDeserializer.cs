@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Agebull.Common.Tson
 {
+    /// <summary>
+    /// TSON反序列化器
+    /// </summary>
     public class TsonDeserializer : TsonDeserializerBase, ITsonDeserializer
     {
         /// <summary>

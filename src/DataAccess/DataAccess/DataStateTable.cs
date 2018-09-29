@@ -12,6 +12,7 @@
 
 using System;
 using System.Linq.Expressions;
+using Agebull.Common.Rpc;
 
 namespace Gboxt.Common.DataModel.MySql
 {
@@ -33,6 +34,21 @@ namespace Gboxt.Common.DataModel.MySql
         ///     重置状态的SQL语句
         /// </summary>
         protected virtual string ResetStateFileSqlCode => $@"`{FieldDictionary["DataState"]}`=0,`{FieldDictionary["IsFreeze"]}`=0";
+
+        /// <summary>
+        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        protected override string ContitionSqlCode(string condition)
+        {
+            var c = base.ContitionSqlCode(condition);
+            if (GlobalContext.Current.IsManageMode)
+                return c;
+            return c == null
+                ? $" WHERE `{FieldDictionary["DataState"]}` < 255"
+                : $" {c} AND `{FieldDictionary["DataState"]}` < 255";
+        }
 
         /// <summary>
         /// 重置状态

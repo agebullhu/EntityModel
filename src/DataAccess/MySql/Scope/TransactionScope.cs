@@ -118,14 +118,15 @@ namespace Gboxt.Common.DataModel.MySql
         ///     设置操作状态
         /// </summary>
         /// <param name="succeed">是否成功</param>
-        public void SetState(bool succeed)
+        public bool SetState(bool succeed)
         {
-            //IsSucceed = succeed;
+            IsSucceed = succeed;
             ////失败向上冒泡，成功由上层自行决定
             //if (_beginType > 0 && !succeed)
             //{
             //    _preScope?.SetState(false);
             //}
+            return IsSucceed;
         }
 
         /// <summary>

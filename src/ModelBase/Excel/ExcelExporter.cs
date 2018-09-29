@@ -120,12 +120,20 @@ namespace Agebull.Common.DataModel.BusinessLogic.Report
             var datas = Access.All();
             WriteToSheet(sheet, datas);
         }
-
+        /// <summary>
+        /// 写入数据到工作表
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="datas"></param>
         protected virtual void WriteToSheet(ISheet sheet, List<TData> datas)
         {
             WriteToSheetByConfig(sheet, datas);
         }
-
+        /// <summary>
+        /// 写入数据到工作表
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="datas"></param>
         protected void WriteToSheetByConfig(ISheet sheet, List<TData> datas)
         {
             if (datas == null || datas.Count == 0)

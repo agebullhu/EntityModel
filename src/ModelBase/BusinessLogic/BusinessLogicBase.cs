@@ -64,7 +64,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool DoByIds(string ids, Func<long, bool> func, Action onEnd = null)
+        public bool DoByIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null)
         {
             return LoopIds(ids, func, onEnd);
         }
@@ -72,36 +72,19 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool LoopIds(string ids, Func<long, bool> func, Action onEnd = null)
+        public bool LoopIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null)
         {
-            if (string.IsNullOrEmpty(ids))
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                return false;
-            }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
+                foreach (var id in ids)
                 {
-                    var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (sids.Length == 0)
+                    if (!func(id))
                     {
                         return false;
                     }
-                    foreach (var sid in sids)
-                    {
-                        long id;
-                        if (!long.TryParse(sid, out id))
-                        {
-                            return false;
-                        }
-                        if (!func(id))
-                        {
-                            return false;
-                        }
-                    }
-                    onEnd?.Invoke();
-                    scope.SetState(true);
                 }
+                onEnd?.Invoke();
+                scope.SetState(true);
             }
             return true;
         }
@@ -109,7 +92,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool DoByIds(string ids, Func<TData, bool> func, Action onEnd = null)
+        public bool DoByIds(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null)
         {
             return LoopIdsToData(ids, func, onEnd);
         }
@@ -117,37 +100,20 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool LoopIdsToData(string ids, Func<TData, bool> func, Action onEnd = null)
+        public bool LoopIdsToData(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null)
         {
-            if (string.IsNullOrEmpty(ids))
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                return false;
-            }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
+                foreach (var id in ids)
                 {
-                    var sids = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (sids.Length == 0)
+                    var data = Access.LoadByPrimaryKey(id);
+                    if (data == null || !func(data))
                     {
                         return false;
                     }
-                    foreach (var sid in sids)
-                    {
-                        long id;
-                        if (!long.TryParse(sid, out id))
-                        {
-                            return false;
-                        }
-                        var data = Access.LoadByPrimaryKey(id);
-                        if (data == null || !func(data))
-                        {
-                            return false;
-                        }
-                    }
-                    onEnd?.Invoke();
-                    scope.SetState(true);
                 }
+                onEnd?.Invoke();
+                scope.SetState(true);
             }
             return true;
         }

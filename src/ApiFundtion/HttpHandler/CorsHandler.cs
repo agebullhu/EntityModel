@@ -9,12 +9,13 @@ namespace Agebull.Common.WebApi
     /// 跨域支持
     /// </summary>
     public sealed class CorsHandler : IHttpSystemHandler
-	{
-		/// <summary>
-		///     开始时的处理
-		/// </summary>
-		/// <returns>如果返回内容不为空，直接返回,后续的处理不再继续</returns>
-		Task<HttpResponseMessage> IHttpSystemHandler.OnBegin(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        private static bool Cors = Configuration.ConfigurationManager.AppSettings["Cors"] == "True";
+        /// <summary>
+        ///     开始时的处理
+        /// </summary>
+        /// <returns>如果返回内容不为空，直接返回,后续的处理不再继续</returns>
+        Task<HttpResponseMessage> IHttpSystemHandler.OnBegin(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (HttpMethod.Options != request.Method)
 			{
@@ -51,7 +52,10 @@ namespace Agebull.Common.WebApi
 		/// </summary>
 		void IHttpSystemHandler.OnEnd(HttpRequestMessage request, CancellationToken cancellationToken, HttpResponseMessage response)
 		{
-			response.Headers.Add("Access-Control-Allow-Origin", "*");
+		    if (HttpMethod.Options == request.Method || Cors)
+		    {
+                response.Headers.Add("Access-Control-Allow-Origin", "*");
+            }
 		}
 	}
 }

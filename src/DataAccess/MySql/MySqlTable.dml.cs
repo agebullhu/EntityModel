@@ -36,7 +36,6 @@ namespace Gboxt.Common.DataModel.MySql
                 ReLoadInner(entity);
                 scope.SetState(true);
             }
-
             return true;
         }
 

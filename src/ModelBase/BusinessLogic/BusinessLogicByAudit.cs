@@ -9,8 +9,8 @@
 #region 引用
 
 using System;
+using System.Collections.Generic;
 using Agebull.Common.Rpc;
-using Agebull.Common.WebApi;
 using Gboxt.Common.DataModel.Extends;
 using Gboxt.Common.DataModel.MySql;
 using Gboxt.Common.DataModel;
@@ -25,10 +25,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicByAudit<TData, TAccess, TDatabase> 
-        : BusinessLogicByHistory<TData, TAccess, TDatabase>
+    public class BusinessLogicByAudit<TData, TAccess, TDatabase>
+        : BusinessLogicByStateData<TData, TAccess, TDatabase>
         where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : HitoryTable<TData, TDatabase>, new()
+        where TAccess : DataStateTable<TData, TDatabase>, new()
         where TDatabase : MySqlDataBase
     {
         #region 消息
@@ -37,17 +37,34 @@ namespace Agebull.Common.DataModel.BusinessLogic
         ///     取消校验(审核时有效)
         /// </summary>
         public bool CancelValidate { get; set; }
+        /// <summary>
+        /// 提示语
+        /// </summary>
+        protected virtual string UnAuditMessageLock => "完成审核且已归档的数据，不能进行反审核！";
 
-        protected virtual string unAuditMessageLock => "完成审核且已归档的数据，不能进行反审核！";
+        /// <summary>
+        /// 提示语
+        /// </summary>
+        protected virtual string UnAuditMessageNoSubmit => "未通过审核的数据，不能进行反审核！";
 
-        protected virtual string unAuditMessageNoSubmit => "未通过审核的数据，不能进行反审核！";
-
+        /// <summary>
+        /// 提示语
+        /// </summary>
         protected virtual string SubmitMessage => "已审核结束的数据不可以提交！";
 
+        /// <summary>
+        /// 提示语
+        /// </summary>
         protected virtual string BackMessage => "仅已提交未审核的数据可退回！";
 
+        /// <summary>
+        /// 提示语
+        /// </summary>
         protected virtual string AuditMessageReDo => "已完成审核超过三十分钟的数据，无法再次审核！";
 
+        /// <summary>
+        /// 提示语
+        /// </summary>
         protected virtual string AuditMessage => "仅已提交未审核的数据可进行审核！";
 
         #endregion
@@ -57,7 +74,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量提交
         /// </summary>
-        public bool Submit(string sels)
+        public bool Submit(IEnumerable<long> sels)
         {
             return DoByIds(sels, SubmitInner);
         }
@@ -65,7 +82,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量退回
         /// </summary>
-        public bool Back(string sels)
+        public bool Back(IEnumerable<long> sels)
         {
             return DoByIds(sels, BackInner);
         }
@@ -73,7 +90,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量通过
         /// </summary>
-        public bool AuditPass(string sels)
+        public bool AuditPass(IEnumerable<long> sels)
         {
             return DoByIds(sels, AuditPassInner);
         }
@@ -81,7 +98,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量拉回
         /// </summary>
-        public bool Pullback(string sels)
+        public bool Pullback(IEnumerable<long> sels)
         {
             return DoByIds(sels, PullbackInner);
         }
@@ -89,7 +106,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量否决
         /// </summary>
-        public bool AuditDeny(string sels)
+        public bool AuditDeny(IEnumerable<long> sels)
         {
             return DoByIds(sels, AuditDenyInner);
         }
@@ -97,14 +114,14 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     批量反审核
         /// </summary>
-        public bool UnAudit(string sels)
+        public bool UnAudit(IEnumerable<long> sels)
         {
             return DoByIds(sels, UnAuditInner);
         }
         /// <summary>
         ///     批量数据校验
         /// </summary>
-        public bool Validate(string sels, Action<ValidateResult> putError)
+        public bool Validate(IEnumerable<long> sels, Action<ValidateResult> putError)
         {
             return LoopIdsToData(sels, data => DoValidateInner(data, putError));
         }
@@ -120,9 +137,9 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public virtual bool Validate(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                return DoValidateInner(Details(id));
+                return scope.SetState(DoValidateInner(Details(id)));
             }
         }
 
@@ -131,15 +148,13 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public bool AuditPass(long id)
         {
+            var data = Details(id);
+            if (data == null)
+                return false;
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                var data = Details(id);
-                if (data == null)
-                    return false;
-                if (AuditPassInner(data))
-                    scope.SetState(true);
+                return scope.SetState(AuditPassInner(data));
             }
-            return true;
         }
 
         /// <summary>
@@ -147,16 +162,13 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public bool AuditDeny(long id)
         {
+            var data = Details(id);
+            if (data == null)
+                return false;
+
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                var data = Details(id);
-                if (data == null)
-                    return false;
-
-                if (!AuditDenyInner(data))
-                    return false;
-                scope.SetState(true);
-                return true;
+                return scope.SetState(AuditDenyInner(data));
             }
         }
 
@@ -165,17 +177,15 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public bool UnAudit(long id)
         {
+            var data = Details(id);
+            if (data == null)
+            {
+                return false;
+            }
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                var data = Details(id);
-                if (data == null)
-                {
-                    return false;
-                }
-                if (UnAuditInner(data))
-                    scope.SetState(true);
+                return scope.SetState(UnAuditInner(data));
             }
-            return true;
         }
 
         /// <summary>
@@ -185,17 +195,15 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public bool Submit(long id)
         {
+            var data = Details(id);
+            if (data == null)
+            {
+                return false;
+            }
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                var data = Details(id);
-                if (data == null)
-                {
-                    return false;
-                }
-                if (SubmitInner(data))
-                    scope.SetState(true);
+                return scope.SetState(SubmitInner(data));
             }
-            return true;
         }
 
         /// <summary>
@@ -205,17 +213,15 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns></returns>
         public bool Back(long id)
         {
+            var data = Details(id);
+            if (data == null)
+            {
+                return false;
+            }
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
-                var data = Details(id);
-                if (data == null)
-                {
-                    return false;
-                }
-                if (BackInner(data))
-                    scope.SetState(true);
+                return scope.SetState(BackInner(data));
             }
-            return true;
         }
 
         #endregion
@@ -227,12 +233,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.None))
-            {
-                ApiContext.Current.LastMessage = "仅未进行任何审核操作的数据可以被删除";
-                return false;
-            }
-            return base.PrepareDelete(id);
+            if (Access.Any(p => p.Id == id && p.AuditState == AuditStateType.None))
+                return base.PrepareDelete(id);
+            GlobalContext.Current.LastMessage = "仅未进行任何审核操作的数据可以被删除";
+            return false;
         }
 
         /// <summary>
@@ -254,16 +258,9 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Reset(long id)
         {
-            ResetState(Access.First(id));
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
-                {
-                    Access.SetValue(p => p.IsFreeze, false, id);
-                    return true;
-                }
-                return base.Reset(id);
-            }
+            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+                return false;
+            return ResetState(Access.First(id));
         }
 
 
@@ -272,62 +269,37 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public override bool Disable(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass ))
-                {
-                    Access.SetValue(p => p.IsFreeze, false, id);
-                    return true;
-                }
-                return base.Disable(id);
-            }
+            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+                return false;
+            return base.Disable(id);
         }
         /// <summary>
         ///     弃用对象
         /// </summary>
         public override bool Discard(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.AuditState <= AuditStateType.Again))
-                {
-                    Access.SetValue(p => p.IsFreeze, false, id);
-                    return true;
-                }
-                return base.Discard(id);
-            }
+            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+                return false;
+            return base.Discard(id);
         }
         /// <summary>
         ///     启用对象
         /// </summary>
         public override bool Enable(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
-                {
-                    Access.SetValue(p => p.IsFreeze, false, id);
-                    return true;
-                }
-                return base.Enable(id);
-            }
+            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+                return false;
+            return base.Enable(id);
         }
-        
+
         /// <summary>
         ///     锁定对象
         /// </summary>
         public override bool Lock(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.AuditState == AuditStateType.Pass))
-                    return false;
-                if (base.Lock(id))
-                {
-                    Access.SetValue(p => p.AuditState, AuditStateType.End, id);
-                }
-            }
-            return true;
+            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+                return false;
+            return base.Lock(id);
         }
 
         #endregion
@@ -357,20 +329,20 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                ApiContext.Current.LastMessage = "已审核处理的数据无法拉回";
+                GlobalContext.Current.LastMessage = "已审核处理的数据无法拉回";
                 return false;
             }
-            if (data.LastReviserId != ApiContext.Current.LoginUserId)
+            if (data.LastReviserId != GlobalContext.Current.LoginUserId)
             {
-                ApiContext.Current.LastMessage = "不是本人提交的数据无法拉回";
+                GlobalContext.Current.LastMessage = "不是本人提交的数据无法拉回";
                 return false;
             }
             if (data.LastModifyDate < DateTime.Now.AddMinutes(-10))
             {
-                ApiContext.Current.LastMessage = "已提交超过十分钟的数据无法拉回";
+                GlobalContext.Current.LastMessage = "已提交超过十分钟的数据无法拉回";
                 return false;
             }
-            
+
             SetAuditState(data, AuditStateType.None, DataStateType.None);
             Access.Update(data);
             if (unityStateChanged)
@@ -449,25 +421,19 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                ApiContext.Current.LastMessage = BackMessage;
+                GlobalContext.Current.LastMessage = BackMessage;
                 return false;
             }
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            if (!DoBack(data))
             {
-                using (var scope = TransactionScope.CreateScope(Access.DataBase))
-                {
-                    if (!DoBack(data))
-                    {
-                        return false;
-                    }
-                    SetAuditState(data, AuditStateType.Again, DataStateType.None);
-                    Access.Update(data);
-                    OnBacked(data);
-                    scope.SetState(true);
-                }
-                if (unityStateChanged)
-                    OnStateChanged(data, BusinessCommandType.Back);
+                return false;
             }
+            SetAuditState(data, AuditStateType.Again, DataStateType.None);
+            if (!Access.Update(data))
+                return false;
+            OnBacked(data);
+            if (unityStateChanged)
+                OnStateChanged(data, BusinessCommandType.Back);
             return true;
         }
 
@@ -481,7 +447,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             //ApiContext.Current.IsSystemMode = true;
             if (data == null || data.IsDeleted())
             {
-                ApiContext.Current.LastMessage = "数据不存在或已删除！";
+                GlobalContext.Current.LastMessage = "数据不存在或已删除！";
                 return false;
             }
             if (data.AuditState == AuditStateType.Submit)
@@ -490,10 +456,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
             }
             if (data.AuditState > AuditStateType.Submit)
             {
-                ApiContext.Current.LastMessage = SubmitMessage;
+                GlobalContext.Current.LastMessage = SubmitMessage;
                 return false;
             }
-            
+
             if (!CancelValidate && !ValidateInner(data))
             {
                 return false;
@@ -531,12 +497,12 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 case AuditStateType.Pass:
                     state = DataStateType.Enable;
                     data.AuditDate = DateTime.Now;
-                    data.AuditorId = ApiContext.Current.LoginUserId;
+                    data.AuditorId = GlobalContext.Current.LoginUserId;
                     break;
                 case AuditStateType.Deny:
                     state = DataStateType.Discard;
                     data.AuditDate = DateTime.Now;
-                    data.AuditorId = ApiContext.Current.LoginUserId;
+                    data.AuditorId = GlobalContext.Current.LoginUserId;
                     break;
                 case AuditStateType.End:
                     data.IsFreeze = true;
@@ -571,7 +537,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
             if (data == null || data.IsDeleted())
             {
-                ApiContext.Current.LastMessage = "数据不存在或已删除！";
+                GlobalContext.Current.LastMessage = "数据不存在或已删除！";
                 return false;
             }
             if (data.AuditState <= AuditStateType.Submit)
@@ -579,7 +545,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             if (data.LastModifyDate >= DateTime.Now.AddMinutes(-30) &&
                 (data.AuditState == AuditStateType.Pass || data.AuditState == AuditStateType.Deny))
                 return true;
-            ApiContext.Current.LastMessage = AuditMessageReDo;
+            GlobalContext.Current.LastMessage = AuditMessageReDo;
             return false;
         }
         /// <summary>
@@ -628,13 +594,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 return false;
             }
             var result = data.Validate();
-            if (!result.succeed)
-            {
-                putError?.Invoke(result);
-                ApiContext.Current.LastMessage = result.ToString();
-                return false;
-            }
-            return ValidateExtend(data);
+            if (result.succeed) return ValidateExtend(data);
+            putError?.Invoke(result);
+            GlobalContext.Current.LastMessage = result.ToString();
+            return false;
         }
 
 
@@ -645,17 +608,15 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns></returns>
         protected virtual bool CanUnAudit(TData data)
         {
-            if (data.IsFreeze)
+            if (data.AuditState == AuditStateType.End)
             {
-                ApiContext.Current.LastMessage = unAuditMessageLock;
+                GlobalContext.Current.LastMessage = UnAuditMessageLock;
                 return false;
             }
-            if (data.AuditState < AuditStateType.Deny)
-            {
-                ApiContext.Current.LastMessage = unAuditMessageNoSubmit;
-                return false;
-            }
-            return true;
+
+            if (data.AuditState >= AuditStateType.Deny) return true;
+            GlobalContext.Current.LastMessage = UnAuditMessageNoSubmit;
+            return false;
         }
 
         #endregion
@@ -708,6 +669,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns></returns>
         protected virtual bool DoBack(TData data)
         {
+            data.DataState = DataStateType.None;
             return true;
         }
 

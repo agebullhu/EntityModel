@@ -10,10 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Gboxt.Common.DataModel;
-using Agebull.Common.WebApi.Auth;
 using Agebull.Common.OAuth;
 using Agebull.Common.Rpc;
-using Agebull.Common.WebApi;
 
 namespace Agebull.Common.WebApi.Auth
 {
@@ -40,7 +38,9 @@ namespace Agebull.Common.WebApi.Auth
 			return Task.Factory.StartNew(delegate
 			{
 				ApiResult apiResult = ApiResult.Error(code);
-				return new HttpResponseMessage(HttpStatusCode.OK)
+			    apiResult.Status.Point += "-beare";
+
+                return new HttpResponseMessage(HttpStatusCode.OK)
 				{
 					Content = new StringContent(JsonConvert.SerializeObject(apiResult))
 				};
@@ -68,11 +68,11 @@ namespace Agebull.Common.WebApi.Auth
 		        return ErrorCode.Success;
 		    if (Request.RequestUri.LocalPath == "/v1/sys/flush")
 		        return ErrorCode.Success;
-            var token = ExtractToken(request);
+		    var token = GlobalContext.Current.Request.Token = ExtractToken(request);
 		    if (string.IsNullOrWhiteSpace(GlobalContext.Current.Token))
 		        return ErrorCode.DenyAccess;
-		    int state = ErrorCode.DenyAccess;
-		    switch (GlobalContext.Current.Token[0])
+		    int state;
+		    switch (token[0])
             {
                 case '{':
                     state = CheckServiceKey(token);
@@ -103,9 +103,11 @@ namespace Agebull.Common.WebApi.Auth
                     break;
             }
 
+		    if (state != 0)
+		        return state;
 		    var page = Request.RequestUri.Segments[2];
 		    BusinessContext.Context.PowerChecker.LoadAuthority(page);
-            return state;
+		    return 0;
 		}
 
 		/// <summary>

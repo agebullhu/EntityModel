@@ -9,9 +9,9 @@
 #region 引用
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
-using Agebull.Common.WebApi;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 
@@ -37,7 +37,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     启用对象
         /// </summary>
-        public bool Enable(string sels)
+        public bool Enable(IEnumerable<long> sels)
         {
             return DoByIds(sels, Enable);
         }
@@ -45,7 +45,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public bool Disable(string sels)
+        public bool Disable(IEnumerable<long> sels)
         {
             return DoByIds(sels, Disable);
         }
@@ -53,7 +53,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public bool Lock(string sels)
+        public bool Lock(IEnumerable<long> sels)
         {
             return DoByIds(sels, Lock);
         }
@@ -77,26 +77,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
-            if (Access.Any(p => p.Id == id && (p.IsFreeze || p.DataState == DataStateType.Disable || p.DataState == DataStateType.Enable)))
+            if (Access.Any(p => p.Id == id && p.IsFreeze))
                 return false;
             return base.PrepareDelete(id);
         }
-        /// <summary>
-        ///     删除对象操作
-        /// </summary>
-        protected override bool DoDelete(long id)
-        {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            {
-                if (!Access.Any(p => p.Id == id && p.DataState == DataStateType.Delete))
-                    return Access.SetValue(p => p.DataState, DataStateType.Delete, p => p.Id == id && p.DataState == DataStateType.None) > 0;
-                //if (BusinessContext.Context.CanDoCurrentPageAction("physical_delete"))
-                //    return Access.PhysicalDelete(id);
-                //BusinessContext.Context.LastMessage = "不允许随意执行物理删除操作";
-                return false;
-            }
-        }
-
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
@@ -176,12 +160,15 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
             if (data == null)
                 return false;
-            if (!DoResetState(data))
-                return false;
-            Access.Update(data);
-            if (unityStateChanged)
-                OnStateChanged(data, BusinessCommandType.Reset);
-            return true;
+            using (var scope = Access.DataBase.CreateTransactionScope())
+            {
+                if (!DoResetState(data))
+                    return false;
+                Access.Update(data);
+                if (unityStateChanged)
+                    OnStateChanged(data, BusinessCommandType.Reset);
+                return scope.SetState(true);
+            }
         }
 
         /// <summary>
@@ -201,7 +188,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <param name="id"></param>
         public virtual bool Reset(long id)
         {
-            return SetDataState(id, DataStateType.None, p => p.Id == id);
+            return SetDataState(id, DataStateType.None, null, false);
         }
 
         /// <summary>
@@ -209,12 +196,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool Enable(long id)
         {
-            if (Access.LoadValue(p => p.IsFreeze, id))
-            {
-                Access.SetValue(p => p.IsFreeze, false, id);
-                return true;
-            }
-            return SetDataState(id, DataStateType.Enable, p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
+            return SetDataState(id, DataStateType.Enable, p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None), true);
         }
 
         /// <summary>
@@ -222,47 +204,53 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool Disable(long id)
         {
-            return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable);
+            return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable, true);
         }
         /// <summary>
         ///     弃用对象
         /// </summary>
         public virtual bool Discard(long id)
         {
-            return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None);
+            return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None, true);
         }
         /// <summary>
         ///     锁定对象
         /// </summary>
         public virtual bool Lock(long id)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
+                return false;
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
-                    return false;
                 Access.SetValue(p => p.IsFreeze, true, id);
-                Access.SetValue(p => p.DataState, DataStateType.Enable, id);
-                if (!unityStateChanged)
-                    return true;
-                OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.Lock);
-                return true;
+                Access.SetValue(p => p.DataState, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.None);
+                if (unityStateChanged)
+                {
+                    OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.Lock);
+                }
+                return scope.SetState(true);
             }
         }
 
         /// <summary>
         ///     修改状态
         /// </summary>
-        protected bool SetDataState(long id, DataStateType state, Expression<Func<TData, bool>> filter)
+        protected bool SetDataState(long id, DataStateType state, Expression<Func<TData, bool>> filter, bool? setFreeze)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            if (filter != null && !Access.Any(filter))
+                return false;
+            if (filter == null && !Access.ExistPrimaryKey(id))
+                return false;
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                if (!Access.ExistPrimaryKey(id) || !Access.Any(filter))
-                    return false;
                 Access.SetValue(p => p.DataState, state, id);
-                if (!unityStateChanged)
-                    return true;
-                OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.SetState);
-                return true;
+                if (setFreeze != null)
+                    Access.SetValue(p => p.IsFreeze, setFreeze.Value, id);
+                if (unityStateChanged)
+                {
+                    OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.SetState);
+                }
+                return scope.SetState(true);
             }
         }
         #endregion

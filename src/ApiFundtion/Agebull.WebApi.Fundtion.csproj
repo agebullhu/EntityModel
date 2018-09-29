@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>WebApi支持</Description>
     <AssemblyTitle>Agebull.WebApi.Fundtion</AssemblyTitle>
-    <Version>2.3.1.1</Version>
+    <Version>2.3.2.19</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>net47</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -25,9 +25,9 @@
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <PackageVersion>2.3.1.1</PackageVersion>
+    <PackageVersion>2.3.2.19</PackageVersion>
     <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>false</IncludeSource>
+    <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -74,6 +74,7 @@
     <Compile Remove="Api\EntityInfo.cs" />
     <Compile Remove="Authority\SubjectionType.cs" />
     <Compile Remove="Authority\UserProfile.cs" />
+    <Compile Remove="HttpHandler\SpecialMethodModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc.zh-Hans" Version="5.2.6" />

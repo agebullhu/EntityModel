@@ -213,13 +213,13 @@ namespace Agebull.Common.Logging
             {
                 IOHelper.CheckPath(LogPath, $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}");
             }
-            DisposeWriters(true);
+            DisposeWriters();
             _recordTimePoint = day;
         }
 
         private class FileInfo
         {
-            public int Size;
+            public long Size;
             public int Index;
             public StreamWriter Stream;
         }
@@ -237,7 +237,9 @@ namespace Agebull.Common.Logging
             }
             if (info == null)
             {
-                _writers.Add(sub, info = new FileInfo());
+                info = new FileInfo();
+                ResetFile(sub, info);
+                _writers.Add(sub, info);
             }
             ResetFile(sub, info);
             return info;
@@ -246,15 +248,14 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///     任务结束,环境销毁
         /// </summary>
-        private void DisposeWriters(bool reset = false)
+        private void DisposeWriters()
         {
             foreach (var info in _writers)
             {
+                if (info.Value.Stream == null)
+                    continue;
                 info.Value.Stream.Flush();
                 info.Value.Stream.Dispose();
-                if (!reset)
-                    continue;
-                ResetFile(info.Key, info.Value);
             }
             _writers.Clear();
         }
@@ -262,24 +263,41 @@ namespace Agebull.Common.Logging
         private void ResetFile(string sub, FileInfo info)
         {
             info.Size = 0;
-            string fileName;
+            info.Index = 0;
             do
             {
                 info.Index++;
-                fileName = dayFolder
+                var fileName = dayFolder
                     ? Path.Combine(LogPath,
                         $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}",
                         $"{sub}.{info.Index:D3}.log")
                      : Path.Combine(LogPath,
                         $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}.{sub}.{info.Index:D3}.log");
+                if (File.Exists(fileName))
+                {
+                    var stream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                    info.Size = stream.Length;
+                    if (stream.Length >= SplitNumber)
+                    {
+                        stream.Close();
+                        stream.Dispose();
+                        continue;
+                    }
+                    info.Stream = new StreamWriter(stream)
+                    {
+                        AutoFlush = true
+                    };
+                    return;
+                }
+                IOHelper.CheckPath(Path.GetDirectoryName(fileName));
+                info.Stream = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                {
+                    AutoFlush = true
+                };
+                info.Size = 0;
+                return;
             }
-            while (File.Exists(fileName));
-            var stream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-
-            info.Stream = new StreamWriter(stream)
-            {
-                AutoFlush = true
-            };
+            while (true);
         }
 
         #endregion

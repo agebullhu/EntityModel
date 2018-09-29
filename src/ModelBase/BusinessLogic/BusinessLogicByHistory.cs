@@ -28,19 +28,5 @@ namespace Agebull.Common.DataModel.BusinessLogic
         where TAccess : HitoryTable<TData, TDatabase>, new()
         where TDatabase : MySqlDataBase
     {
-        /// <summary>
-        ///     ÖØÖÃÊý¾Ý×´Ì¬
-        /// </summary>
-        /// <param name="data"></param>
-        protected override bool DoResetState(TData data)
-        {
-            if (data == null)
-                return false;
-            data.AddDate = DateTime.MinValue;
-            data.AuthorId = 0;
-            data.LastModifyDate = DateTime.MinValue;
-            data.LastReviserId = 0;
-            return base.DoResetState(data);
-        }
     }
 }

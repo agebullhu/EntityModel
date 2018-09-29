@@ -91,11 +91,7 @@ namespace Agebull.Common.Rpc
 
         #region 当前实例
 
-        /// <summary>
-        ///     当前线程的调用上下文
-        /// </summary>
-        [ThreadStatic] private static GlobalContext _current;
-
+        static readonly AsyncLocal<GlobalContext> Local = new AsyncLocal<GlobalContext>();
         /// <summary>
         ///     当前线程的调用上下文
         /// </summary>
@@ -103,24 +99,25 @@ namespace Agebull.Common.Rpc
         {
             get
             {
-                if (_current != null)
-                    return _current;
-                var local = new AsyncLocal<GlobalContext>();
-                if (local.Value != null)
-                    return _current = local.Value;
-                local.Value = _current = IocHelper.Create<GlobalContext>() ?? new GlobalContext();
-                return _current;
+                if (Local.Value != null)
+                    return Local.Value;
+                Local.Value = IocHelper.CreateScope<GlobalContext>() ?? new GlobalContext();
+                return Local.Value;
             }
         }
 
+        /// <summary>
+        ///     当前线程的调用上下文(无懒构造)
+        /// </summary>
+        public static GlobalContext CurrentNoLazy => Local.Value;
 
         /// <summary>
         ///     内部构造
         /// </summary>
         protected GlobalContext()
         {
-            _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{Guid.NewGuid():N}");
-            _user = LoginUserInfo.CreateAnymouse("<error>", "<error>", "<error>");
+            _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{RandomOperate.Generate(8)}");
+            _user = LoginUserInfo.Anymouse;
             _organizational = OrganizationalInfo.System;
         }
 
@@ -185,7 +182,6 @@ namespace Agebull.Common.Rpc
         /// <inheritdoc />
         protected override void OnDispose()
         {
-            _current = null;
             var local = new AsyncLocal<GlobalContext>();
             if (local.Value != null)
                 local.Value = null;
@@ -199,7 +195,7 @@ namespace Agebull.Common.Rpc
             if (Current._requestInfo == null)
             {
                 Current._requestInfo = new RequestInfo();
-                Current._user = LoginUserInfo.CreateAnymouse("?", "*", "*");
+                Current._user = LoginUserInfo.Anymouse;
             }
         }
         #endregion
@@ -210,6 +206,12 @@ namespace Agebull.Common.Rpc
         ///     是否工作在不安全模式下
         /// </summary>
         public bool IsUnSafeMode { get; set; }
+
+
+        /// <summary>
+        ///     是否工作在管理模式下(数据全看模式)
+        /// </summary>
+        public bool IsManageMode { get; set; }
 
         /// <summary>
         ///     是否工作在系统模式下
@@ -236,7 +238,8 @@ namespace Agebull.Common.Rpc
         /// <param name="msg"></param>
         public void AppendMessage(string msg)
         {
-            if (_messageBuilder == null) _messageBuilder = new StringBuilder(_status.ClientMessage);
+            if (_messageBuilder == null)
+                _messageBuilder = new StringBuilder(_status.ClientMessage);
             _messageBuilder.AppendLine(msg);
             messageChanged = true;
         }
@@ -274,18 +277,9 @@ namespace Agebull.Common.Rpc
         private readonly OperatorStatus _status = new OperatorStatus();
 
         /// <summary>
-        ///     取所有消息
-        /// </summary>
-        /// <returns></returns>
-        public string GetFullMessage()
-        {
-            return _messageBuilder?.ToString();
-        }
-
-        /// <summary>
         ///     最后状态(当前时间)
         /// </summary>
-        public IOperatorStatus LastStatus
+        public OperatorStatus LastStatus
         {
             get
             {
@@ -295,9 +289,23 @@ namespace Agebull.Common.Rpc
             }
         }
 
+        /// <summary>
+        ///     最后状态(当前时间)
+        /// </summary>
+        IOperatorStatus IGlobalContext.LastStatus => LastStatus;
+
         #endregion
 
         #region 服务信息
+
+        static GlobalContext()
+        {
+#if !NETSTANDARD
+            ServiceKey = System.Configuration.ConfigurationManager.AppSettings["ServiceKey"];
+            ServiceName = System.Configuration.ConfigurationManager.AppSettings["ServiceName"];
+            ServiceRealName = $"{ServiceName}-{RandomOperate.Generate(8)}";
+#endif
+        }
 
         /// <summary>
         ///     当前服务器的标识

@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
+using Gboxt.Common.DataModel;
 
 #endregion
 
@@ -103,7 +104,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static string GetRequestId()
         {
-            return GetRequestIdFunc?.Invoke() ?? Guid.NewGuid().ToString();
+            return GetRequestIdFunc?.Invoke() ?? RandomOperate.Generate(8);
         }
 
         /// <summary>
@@ -772,7 +773,6 @@ namespace Agebull.Common.Logging
         /// </summary>
         private static void WriteRecordLoop()
         {
-            bool doTrace = Listener != null || TraceToConsole;
             SystemTrace("日志开始");
             int cnt = 0;
             while (State != LogRecorderStatus.Shutdown)
@@ -794,7 +794,7 @@ namespace Agebull.Common.Logging
                         _id = 1;
                     if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
                         BaseRecorder.RecordLog(info);
-                    if (doTrace)
+                    if (Listener != null || TraceToConsole)
                         DoTrace(info);
                 }
                 try
@@ -843,7 +843,12 @@ namespace Agebull.Common.Logging
         internal static void SystemTrace(string title, params object[] arg)
         {
             lock (BaseRecorder)
-                Console.WriteLine($"[LogRecorder] {title} {arg.LinkToString(" > ")}");
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"{DateTime.Now} [{title}]");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(arg.LinkToString(" > "));
+            }
         }
 
         #endregion

@@ -23,14 +23,28 @@ namespace Gboxt.Common.DataModel.MySql
         #region 更新
 
         /// <summary>
-        ///     生成更新的SQL语句
+        ///     生成单个字段更新的SQL
         /// </summary>
-        /// <param name="expression">字段更新语句</param>
-        /// <param name="convert">更新条件</param>
-        /// <returns>更新的SQL语句</returns>
-        private string CreateUpdateSql(string expression, ConditionItem convert)
+        /// <param name="field">字段</param>
+        /// <param name="value">值</param>
+        /// <param name="parameters">参数列表</param>
+        /// <returns>单个字段更新的SQL</returns>
+        private string FileUpdateSql(string field, object value, IList<MySqlParameter> parameters)
         {
-            return CreateUpdateSql(expression, convert.ConditionSql);
+            field = FieldDictionary[field];
+            if (value == null)
+                return $"`{field}` = NULL";
+            if (value is string || value is DateTime || value is byte[])
+            {
+                var name = "v_" + field;
+                parameters.Add(CreateFieldParameter(name, value));
+                return $"`{field}` = ?{name}";
+            }
+            if (value is bool)
+                value = (bool)value ? 1 : 0;
+            else if (value is Enum)
+                value = Convert.ToInt32(value);
+            return $"`{field}` = {value}";
         }
 
 
@@ -62,32 +76,6 @@ UPDATE `{WriteTableName}`
         {
             return CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
         }
-
-        /// <summary>
-        ///     生成单个字段更新的SQL
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="value">值</param>
-        /// <param name="parameters">参数列表</param>
-        /// <returns>单个字段更新的SQL</returns>
-        private string FileUpdateSql(string field, object value, IList<MySqlParameter> parameters)
-        {
-            field = FieldDictionary[field];
-            if (value == null)
-                return $"`{field}` = NULL";
-            if (value is string || value is DateTime || value is byte[])
-            {
-                var name = "v_" + field;
-                parameters.Add(CreateFieldParameter(name, value));
-                return $"`{field}` = ?{name}";
-            }
-            if (value is bool)
-                value = (bool)value ? 1 : 0;
-            else if (value is Enum)
-                value = Convert.ToInt32(value);
-            return $"`{field}` = {value}";
-        }
-
         #endregion
 
         #region 载入
@@ -110,24 +98,25 @@ UPDATE `{WriteTableName}`
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        protected string ContitionSqlCode(string condition)
+        protected virtual string ContitionSqlCode(string condition)
         {
             if (!_baseConditionInited)
             {
                 InitBaseCondition();
                 _baseConditionInited = true;
             }
-
-            if (string.IsNullOrWhiteSpace(BaseCondition))
-                return string.IsNullOrWhiteSpace(condition)
-                    ? null
-                    : $@"
-WHERE {condition}";
-            return string.IsNullOrWhiteSpace(condition)
-                ? $@"
-WHERE {BaseCondition}"
-                : $@"
-WHERE ({BaseCondition}) AND ({condition})";
+            var a = string.IsNullOrWhiteSpace(BaseCondition);
+            var b = string.IsNullOrWhiteSpace(condition);
+            if (a && b)
+                return null;
+            if(a)
+                return $@"
+WHERE ({condition})";
+            if (b)
+                return $@"
+WHERE ({BaseCondition})";
+            return $@"
+WHERE (({BaseCondition}) AND ({condition}))";
         }
 
         /// <summary>

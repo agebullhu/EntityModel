@@ -36,22 +36,16 @@ namespace Agebull.Common.DataModel.BusinessLogic
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
             params MySqlParameter[] args)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            var data = Access.PageData(page, limit, sort, desc, condition, args);
+            var count = (int)Access.Count(condition, args);
+            return new ApiPageData<TData>
             {
-                //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
-                {
-                    var data = Access.PageData(page, limit, sort, desc, condition, args);
-                    var count = (int)Access.Count(condition, args);
-                    return new ApiPageData<TData>
-                    {
-                        RowCount = count,
-                        Rows = data,
-                        PageIndex = page,
-                        PageSize = limit,
-                        PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-                    };
-                }
-            }
+                RowCount = count,
+                Rows = data,
+                PageIndex = page,
+                PageSize = limit,
+                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+            };
         }
 
         /// <summary>
@@ -59,26 +53,20 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            if (limit <= 0 || limit >= 999)
             {
-                //using (MySqlReaderScope<TData>.CreateScope(Access, Access.SimpleFields, Access.SimpleLoad))
-                {
-                    if (limit <= 0 || limit >= 999)
-                    {
-                        limit = 30;
-                    }
-                    var data = Access.PageData(page, limit, lambda);
-                    var count = (int)Access.Count(lambda);
-                    return new ApiPageData<TData>
-                    {
-                        RowCount = count,
-                        Rows = data,
-                        PageIndex = page,
-                        PageSize = limit,
-                        PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-                    };
-                }
+                limit = 30;
             }
+            var data = Access.PageData(page, limit, lambda);
+            var count = (int)Access.Count(lambda);
+            return new ApiPageData<TData>
+            {
+                RowCount = count,
+                Rows = data,
+                PageIndex = page,
+                PageSize = limit,
+                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+            };
         }
 
         /// <summary>
@@ -86,24 +74,20 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
+            if (limit <= 0 || limit >= 999)
             {
-
-                if (limit <= 0 || limit >= 999)
-                {
-                    limit = 30;
-                }
-                var data = Access.PageData(page, limit, lambda);
-                var count = (int)Access.Count(lambda);
-                return new ApiPageData<TData>
-                {
-                    RowCount = count,
-                    Rows = data,
-                    PageIndex = page,
-                    PageSize = limit,
-                    PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-                };
+                limit = 30;
             }
+            var data = Access.PageData(page, limit, lambda);
+            var count = (int)Access.Count(lambda);
+            return new ApiPageData<TData>
+            {
+                RowCount = count,
+                Rows = data,
+                PageIndex = page,
+                PageSize = limit,
+                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+            };
         }
         #endregion
 
@@ -224,7 +208,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool AddNew(TData data)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!CanSave(data, true))
                 {
@@ -250,13 +234,13 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public virtual bool Update(TData data)
         {
-            if (data.Id == 0)
+            if (data.Id <= 0)
             {
                 return AddNew(data);
             }
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                if (!CanSave(data, true))
+                if (!CanSave(data, false))
                 {
                     return false;
                 }
@@ -282,8 +266,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public bool Delete(IEnumerable<long> lid)
         {
-            using (MySqlDataBaseScope.CreateScope(Access.DataBase))
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 foreach (var id in lid)
                 {
@@ -300,7 +283,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         public bool Delete(long id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!PrepareDelete(id))
                 {
@@ -312,8 +295,8 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 LogRecorder.MonitorTrace("Delete");
                 OnInnerCommand(id, BusinessCommandType.Delete);
                 scope.SetState(true);
-                return true;
             }
+            return true;
         }
 
         /// <summary>

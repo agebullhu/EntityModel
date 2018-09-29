@@ -12,7 +12,7 @@ using System;
 using System.Linq.Expressions;
 using System.Web.Http;
 using Agebull.Common.DataModel.BusinessLogic;
-using Agebull.Common.WebApi;
+using Agebull.Common.Rpc;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 
@@ -56,7 +56,7 @@ namespace Agebull.Common.WebApi
             if (Business.Access.IsUnique(field, no, condition))
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                Message = name + "[" + no + "]唯一";
+                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -70,10 +70,14 @@ namespace Agebull.Common.WebApi
         [Route("state/reset")]
         public ApiResponseMessage Reset()
         {
-            InitForm();
+            
             OnReset();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -84,10 +88,14 @@ namespace Agebull.Common.WebApi
         [Route("state/lock")]
         public ApiResponseMessage Lock()
         {
-            InitForm();
+            
             OnLock();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -98,10 +106,14 @@ namespace Agebull.Common.WebApi
         [Route("state/discard")]
         public ApiResponseMessage Discard()
         {
-            InitForm();
+            
             OnDiscard();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -112,10 +124,14 @@ namespace Agebull.Common.WebApi
         [Route("state/disable")]
         public ApiResponseMessage Disable()
         {
-            InitForm();
+            
             OnDisable();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -126,10 +142,14 @@ namespace Agebull.Common.WebApi
         [Route("state/enable")]
         public ApiResponseMessage Enable()
         {
-            InitForm();
+            
             OnEnable();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -142,7 +162,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         protected virtual void OnLock()
         {
-            foreach (var id in GetIntArrayArg("selects")) Business.Lock(id);
+            var ids = GetLongArrayArg("selects");
+            if (!Business.LoopIds(ids, Business.Lock))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -150,7 +172,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnReset()
         {
-            foreach (var id in GetIntArrayArg("selects")) Business.Reset(id);
+            var ids = GetLongArrayArg("selects");
+            if (!Business.LoopIds(ids, Business.Reset))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -158,7 +182,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnDiscard()
         {
-            foreach (var id in GetIntArrayArg("selects")) Business.Discard(id);
+            var ids = GetLongArrayArg("selects");
+            if (!Business.LoopIds(ids, Business.Discard))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -166,7 +192,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnEnable()
         {
-            foreach (var id in GetIntArrayArg("selects")) Business.Enable(id);
+            var ids = GetLongArrayArg("selects");
+            if (!Business.LoopIds(ids, Business.Enable))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -174,7 +202,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnDisable()
         {
-            foreach (var id in GetIntArrayArg("selects")) Business.Disable(id);
+            var ids = GetLongArrayArg("selects");
+            if (!Business.LoopIds(ids, Business.Disable))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         #endregion
@@ -200,7 +230,7 @@ namespace Agebull.Common.WebApi
             if (state >= 0)
             {
                 if (state < 0x100)
-                    lambda.AddRoot(p => p.DataState == (DataStateType) state);
+                    lambda.AddRoot(p => p.DataState == (DataStateType)state);
                 else
                     lambda.AddRoot(p => p.DataState < DataStateType.Delete);
             }

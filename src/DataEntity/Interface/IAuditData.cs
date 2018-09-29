@@ -14,19 +14,6 @@ using System;
 
 namespace Agebull.Common.DataModel
 {
-    
-    /// <summary>
-    ///     表示这条数据支持内联层级
-    /// </summary>
-    public interface IInnerTree
-    {
-        /// <summary>
-        ///     上级
-        /// </summary>
-        /// <value>string</value>
-        long ParentId { get; set; }
-
-    }
     /// <summary>
     ///     表示这条数据支持审核
     /// </summary>
@@ -103,9 +90,36 @@ namespace Agebull.Common.DataModel
         /// </summary>
         Error
     }
-
+    /// <summary>
+    /// 审核状态扩展类
+    /// </summary>
     public static class AuditStateTypeHelper
     {
+        /// <summary>
+        ///     到中文名称
+        /// </summary>
+        /// <param name="state">审核状态类型</param>
+        /// <returns>中文名称</returns>
+        public static string ToCapition(this AuditStateType state)
+        {
+            switch (state)
+            {
+                case AuditStateType.Submit:
+                    return "提交审核";
+                case AuditStateType.Deny:
+                    return "已否决";
+                case AuditStateType.Pass:
+                    return "已通过";
+                case AuditStateType.Again:
+                    return "反审核";
+                case AuditStateType.End:
+                    return "结束";
+                case AuditStateType.None:
+                    return "草稿";
+                default:
+                    return "错误";
+            }
+        }
         /// <summary>
         ///     到中文名称
         /// </summary>

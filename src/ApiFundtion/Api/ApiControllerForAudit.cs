@@ -8,11 +8,11 @@
 
 #region “˝”√
 
+using System.Collections.Generic;
 using System.Web.Http;
 using Agebull.Common.DataModel;
 using Agebull.Common.DataModel.BusinessLogic;
 using Agebull.Common.Rpc;
-using Agebull.Common.WebApi;
 using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.Extends;
 using Gboxt.Common.DataModel.MySql;
@@ -36,20 +36,21 @@ namespace Agebull.Common.WebApi
         /// </summary>
         protected virtual void OnSubmitAudit()
         {
-            var ids = GetArg("selects");
+            var ids = GetLongArrayArg("selects");
             if (!DoValidate(ids))
                 return;
             if (!Business.Submit(ids))
-                SetFailed(ApiContext.Current.GetFullMessage());
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
-        ///     Ã·Ωª…Û∫À
+        ///     ÕÀªÿ…Û∫À
         /// </summary>
         private void OnBackAudit()
         {
-            if (!Business.Back(GetArg("selects")))
-                SetFailed(ApiContext.Current.GetFullMessage());
+            var ids = GetLongArrayArg("selects");
+            if (!Business.Back(ids))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -57,8 +58,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnUnAudit()
         {
-            if (!Business.UnAudit(GetArg("selects")))
-                SetFailed(ApiContext.Current.GetFullMessage());
+            var ids = GetLongArrayArg("selects");
+            if (!Business.UnAudit(ids))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -66,31 +68,27 @@ namespace Agebull.Common.WebApi
         /// </summary>
         protected virtual void OnAuditPass()
         {
-            var ids = GetArg("selects");
+            var ids = GetLongArrayArg("selects");
             if (!DoValidate(ids))
+            {
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
                 return;
+            }
             var result = Business.AuditPass(ids);
             if (!result)
-                SetFailed(ApiContext.Current.GetFullMessage());
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
-        private bool DoValidate(string ids)
+        private bool DoValidate(IEnumerable<long> ids)
         {
             var message = new ValidateResultDictionary();
             var succeed = Business.Validate(ids, message.TryAdd);
 
             if (message.Result.Count > 0)
             {
-                IsFailed = true;
-                Message = message.ToString();
-                Message2 = message.ToString();
-                return false;
+                GlobalContext.Current.LastMessage = message.ToString();
             }
-
-            if (succeed)
-                return true;
-            SetFailed(ApiContext.Current.GetFullMessage());
-            return false;
+            return succeed;
         }
 
         /// <summary>
@@ -98,10 +96,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnPullback()
         {
-            var ids = GetArg("selects");
-            var result = Business.Pullback(ids);
-            if (!result)
-                SetFailed(ApiContext.Current.GetFullMessage());
+            var ids = GetLongArrayArg("selects");
+            if (!Business.Pullback(ids))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
         /// <summary>
@@ -109,10 +106,9 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnAuditDeny()
         {
-            var ids = GetArg("selects");
-            var result = Business.AuditDeny(ids);
-            if (!result)
-                SetFailed(ApiContext.Current.GetFullMessage());
+            var ids = GetLongArrayArg("selects");
+            if (!Business.AuditDeny(ids))
+                GlobalContext.Current.LastState = ErrorCode.LogicalError;
         }
 
 
@@ -122,27 +118,29 @@ namespace Agebull.Common.WebApi
         protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
             var audit = GetIntArg("audit", -1);
-            if (audit != 0x100 && audit >= 0)
+            if (audit == 0x100 || audit < 0)
+                return base.GetListData(lambda);
+            if (audit <= (int) AuditStateType.End)
             {
-                if (audit <= (int) AuditStateType.End)
-                    lambda.AddRoot(p => p.AuditState == (AuditStateType) audit);
-                else
-                    switch (audit)
-                    {
-                        case 0x10: //∑œ∆˙
-                        case 0xFF: //…æ≥˝
-                            SetArg("dataState", audit);
-                            break;
-                        case 0x13: //Õ£”√
-                            SetArg("dataState", (int) DataStateType.Disable);
-                            break;
-                        case 0x11: //Œ¥…Û∫À
-                            lambda.AddRoot(p => p.AuditState <= AuditStateType.Again);
-                            break;
-                        case 0x12: //Œ¥Ω· ¯
-                            lambda.AddRoot(p => p.AuditState < AuditStateType.End);
-                            break;
-                    }
+                lambda.AddRoot(p => p.AuditState == (AuditStateType)audit);
+                return base.GetListData(lambda);
+            }
+
+            switch (audit)
+            {
+                case 0x10: //∑œ∆˙
+                case 0xFF: //…æ≥˝
+                    SetArg("dataState", audit);
+                    break;
+                case 0x13: //Õ£”√
+                    SetArg("dataState", (int)DataStateType.Disable);
+                    break;
+                case 0x11: //Œ¥…Û∫À
+                    lambda.AddRoot(p => p.AuditState <= AuditStateType.Again);
+                    break;
+                case 0x12: //Œ¥Ω· ¯
+                    lambda.AddRoot(p => p.AuditState < AuditStateType.End);
+                    break;
             }
 
             return base.GetListData(lambda);
@@ -157,10 +155,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/deny")]
         public ApiResponseMessage AuditDeny()
         {
-            InitForm();
+            
             OnAuditDeny();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -171,10 +173,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/pullback")]
         public ApiResponseMessage Pullback()
         {
-            InitForm();
+            
             OnPullback();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -185,10 +191,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/submit")]
         public ApiResponseMessage SubmitAudit()
         {
-            InitForm();
+            
             OnSubmitAudit();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -199,10 +209,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/validate")]
         public ApiResponseMessage Validate()
         {
-            InitForm();
-            DoValidate(GetArg("selects"));
+            
+            DoValidate(GetLongArrayArg("selects"));
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -214,10 +228,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/pass")]
         public ApiResponseMessage AuditPass()
         {
-            InitForm();
+            
             OnAuditPass();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -230,7 +248,11 @@ namespace Agebull.Common.WebApi
         {
             OnUnAudit();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 
@@ -241,10 +263,14 @@ namespace Agebull.Common.WebApi
         [Route("audit/back")]
         public ApiResponseMessage BackAudit()
         {
-            InitForm();
+            
             OnBackAudit();
             return IsFailed
-                ? Request.ToResponse(ApiResult.Error(State, Message))
+                ? Request.ToResponse(new ApiResult
+                {
+                    Success = false,
+                    Status = GlobalContext.Current.LastStatus
+                })
                 : Request.ToResponse(ApiResult.Succees());
         }
 

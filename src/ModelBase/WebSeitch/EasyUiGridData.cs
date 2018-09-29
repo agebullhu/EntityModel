@@ -19,7 +19,7 @@ namespace Agebull.Common.DataModel.WebUI
     /// 支持EasyUi表格列表数据的对象
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class EasyUiGridData<T>  : AjaxResult
+    public class EasyUiGridData<T>
         where T : class
     {
         /// <summary>

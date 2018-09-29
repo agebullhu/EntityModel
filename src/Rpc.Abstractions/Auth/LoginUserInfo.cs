@@ -177,8 +177,8 @@ namespace Agebull.Common.OAuth
             UserId = -1,
             Account = "anymouse",
             DeviceId = "%",
-            App = "sys",
-            Os = "sys",
+            App = "*",
+            Os = "*",
             LoginType = 0,
             State = UserStateType.None
         };

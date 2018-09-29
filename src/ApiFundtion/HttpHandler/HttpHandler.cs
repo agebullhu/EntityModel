@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
-using Agebull.Common.WebApi;
 
 namespace Agebull.Common.WebApi
 {
@@ -29,14 +28,14 @@ namespace Agebull.Common.WebApi
 		/// <returns></returns>
 		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			foreach (IHttpSystemHandler handler in Handlers)
+		    IocHelper.Update();
+            foreach (IHttpSystemHandler handler in Handlers)
 			{
 				try
 				{
 					Task<HttpResponseMessage> task = handler.OnBegin(request, cancellationToken);
 					if (task != null)
 					{
-						ContextHelper.Remove("ApiContext");
 						return DoEnd(task, request, cancellationToken);
 					}
 				}
@@ -51,30 +50,37 @@ namespace Agebull.Common.WebApi
 
 		private Task<HttpResponseMessage> DoEnd(Task<HttpResponseMessage> t1, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			t1.Wait(cancellationToken);
-			HttpResponseMessage result;
-			if (t1.IsCanceled)
-			{
-				LogRecorder.MonitorTrace("操作被取消");
-				result = request.ToResponse(ApiResult.Error(-7, "服务器正忙", "操作被取消"));
-				LogRecorder.EndMonitor();
-				return Task<HttpResponseMessage>.Factory.StartNew(() => result, cancellationToken);
-			}
-			if (t1.IsFaulted)
-			{
-				LogRecorder.MonitorTrace(t1.Exception?.Message);
-				LogRecorder.Exception(t1.Exception);
-				result = request.ToResponse(ApiResult.Error(-1, "未知错误", t1.Exception?.Message));
-			}
-			else
-			{
-				result = t1.Result;
-			}
-			return Task<HttpResponseMessage>.Factory.StartNew(delegate
-			{
-				OnEnd(request, result, cancellationToken);
-				return result;
-			}, cancellationToken);
+		    try
+		    {
+		        t1.Wait(cancellationToken);
+		        HttpResponseMessage result;
+		        if (t1.IsCanceled)
+		        {
+		            LogRecorder.MonitorTrace("操作被取消");
+		            result = request.ToResponse(ApiResult.Error(-7, "服务器正忙", "操作被取消"));
+		            LogRecorder.EndMonitor();
+		            return Task<HttpResponseMessage>.Factory.StartNew(() => result, cancellationToken);
+		        }
+		        if (t1.IsFaulted)
+		        {
+		            LogRecorder.MonitorTrace(t1.Exception?.Message);
+		            LogRecorder.Exception(t1.Exception);
+		            result = request.ToResponse(ApiResult.Error(-1, "未知错误", t1.Exception?.Message));
+		        }
+		        else
+		        {
+		            result = t1.Result;
+		        }
+		        return Task<HttpResponseMessage>.Factory.StartNew(delegate
+		        {
+		            OnEnd(request, result, cancellationToken);
+		            return result;
+		        }, cancellationToken);
+            }
+		    finally
+		    {
+		        IocHelper.DisposeScope();
+		    }
 		}
 
 		/// <summary>
@@ -85,28 +91,29 @@ namespace Agebull.Common.WebApi
 		/// <param name="cancellationToken"></param>
 		private void OnEnd(HttpRequestMessage request, HttpResponseMessage response, CancellationToken cancellationToken)
 		{
-			if (!response.IsSuccessStatusCode)
-			{
-				HttpStatusCode statusCode = response.StatusCode;
-				if (statusCode != HttpStatusCode.NotFound && statusCode != HttpStatusCode.MethodNotAllowed)
-				{
-					;
-				}
-			}
-			for (int index = Handlers.Count - 1; index >= 0; index--)
-			{
-				IHttpSystemHandler handler = Handlers[index];
-				try
-				{
-					handler.OnEnd(request, cancellationToken, response);
-				}
-				catch (Exception ex)
-				{
-					LogRecorder.Exception(ex);
-				}
-			}
-			ContextHelper.Remove("ApiContext");
-		    IocHelper.DisposeScope();
+		    using (IocScope.CreateScope())
+		    {
+		        if (!response.IsSuccessStatusCode)
+		        {
+		            HttpStatusCode statusCode = response.StatusCode;
+		            if (statusCode != HttpStatusCode.NotFound && statusCode != HttpStatusCode.MethodNotAllowed)
+		            {
+		                ;
+		            }
+		        }
+		        for (int index = Handlers.Count - 1; index >= 0; index--)
+		        {
+		            IHttpSystemHandler handler = Handlers[index];
+		            try
+		            {
+		                handler.OnEnd(request, cancellationToken, response);
+		            }
+		            catch (Exception ex)
+		            {
+		                LogRecorder.Exception(ex);
+		            }
+		        }
+            }
 		}
 	}
 }

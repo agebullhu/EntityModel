@@ -10,7 +10,13 @@ namespace Agebull.Common.Tson
     public sealed class TsonObjectScope : ScopeBase
     {
         private readonly ITsonDeserializer deserializer;
+        /// <summary>
+        /// 数据版本
+        /// </summary>
         public readonly byte Ver;
+        /// <summary>
+        /// 数据类型
+        /// </summary>
         public readonly TsonDataType DataType;
 
         private TsonObjectScope(ITsonDeserializer s)
@@ -32,6 +38,9 @@ namespace Agebull.Common.Tson
         }
     }
 
+    /// <summary>
+    ///  Tson反序列化器
+    /// </summary>
     public interface ITsonDeserializer : IDisposable
     {
 

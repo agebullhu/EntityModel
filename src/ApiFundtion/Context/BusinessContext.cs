@@ -10,18 +10,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.Http;
 using Agebull.Common.AppManage;
-using Agebull.Common.Configuration;
-using Agebull.Common.DataModel;
 using Agebull.Common.DataModel.Redis;
 using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.Common.Redis;
-using Agebull.Common.Rpc;
 using Agebull.Common.WebApi.Auth;
-using Gboxt.Common.DataModel;
 using Gboxt.Common.DataModel.MySql;
 using Newtonsoft.Json;
 
@@ -34,6 +28,7 @@ namespace Agebull.Common.WebApi
     /// </summary>
     public class BusinessContext : ApiContext
     {
+
         #region Ïß³Ìµ¥Àý
         
         /// <summary>

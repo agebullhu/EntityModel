@@ -60,7 +60,7 @@ namespace System
         /// <returns>文本</returns>
         public static string FromUtf8Bytes(this byte[] bytes)
         {
-            return bytes == null || bytes.Length == 0 ? null : Encoding.ASCII.GetString(bytes);
+            return bytes == null || bytes.Length == 0 ? null : Encoding.UTF8.GetString(bytes);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace System
         /// <returns></returns>
         public static string ToPercent(this decimal d, string nullString)
         {
-            return d == 0 ? (nullString ?? "0") : String.Format("{0:F2}%", d * 100.0M);
+            return d == 0 ? (nullString ?? "0") : $"{d * 100.0M:F2}%";
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace System
         /// <returns></returns>
         public static string ToPercent(this decimal d)
         {
-            return String.Format("{0:F2}%", d * 100.0M);
+            return $"{d * 100.0M:F2}%";
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace System
                 return nullString ?? "0";
             if (dia <= 0)
                 dia = 10;
-            return d.ToString(String.Format("F{0}", dia)).TrimEnd('0').TrimEnd('.');
+            return d.ToString($"F{dia}").TrimEnd('0').TrimEnd('.');
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace System
                 return nullString;
             if (dia <= 0)
                 dia = 10;
-            return d.Value.ToString(String.Format("F{0}", dia)).TrimEnd('0').TrimEnd('.');
+            return d.Value.ToString($"F{dia}").TrimEnd('0').TrimEnd('.');
         }
 
         /// <summary>
@@ -444,12 +444,12 @@ namespace System.Text
                 switch (word.Substring(word.Length - 2).ToLower())
                 {
                     case "is":
-                        return string.Format("{0}es", word.Substring(0, word.Length - 2));
+                        return $"{word.Substring(0, word.Length - 2)}es";
                     case "fe":
-                        return string.Format("{0}ves", word.Substring(0, word.Length - 1));
+                        return $"{word.Substring(0, word.Length - 1)}ves";
                     case "ch":
                     case "sh":
-                        return string.Format("{0}es", word);
+                        return $"{word}es";
                 }
             }
             switch (word[word.Length - 1])
@@ -458,14 +458,14 @@ namespace System.Text
                 case 'z':
                 case 'x':
                 case 'o':
-                    return string.Format("{0}es", word);
+                    return $"{word}es";
                 case 'f':
-                    return string.Format("{0}ves", word);
+                    return $"{word}ves";
                 case 'y':
-                    return string.Format("{0}ies", word.Substring(0, word.Length - 1));
+                    return $"{word.Substring(0, word.Length - 1)}ies";
             }
 
-            return string.Format("{0}s", word);
+            return $"{word}s";
         }
         /// <summary>
         ///   到首字母大写的文本
@@ -480,7 +480,7 @@ namespace System.Text
             }
             return word.Length == 1
                            ? word.ToUpper()
-                           : string.Format("{0}{1}", ToUpper(word[0]), word.Substring(1));
+                           : $"{ToUpper(word[0])}{word.Substring(1)}";
         }
         /// <summary>
         ///   到首字母小写的文本
@@ -495,7 +495,7 @@ namespace System.Text
             }
             return word.Length == 1
                            ? word.ToLower()
-                           : string.Format("{0}{1}", ToLower(word[0]), word.Substring(1));
+                           : $"{ToLower(word[0])}{word.Substring(1)}";
         }
 
         /// <summary>
@@ -575,7 +575,7 @@ namespace System.Text
                     {
                         sb.Append(";");
                     }
-                    sb.Append(string.Format("{0},{1}", kv.Key, kv.Value));
+                    sb.Append($"{kv.Key},{kv.Value}");
                 }
             }
             return sb.ToString();
@@ -1005,7 +1005,7 @@ namespace System.Text
             }
             return word.Length == 1
                            ? word.ToUpper()
-                           : String.Format("{0}{1}", ToUpper(word[0]), word.Substring(1));
+                           : $"{ToUpper(word[0])}{word.Substring(1)}";
         }
 
         /// <summary>
@@ -1021,7 +1021,7 @@ namespace System.Text
             }
             return word.Length == 1
                            ? word.ToUpper()
-                           : String.Format("{0}{1}", ToLower(word[0]), word.Substring(1));
+                           : $"{ToLower(word[0])}{word.Substring(1)}";
         }
 
         /// <summary>

@@ -35,7 +35,10 @@ namespace Agebull.Common.WebApi
         ///     参数
         /// </summary>
         private readonly Dictionary<string, string> _arguments;
-
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="arguments"></param>
         public FormConvert(Dictionary<string, string> arguments)
         {
             _arguments = arguments;
@@ -47,6 +50,7 @@ namespace Agebull.Common.WebApi
         }
 
         /// <summary>
+        /// 到文本
         /// </summary>
         /// <param name="name"></param>
         /// <param name="canNull"></param>
@@ -61,7 +65,11 @@ namespace Agebull.Common.WebApi
             //}
             return null;
         }
-
+        /// <summary>
+        /// 设置错误参数
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="msg"></param>
         private void AddMessage(string name, string msg)
         {
             if (Messages.ContainsKey(name))
@@ -70,10 +78,21 @@ namespace Agebull.Common.WebApi
                 Messages.Add(name, msg);
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">找不到或为空时的默认值</param>
+        /// <returns>值</returns>
         public string ToString(string name, string def = null)
         {
             return string.IsNullOrWhiteSpace(GetValue(name)) ? def : GetValue(name).Trim();
         }
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
 
         public byte ToByte(string name)
         {
@@ -84,16 +103,18 @@ namespace Agebull.Common.WebApi
                 return 0;
             }
 
-            if (!byte.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
-            }
+            if (byte.TryParse(GetValue(name), out var vl)) return vl;
+            AddMessage(name, "值无法转为数字");
+            Failed = true;
+            return 0;
 
-            return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public byte? ToNullByte(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -113,6 +134,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public sbyte ToSByte(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -132,6 +158,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public sbyte? ToNullSByte(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -150,7 +181,11 @@ namespace Agebull.Common.WebApi
 
             return vl;
         }
-
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public long ToLong(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -170,6 +205,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的默认值</param>
+        /// <returns>值</returns>
         public long ToLong(string name, long def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -183,6 +224,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public long? ToNullLong(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -196,6 +242,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="canNull">能否为空</param>
+        /// <returns>值</returns>
         public uint ToUInteger(string name, bool canNull = true)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -219,6 +271,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="canNull">能否为空</param>
+        /// <returns>值</returns>
         public int ToInteger(string name, bool canNull = true)
         {
             var val = GetValue(name);
@@ -243,6 +301,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="procFunc">转换方法</param>
+        /// <returns>值</returns>
         public int ToInteger(string name, Func<string, string> procFunc)
         {
             var str = GetValue(name);
@@ -258,6 +322,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public int ToInteger(string name, int def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -271,6 +341,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public int? ToNullInteger(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -284,6 +359,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public bool ToBoolean(string name)
         {
             var str = GetValue(name);
@@ -306,6 +386,12 @@ namespace Agebull.Common.WebApi
             return false;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public bool ToBoolean(string name, bool def)
         {
             var str = GetValue(name);
@@ -328,12 +414,23 @@ namespace Agebull.Common.WebApi
             return false;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public bool? ToNullBoolean(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
             return ToBoolean(name);
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="canNull">是否可为空时</param>
+        /// <returns>值</returns>
         public decimal ToDecimal(string name, bool canNull = true)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -357,6 +454,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public decimal ToDecimal(string name, decimal def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -370,6 +473,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public decimal? ToNullDecimal(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -383,6 +491,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public Guid ToGuid(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -402,6 +515,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public Guid ToGuid(string name, Guid def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -415,6 +534,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public Guid? ToNullGuid(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -428,6 +552,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public double ToDouble(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -447,6 +576,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public double ToDouble(string name, double def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -460,6 +595,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public double? ToNullDouble(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -473,6 +613,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public float ToSingle(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -492,6 +637,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public float ToSingle(string name, float def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -505,6 +656,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public float? ToNullSingle(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -518,6 +674,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public DateTime ToDateTime(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name)))
@@ -537,6 +698,12 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="def">为空时的缺省值</param>
+        /// <returns>值</returns>
         public DateTime ToDateTime(string name, DateTime def)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
@@ -544,12 +711,17 @@ namespace Agebull.Common.WebApi
             {
                 AddMessage(name, "值无法转为日期");
                 Failed = true;
-                return DateTime.MinValue;
+                return def;
             }
 
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public DateTime? ToNullDateTime(string name)
         {
             if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
@@ -563,6 +735,11 @@ namespace Agebull.Common.WebApi
             return vl;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <returns>值</returns>
         public List<int> ToArray(string name)
         {
             var cs = GetValue(name);
@@ -571,6 +748,12 @@ namespace Agebull.Common.WebApi
             return css.Length > 0 ? css.Select(int.Parse).ToList() : null;
         }
 
+        /// <summary>
+        /// 参数值转换
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="parse">转换方法</param>
+        /// <returns>值</returns>
         public List<T> ToArray<T>(string name, Func<string, T> parse)
         {
             var cs = GetValue(name);
