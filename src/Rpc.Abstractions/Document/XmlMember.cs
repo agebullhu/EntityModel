@@ -73,8 +73,10 @@ namespace Agebull.Common.ApiDocuments
         public static XmlMember Find(Type type)
         {
             var re = HelpXml.FirstOrDefault(p => /*p.Type == "T" &&*/ p.Name == type.FullName);
-            if (re == null && !Assemblies.Contains(type.Assembly)) Load(type.Assembly);
-            return re;
+            if (re != null || Assemblies.Contains(type.Assembly))
+                return re;
+            Load(type.Assembly);
+            return HelpXml.FirstOrDefault(p => /*p.Type == "T" &&*/ p.Name == type.FullName);
         }
 
         /// <summary>
@@ -87,6 +89,10 @@ namespace Agebull.Common.ApiDocuments
         public static XmlMember Find(Type type, string sub, string subType = "P")
         {
             var name = $"{type.FullName}.{sub}";
+            var re = HelpXml.FirstOrDefault(p => /*p.Type == subType &&*/ p.Name == name);
+            if (re != null || Assemblies.Contains(type.Assembly))
+                return re;
+            Load(type.Assembly);
             return HelpXml.FirstOrDefault(p => /*p.Type == subType &&*/ p.Name == name);
         }
 
@@ -139,30 +145,30 @@ namespace Agebull.Common.ApiDocuments
             var xRoot = XElement.Load(path);
             var xElement = xRoot.Element("members");
             if (xElement == null) return;
-            var chars = new[] {':', '(', '`'};
+            var chars = new[] { ':', '(', '`' };
             var members = from p in xElement.Elements("member")
-                let name = p.Attribute("name")
-                where !string.IsNullOrEmpty(name?.Value)
-                let summary = p.Element("summary")
-                let remarks = p.Element("remarks")
-                let seealso = p.Element("seealso")
-                let value = p.Element("value")
-                let example = p.Element("example")
-                let returns = p.Element("returns")
-                let paramss = p.Elements("param")
-                let np = name.Value.Split(chars)
-                select new XmlMember
-                {
-                    Type = np[0],
-                    Name = np[1],
-                    Caption = summary?.Value.ConverToAscii(),
-                    Description = remarks?.Value.ConverToAscii(),
-                    Seealso = seealso?.Value,
-                    Value = value?.Value,
-                    Example = example?.Value,
-                    Returns = returns?.Value,
-                    XArguments = paramss
-                };
+                          let name = p.Attribute("name")
+                          where !string.IsNullOrEmpty(name?.Value)
+                          let summary = p.Element("summary")
+                          let remarks = p.Element("remarks")
+                          let seealso = p.Element("seealso")
+                          let value = p.Element("value")
+                          let example = p.Element("example")
+                          let returns = p.Element("returns")
+                          let paramss = p.Elements("param")
+                          let np = name.Value.Split(chars)
+                          select new XmlMember
+                          {
+                              Type = np[0],
+                              Name = np[1],
+                              Caption = summary?.Value.ConverToAscii(),
+                              Description = remarks?.Value.ConverToAscii(),
+                              Seealso = seealso?.Value,
+                              Value = value?.Value,
+                              Example = example?.Value,
+                              Returns = returns?.Value,
+                              XArguments = paramss
+                          };
 
             HelpXml.AddRange(members);
         }

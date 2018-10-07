@@ -27,7 +27,7 @@ namespace Agebull.Common.WebApi
     public abstract class ApiControllerForAudit<TData, TAccess, TDatabase, TBusinessLogic> :
         ApiControllerForDataState<TData, TAccess, TDatabase, TBusinessLogic>
         where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TAccess : HitoryTable<TData, TDatabase>, new()
+        where TAccess : DataStateTable<TData, TDatabase>, new()
         where TBusinessLogic : BusinessLogicByAudit<TData, TAccess, TDatabase>, new()
         where TDatabase : MySqlDataBase
     {
@@ -283,7 +283,7 @@ namespace Agebull.Common.WebApi
     public abstract class ApiControllerForAudit<TData, TAccess, TDatabase> :
         ApiControllerForDataState<TData, TAccess, TDatabase, BusinessLogicByAudit<TData, TAccess, TDatabase>>
         where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TAccess : HitoryTable<TData, TDatabase>, new()
+        where TAccess : DataStateTable<TData, TDatabase>, new()
         where TDatabase : MySqlDataBase
     {
     }
