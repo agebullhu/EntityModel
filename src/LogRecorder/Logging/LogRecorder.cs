@@ -43,7 +43,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 日志等级
         /// </summary>
-        public static LogLevel Level { get; set; }
+        public static LogLevel Level { get; set; } = LogLevel.Warning;
 
         /// <summary>
         ///   消息跟踪器
@@ -159,8 +159,7 @@ namespace Agebull.Common.Logging
                 LogDataSql = sec.GetBool("sql");
                 Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
             }
-#if NETSTANDARD2_0
-#else
+#if !NETSTANDARD2_0
             if (LogMonitor)
             {
                 AppDomain.MonitoringIsEnabled = true;
@@ -199,44 +198,6 @@ namespace Agebull.Common.Logging
         #region 支持
 
         /// <summary>
-        ///   日志类型到文本
-        /// </summary>
-        /// <param name="type"> </param>
-        /// <param name="def"> </param>
-        /// <returns> </returns>
-        public static string TypeToString(LogType type, string def = null)
-        {
-            switch (type)
-            {
-                default:
-                    return def ?? "None";
-                case LogType.Plan:
-                    return "Plan";
-                case LogType.Debug:
-                    return "Debug";
-                case LogType.Trace:
-                    return "Trace";
-                case LogType.Message:
-                    return "Message";
-                case LogType.Warning:
-                    return "Warning";
-                case LogType.Error:
-                    return "Error";
-                case LogType.Exception:
-                    return "Exception";
-                case LogType.System:
-                    return "System";
-                case LogType.Login:
-                    return "Login";
-                case LogType.Request:
-                    return "Request";
-                case LogType.DataBase:
-                    return "DataBase";
-                case LogType.NetWork:
-                    return "NetWork";
-            }
-        }
-        /// <summary>
         /// 格式化消息
         /// </summary>
         /// <param name="message"></param>
@@ -252,7 +213,7 @@ namespace Agebull.Common.Logging
             }
             else
             {
-                msg = String.Format(message, formatArgs);
+                msg = string.Format(message, formatArgs);
             }
             return msg;
         }
@@ -592,7 +553,7 @@ namespace Agebull.Common.Logging
                 case BugException _:
                     return $"发生设计错误,系统标识:{GetRequestId()}";
                 case AgebullBusinessException _:
-                    return String.Format("发生业务逻辑错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
+                    return string.Format("发生业务逻辑错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
             }
 
             return $"发生未知错误,系统标识:{GetRequestId()}";
@@ -647,37 +608,7 @@ namespace Agebull.Common.Logging
         /// <param name="formatArgs">文本格式化参数</param>
         private static void Record(string name, LogType type, string typeName, string msg, params object[] formatArgs)
         {
-            LogLevel level = LogLevel.None;
-            switch (type)
-            {
-                case LogType.Monitor:
-                    if (LogMonitor)
-                        level = LogLevel.System;
-                    break;
-                case LogType.DataBase:
-                    if (LogDataSql)
-                        level = LogLevel.System;
-                    break;
-                case LogType.Login:
-                case LogType.NetWork:
-                case LogType.Message:
-                case LogType.Request:
-                case LogType.Trace:
-                    level = LogLevel.Trace;
-                    break;
-                case LogType.Warning:
-                    level = LogLevel.Warning;
-                    break;
-                case LogType.Exception:
-                case LogType.Error:
-                    level = LogLevel.Error;
-                    break;
-                case LogType.System:
-                case LogType.Plan:
-                    level = LogLevel.System;
-                    break;
-            }
-            RecordInner(level, name, FormatMessage(msg, formatArgs), type, typeName);
+            RecordInner(type.Level(), name, FormatMessage(msg, formatArgs), type, typeName);
         }
 
         /// <summary>
@@ -689,34 +620,7 @@ namespace Agebull.Common.Logging
         /// <param name="typeName"> 类型名称 </param>
         private static void Record(string name, string msg, LogType type, string typeName = null)
         {
-            LogLevel level = LogLevel.None;
-            switch (type)
-            {
-                case LogType.Debug:
-                    level = LogLevel.Debug;
-                    break;
-                case LogType.DataBase:
-                case LogType.Monitor:
-                case LogType.Login:
-                case LogType.NetWork:
-                case LogType.Message:
-                case LogType.Request:
-                case LogType.Trace:
-                case LogType.Plan:
-                    level = LogLevel.Trace;
-                    break;
-                case LogType.Warning:
-                    level = LogLevel.Warning;
-                    break;
-                case LogType.Exception:
-                case LogType.Error:
-                    level = LogLevel.Error;
-                    break;
-                case LogType.System:
-                    level = LogLevel.System;
-                    break;
-            }
-            RecordInner(level, name, msg, type, typeName);
+            RecordInner(type.Level(), name, msg, type, typeName);
         }
 
 
@@ -764,7 +668,7 @@ namespace Agebull.Common.Logging
                 Message = msg,
                 Time = DateTime.Now,
                 ThreadID = Thread.CurrentThread.ManagedThreadId,
-                TypeName = typeName ?? TypeToString(type)
+                TypeName = typeName ?? LogEnumHelper.TypeToString(type)
             });
         }
 
@@ -773,18 +677,22 @@ namespace Agebull.Common.Logging
         /// </summary>
         private static void WriteRecordLoop()
         {
-            SystemTrace("日志开始");
+            SystemTrace(LogLevel.System, "日志开始");
             int cnt = 0;
             while (State != LogRecorderStatus.Shutdown)
             {
                 //Thread.Sleep(10);//让子弹飞一会
+                if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
+                {
+                    Thread.Sleep(50);
+                    continue;
+                }
                 var items = RecordInfos.Switch();
                 if (items.Count == 0)
                 {
                     Thread.Sleep(50);
                     continue;
                 }
-
                 var array = items.ToList();
                 items.Clear();
                 foreach (var info in array)
@@ -803,16 +711,16 @@ namespace Agebull.Common.Logging
                 }
                 catch (Exception ex)
                 {
-                    SystemTrace("日志写入发生错误", ex);
+                    SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
                 }
-                if (++cnt == 24)
-                {
-                    GC.Collect();
-                    cnt = 0;
-                }
+
+                if (++cnt != 24)
+                    continue;
+                GC.Collect();
+                cnt = 0;
             }
 
-            SystemTrace("日志结束");
+            SystemTrace(LogLevel.System, "日志结束");
             syncSlim.Release();
         }
 
@@ -824,27 +732,42 @@ namespace Agebull.Common.Logging
                 {
                     Listener.Trace(info);
                 }
-                else if (TraceToConsole)
+                else if (TraceToConsole && info.Type.Level() >= Level)
                 {
-                    SystemTrace(info.TypeName, info.Message);
+                    SystemTrace(info.Type.Level(), info.TypeName, info.Message);
                 }
             }
             catch (Exception ex)
             {
-                SystemTrace("日志侦听器发生错误", ex);
+                SystemTrace(LogLevel.Error, "日志侦听器发生错误", ex);
             }
         }
 
         /// <summary>
         /// 写入系统跟踪
         /// </summary>
+        /// <param name="level"></param>
         /// <param name="title"></param>
         /// <param name="arg"></param>
-        internal static void SystemTrace(string title, params object[] arg)
+        internal static void SystemTrace(LogLevel level, string title, params object[] arg)
         {
             lock (BaseRecorder)
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                switch (level)
+                {
+                    case LogLevel.Warning:
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    case LogLevel.System:
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        break;
+                    case LogLevel.Error:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        break;
+                }
                 Console.Write($"{DateTime.Now} [{title}]");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(arg.LinkToString(" > "));

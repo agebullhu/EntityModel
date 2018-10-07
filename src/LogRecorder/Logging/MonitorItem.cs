@@ -111,7 +111,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("EndMonitor", ex);
+                LogRecorder.SystemTrace(LogLevel.Error, "EndMonitor", ex);
                 return null;
             }
             finally

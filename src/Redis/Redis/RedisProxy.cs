@@ -131,6 +131,8 @@ namespace Agebull.Common.DataModel.Redis
         private IRedis CreateClient()
         {
             _redis= IocHelper.Create<IRedis>();
+            if (_redis == null)
+                throw new Exception("未正确注册Redis对象");
             ChangeDb();
             return _redis;
         }

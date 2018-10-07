@@ -1,9 +1,8 @@
 // // /*****************************************************
-// // (c)2016-2016 Copy right www.gboxt.com
-// // 作者:
+// // 作者:agebull
 // // 工程:Agebull.DataModel
 // // 建立:2016-06-12
-// // 修改:2016-06-16
+// // 修改:2018.10.07
 // // *****************************************************/
 
 #region 引用
@@ -22,9 +21,7 @@ namespace Gboxt.Common.DataModel
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
-    /// <typeparam name="TData">实体</typeparam>
-    public interface IDataTable<TData> : IConfig
-        where TData : EditDataObject, new()
+    public interface IDataTable
     {
         #region 数据库
 
@@ -41,21 +38,139 @@ namespace Gboxt.Common.DataModel
         #region 数据结构
 
         /// <summary>
-        ///     字段字典(运行时)
-        /// </summary>
-        Dictionary<string, string> FieldDictionary { get; }
-
-        /// <summary>
         ///     表的唯一标识
         /// </summary>
         int TableId { get; }
+
         /// <summary>
         ///     设计时的主键字段
         /// </summary>
         string PrimaryKey { get; }
 
+        /// <summary>
+        ///     字段字典(设计时)
+        /// </summary>
+        Dictionary<string, string> FieldMap { get; }
+
+        /// <summary>
+        ///     所有字段(设计时)
+        /// </summary>
+        string[] Fields { get; }
+
+        /// <summary>
+        ///     读表名
+        /// </summary>
+        string ReadTableName { get; }
+
+        /// <summary>
+        ///     写表名
+        /// </summary>
+        string WriteTableName { get; }
+
+
+        /// <summary>
+        ///     字段字典(运行时)
+        /// </summary>
+        Dictionary<string, string> FieldDictionary { get; }
+
+        /// <summary>
+        ///     主键字段(可动态覆盖PrimaryKey)
+        /// </summary>
+        string KeyField { get; }
         #endregion
 
+        #region 动态虚化
+
+
+        /// <summary>
+        ///     切换读取的表
+        /// </summary>
+        /// <returns>之前的动态读取的表名</returns>
+        string SetDynamicReadTable(string table);
+
+        #endregion
+
+        #region 聚合函数支持
+
+
+        /// <summary>
+        ///     是否存在数据
+        /// </summary>
+        bool Exist();
+
+        /// <summary>
+        ///     是否存在数据
+        /// </summary>
+        /// <returns>是否存在数据</returns>
+        bool Any();
+
+        /// <summary>
+        ///     是否存在此主键的数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns>是否存在数据</returns>
+        bool ExistPrimaryKey<T>(T id);
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        decimal Sum(string field);
+
+        /// <summary>
+        ///     总数
+        /// </summary>
+        long Count();
+
+        /// <summary>
+        ///     总数
+        /// </summary>
+        long Count(string condition, params DbParameter[] args);
+
+
+        #endregion
+
+        #region 条件更新
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="field">更新字段</param>
+        /// <param name="value">更新值</param>
+        /// <param name="conditionFiles">条件包含的字段</param>
+        /// <param name="conditionValues">条件包含的值</param>
+        /// <returns>更新行数</returns>
+        /// <remarks>
+        /// 条件中使用AND组合,均为等于
+        /// </remarks>
+        void SaveValue(string field, object value, string[] conditionFiles, object[] conditionValues);
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="value">值</param>
+        /// <param name="key">条件主键</param>
+        /// <returns>更新行数</returns>
+        int SetValue(string field, object value, object key);
+
+        /// <summary>
+        ///     设计字段按自定义表达式更新值
+        /// </summary>
+        /// <param name="valueExpression">值的SQL方式</param>
+        /// <param name="key">主键</param>
+        /// <returns>更新行数</returns>
+        int SetCoustomValue<TKey>(string valueExpression, TKey key);
+
+        #endregion
+    }
+
+    /// <summary>
+    ///     Sql实体访问类
+    /// </summary>
+    /// <typeparam name="TData">实体</typeparam>
+    public interface IDataTable<TData> : IDataTable, IConfig
+    where TData : EditDataObject, new()
+    {
         #region 读
 
         #region 遍历所有
@@ -280,48 +395,8 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region Exist
-
-        /// <summary>
-        ///     是否存在数据
-        /// </summary>
-        bool Exist();
-
-        /// <summary>
-        ///     是否存在此主键的数据
-        /// </summary>
-        /// <param name="id">id</param>
-        /// <returns>是否存在数据</returns>
-        bool ExistPrimaryKey<T>(T id);
-
-        #endregion
-
-        #region Count
-
-        /// <summary>
-        ///     总数
-        /// </summary>
-        long Count();
-
-        #endregion
-
-        #region SUM
-
-        /// <summary>
-        ///     汇总
-        /// </summary>
-        decimal Sum(string field);
-
-        #endregion
-
 
         #region Any
-
-        /// <summary>
-        ///     是否存在数据
-        /// </summary>
-        /// <returns>是否存在数据</returns>
-        bool Any();
 
         /// <summary>
         ///     是否存在数据
@@ -358,11 +433,6 @@ namespace Gboxt.Common.DataModel
         /// <returns>如果有载入首行,否则返回空</returns>
         long Count(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
-
-        /// <summary>
-        ///     总数
-        /// </summary>
-        long Count(string condition, params DbParameter[] args);
         #endregion
 
         #region Sum
@@ -525,17 +595,6 @@ namespace Gboxt.Common.DataModel
 
         #endregion
 
-        #region 动态虚化
-
-
-        /// <summary>
-        ///     切换读取的表
-        /// </summary>
-        /// <returns>之前的动态读取的表名</returns>
-        string SetDynamicReadTable(string table);
-
-        #endregion
-
         #endregion
 
         #region 写
@@ -609,28 +668,6 @@ namespace Gboxt.Common.DataModel
         #region 条件更新
 
         /// <summary>
-        ///     条件更新
-        /// </summary>
-        /// <param name="field">更新字段</param>
-        /// <param name="value">更新值</param>
-        /// <param name="conditionFiles">条件包含的字段</param>
-        /// <param name="conditionValues">条件包含的值</param>
-        /// <returns>更新行数</returns>
-        /// <remarks>
-        /// 条件中使用AND组合,均为等于
-        /// </remarks>
-        void SaveValue(string field, object value, string[] conditionFiles, object[] conditionValues);
-
-        /// <summary>
-        ///     条件更新
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="value">值</param>
-        /// <param name="key">条件主键</param>
-        /// <returns>更新行数</returns>
-        int SetValue(string field, object value, object key);
-
-        /// <summary>
         ///     全量更新
         /// </summary>
         /// <param name="field">字段</param>
@@ -645,14 +682,7 @@ namespace Gboxt.Common.DataModel
         /// <param name="value">值</param>
         /// <param name="lambda">条件</param>
         /// <returns>更新行数</returns>
-        int SetValue<TField>(Expression<Func<TData, TField>> field, TField value,
-            Expression<Func<TData, bool>> lambda);
-
-
-
-        #endregion
-
-        #region 简单更新
+        int SetValue<TField>(Expression<Func<TData, TField>> field, TField value, Expression<Func<TData, bool>> lambda);
 
         /// <summary>
         ///     条件更新
@@ -663,18 +693,9 @@ namespace Gboxt.Common.DataModel
         /// <returns>更新行数</returns>
         int SetValue<TField, TKey>(Expression<Func<TData, TField>> fieldExpression, TField value, TKey key);
 
-        /// <summary>
-        ///     设计字段按自定义表达式更新值
-        /// </summary>
-        /// <param name="valueExpression">值的SQL方式</param>
-        /// <param name="key">主键</param>
-        /// <returns>更新行数</returns>
-        int SetCoustomValue<TKey>(string valueExpression, TKey key);
-
         #endregion
 
         #endregion
-
 
         #region 数据校验支持
 

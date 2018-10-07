@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Rpc;
 
@@ -38,16 +39,13 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     得到可正确拼接的SQL条件语句（可能是没有）
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="conditions"></param>
         /// <returns></returns>
-        protected override string ContitionSqlCode(string condition)
+        protected override void ContitionSqlCode(List<string> conditions)
         {
-            var c = base.ContitionSqlCode(condition);
             if (GlobalContext.Current.IsManageMode)
-                return c;
-            return c == null
-                ? $" WHERE `{FieldDictionary["DataState"]}` < 255"
-                : $" {c} AND `{FieldDictionary["DataState"]}` < 255";
+                return;
+            conditions.Add($"`{FieldDictionary["DataState"]}` < 255");
         }
 
         /// <summary>

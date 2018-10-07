@@ -47,12 +47,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
-        IDataBase IDataTable<TData>.DataBase => DataBase;
-
-        /// <summary>
-        ///     设计时的主键字段
-        /// </summary>
-        string IDataTable<TData>.PrimaryKey => PrimaryKey;
+        IDataBase IDataTable.DataBase => DataBase;
 
         #endregion
 
@@ -64,9 +59,19 @@ namespace Gboxt.Common.DataModel.MySql
         public bool IsBaseClass { get; set; }
 
         /// <summary>
+        ///     设计时的主键字段
+        /// </summary>
+        string IDataTable.PrimaryKey => PrimaryKey;
+
+        /// <summary>
         ///     表名
         /// </summary>
-        public string TableName => ReadTableName;
+        string IDataTable.ReadTableName => ReadTableName;
+
+        /// <summary>
+        ///     写表名
+        /// </summary>
+        string IDataTable.WriteTableName => WriteTableName;
 
         /// <summary>
         ///     字段字典(运行时)
@@ -311,11 +316,11 @@ namespace Gboxt.Common.DataModel.MySql
         protected abstract string FullLoadFields { get; }
 
         /// <summary>
-        ///     表名
+        ///     读表名
         /// </summary>
         protected abstract string ReadTableName { get; }
         /// <summary>
-        ///     表名
+        ///     写表名
         /// </summary>
         protected abstract string WriteTableName { get; }
 
@@ -370,8 +375,7 @@ namespace Gboxt.Common.DataModel.MySql
         ///     字段字典(动态覆盖)
         /// </summary>
         public Dictionary<string, string> OverrideFieldMap { get; set; }
-
-
+        
 
         #endregion
 

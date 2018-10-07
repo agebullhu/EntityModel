@@ -14,6 +14,19 @@ using System;
 
 namespace Gboxt.Common.DataModel.Extends
 {
+
+    /// <summary>
+    ///     表示这条数据记录修改版本号
+    /// </summary>
+    public interface IVersionData
+    {
+        /// <summary>
+        ///     数据版本
+        /// </summary>
+        /// <value>int</value>
+        long DataVersion{ get; set; }
+    }
+
     /// <summary>
     ///     表示这条数据记录修改历史
     /// </summary>

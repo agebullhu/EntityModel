@@ -154,13 +154,23 @@ namespace Agebull.Common.OAuth
         #region 预定义
 
         /// <summary>
+        /// 匿名用户ID
+        /// </summary>
+        public const long AnymouseUserId = -2;
+
+        /// <summary>
+        /// 系统用户ID
+        /// </summary>
+        public const long SystemUserId = -1;
+
+        /// <summary>
         ///     匿名用户
         /// </summary>
         public static LoginUserInfo CreateAnymouse(string did, string app, string os)
         {
             return new LoginUserInfo
             {
-                UserId = -2,
+                UserId = AnymouseUserId,
                 Account = "anymouse",
                 App = app,
                 Os = os,
@@ -174,7 +184,7 @@ namespace Agebull.Common.OAuth
         /// </summary>
         public static LoginUserInfo Anymouse { get; } = new LoginUserInfo
         {
-            UserId = -1,
+            UserId = AnymouseUserId,
             Account = "anymouse",
             DeviceId = "%",
             App = "*",
@@ -188,7 +198,7 @@ namespace Agebull.Common.OAuth
         /// </summary>
         public static LoginUserInfo System { get; } = new LoginUserInfo
         {
-            UserId = -1,
+            UserId = SystemUserId,
             Account = "system",
             DeviceId = "***system***",
             App = "sys",

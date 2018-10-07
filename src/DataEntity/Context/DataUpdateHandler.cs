@@ -9,8 +9,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using Agebull.Common.Ioc;
-using Newtonsoft.Json;
+using Gboxt.Common.DataModel.ExtendEvents;
 
 namespace Gboxt.Common.DataModel
 {
@@ -22,14 +23,19 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         /// 事件代理
         /// </summary>
-        public static ExtendEvents.IEntityEventProxy EventProxy
+        public static IEntityEventProxy EventProxy
         {
             get;
         }
         static DataUpdateHandler()
         {
-            EventProxy = IocHelper.Create<ExtendEvents.IEntityEventProxy>();
+            EventProxy = IocHelper.Create<IEntityEventProxy>();
         }
+        /// <summary>
+        /// 通用处理器
+        /// </summary>
+        private static readonly List<IDataTrigger> _generalTriggers = new List<IDataTrigger> { new DefaultDataUpdateTrigger() };
+
         /// <summary>
         ///     更新注入处理器
         /// </summary>
@@ -44,12 +50,34 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     注册数据更新注入器
         /// </summary>
+        public static void RegisterUpdateHandler(IDataTrigger handler)
+        {
+            if (_generalTriggers.All(p => p.GetType() != handler.GetType()))
+                _generalTriggers.Add(handler);
+        }
+        /// <summary>
+        ///     反注册数据更新注入器
+        /// </summary>
+        public static void UnRegisterUpdateHandler(IDataTrigger handler)
+        {
+            if (_generalTriggers != null && _generalTriggers.Contains(handler))
+            {
+                _generalTriggers.Remove(handler);
+            }
+        }
+
+        /// <summary>
+        ///     注册数据更新注入器
+        /// </summary>
         public static void RegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
             if (_triggers == null)
                 _triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
             if (Triggers.ContainsKey(entityId))
-                Triggers[entityId].Add(handler);
+            {
+                if (Triggers[entityId].All(p => p.GetType() != handler.GetType()))
+                    Triggers[entityId].Add(handler);
+            }
             else
                 Triggers.Add(entityId, new List<IDataUpdateTrigger> { handler });
         }
@@ -60,7 +88,13 @@ namespace Gboxt.Common.DataModel
         public static void UnRegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
             if (_triggers != null && Triggers.ContainsKey(entityId))
+            {
                 Triggers[entityId].Remove(handler);
+                if (Triggers[entityId].Count == 0)
+                    Triggers.Remove(entityId);
+                if (Triggers.Count == 0)
+                    _triggers = null;
+            }
         }
 
 
@@ -71,15 +105,11 @@ namespace Gboxt.Common.DataModel
         /// <param name="operatorType">操作类型</param>
         public static void OnPrepareSave(EditDataObject data, DataOperatorType operatorType)
         {
-            if (_triggers == null)
-                return;
-            if (Triggers.ContainsKey(data.__Struct.EntityType))
-                foreach (var trigger in Triggers[data.__Struct.EntityType])
-                    trigger.OnPrepareSave(data, operatorType);
-            if (!Triggers.ContainsKey(0))
-                return;
-            foreach (var trigger in Triggers[0])
+            foreach (var trigger in _generalTriggers)
                 trigger.OnPrepareSave(data, operatorType);
+            if (_triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+                foreach (var trigger in triggers)
+                    trigger.OnPrepareSave(data, operatorType);
         }
 
         /// <summary>
@@ -88,16 +118,12 @@ namespace Gboxt.Common.DataModel
         /// <param name="data">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
         public static void OnDataSaved(EditDataObject data, DataOperatorType operatorType)
-        {
-            if (_triggers == null)
-                return;
-            if (Triggers.ContainsKey(data.__Struct.EntityType))
-                foreach (var trigger in Triggers[data.__Struct.EntityType])
-                    trigger.OnDataSaved(data, operatorType);
-            if (!Triggers.ContainsKey(0))
-                return;
-            foreach (var trigger in Triggers[0])
+        {  
+            foreach (var trigger in _generalTriggers)
                 trigger.OnDataSaved(data, operatorType);
+            if (_triggers != null && _triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+                foreach (var trigger in triggers)
+                    trigger.OnDataSaved(data, operatorType);
         }
 
         /// <summary>
@@ -107,18 +133,15 @@ namespace Gboxt.Common.DataModel
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecuting(int entityId, string condition, IEnumerable<DbParameter> args,DataOperatorType operatorType)
+        public static void OnOperatorExecuting(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
-            if (_triggers == null)
-                return;
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
-            if (Triggers.ContainsKey(entityId))
-                foreach (var trigger in Triggers[entityId])
-                    trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
-            if (!Triggers.ContainsKey(0))
-                return;
-            foreach (var trigger in Triggers[0])
+            foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
+            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+                foreach (var trigger in triggers)
+                    trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
+
         }
 
         /// <summary>
@@ -128,18 +151,84 @@ namespace Gboxt.Common.DataModel
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args,DataOperatorType operatorType)
+        public static void OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
-            if (_triggers == null)
-                return;
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
-            if (Triggers.ContainsKey(entityId))
-                foreach (var trigger in Triggers[entityId])
-                    trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
-            if (!Triggers.ContainsKey(0))
-                return;
-            foreach (var trigger in Triggers[0])
+            foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
+            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+                foreach (var trigger in triggers)
+                    trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
+        }
+
+        /// <summary>
+        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        /// </summary>
+        /// <param name="entityId">实体类型ID</param>
+        /// <param name="conditions">附加的条件集合</param>
+        /// <returns></returns>
+        public static void ContitionSqlCode<T>(int entityId, List<string> conditions) where T : EditDataObject, new()
+        {
+            foreach (var trigger in _generalTriggers)
+                trigger.ContitionSqlCode<T>(conditions);
+            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+                foreach (var trigger in triggers)
+                    trigger.ContitionSqlCode<T>(conditions);
+        }
+
+        /// <summary>
+        ///     初始化类型
+        /// </summary>
+        /// <returns></returns>
+        public static void InitType<T>() where T : EditDataObject, new()
+        {
+            foreach (var trigger in _generalTriggers)
+                trigger.InitType<T>();
+        }
+
+
+        /// <summary>
+        ///     与更新同时执行的SQL(更新之前立即执行)
+        /// </summary>
+        /// <param name="table">当前数据操作对象</param>
+        /// <param name="code">写入SQL的文本构造器</param>
+        /// <param name="condition">当前场景的执行条件</param>
+        /// <param name="entityId">实体类型ID</param>
+        /// <returns></returns>
+        public static void BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, int entityId, string condition)
+            where TEntity : EditDataObject, new()
+        {
+            foreach (var trigger in _generalTriggers)
+            {
+                trigger.BeforeUpdateSql(table, condition, code);
+            }
+            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+            {
+                foreach (var trigger in triggers)
+                    trigger.BeforeUpdateSql(table, condition, code);
+            }
+        }
+
+        /// <summary>
+        ///     与更新同时执行的SQL(更新之后立即执行)
+        /// </summary>
+        /// <param name="table">当前数据操作对象</param>
+        /// <param name="condition">当前场景的执行条件</param>
+        /// <param name="entityId">实体类型ID</param>
+        /// <param name="code">写入SQL的文本构造器</param>
+        /// <returns></returns>
+        public static void AfterUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, int entityId, string condition)
+            where TEntity : EditDataObject, new()
+        {
+            foreach (var trigger in _generalTriggers)
+            {
+                trigger.AfterUpdateSql(table, condition, code);
+            }
+            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+            {
+                foreach (var trigger in triggers)
+                    trigger.AfterUpdateSql(table, condition, code);
+            }
         }
     }
 }

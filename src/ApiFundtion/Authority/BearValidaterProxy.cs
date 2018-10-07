@@ -1,6 +1,6 @@
 ﻿using Agebull.Common.OAuth;
 using Gboxt.Common.DataModel;
-using System.Configuration;
+using Agebull.Common.Configuration;
 
 namespace Agebull.Common.WebApi.Auth
 {

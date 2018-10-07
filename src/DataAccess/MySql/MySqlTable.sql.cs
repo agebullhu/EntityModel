@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text;
 
@@ -98,25 +99,48 @@ UPDATE `{WriteTableName}`
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        protected virtual string ContitionSqlCode(string condition)
+        private string ContitionSqlCode(string condition)
         {
+            List<string> conditions = new List<string>();
             if (!_baseConditionInited)
             {
                 InitBaseCondition();
                 _baseConditionInited = true;
             }
-            var a = string.IsNullOrWhiteSpace(BaseCondition);
-            var b = string.IsNullOrWhiteSpace(condition);
-            if (a && b)
+            if (!string.IsNullOrEmpty(BaseCondition))
+                conditions.Add(BaseCondition);
+            if (!string.IsNullOrEmpty(condition))
+                conditions.Add(condition);
+            ContitionSqlCode(conditions);
+            DataUpdateHandler.ContitionSqlCode<TData>(TableId, conditions); 
+            if (conditions.Count == 0)
                 return null;
-            if(a)
-                return $@"
-WHERE ({condition})";
-            if (b)
-                return $@"
-WHERE ({BaseCondition})";
-            return $@"
-WHERE (({BaseCondition}) AND ({condition}))";
+            var code = new StringBuilder();
+
+            bool isFirst = true;
+            foreach (var con in conditions)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                    code.Append("\nWHERE ");
+                }
+                else
+                {
+                    code.Append(" AND ");
+                }
+                code.Append($"({con})");
+            }
+            return code.ToString();
+        }
+
+        /// <summary>
+        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        /// </summary>
+        /// <param name="conditions"></param>
+        /// <returns></returns>
+        protected virtual void ContitionSqlCode(List<string> conditions)
+        {
         }
 
         /// <summary>

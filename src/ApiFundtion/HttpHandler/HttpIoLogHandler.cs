@@ -37,7 +37,7 @@ namespace Agebull.Common.WebApi
 				LogRecorder.MonitorTrace(args.ToString());
 				LogRecorder.MonitorTrace($"Method：{request.Method}");
 				LogRecorder.MonitorTrace($"QueryString：{request.RequestUri.Query}");
-				RecordRequestToCode(request);
+				//RecordRequestToCode(request);
 			}
 			catch (Exception ex)
 			{

@@ -18,6 +18,10 @@ namespace Agebull.Common.Logging
     public interface ILogRecorder
     {
         /// <summary>
+        /// 是否初始化成功
+        /// </summary>
+        bool IsInitialized { get; }
+        /// <summary>
         ///   初始化
         /// </summary>
         void Initialize() ;

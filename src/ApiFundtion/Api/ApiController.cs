@@ -309,18 +309,20 @@ namespace Agebull.Common.WebApi
 
         private void SaveQueryArguments(int page, string sort, string adesc, int rows)
         {
-            //if (!this.CanSaveQueryArguments)
-            //{
+            //if (BusinessContext.Context?.PowerChecker == null)
             //    return;
-            //}
-            var requestArgs = new Dictionary<string, string>
-            {
-                {"page", page.ToString()},
-                {"sort", sort},
-                {"order", adesc},
-                {"size", rows.ToString()}
-            };
-            BusinessContext.Context.PowerChecker.SaveQueryHistory(LoginUser, PageItem, Arguments);
+            ////if (!this.CanSaveQueryArguments)
+            ////{
+            ////    return;
+            ////}
+            //var requestArgs = new Dictionary<string, string>
+            //{
+            //    {"page", page.ToString()},
+            //    {"sort", sort},
+            //    {"order", adesc},
+            //    {"size", rows.ToString()}
+            //};
+            //BusinessContext.Context.PowerChecker.SaveQueryHistory(LoginUser, PageItem, Arguments);
         }
 
         /// <summary>

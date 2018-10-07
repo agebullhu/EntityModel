@@ -46,7 +46,10 @@ namespace Agebull.Common.Logging
         /// 每日一个文件夹吗
         /// </summary>
         public static bool dayFolder { get; set; }
-
+        /// <summary>
+        /// 是否初始化成功
+        /// </summary>
+        public bool IsInitialized { get; set; }
         /// <summary>
         ///     初始化
         /// </summary>
@@ -69,10 +72,11 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("TextRecorder.Initialize", ex);
+                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.Initialize", ex);
             }
 
             Trace.Listeners.Add(this);
+            IsInitialized = true;
         }
 
         /// <summary>
@@ -89,6 +93,7 @@ namespace Agebull.Common.Logging
         /// <param name="infos"> 日志消息 </param>
         public void RecordLog(List<RecordInfo> infos)
         {
+
             foreach (var info in infos)
                 RecordLog(info);
         }
@@ -99,7 +104,7 @@ namespace Agebull.Common.Logging
         /// <param name="info"> 日志消息 </param>
         public void RecordLog(RecordInfo info)
         {
-            string name;
+            List<string> names = new List<string>();
             string log;
             switch (info.Type)
             {
@@ -108,49 +113,57 @@ namespace Agebull.Common.Logging
                 case LogType.Request:
                 case LogType.System:
                 case LogType.Login:
-                    name = "system";
-                    log =
-                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
+                    names.Add("system");
+                    log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
+                    break;
+                case LogType.Warning:
+                    names.Add("warning");
+                    names.Add("system");
+                    log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
+                    break;
+                case LogType.Error:
+                case LogType.Exception:
+                    names.Add("error");
+                    names.Add("system");
+                    log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.ThreadID}-{info.RequestID}-{info.User} > 
+{info.Message}
+";
                     break;
                 case LogType.DataBase:
-                    name = "sql";
+                    names.Add("sql");
+                    names.Add("trace");
                     log = $@"/*[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User}*/
 {info.Message}
 ";
                     break;
-                case LogType.Warning:
-                    log =
-                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
-                    name = "warning";
-                    break;
-                case LogType.Error:
-                case LogType.Exception:
-                    name = "error";
-                    log =
-                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.ThreadID}-{info.RequestID}-{info.User} > 
-{info.Message}
-";
-                    break;
                 case LogType.Monitor:
+                    names.Add("monitor");
+                    names.Add("trace");
                     log = info.Message;
-                    name = "monitor";
+                    break;
+                case LogType.Debug:
+                    names.Add("debug");
+                    names.Add("trace");
+                    log = info.Message;
                     break;
                 default:
-                    name = "trace";
-                    log =
-                        $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
+                    names.Add("trace");
+                    log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     break;
             }
 
-            try
+            foreach (var name in names)
             {
-                var writer = GetWriter(name);
-                writer.Size += log.Length;
-                writer.Stream.WriteLine(log);
-            }
-            catch (Exception ex)
-            {
-                LogRecorder.SystemTrace("TextRecorder.RecordLog4", name, ex);
+                try
+                {
+                    var writer = GetWriter(name);
+                    writer.Size += log.Length;
+                    writer.Stream.WriteLine(log);
+                }
+                catch (Exception ex)
+                {
+                    LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.RecordLog4", name, ex);
+                }
             }
         }
 
@@ -167,7 +180,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace("TextRecorder.WriteFile", ex);
+                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.WriteFile", type, ex);
                 info.Stream.Dispose();
                 info.Stream.Close();
                 ResetFile(type, info);

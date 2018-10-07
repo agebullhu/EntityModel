@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using Agebull.Common.Configuration;
 using System.Threading;
 using CSRedis;
 using Gboxt.Common.DataModel;
@@ -25,7 +25,7 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static CSRedisEx()
         {
-            var c = ConfigurationManager.AppSettings["RedisConnectionString"].Split(',', ':');
+            var c = ConfigurationManager.ConnectionStrings["Redis"].Split(',', ':');
             Address = c[0];
             Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
             //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);

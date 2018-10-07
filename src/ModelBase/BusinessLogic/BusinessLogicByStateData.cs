@@ -86,11 +86,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         protected override void OnDeleted(long id)
         {
-            if (unityStateChanged)
-            {
-                var data = Access.LoadData(id);
-                OnStateChanged(data, BusinessCommandType.Delete);
-            }
+            OnStateChanged(id, BusinessCommandType.Delete);
             base.OnDeleted(id);
         }
 
@@ -106,8 +102,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected override bool LastSaved(TData data, bool isAdd)
         {
-            if (unityStateChanged)
-                OnStateChanged(data, isAdd ? BusinessCommandType.AddNew : BusinessCommandType.Update);
+            OnStateChanged(data, isAdd ? BusinessCommandType.AddNew : BusinessCommandType.Update);
             return base.LastSaved(data, isAdd);
         }
 
@@ -121,9 +116,10 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="cmd">命令</param>
-        protected void OnStateChanged(TData data, BusinessCommandType cmd)
+        protected sealed override void OnStateChanged(TData data, BusinessCommandType cmd)
         {
-            if (!unityStateChanged) return;
+            if (!unityStateChanged)
+                return;
             LogRecorder.MonitorTrace("OnStateChanged");
             OnInnerCommand(data, cmd);
             DoStateChanged(data);
@@ -134,11 +130,11 @@ namespace Agebull.Common.DataModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected override void OnInnerCommand(long id, BusinessCommandType cmd)
+        protected sealed override void OnStateChanged(long id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;
-            OnInnerCommand(Access.LoadByPrimaryKey(id), cmd);
+            OnStateChanged(Access.LoadByPrimaryKey(id), cmd);
         }
         /// <summary>
         ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
@@ -165,8 +161,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 if (!DoResetState(data))
                     return false;
                 Access.Update(data);
-                if (unityStateChanged)
-                    OnStateChanged(data, BusinessCommandType.Reset);
+                OnStateChanged(data, BusinessCommandType.Reset);
                 return scope.SetState(true);
             }
         }
@@ -224,10 +219,8 @@ namespace Agebull.Common.DataModel.BusinessLogic
             {
                 Access.SetValue(p => p.IsFreeze, true, id);
                 Access.SetValue(p => p.DataState, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.None);
-                if (unityStateChanged)
-                {
-                    OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.Lock);
-                }
+
+                OnStateChanged(id, BusinessCommandType.Lock);
                 return scope.SetState(true);
             }
         }
@@ -246,10 +239,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 Access.SetValue(p => p.DataState, state, id);
                 if (setFreeze != null)
                     Access.SetValue(p => p.IsFreeze, setFreeze.Value, id);
-                if (unityStateChanged)
-                {
-                    OnStateChanged(Access.LoadByPrimaryKey(id), BusinessCommandType.SetState);
-                }
+                OnStateChanged(id, BusinessCommandType.SetState);
                 return scope.SetState(true);
             }
         }

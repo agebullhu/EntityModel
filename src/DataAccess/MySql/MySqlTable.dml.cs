@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using Gboxt.Common.DataModel.ExtendEvents;
 using Newtonsoft.Json;
 
 #endregion
@@ -23,6 +25,10 @@ namespace Gboxt.Common.DataModel.MySql
     {
         #region 实体更新
 
+        static MySqlTable()
+        {
+            DataUpdateHandler.InitType<TData>();
+        }
 
         /// <summary>
         ///     插入新数据
@@ -327,7 +333,7 @@ namespace Gboxt.Common.DataModel.MySql
             var cnt = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (cnt == 0)
                 return false;
-            OnEvent(DataOperatorType.Delete, $"#:{key}");
+            OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -362,7 +368,7 @@ namespace Gboxt.Common.DataModel.MySql
                 scope.SetState(true);
             }
 
-            OnEvent(DataOperatorType.Delete, $"#:{key}");
+            OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
         /// <summary>
@@ -446,7 +452,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             int re = SetValueInner(field, value, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnEvent(DataOperatorType.Update, $"#:{key}");
+                OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -461,7 +467,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             int re = SetValueInner(GetPropertyName(fieldExpression), value, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnEvent(DataOperatorType.Update, $"#:{key}");
+                OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -489,7 +495,7 @@ namespace Gboxt.Common.DataModel.MySql
                 OnOperatorExecutd(condition, arg2, DataOperatorType.Update);
                 scope.SetState(true);
             }
-            OnEvent(DataOperatorType.Delete, $"#:{key}");
+            OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
 
@@ -663,7 +669,7 @@ namespace Gboxt.Common.DataModel.MySql
             var convert = Compile(condition);
             return SetMulitValue(expression, convert.ConditionSql, convert.Parameters);
         }
-        
+
         /// <summary>
         ///     自定义更新（更新表达式自写）
         /// </summary>
@@ -713,21 +719,47 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         ///     与更新同时执行的SQL(更新之前立即执行)
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">当前场景的执行条件</param>
         /// <returns></returns>
-        protected virtual string BeforeUpdateSql(string condition)
+        private string BeforeUpdateSql(string condition)
         {
-            return null;
+            var code = new StringBuilder();
+            BeforeUpdateSql(code, condition);
+            DataUpdateHandler.BeforeUpdateSql(this,code, TableId, condition);
+            return code.ToString();
         }
 
         /// <summary>
         ///     与更新同时执行的SQL(更新之后立即执行)
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">当前场景的执行条件</param>
         /// <returns></returns>
-        protected virtual string AfterUpdateSql(string condition)
+        private string AfterUpdateSql(string condition)
         {
-            return null;
+            var code = new StringBuilder();
+            AfterUpdateSql(code, condition);
+            DataUpdateHandler.AfterUpdateSql(this, code, TableId, condition);
+            return code.ToString();
+        }
+
+
+        /// <summary>
+        ///     与更新同时执行的SQL(更新之前立即执行)
+        /// </summary>
+        /// <param name="code">写入SQL的文本构造器</param>
+        /// <param name="condition">当前场景的执行条件</param>
+        /// <returns></returns>
+        protected virtual void BeforeUpdateSql(StringBuilder code, string condition)
+        {
+        }
+
+        /// <summary>
+        ///     与更新同时执行的SQL(更新之后立即执行)
+        /// </summary>
+        /// <param name="code">写入SQL的文本构造器</param>
+        /// <param name="condition">当前场景的执行条件</param>
+        protected virtual void AfterUpdateSql(StringBuilder code, string condition)
+        {
         }
 
         #endregion
@@ -830,15 +862,26 @@ namespace Gboxt.Common.DataModel.MySql
 
         #region 数据更新事件支持
 
+        private bool _globalEvent;
+
+        /// <summary>
+        /// 是否允许全局事件(如全局事件器,则永为否)
+        /// </summary>
+        public virtual bool GlobalEvent
+        {
+            get => _globalEvent && DataUpdateHandler.EventProxy != null;
+            set => _globalEvent = value;
+        }
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
         /// <param name="operatorType">操作类型</param>
-        /// <param name="tag">其它参数</param>
-        private void OnEvent(DataOperatorType operatorType, string tag)
+        /// <param name="key">其它参数</param>
+        private void OnKeyEvent(DataOperatorType operatorType, object key)
         {
-            DataUpdateHandler.EventProxy?.OnStatusChanged(DataBase.Name, Name, operatorType, tag);
+            if (GlobalEvent)
+                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
         }
 
         /// <summary>
@@ -846,21 +889,23 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         private void OnMulitUpdateEvent(DataOperatorType operatorType, string condition, MySqlParameter[] args)
         {
-            var queryCondition = new ExtendEvents.MulitCondition
+            if (!GlobalEvent)
+                return;
+            var queryCondition = new MulitCondition
             {
                 Condition = condition,
-                Parameters = new ExtendEvents.ConditionParameter[args.Length]
+                Parameters = new ConditionParameter[args.Length]
             };
             for (int i = 0; i < args.Length; i++)
             {
-                queryCondition.Parameters[i] = new ExtendEvents.ConditionParameter
+                queryCondition.Parameters[i] = new ConditionParameter
                 {
                     Name = args[i].ParameterName,
                     Value = args[i].Value == DBNull.Value ? null : args[i].Value.ToString(),
                     Type = args[i].DbType
                 };
             }
-            DataUpdateHandler.EventProxy?.OnStatusChanged(DataBase.Name, Name, operatorType, JsonConvert.SerializeObject(queryCondition));
+            DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
         }
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
@@ -869,7 +914,8 @@ namespace Gboxt.Common.DataModel.MySql
         /// <param name="entity">其它参数</param>
         private void OnEvent(DataOperatorType operatorType, TData entity)
         {
-            DataUpdateHandler.EventProxy?.OnStatusChanged(DataBase.Name, Name, operatorType, JsonConvert.SerializeObject(entity));
+            if (GlobalEvent)
+                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
         }
 
         #endregion

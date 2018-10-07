@@ -1,12 +1,13 @@
 using System.Collections.Generic;
-using System.Configuration;
+using Agebull.Common.Configuration;
+using Agebull.Common.Rpc;
 
 namespace Agebull.Common.WebApi
 {
     /// <summary>
     /// 与ZeroNet互通类
     /// </summary>
-    public class ZeroNetBridge
+    internal class ZeroNetBridge : IZeroPublisher
     {
         /// <summary>
         /// 发布消息
@@ -16,12 +17,12 @@ namespace Agebull.Common.WebApi
         /// <param name="sub">消息子标题</param>
         /// <param name="arg">消息参数(JSON)</param>
         /// <returns>发布是否成功</returns>
-        public static bool Publish(string station,string title,string sub,string arg)
+        bool IZeroPublisher.Publish(string station,string title,string sub,string arg)
         {
-            var caller = new WebApiCaller(ConfigurationManager.AppSettings["ZeroNetBridgeAddress"]);
+            var caller = new WebApiCaller(ConfigurationManager.AppSettings["ZeroGratewayAddress"]);
             var result = caller.Post("publish", new Dictionary<string, string>
             {
-                {"Host", "MachineEventMQ"},
+                {"Host", station},
                 { "Title",title},
                 {"Sub", sub},
                 {"Arg", arg }

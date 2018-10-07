@@ -345,8 +345,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
 
             SetAuditState(data, AuditStateType.None, DataStateType.None);
             Access.Update(data);
-            if (unityStateChanged)
-                OnStateChanged(data, BusinessCommandType.Pullback);
+            OnStateChanged(data, BusinessCommandType.Pullback);
             return true;
         }
 
@@ -388,8 +387,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             {
                 OnAuditDenyed(data);
             }
-            if (unityStateChanged)
-                OnStateChanged(data, pass ? BusinessCommandType.Pass : BusinessCommandType.Deny);
+            OnStateChanged(data, pass ? BusinessCommandType.Pass : BusinessCommandType.Deny);
             return true;
         }
 
@@ -407,8 +405,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             DoUnAudit(data);
             Access.Update(data);
             OnUnAudited(data);
-            if (unityStateChanged)
-                OnStateChanged(data, BusinessCommandType.ReAudit);
+            OnStateChanged(data, BusinessCommandType.ReAudit);
             return true;
         }
 
@@ -432,8 +429,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             if (!Access.Update(data))
                 return false;
             OnBacked(data);
-            if (unityStateChanged)
-                OnStateChanged(data, BusinessCommandType.Back);
+            OnStateChanged(data, BusinessCommandType.Back);
             return true;
         }
 
@@ -474,8 +470,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
             }
             SetAuditState(data, AuditStateType.Submit, DataStateType.None);
             Access.Update(data);
-            if (unityStateChanged)
-                OnStateChanged(data, BusinessCommandType.Submit);
+            OnStateChanged(data, BusinessCommandType.Submit);
             return true;
         }
 

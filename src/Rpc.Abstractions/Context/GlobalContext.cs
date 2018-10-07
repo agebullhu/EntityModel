@@ -46,7 +46,7 @@ namespace Agebull.Common.Rpc
         /// <summary>
         ///     当前调用的客户信息
         /// </summary>
-        [JsonProperty("user")] private ILoginUserInfo _user;
+        [JsonProperty("user")] internal ILoginUserInfo _user;
 
         /// <summary>
         ///     当前调用的客户信息
@@ -203,12 +203,6 @@ namespace Agebull.Common.Rpc
         #region 全局状态
 
         /// <summary>
-        ///     是否工作在不安全模式下
-        /// </summary>
-        public bool IsUnSafeMode { get; set; }
-
-
-        /// <summary>
         ///     是否工作在管理模式下(数据全看模式)
         /// </summary>
         public bool IsManageMode { get; set; }
@@ -216,7 +210,7 @@ namespace Agebull.Common.Rpc
         /// <summary>
         ///     是否工作在系统模式下
         /// </summary>
-        public bool IsSystemMode { get; set; }
+        public bool IsSystemMode { get;internal set; }
 
 
         /// <summary>
@@ -333,6 +327,40 @@ namespace Agebull.Common.Rpc
         public static string ServiceRealName { get; set; }
 
         #endregion
+    }
+    /// <summary>
+    /// 系统模式范围
+    /// </summary>
+    public class SystemModelScope : ScopeBase
+    {
+        private readonly bool preIs;
+        private readonly ILoginUserInfo preUser;
+
+        SystemModelScope()
+        {
+            preIs = GlobalContext.Current.IsSystemMode;
+            if (!preIs)
+            {
+                preUser = GlobalContext.Current.User;
+                GlobalContext.Current._user = LoginUserInfo.System;
+                GlobalContext.Current.IsSystemMode = true;
+            }
+        }
+        /// <summary>
+        /// 生成范围
+        /// </summary>
+        /// <returns></returns>
+        public static IDisposable CreateScope()
+        {
+            return new SystemModelScope();
+        }
+
+        /// <inheritdoc />
+        protected override void OnDispose()
+        {
+            if (!preIs)
+                GlobalContext.Current._user = preUser;
+        }
     }
 }
 

@@ -37,8 +37,9 @@ namespace Agebull.Common.WebApi
 
             IocHelper.Update();
             IocHelper.AddScoped<GlobalContext, BusinessContext>();
+            IocHelper.AddSingleton<IZeroPublisher, ZeroNetBridge>();
             IocHelper.AddSingleton<IGlobalContext, BusinessContext>(p => BusinessContext.Context);
-            IocHelper.Update();
+            IocHelper.Update(); 
 
             Environment.CurrentDirectory = ConfigurationManager.BasePath = HttpContext.Current.Server.MapPath("~");
 

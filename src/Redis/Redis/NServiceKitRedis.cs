@@ -1,10 +1,8 @@
 #if !NETSTANDARD
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Threading;
+using Agebull.Common.Configuration;
 using Gboxt.Common.DataModel;
 using Newtonsoft.Json;
 using NServiceKit.Redis;
@@ -17,7 +15,7 @@ namespace Agebull.Common.DataModel.Redis
     /// </summary>
     public class NServiceKitRedis : IDisposable, IRedis
     {
-#region 配置
+        #region 配置
 
         /// <summary>
         /// 不关闭
@@ -29,7 +27,7 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static NServiceKitRedis()
         {
-            var c = ConfigurationManager.AppSettings["RedisConnectionString"].Split(',', ':');
+            var c = ConfigurationManager.ConnectionStrings["Redis"].Split(',', ':');
             Address = c[0];
             Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
             //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);
@@ -57,9 +55,9 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         private static readonly int PoolSize;*/
 
-#endregion
+        #endregion
 
-#region 构造
+        #region 构造
 
 
         /// <summary>
@@ -217,9 +215,9 @@ namespace Agebull.Common.DataModel.Redis
         }
 
 
-#endregion
+        #endregion
 
-#region 文本读写
+        #region 文本读写
 
         /// <summary>
         /// 删除KEY
@@ -286,9 +284,9 @@ namespace Agebull.Common.DataModel.Redis
             Client.Set(key, value, span);
         }
 
-#endregion
+        #endregion
 
-#region 值读写
+        #region 值读写
 
         /// <summary>
         /// 写值
@@ -307,9 +305,9 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="key"></param>
         /// <param name="span"></param>
         /// <returns></returns>
-        public void SetTime(string key,TimeSpan span)
+        public void SetTime(string key, TimeSpan span)
         {
-            Client.Set(key,  span);
+            Client.Set(key, span);
         }
         /// <summary>
         /// 取值
@@ -360,9 +358,9 @@ namespace Agebull.Common.DataModel.Redis
             Client.Set(key, value, span);
         }
 
-#endregion
+        #endregion
 
-#region 对象读写
+        #region 对象读写
 
 
         /// <summary>
@@ -461,9 +459,9 @@ namespace Agebull.Common.DataModel.Redis
             Client.Set(key, StringExtensions.ToUtf8Bytes(JsonConvert.SerializeObject(value)), span);
         }
 
-#endregion
+        #endregion
 
-#region 实体缓存支持
+        #region 实体缓存支持
 
         /// <summary>
         /// 读缓存
@@ -544,7 +542,7 @@ namespace Agebull.Common.DataModel.Redis
 
         bool IRedis.SetNx(string key, byte[] value)
         {
-            return Client.SetNX(key,value) == 1;
+            return Client.SetNX(key, value) == 1;
         }
 
         long IRedis.Incr(string key)
@@ -554,10 +552,10 @@ namespace Agebull.Common.DataModel.Redis
 
         long IRedis.Decr(string key)
         {
-          return  Client.Decr(key);
+            return Client.Decr(key);
         }
 
-#endregion
+        #endregion
 
     }
 }

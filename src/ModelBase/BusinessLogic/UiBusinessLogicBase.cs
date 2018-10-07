@@ -93,27 +93,6 @@ namespace Agebull.Common.DataModel.BusinessLogic
 
         #region 写数据
 
-        /// <summary>
-        ///     内部命令执行完成后的处理
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="cmd">命令</param>
-        protected virtual void OnInnerCommand(TData data, BusinessCommandType cmd)
-        {
-
-        }
-
-
-        /// <summary>
-        ///     内部命令执行完成后的处理
-        /// </summary>
-        /// <param name="id">数据</param>
-        /// <param name="cmd">命令</param>
-        protected virtual void OnInnerCommand(long id, BusinessCommandType cmd)
-        {
-
-        }
-
 
         /// <summary>
         ///     是否可以执行保存操作
@@ -223,7 +202,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 else
                     Access.Insert(data);
                 var result = LastSaved(data, true);
-                OnInnerCommand(data, BusinessCommandType.Delete);
+                OnStateChanged(data, BusinessCommandType.AddNew);
                 scope.SetState(true);
                 return result;
             }
@@ -250,7 +229,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 }
                 Access.Update(data);
                 var result = LastSaved(data, false);
-                OnInnerCommand(data, BusinessCommandType.Delete);
+                OnStateChanged(data, BusinessCommandType.Update);
                 scope.SetState(true);
                 return result;
             }
@@ -293,7 +272,7 @@ namespace Agebull.Common.DataModel.BusinessLogic
                     return false;
                 OnDeleted(id);
                 LogRecorder.MonitorTrace("Delete");
-                OnInnerCommand(id, BusinessCommandType.Delete);
+                OnStateChanged(id, BusinessCommandType.Delete);
                 scope.SetState(true);
             }
             return true;
@@ -322,6 +301,42 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
 
         }
+        #endregion
+
+        #region 状态处理
+
+
+        /// <summary>
+        ///     内部命令执行完成后的处理
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="cmd">命令</param>
+        protected virtual void OnInnerCommand(TData data, BusinessCommandType cmd)
+        {
+
+        }
+
+
+        /// <summary>
+        ///     内部命令执行完成后的处理
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="cmd">命令</param>
+        protected virtual void OnStateChanged(long id, BusinessCommandType cmd)
+        {
+
+        }
+
+        /// <summary>
+        ///     状态改变后的统一处理
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="cmd">命令</param>
+        protected virtual void OnStateChanged(TData data, BusinessCommandType cmd)
+        {
+            OnInnerCommand(data, cmd);
+        }
+
         #endregion
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Agebull.Common.Rpc;
 using Gboxt.Common.DataModel.Extends;
 
@@ -11,26 +12,28 @@ namespace Gboxt.Common.DataModel.MySql
     /// <typeparam name="TData">实体</typeparam>
     /// <typeparam name="TMySqlDataBase">数据库</typeparam>
     public abstract class HitoryTable<TData, TMySqlDataBase> : DataStateTable<TData, TMySqlDataBase>
-        where TData : EditDataObject, IStateData,IHistoryData, IIdentityData, new()
+        where TData : EditDataObject, IStateData, IHistoryData, IIdentityData, new()
         where TMySqlDataBase : MySqlDataBase
     {
         /// <summary>
-        /// 与更新同时执行的SQL
+        ///     与更新同时执行的SQL(更新之后立即执行)
         /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        protected override string AfterUpdateSql(string condition)
+        /// <param name="code">写入SQL的文本构造器</param>
+        /// <param name="condition">当前场景的执行条件</param>
+        protected override void AfterUpdateSql(StringBuilder code, string condition)
         {
-            var filter= string.IsNullOrEmpty(condition)
-                ? null 
-                : $@"
-WHERE {condition}";
-            return $@"
+            code.Append($@"
 UPDATE `{WriteTableName}` 
 SET `{FieldDictionary["LastReviserID"]}` = {GlobalContext.Current.LoginUserId},
-    `{FieldDictionary["LastModifyDate"]}` = NOW(){filter};";
+    `{FieldDictionary["LastModifyDate"]}` = {DateTime.Now}");
+            if (!string.IsNullOrEmpty(condition))
+            {
+                code.Append($@"
+WHERE {condition}");
+            }
+            code.AppendLine(";");
         }
-        
+
         /// <summary>
         ///     保存前处理
         /// </summary>

@@ -49,8 +49,13 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   日志类型
         /// </summary>
-        public LogType Type ;
+        public LogType Type;
 
+        /// <summary>
+        /// 日志等级
+        /// </summary>
+        public LogLevel Level { get; set; }
+        
         /// <summary>
         ///   日志扩展名称,类型为None
         /// </summary>
