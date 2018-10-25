@@ -32,16 +32,17 @@ namespace Agebull.Common.Base
         /// <summary>
         /// 防止多次析构
         /// </summary>
-        private bool _isDisposed;
+        public bool IsDisposed { get; private set; }
+
         /// <summary>
         ///   析构
         /// </summary>
         public void Dispose()
         {
-            if (_isDisposed)
+            if (IsDisposed)
                 return;
+            IsDisposed = true;
             OnDispose();
-            _isDisposed = true;
             GC.SuppressFinalize(this);
         }
     }

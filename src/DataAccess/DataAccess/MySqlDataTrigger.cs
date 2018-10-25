@@ -64,7 +64,7 @@ namespace Agebull.Common.DataModel
                 code.Append($@"
 UPDATE `{table.WriteTableName}` 
 SET `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = {GlobalContext.Current.LoginUserId},
-    `{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}` = '{DateTime.Now:O}'");
+    `{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}` = Now()");
                 if (!string.IsNullOrEmpty(condition))
                 {
                     code.Append($@"

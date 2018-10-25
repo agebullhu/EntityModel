@@ -90,6 +90,16 @@ namespace Agebull.Common.DataModel.BusinessLogic
             base.OnDeleted(id);
         }
 
+        /// <summary>
+        ///     删除对象操作
+        /// </summary>
+        protected override bool DoDelete(long id)
+        {
+            if (Access.Any(p => p.DataState == DataStateType.Delete && p.Id == id))
+                return Access.PhysicalDelete(id);
+            return Access.DeletePrimaryKey(id);
+        }
+
         #endregion
 
         #region 数据状态修改
@@ -134,7 +144,9 @@ namespace Agebull.Common.DataModel.BusinessLogic
         {
             if (!unityStateChanged)
                 return;
-            OnStateChanged(Access.LoadByPrimaryKey(id), cmd);
+            var data = Access.LoadByPrimaryKey(id);
+            if (data != null)
+                OnStateChanged(data, cmd);
         }
         /// <summary>
         ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
@@ -158,24 +170,27 @@ namespace Agebull.Common.DataModel.BusinessLogic
                 return false;
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                if (!DoResetState(data))
-                    return false;
-                Access.Update(data);
+                //if (!DoResetState(data))
+                //    return false;
+
+                data.DataState = DataStateType.None;
+                data.IsFreeze = false;
+                Access.ResetState(data.Id);
                 OnStateChanged(data, BusinessCommandType.Reset);
                 return scope.SetState(true);
             }
         }
 
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
-        /// <param name="data"></param>
-        protected virtual bool DoResetState(TData data)
-        {
-            data.DataState = DataStateType.None;
-            data.IsFreeze = false;
-            return true;
-        }
+        ///// <summary>
+        /////     重置数据状态
+        ///// </summary>
+        ///// <param name="data"></param>
+        //protected virtual bool DoResetState(TData data)
+        //{
+        //    data.DataState = DataStateType.None;
+        //    data.IsFreeze = false;
+        //    return true;
+        //}
 
         /// <summary>
         ///     重置数据状态

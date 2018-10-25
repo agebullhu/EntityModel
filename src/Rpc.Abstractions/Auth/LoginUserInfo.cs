@@ -17,6 +17,11 @@ namespace Agebull.Common.OAuth
         /// </summary>
         [JsonProperty("userId")]
         public long UserId { get; set; }
+        /// <summary>
+        ///     用户开放标识
+        /// </summary>
+        [JsonProperty("openId")]
+        public string OpenId { get; set; }
 
         /// <summary>
         ///     用户角色标识

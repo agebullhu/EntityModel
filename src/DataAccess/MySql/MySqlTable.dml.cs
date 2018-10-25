@@ -85,12 +85,24 @@ namespace Gboxt.Common.DataModel.MySql
                     if (key == DBNull.Value || key == null)
                         return false;
                     entity.SetValue(KeyField, key);
+
                 }
                 else
                 {
                     if (cmd.ExecuteNonQuery() == 0)
                         return false;
+
                 }
+
+                var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+                if (!string.IsNullOrEmpty(sql))
+                    using (var cmd2 = DataBase.CreateCommand())
+                    {
+                        cmd2.CommandText = sql;
+                        cmd2.Parameters.Add(CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                        cmd2.ExecuteNonQuery();
+                    }
+
             }
             EndSaved(entity, DataOperatorType.Insert);
             return true;
@@ -725,7 +737,7 @@ namespace Gboxt.Common.DataModel.MySql
         {
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
-            DataUpdateHandler.BeforeUpdateSql(this,code, TableId, condition);
+            DataUpdateHandler.BeforeUpdateSql(this, code, TableId, condition);
             return code.ToString();
         }
 

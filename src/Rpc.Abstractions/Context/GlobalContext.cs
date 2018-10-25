@@ -99,9 +99,14 @@ namespace Agebull.Common.Rpc
         {
             get
             {
-                if (Local.Value != null)
+                if (Local.Value != null && !Local.Value.IsDisposed)
                     return Local.Value;
-                Local.Value = IocHelper.CreateScope<GlobalContext>() ?? new GlobalContext();
+                Local.Value = IocHelper.CreateScope<GlobalContext>();
+                if (Local.Value == null)
+                {
+                    IocHelper.AddScoped<GlobalContext, GlobalContext>();
+                    Local.Value = IocHelper.CreateScope<GlobalContext>();
+                }
                 return Local.Value;
             }
         }
@@ -114,7 +119,7 @@ namespace Agebull.Common.Rpc
         /// <summary>
         ///     内部构造
         /// </summary>
-        protected GlobalContext()
+        public GlobalContext()
         {
             _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{RandomOperate.Generate(8)}");
             _user = LoginUserInfo.Anymouse;
@@ -185,6 +190,7 @@ namespace Agebull.Common.Rpc
             var local = new AsyncLocal<GlobalContext>();
             if (local.Value != null)
                 local.Value = null;
+
         }
 
         /// <summary>
@@ -210,7 +216,13 @@ namespace Agebull.Common.Rpc
         /// <summary>
         ///     是否工作在系统模式下
         /// </summary>
-        public bool IsSystemMode { get;internal set; }
+        public bool IsSystemMode { get; internal set; }
+
+
+        /// <summary>
+        ///     其它特性
+        /// </summary>
+        public int Feature { get; set; }
 
 
         /// <summary>

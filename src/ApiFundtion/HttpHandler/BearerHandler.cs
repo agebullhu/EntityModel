@@ -106,7 +106,7 @@ namespace Agebull.Common.WebApi.Auth
 		    if (state != 0)
 		        return state;
 		    var page = Request.RequestUri.Segments[2];
-		    BusinessContext.Context.PowerChecker.LoadAuthority(page);
+		    BusinessContext.Context.PowerChecker?.LoadAuthority(page);
 		    return 0;
 		}
 

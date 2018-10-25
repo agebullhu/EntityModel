@@ -11,6 +11,10 @@ namespace Agebull.Common.OAuth
         ///     用户数字标识
         /// </summary>
         long UserId { get; set; }
+        /// <summary>
+        ///     用户开放标识
+        /// </summary>
+        string OpenId { get; set; }
 
         /// <summary>
         ///     用户角色标识
@@ -73,17 +77,16 @@ namespace Agebull.Common.OAuth
         string NickName { get; set; }
 
         /// <summary>
-        ///     头像
+        ///     头像链接
         /// </summary>
         /// <remarks>
-        ///     头像
+        ///     头像链接
         /// </remarks>
         string AvatarUrl { get; set; }
 
         /// <summary>
         ///     状态
         /// </summary>
-        [JsonProperty("state")]
         UserStateType State { get; set; }
 
         /// <summary>

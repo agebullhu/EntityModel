@@ -43,7 +43,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <returns></returns>
         protected override void ContitionSqlCode(List<string> conditions)
         {
-            if (GlobalContext.Current.IsManageMode)
+            if (GlobalContext.Current.IsManageMode || GlobalContext.Current.IsSystemMode)
                 return;
             conditions.Add($"`{FieldDictionary["DataState"]}` < 255");
         }
@@ -51,7 +51,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// <summary>
         /// ÷ÿ÷√◊¥Ã¨
         /// </summary>
-        public virtual bool ResetState(int id)
+        public virtual bool ResetState(long id)
         {
             //using (MySqlDataBaseScope.CreateScope(DataBase))
             {

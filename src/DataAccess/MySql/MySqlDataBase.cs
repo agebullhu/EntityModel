@@ -164,7 +164,7 @@ namespace Gboxt.Common.DataModel.MySql
             lock (LockData)
             {
                 var connection = new MySqlConnection(ConnectionString);
-                Connections.Add(_connection);
+                Connections.Add(connection);
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened _connection", "MySqlDataBase");
                 connection.Open();
@@ -191,6 +191,7 @@ namespace Gboxt.Common.DataModel.MySql
                     }
                     Connections.Remove(_connection);
                     LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
+                    _connection.Dispose();
                     _connection = null;
 
                 }

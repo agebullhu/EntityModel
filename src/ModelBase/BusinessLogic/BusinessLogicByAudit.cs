@@ -239,19 +239,19 @@ namespace Agebull.Common.DataModel.BusinessLogic
             return false;
         }
 
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
-        /// <param name="data"></param>
-        protected override bool DoResetState(TData data)
-        {
-            if (data == null)
-                return false;
-            data.AuditState = AuditStateType.None;
-            data.AuditDate = DateTime.MinValue;
-            data.AuditorId = 0;
-            return base.DoResetState(data);
-        }
+        ///// <summary>
+        /////     重置数据状态
+        ///// </summary>
+        ///// <param name="data"></param>
+        //protected override bool DoResetState(TData data)
+        //{
+        //    if (data == null)
+        //        return false;
+        //    data.AuditState = AuditStateType.None;
+        //    data.AuditDate = DateTime.MinValue;
+        //    data.AuditorId = 0;
+        //    return base.DoResetState(data);
+        //}
 
         /// <summary>
         ///     禁用对象
