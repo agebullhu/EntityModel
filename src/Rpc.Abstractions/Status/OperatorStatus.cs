@@ -27,10 +27,10 @@ namespace Gboxt.Common.DataModel
         }
 
         /// <summary>
-        ///     指导码（系统定义）
+        ///     指导码
         /// </summary>
         /// <remarks>
-        /// 指示下一步应如何处理的代码
+        /// 内部使用:指示下一步应如何处理的代码
         /// </remarks>
         /// <example>retry</example>
         [JsonProperty("guide")]
@@ -40,14 +40,14 @@ namespace Gboxt.Common.DataModel
         ///     错误说明
         /// </summary>
         /// <remarks>
-        /// 详细说明错误内容
+        /// 内部使用:详细说明错误内容
         /// </remarks>
         /// <example>系统未就绪</example>
         [JsonProperty("describe")]
         public string Describe { get; set; }
 
         /// <summary>
-        ///     错误点（系统定义）
+        ///     错误点
         /// </summary>
         /// <remarks>
         /// 系统在哪一个节点发生错误的标识
@@ -67,8 +67,11 @@ namespace Gboxt.Common.DataModel
         public int ErrorCode { get; set; }
 
         /// <summary>
-        ///     对应HTTP错误码（参考）
+        ///     HTTP错误码
         /// </summary>
+        /// <remarks>
+        ///  内部使用:不清楚请不要使用
+        /// </remarks>
         /// <example>404</example>
         [JsonProperty("http")]
         public string HttpCode { get; set; } = "200";
@@ -76,6 +79,9 @@ namespace Gboxt.Common.DataModel
         /// <summary>
         ///     提示信息
         /// </summary>
+        /// <remarks>
+        ///  说明错误的原因
+        /// </remarks>
         /// <example>你的数据不正确</example>
         [JsonProperty("msg")]
         public string ClientMessage { get; set; }

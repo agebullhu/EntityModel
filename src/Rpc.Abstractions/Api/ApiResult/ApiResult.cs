@@ -33,8 +33,9 @@ namespace Gboxt.Common.DataModel
 
 
         /// <summary>
-        ///     API执行状态（为空表示状态正常）
+        ///     执行状态
         /// </summary>
+        /// <remarks>success为true时,可能是空值</remarks>
         [JsonProperty("status")]
         public OperatorStatus Status { get; set; }
 
@@ -44,10 +45,7 @@ namespace Gboxt.Common.DataModel
         [JsonProperty("success")]
         public bool Success { get; set; } = true;
 
-
-        /// <summary>
-        ///     API执行状态（为空表示状态正常）
-        /// </summary>
+        
         [JsonIgnore]
         IOperatorStatus IApiResult.Status
         {

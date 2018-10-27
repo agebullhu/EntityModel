@@ -41,5 +41,14 @@ namespace Agebull.Common.ApiDocuments
         /// </summary>
         [DataMember] [JsonProperty("route", NullValueHandling = NullValueHandling.Ignore)] [Category]
         public string RouteName;
+
+        /// <summary>
+        ///     Api名称
+        /// </summary>
+        [DataMember]
+        [JsonProperty("api", NullValueHandling = NullValueHandling.Ignore)]
+        [Category]
+        public string ApiName;
+        
     }
 }

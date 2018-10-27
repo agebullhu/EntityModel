@@ -88,12 +88,18 @@ namespace Agebull.Common.ApiDocuments
         /// <returns></returns>
         public static XmlMember Find(Type type, string sub, string subType = "P")
         {
-            var name = $"{type.FullName}.{sub}";
+            if (type == typeof(object) || type.Namespace.IndexOf("System") == 0)
+                return null;
+            if (!Assemblies.Contains(type.Assembly))
+                Load(type.Assembly);
+            var fn = type.FullName.Split('[')[0];
+            var name = $"{fn}.{sub}";
             var re = HelpXml.FirstOrDefault(p => /*p.Type == subType &&*/ p.Name == name);
-            if (re != null || Assemblies.Contains(type.Assembly))
-                return re;
-            Load(type.Assembly);
-            return HelpXml.FirstOrDefault(p => /*p.Type == subType &&*/ p.Name == name);
+            if (re == null && Assemblies.Contains(type.Assembly))
+            {
+                return Find(type.BaseType, sub, subType);
+            }
+            return re;
         }
 
         /// <summary>
@@ -145,7 +151,8 @@ namespace Agebull.Common.ApiDocuments
             var xRoot = XElement.Load(path);
             var xElement = xRoot.Element("members");
             if (xElement == null) return;
-            var chars = new[] { ':', '(', '`' };
+            var chars = new[] { ':', '(' };
+            var chars2 = new[] { '`', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
             var members = from p in xElement.Elements("member")
                           let name = p.Attribute("name")
                           where !string.IsNullOrEmpty(name?.Value)
@@ -160,7 +167,7 @@ namespace Agebull.Common.ApiDocuments
                           select new XmlMember
                           {
                               Type = np[0],
-                              Name = np[1],
+                              Name = np[1].TrimEnd(chars2),
                               Caption = summary?.Value.ConverToAscii(),
                               Description = remarks?.Value.ConverToAscii(),
                               Seealso = seealso?.Value,
