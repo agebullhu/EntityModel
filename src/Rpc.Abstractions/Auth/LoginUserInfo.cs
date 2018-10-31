@@ -30,19 +30,19 @@ namespace Agebull.Common.OAuth
         public long RoleId { get; set; }
 
         /// <summary>
-        ///     集团(医联体)标识
+        ///     集团标识
         /// </summary>
         [JsonProperty("groupId")]
         public long GroupId { get; set; }
 
         /// <summary>
-        ///     公司(医院)标识
+        ///     公司标识
         /// </summary>
         [JsonProperty("orgId")]
         public long OrganizationId { get; set; }
 
         /// <summary>
-        ///     部门(科室)标识
+        ///     部门标识
         /// </summary>
         [JsonProperty("depId")]
         public long DepartmentId { get; set; }
@@ -123,7 +123,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     机构级别
         /// </summary>
-        [JsonProperty("dep", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("depLevel", NullValueHandling = NullValueHandling.Ignore)]
         public int DepartmentLevel { get; set; }
 
         /// <summary>

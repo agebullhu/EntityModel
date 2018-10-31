@@ -41,21 +41,25 @@ namespace Agebull.Common.OAuth
         /// <summary>
         /// 组织的唯一标识(数字)
         /// </summary>
+        [JsonProperty("orgId")]
         public long OrgId { get; set; }
 
         /// <summary>
         /// 组织名称
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// 组织的唯一标识(文字)
         /// </summary>
+        [JsonProperty("key")]
         public string OrgKey { get; set; }
 
         /// <summary>
         /// 组织的路由名称
         /// </summary>
+        [JsonProperty("routeName")]
         public string RouteName { get; set; }
 
 
