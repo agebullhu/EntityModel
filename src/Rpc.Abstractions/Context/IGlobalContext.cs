@@ -42,6 +42,4 @@ namespace Agebull.Common
         RequestInfo Request { get; }
 
     }
-
-    
 }
