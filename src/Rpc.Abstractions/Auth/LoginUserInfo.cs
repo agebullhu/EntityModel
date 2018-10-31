@@ -187,7 +187,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     匿名用户
         /// </summary>
-        public static LoginUserInfo Anymouse { get; } = new LoginUserInfo
+        public static LoginUserInfo Anymouse => new LoginUserInfo
         {
             UserId = AnymouseUserId,
             Account = "anymouse",
@@ -201,7 +201,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     系统用户
         /// </summary>
-        public static LoginUserInfo System { get; } = new LoginUserInfo
+        public static LoginUserInfo System => new LoginUserInfo
         {
             UserId = SystemUserId,
             Account = "system",

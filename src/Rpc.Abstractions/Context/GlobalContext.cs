@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
@@ -7,6 +6,7 @@ using Agebull.Common.Base;
 using Agebull.Common.DataModel;
 using Agebull.Common.Ioc;
 using Agebull.Common.OAuth;
+using Agebull.Common.Rpc;
 using Gboxt.Common.DataModel;
 using Newtonsoft.Json;
 
@@ -20,7 +20,6 @@ namespace Agebull.Common.Rpc
     [JsonObject(MemberSerialization.OptIn)]
     public class GlobalContext : ScopeBase, IGlobalContext
     {
-
         #region 依赖对象字典
 
         /// <summary>
@@ -29,8 +28,7 @@ namespace Agebull.Common.Rpc
         public DependencyObjects DependencyObjects { get; } = new DependencyObjects();
 
         #endregion
-
-
+        
         #region 用户信息
 
         /// <summary>
@@ -91,7 +89,14 @@ namespace Agebull.Common.Rpc
 
         #region 当前实例
 
-        static readonly AsyncLocal<GlobalContext> Local = new AsyncLocal<GlobalContext>();
+        private static IGlobalContextHelper _helper;
+        /// <summary>
+        /// 用户组织信息泛化的辅助类
+        /// </summary>
+        private static IGlobalContextHelper Helper => _helper ?? (_helper = IocHelper.Create<IGlobalContextHelper>());
+
+        private static readonly AsyncLocal<GlobalContext> Local = new AsyncLocal<GlobalContext>();
+
         /// <summary>
         ///     当前线程的调用上下文
         /// </summary>
@@ -102,11 +107,10 @@ namespace Agebull.Common.Rpc
                 if (Local.Value != null && !Local.Value.IsDisposed)
                     return Local.Value;
                 Local.Value = IocHelper.CreateScope<GlobalContext>();
-                if (Local.Value == null)
-                {
-                    IocHelper.AddScoped<GlobalContext, GlobalContext>();
-                    Local.Value = IocHelper.CreateScope<GlobalContext>();
-                }
+                if (Local.Value != null) return Local.Value;
+                IocHelper.AddScoped<GlobalContext, GlobalContext>();
+                Local.Value = IocHelper.CreateScope<GlobalContext>();
+
                 return Local.Value;
             }
         }
@@ -121,9 +125,15 @@ namespace Agebull.Common.Rpc
         /// </summary>
         public GlobalContext()
         {
+            var helper = Helper;
+            if (helper == null)
+            {
+                IocHelper.AddSingleton<IGlobalContextHelper, DefaultGlobalContextHelper>();
+                helper = new DefaultGlobalContextHelper();
+            }
             _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{RandomOperate.Generate(8)}");
-            _user = LoginUserInfo.Anymouse;
-            _organizational = OrganizationalInfo.System;
+            _user = helper.CreateUserObject(1);
+            _organizational = helper.CreateOrganizationalObject();
         }
 
         /// <summary>
@@ -190,20 +200,18 @@ namespace Agebull.Common.Rpc
             var local = new AsyncLocal<GlobalContext>();
             if (local.Value != null)
                 local.Value = null;
-
         }
 
         /// <summary>
-        /// 检查上下文，如果信息为空，加入系统匿名用户上下文
+        ///     检查上下文，如果信息为空，加入系统匿名用户上下文
         /// </summary>
         public static void TryCheckByAnymouse()
         {
-            if (Current._requestInfo == null)
-            {
-                Current._requestInfo = new RequestInfo();
-                Current._user = LoginUserInfo.Anymouse;
-            }
+            if (Current._requestInfo != null) return;
+            Current._requestInfo = new RequestInfo();
+            Current._user = LoginUserInfo.Anymouse;
         }
+
         #endregion
 
         #region 全局状态
@@ -234,7 +242,7 @@ namespace Agebull.Common.Rpc
             set => _status.ErrorCode = value;
         }
 
-        private bool messageChanged;
+        private bool _messageChanged;
 
         private StringBuilder _messageBuilder;
 
@@ -247,7 +255,7 @@ namespace Agebull.Common.Rpc
             if (_messageBuilder == null)
                 _messageBuilder = new StringBuilder(_status.ClientMessage);
             _messageBuilder.AppendLine(msg);
-            messageChanged = true;
+            _messageChanged = true;
         }
 
         /// <summary>
@@ -266,7 +274,7 @@ namespace Agebull.Common.Rpc
         public void ClearMessage()
         {
             _messageBuilder = null;
-            messageChanged = false;
+            _messageChanged = false;
             _status.ClientMessage = null;
             _status.InnerMessage = null;
         }
@@ -289,12 +297,13 @@ namespace Agebull.Common.Rpc
         {
             get
             {
-                if (messageChanged)
+                if (_messageChanged)
                     _status.InnerMessage = _messageBuilder.ToString();
                 return _status;
             }
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     最后状态(当前时间)
         /// </summary>
@@ -340,40 +349,6 @@ namespace Agebull.Common.Rpc
 
         #endregion
     }
-    /// <summary>
-    /// 系统模式范围
-    /// </summary>
-    public class SystemModelScope : ScopeBase
-    {
-        private readonly bool preIs;
-        private readonly ILoginUserInfo preUser;
-
-        SystemModelScope()
-        {
-            preIs = GlobalContext.Current.IsSystemMode;
-            if (!preIs)
-            {
-                preUser = GlobalContext.Current.User;
-                GlobalContext.Current._user = LoginUserInfo.System;
-                GlobalContext.Current.IsSystemMode = true;
-            }
-        }
-        /// <summary>
-        /// 生成范围
-        /// </summary>
-        /// <returns></returns>
-        public static IDisposable CreateScope()
-        {
-            return new SystemModelScope();
-        }
-
-        /// <inheritdoc />
-        protected override void OnDispose()
-        {
-            if (!preIs)
-                GlobalContext.Current._user = preUser;
-        }
-    }
 }
 
 namespace Agebull.Common.WebApi
@@ -384,10 +359,11 @@ namespace Agebull.Common.WebApi
     [DataContract]
     [Category("上下文")]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ApiContext : Rpc.GlobalContext
+    public class ApiContext : GlobalContext
     {
     }
 }
+
 namespace Agebull.ZeroNet.Core
 {
     /// <summary>
@@ -396,7 +372,7 @@ namespace Agebull.ZeroNet.Core
     [DataContract]
     [Category("上下文")]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ApiContext : Common.Rpc.GlobalContext
+    public class ApiContext : GlobalContext
     {
     }
 }
