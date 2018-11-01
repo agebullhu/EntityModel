@@ -28,7 +28,7 @@ namespace Agebull.Common.Rpc
         public DependencyObjects DependencyObjects { get; } = new DependencyObjects();
 
         #endregion
-        
+
         #region 用户信息
 
         /// <summary>
@@ -106,10 +106,10 @@ namespace Agebull.Common.Rpc
             {
                 if (Local.Value != null && !Local.Value.IsDisposed)
                     return Local.Value;
-                Local.Value = IocHelper.CreateScope<GlobalContext>();
+                Local.Value = IocHelper.Create<GlobalContext>();
                 if (Local.Value != null) return Local.Value;
                 IocHelper.AddScoped<GlobalContext, GlobalContext>();
-                Local.Value = IocHelper.CreateScope<GlobalContext>();
+                Local.Value = IocHelper.Create<GlobalContext>();
 
                 return Local.Value;
             }
@@ -125,12 +125,7 @@ namespace Agebull.Common.Rpc
         /// </summary>
         public GlobalContext()
         {
-            var helper = Helper;
-            if (helper == null)
-            {
-                IocHelper.AddSingleton<IGlobalContextHelper, DefaultGlobalContextHelper>();
-                helper = new DefaultGlobalContextHelper();
-            }
+            var helper = Helper ?? new DefaultGlobalContextHelper();
             _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{RandomOperate.Generate(8)}");
             _user = helper.CreateUserObject(1);
             _organizational = helper.CreateOrganizationalObject();

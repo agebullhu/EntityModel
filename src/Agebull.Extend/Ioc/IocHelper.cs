@@ -16,7 +16,7 @@ namespace Agebull.Common.Ioc
         /// <returns></returns>
         public static IDisposable CreateScope()
         {
-            IocHelper.Update();
+            IocHelper.CreateScope();
             return new IocScope();
         }
 
@@ -81,7 +81,7 @@ namespace Agebull.Common.Ioc
         ///    生成范围对象
         /// </summary>
         /// <returns></returns>
-        static IServiceProvider CreateScope()
+        internal static IServiceProvider CreateScope()
         {
             lock (Local)
             {
@@ -105,8 +105,9 @@ namespace Agebull.Common.Ioc
         /// <returns></returns>
         public static IServiceProvider Update()
         {
-            DisposeScope();
-            return CreateScope();
+            _rootProvider = null;
+            Local.Value = null;
+            return RootProvider;
         }
 
         /// <summary>
@@ -130,17 +131,6 @@ namespace Agebull.Common.Ioc
         #endregion
 
         #region 生成接口实例
-
-        /// <summary>
-        ///     生成接口实例
-        /// </summary>
-        /// <typeparam name="TInterface"></typeparam>
-        /// <returns></returns>
-        public static TInterface CreateScope<TInterface>()
-            where TInterface : class
-        {
-            return Local.Value?.Provider?.GetService<TInterface>();
-        }
 
         /// <summary>
         ///     生成接口实例
@@ -182,7 +172,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" />
         public static IServiceCollection AddTransient(Type serviceType, Type implementationType)
         {
-            DisposeScope();
+            //DisposeScope();
             return ServiceCollection.AddTransient(serviceType, implementationType);
         }
 
@@ -198,7 +188,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddTransient(Type serviceType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            DisposeScope();
+            //DisposeScope();
             return ServiceCollection.AddTransient(serviceType, implementationFactory);
         }
 
@@ -214,7 +204,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddTransient<TService, TImplementation>() where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddTransient<TService, TImplementation>();
         }
@@ -228,7 +218,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" />
         public static IServiceCollection AddTransient(Type serviceType)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddTransient(serviceType);
         }
@@ -242,7 +232,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" />
         public static IServiceCollection AddTransient<TService>() where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddTransient<TService>();
         }
@@ -259,7 +249,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddTransient<TService>(Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddTransient(implementationFactory);
         }
@@ -279,7 +269,7 @@ namespace Agebull.Common.Ioc
             Func<IServiceProvider, TImplementation> implementationFactory) where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddTransient(implementationFactory);
         }
@@ -295,7 +285,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped" />
         public static IServiceCollection AddScoped(Type serviceType, Type implementationType)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped(serviceType, implementationType);
         }
@@ -312,7 +302,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddScoped(Type serviceType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped(serviceType, implementationFactory);
         }
@@ -329,7 +319,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddScoped<TService, TImplementation>() where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped<TService, TImplementation>();
         }
@@ -343,7 +333,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped" />
         public static IServiceCollection AddScoped(Type serviceType)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped(serviceType);
         }
@@ -357,7 +347,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped" />
         public static IServiceCollection AddScoped<TService>() where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped<TService>();
         }
@@ -374,8 +364,6 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddScoped<TService>(Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
-            DisposeScope();
-
             return ServiceCollection.AddScoped(implementationFactory);
         }
 
@@ -394,7 +382,7 @@ namespace Agebull.Common.Ioc
             Func<IServiceProvider, TImplementation> implementationFactory) where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddScoped(implementationFactory);
         }
@@ -410,7 +398,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingleton(Type serviceType, Type implementationType)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(serviceType, implementationType);
         }
@@ -427,7 +415,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddSingleton(Type serviceType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(serviceType, implementationFactory);
         }
@@ -444,7 +432,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddSingleton<TService, TImplementation>() where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton<TService, TImplementation>();
         }
@@ -458,7 +446,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingleton(Type serviceType)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(serviceType);
         }
@@ -472,7 +460,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingleton<TService>() where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton<TService>();
         }
@@ -489,7 +477,7 @@ namespace Agebull.Common.Ioc
         public static IServiceCollection AddSingleton<TService>(Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(implementationFactory);
         }
@@ -509,7 +497,7 @@ namespace Agebull.Common.Ioc
             Func<IServiceProvider, TImplementation> implementationFactory) where TService : class
             where TImplementation : class, TService
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(implementationFactory);
         }
@@ -525,7 +513,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingleton(Type serviceType, object implementationInstance)
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(serviceType, implementationInstance);
         }
@@ -540,7 +528,7 @@ namespace Agebull.Common.Ioc
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingleton<TService>(TService implementationInstance) where TService : class
         {
-            DisposeScope();
+            //DisposeScope();
 
             return ServiceCollection.AddSingleton(typeof(TService), implementationInstance);
         }
