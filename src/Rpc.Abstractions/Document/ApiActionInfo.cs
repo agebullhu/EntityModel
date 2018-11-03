@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using Newtonsoft.Json;
 
 namespace Agebull.Common.ApiDocuments

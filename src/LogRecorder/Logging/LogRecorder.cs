@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 
 #endregion
 

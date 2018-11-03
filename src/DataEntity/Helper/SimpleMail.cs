@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Mail;
 using Agebull.Common.Configuration;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     /// ·¢ÓÊ¼þ

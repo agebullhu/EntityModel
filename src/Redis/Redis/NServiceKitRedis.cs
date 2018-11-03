@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Agebull.Common.Configuration;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using Newtonsoft.Json;
 using NServiceKit.Redis;
 using NServiceKit.Text;

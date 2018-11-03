@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Agebull.Common.Configuration;
 using System.Threading;
 using CSRedis;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using Newtonsoft.Json;
 
 namespace Agebull.Common.DataModel.Redis

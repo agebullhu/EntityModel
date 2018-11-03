@@ -13,7 +13,7 @@ using System.Text;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     /// 随机字符串生成器

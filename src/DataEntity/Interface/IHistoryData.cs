@@ -12,7 +12,7 @@ using System;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.Extends
+namespace Agebull.Common.DataModel.Extends
 {
 
     /// <summary>

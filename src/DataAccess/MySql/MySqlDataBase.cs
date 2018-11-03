@@ -18,10 +18,11 @@ using System.Text;
 using Agebull.Common.Logging;
 using System.Data.Common;
 using Agebull.Common.Ioc;
+using Agebull.Orm.Abstractions;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     表示SQL SERVER数据库对象
@@ -142,7 +143,7 @@ namespace Gboxt.Common.DataModel.MySql
                     Connections.Add(_connection);
                     //Trace.WriteLine("Create _connection", "MySqlDataBase");
                 }
-                else if (string.IsNullOrEmpty(_connection.ConnectionString))
+                else if (String.IsNullOrEmpty(_connection.ConnectionString))
                 {
                     result = true;
                     //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
@@ -685,7 +686,7 @@ namespace Gboxt.Common.DataModel.MySql
             {
                 type = MySqlDbType.Text;
             }
-            else if (value.Length >= ushort.MaxValue)
+            else if (value.Length >= UInt16.MaxValue)
             {
                 type = MySqlDbType.LongText;
             }
@@ -913,7 +914,6 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
-
         #region 接口
 
         string IDataBase.ConnectionString => ConnectionString;
@@ -972,6 +972,31 @@ namespace Gboxt.Common.DataModel.MySql
 
 
         #endregion
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="subsist"></param>
+        /// <param name="condition"></param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static SqlCommandInfo ToCommandInfo(EntitySubsist subsist, string condition, MySqlCommand cmd)
+        {
+            var info = new SqlCommandInfo
+            {
+                Condition = condition
+            };
+            foreach (MySqlParameter para in cmd.Parameters)
+            {
+                info.Parameters.Add(new ParameterItem
+                {
+                    Name = para.ParameterName,
+                    DbType = para.DbType,
+                    Value = para.Value == null || para.Value == DBNull.Value ? null : para.Value.ToString()
+                });
+            }
+            return info;
+        }
     }
 
 }

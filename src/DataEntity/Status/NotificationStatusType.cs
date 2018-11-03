@@ -6,7 +6,7 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     通知对象的状态类型

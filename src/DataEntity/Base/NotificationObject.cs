@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     有属性通知的对象

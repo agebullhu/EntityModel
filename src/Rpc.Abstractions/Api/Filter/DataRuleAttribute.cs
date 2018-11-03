@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     /// 数据规则

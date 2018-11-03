@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     实体状态对象

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     系统错误代码

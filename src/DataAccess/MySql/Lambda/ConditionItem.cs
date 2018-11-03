@@ -14,7 +14,7 @@ using System.Linq;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     表示访问条件和参数

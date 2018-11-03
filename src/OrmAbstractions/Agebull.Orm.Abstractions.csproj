@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Description>数据实体Mysql版本</Description>
+    <AssemblyTitle>Agebull.Extends</AssemblyTitle>
+    <Version>2.3.2.68</Version>
+    <!--monoandroid60;xamarinios10-->
+    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Agebull.EntityModel.Abstractions</AssemblyName>
+    <PackageId>Agebull.EntityModel.Abstractions</PackageId>
+    <PackageTags>Agebull.EntityModel.Abstractions</PackageTags>
+    <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
+    <PackageVersion>2.3.2.68</PackageVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <Product>Agebull.EntityModel.Abstractions</Product>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <PackageReleaseNotes>Agebull.EntityModel.Abstractions</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="DataAccess\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <None Remove="DataAccess\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Sqlite\" />
+  </ItemGroup>
+
+</Project>

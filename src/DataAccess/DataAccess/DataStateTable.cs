@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Rpc;
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     /// 数据状态基类

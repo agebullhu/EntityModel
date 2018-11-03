@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     编辑支持的实体对象

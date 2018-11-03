@@ -14,7 +14,7 @@ using Newtonsoft.Json.Converters;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     自定义的日期JSON转换器(用于Newtonsoft.Json)

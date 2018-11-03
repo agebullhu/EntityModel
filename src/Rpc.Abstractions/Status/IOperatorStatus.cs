@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     操作状态

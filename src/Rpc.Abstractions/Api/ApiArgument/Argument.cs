@@ -1,7 +1,7 @@
 using Agebull.Common.Rpc;
 using Newtonsoft.Json;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     ÇëÇó²ÎÊý

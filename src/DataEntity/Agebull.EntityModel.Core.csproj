@@ -53,12 +53,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Context\**" />
     <Compile Remove="DataBase\**" />
     <Compile Remove="DEncrypt\**" />
     <Compile Remove="Redis\**" />
+    <EmbeddedResource Remove="Context\**" />
     <EmbeddedResource Remove="DataBase\**" />
     <EmbeddedResource Remove="DEncrypt\**" />
     <EmbeddedResource Remove="Redis\**" />
+    <None Remove="Context\**" />
     <None Remove="DataBase\**" />
     <None Remove="DEncrypt\**" />
     <None Remove="Redis\**" />
@@ -74,15 +77,6 @@
     <None Remove="Agebull.Common.DataEntity.csproj.vspscc" />
     <None Remove="app.config" />
     <None Remove="packages.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="DataBase\Interface\IDataBase.cs" />
-    <Compile Include="DataBase\Interface\IDataTable.cs" />
-    <Compile Include="DataBase\Interface\ITransactionScope.cs" />
-    <Compile Include="DataBase\Interface\LambdaItem.cs" />
-    <Compile Include="DataBase\Interface\TableSql.cs" />
-    <Compile Include="DataBase\Scope\ReadTableScope.cs" />
   </ItemGroup>
 
   <ItemGroup>

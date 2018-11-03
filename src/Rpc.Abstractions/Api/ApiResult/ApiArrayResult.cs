@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Agebull.Common.Rpc;
 using Newtonsoft.Json;
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     API返回数组泛型类

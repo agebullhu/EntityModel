@@ -17,12 +17,13 @@ using System.Diagnostics;
 using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
-using Gboxt.Common.DataModel.ExtendEvents;
 using Agebull.Common.Rpc;
+using Agebull.Orm.Abstractions;
+using Agebull.Orm.Abstractions.ExtendEvents;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     partial class MySqlTable<TData, TMySqlDataBase>
     {

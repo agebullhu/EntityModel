@@ -72,7 +72,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\OrmAbstractions\Agebull.Orm.Abstractions.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

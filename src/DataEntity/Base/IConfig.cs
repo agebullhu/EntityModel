@@ -1,4 +1,4 @@
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     /// 基本配置对象

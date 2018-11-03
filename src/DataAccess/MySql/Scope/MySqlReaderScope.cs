@@ -2,7 +2,7 @@ using System;
 using Agebull.Common.Base;
 using MySql.Data.MySqlClient;
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     ÐÞ¸Ä¶ÁÈ¡×Ö¶Î·¶Î§

@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     编辑状态

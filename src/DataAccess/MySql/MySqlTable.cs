@@ -13,11 +13,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Agebull.Common.Ioc;
+using Agebull.Orm.Abstractions;
 using MySql.Data.MySqlClient;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     Sql实体访问类
@@ -52,6 +53,33 @@ namespace Gboxt.Common.DataModel.MySql
         #endregion
 
         #region 数据结构
+
+        /// <summary>
+        /// 字段左侧字符
+        /// </summary>
+        public char FieldLeftChar => '`';
+        /// <summary>
+        /// 字段右侧字符
+        /// </summary>
+        public char FieldRightChar => '`';
+        /// <summary>
+        /// 参数前导字符
+        /// </summary>
+        public char ArgumentChar => '?';
+
+        /// <summary>
+        /// 格式化为符合SQL的名称
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string ToSqlName(string name) => $"{FieldLeftChar}{name}{FieldRightChar}";
+
+        /// <summary>
+        /// 格式化为符合SQL的名称
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public string PropertyToSqlName(string property) => $"{FieldLeftChar}{FieldDictionary[property]}{FieldRightChar}";
 
         /// <summary>
         ///     是否作为基类存在的

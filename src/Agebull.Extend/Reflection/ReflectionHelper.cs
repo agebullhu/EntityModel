@@ -1,7 +1,7 @@
 ﻿// /*****************************************************
-// (c)2008-2013 Copy right www.Gboxt.com
+// (c)2008-2013 Copy right www.Agebull.com
 // 作者:bull2
-// 工程:Agebull.Common.Extend-Gboxt.Common.Reflection
+// 工程:Agebull.Common.Extend-Agebull.Common.Reflection
 // 建立:2014-04-13
 // 修改:2014-10-13
 // *****************************************************/

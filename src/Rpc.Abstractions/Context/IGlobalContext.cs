@@ -1,6 +1,6 @@
 using Agebull.Common.OAuth;
 using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using System;
 
 namespace Agebull.Common

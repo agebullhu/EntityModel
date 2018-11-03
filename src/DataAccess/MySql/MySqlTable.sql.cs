@@ -14,10 +14,11 @@ using System.Diagnostics;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text;
+using Agebull.Orm.Abstractions;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     partial class MySqlTable<TData, TMySqlDataBase>
     {

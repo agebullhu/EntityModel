@@ -16,10 +16,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using Agebull.Common.Logging;
+using Agebull.Orm.Abstractions;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     用于Sql Servr 的Lambda表达式解析器(仅支持查询条件)
@@ -401,7 +402,7 @@ namespace Gboxt.Common.DataModel.MySql
                 case ExpressionType.Not:
                     var parameterExpression = expression.Operand as ParameterExpression;
                     return parameterExpression != null
-                        ? $"`{parameterExpression.Name}` == 0"
+                        ? $"`{parameterExpression.Name}` = 0"
                         : $"NOT({ConvertExpression(expression.Operand)})";
                 case ExpressionType.Convert:
                     return ConvertExpression(expression.Operand);

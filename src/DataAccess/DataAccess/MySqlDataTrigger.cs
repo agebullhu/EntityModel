@@ -4,8 +4,9 @@ using System.Data.Common;
 using System.Text;
 using Agebull.Common.OAuth;
 using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.Extends;
+using Agebull.Orm.Abstractions;
+using Agebull.Common.DataModel;
+using Agebull.Common.DataModel.Extends;
 
 namespace Agebull.Common.DataModel
 {

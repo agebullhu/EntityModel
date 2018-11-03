@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 // ReSharper disable All
 
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     表示网络数据

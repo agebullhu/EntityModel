@@ -7,7 +7,7 @@ using Agebull.Common.DataModel;
 using Agebull.Common.Ioc;
 using Agebull.Common.OAuth;
 using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using Newtonsoft.Json;
 
 namespace Agebull.Common.Rpc

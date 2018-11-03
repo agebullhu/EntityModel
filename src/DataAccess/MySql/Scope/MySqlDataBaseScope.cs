@@ -12,7 +12,7 @@ using Agebull.Common.Base;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     Êý¾Ý¿â·ÃÎÊ·¶Î§

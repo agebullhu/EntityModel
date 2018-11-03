@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Description>数据实体Mysql版本</Description>
+    <AssemblyTitle>Agebull.Extends</AssemblyTitle>
+    <Version>2.3.2.68</Version>
+    <!--monoandroid60;xamarinios10-->
+    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Agebull.EntityModel.Sqlite</AssemblyName>
+    <PackageId>Agebull.EntityModel.Sqlite</PackageId>
+    <PackageTags>Agebull.EntityModel.Sqlite</PackageTags>
+    <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
+    <PackageVersion>2.3.2.68</PackageVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <Product>Agebull.EntityModel.Sqlite</Product>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <PackageReleaseNotes>Agebull.EntityModel.Sqlite</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Interface\**" />
+    <Compile Remove="Old\**" />
+    <Compile Remove="SQLite\**" />
+    <Compile Remove="SqlServer\**" />
+    <EmbeddedResource Remove="Interface\**" />
+    <EmbeddedResource Remove="Old\**" />
+    <EmbeddedResource Remove="SQLite\**" />
+    <EmbeddedResource Remove="SqlServer\**" />
+    <None Remove="Interface\**" />
+    <None Remove="Old\**" />
+    <None Remove="SQLite\**" />
+    <None Remove="SqlServer\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="DataAccess\HitoryTable.cs" />
+    <Compile Remove="MySql\CacheTable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sqlite\Lambda\ConditionItem.cs" />
+    <Compile Include="Sqlite\Lambda\PredicateConvert.cs" />
+    <Compile Include="Sqlite\SqliteTable.cs" />
+    <Compile Include="Sqlite\SqliteTable.dml.cs" />
+    <Compile Include="Sqlite\SqliteTable.load.cs" />
+    <Compile Include="Sqlite\SqliteTable.sql.cs" />
+    <Compile Include="Sqlite\SqliteDataBase.cs" />
+    <Compile Include="Sqlite\Scope\SqliteDataBaseScope.cs" />
+    <Compile Include="Sqlite\Scope\SqliteReaderScope.cs" />
+    <Compile Include="Sqlite\Scope\TransactionScope.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SQLite" Version="3.13.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.109.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataEntity\Agebull.EntityModel.Core.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy   $(OutDir)$(TargetFileName) C:\Projects\Agebull\hotfix\ /y&#xD;&#xA;xcopy   $(OutDir)$(TargetName).pdb C:\Projects\Agebull\hotfix\ /y" />
+  </Target>
+
+</Project>

@@ -15,7 +15,7 @@ using System.Linq;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     公共方法的一些扩展

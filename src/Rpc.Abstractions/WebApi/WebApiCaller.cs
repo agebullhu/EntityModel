@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
-using Gboxt.Common.DataModel;
+using Agebull.Common.DataModel;
 using Agebull.Common.Rpc;
 
 namespace Agebull.Common.WebApi

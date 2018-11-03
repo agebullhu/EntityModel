@@ -6,7 +6,7 @@
 // // ÐÞ¸Ä:2016-06-16
 // // *****************************************************/
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     ±à¼­¶ÔÏó

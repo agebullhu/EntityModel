@@ -9,10 +9,11 @@
 #region 引用
 
 using System;
+using Agebull.Orm.Abstractions;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     /// <summary>
     ///     数据库事务范围对象

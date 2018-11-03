@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Gboxt.Common.DataModel
+namespace Agebull.Common.DataModel
 {
     /// <summary>
     ///     表示实体结构

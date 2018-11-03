@@ -14,12 +14,13 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Gboxt.Common.DataModel.ExtendEvents;
+using Agebull.Orm.Abstractions;
+using Agebull.Orm.Abstractions.ExtendEvents;
 using Newtonsoft.Json;
 
 #endregion
 
-namespace Gboxt.Common.DataModel.MySql
+namespace Agebull.Common.DataModel.MySql
 {
     partial class MySqlTable<TData, TMySqlDataBase>
     {

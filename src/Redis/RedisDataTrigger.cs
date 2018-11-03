@@ -2,8 +2,8 @@
 using System.Data.Common;
 using System.Text;
 using Agebull.Common.DataModel.Redis;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.Extends;
+using Agebull.Common.DataModel;
+using Agebull.Common.DataModel.Extends;
 
 namespace Agebull.Common.DataModel
 {
@@ -54,8 +54,8 @@ namespace Agebull.Common.DataModel
                     ver = proxy.Redis.Incr($"ent:ver:{table.Name}");
                 }
                 code.Append($@"
-UPDATE `{table.WriteTableName}` 
-SET `{table.FieldDictionary[nameof(IVersionData.DataVersion)]}` = {ver}");
+UPDATE {table.ToSqlName(table.WriteTableName)} 
+SET {table.PropertyToSqlName(nameof(IVersionData.DataVersion))} = {ver}");
                 if (!string.IsNullOrEmpty(condition))
                 {
                     code.Append($@"
