@@ -38,12 +38,8 @@ namespace Agebull.Common.Logging
 
         private void Begin(string title)
         {
-            Stack.SetFix(new MonitorData
-            {
-                Title = title
-            });
             InMonitor = true;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             if (!AppDomain.MonitoringIsEnabled)
                 AppDomain.MonitoringIsEnabled = true;
 #endif
@@ -52,16 +48,16 @@ namespace Agebull.Common.Logging
                 {
                     Title = title
                 });
-                Texter.AppendLine(
-                    $"<<RequestId:{LogRecorder.GetRequestId()}>>*<<Machine:{LogRecorder.GetMachineName()}>>");
+                Texter.AppendLine($@"
+ Date:{DateTime.Now}    RequestId:{LogRecorder.GetRequestId()}    Machine:{LogRecorder.GetMachineName()}");
                 Texter.Append(' ', 24);
                 Texter.Append("标题");
                 Texter.Append(' ', 24);
                 Texter.Append("|状态|   时间   |   用 时(ms)   |");
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
                 Texter.Append("|  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");
 #endif
-                Write(title, 0);
+                Write(title, ItemType.First);
             }
         }
 
@@ -74,7 +70,7 @@ namespace Agebull.Common.Logging
             {
                 Title = title
             });
-            Write(title, 1);
+            Write(title, ItemType.Begin);
         }
 
         /// <summary>
@@ -84,7 +80,7 @@ namespace Agebull.Common.Logging
         {
             Stack.Current.Coll();
             Stack.Current.FlushMessage();
-            Write(title, 4);
+            Write(title, ItemType.Begin);//BUG:
             Stack.Current.Flush();
         }
 
@@ -93,6 +89,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public string End()
         {
+            InMonitor = false;
             try
             {
                 MonitorData pre = null;
@@ -100,13 +97,13 @@ namespace Agebull.Common.Logging
                 {
                     Stack.Current.Coll(pre);
                     Stack.Current.EndMessage();
-                    Write(Stack.Current.Title, 2);
+                    Write(Stack.Current.Title, ItemType.End);
                     pre = Stack.Current;
                     Stack.Pop();
                 }
                 Stack.Current.Coll(pre);
                 Stack.FixValue.EndMessage();
-                Write(Stack.FixValue.Title ?? "Monitor", 3);
+                Write(Stack.FixValue.Title ?? "Monitor", ItemType.End);
                 return Texter.ToString();
             }
             catch (Exception ex)
@@ -117,40 +114,52 @@ namespace Agebull.Common.Logging
             finally
             {
                 Texter.Clear();
-                InMonitor = false;
             }
         }
 
-        internal void Write(string title, int type, bool showMonitorValue = true)
+        internal enum ItemType
+        {
+            First,
+            Begin,
+            End,
+            Item
+        }
+        internal void Write(string title, ItemType type, bool showMonitorValue = true)
         {
             Texter.AppendLine();
             var cnt = Stack.StackCount;
             switch (type)
             {
-                case 0:
-                case 1:
+                case ItemType.First :
+                case ItemType.Begin:
                     if (cnt > 0)
-                        Texter.Append('│', cnt);
-                    Texter.Append('┌');
+                    {
+                        Texter.Append('│', cnt - 1);
+                        Texter.Append("├┬");
+                    }
+                    else
+                    {
+                        Texter.Append('┌');
+                    }
                     break;
                 //if (cnt > 0)
                 //    Texter.Append('│', cnt);
                 //Texter.Append('┬');
                 //break;
-                case 2:
+                case ItemType.End:
                     if (cnt > 1)
-                        Texter.Append('│', cnt - 1);
-                    Texter.Append("├┴");
-                    break;
-                case 3:
-                    if (cnt > 0)
                         Texter.Append('│', cnt);
                     Texter.Append('└');
                     break;
                 default:
+                //case ItemType.Item:
+                //    if (cnt > 0)
+                //        Texter.Append('│', cnt);
+                //    Texter.Append('└');
+                //    break;
                     if (cnt > 0)
                         Texter.Append('│', cnt);
-                    Texter.Append("├─");
+                    Texter.Append('├');
                     cnt++;
                     break;
             }
@@ -177,7 +186,7 @@ namespace Agebull.Common.Logging
                 return;
             }
             Stack.Current.EndMessage();
-            Write(Stack.Current.Title, 2);
+            Write(Stack.Current.Title, ItemType.End);
             var pre = Stack.Current;
             Stack.Pop();
             Stack.Current.Coll(pre);
@@ -201,9 +210,9 @@ namespace Agebull.Common.Logging
         {
             var scope= new MonitorScope
             {
-                _isStep = LogRecorder.Data.InMonitor
+                _isStep = LogRecorder.MonitorItem.InMonitor
             };
-            if (LogRecorder.Data.InMonitor)
+            if (LogRecorder.MonitorItem.InMonitor)
                 LogRecorder.BeginStepMonitor(name);
             else
                 LogRecorder.BeginMonitor(name);

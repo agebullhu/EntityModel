@@ -159,7 +159,7 @@ namespace Agebull.Common.Logging
                 LogDataSql = sec.GetBool("sql");
                 Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
             }
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             if (LogMonitor)
             {
                 AppDomain.MonitoringIsEnabled = true;

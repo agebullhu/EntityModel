@@ -97,6 +97,47 @@ namespace Gboxt.Common.DataModel.MySql
 
         #endregion
 
+        #region 数据库连接对象
+
+        private MySqlConnection _connection;
+        /// <summary>
+        ///     连接对象
+        /// </summary>
+        public MySqlConnection Connection => _connection ?? (_connection = InitConnection());
+
+
+        /// <summary>
+        ///     连接对象
+        /// </summary>
+        public static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
+
+        /// <summary>
+        ///     连接对象
+        /// </summary>
+        public MySqlConnection GetCurrentConnection()
+        {
+            return Connection;
+        }
+
+        /// <summary>
+        /// 初始化连接对象
+        /// </summary>
+        /// <returns></returns>
+        private MySqlConnection InitConnection()
+        {
+            lock (LockData)
+            {
+                var connection = new MySqlConnection(ConnectionString);
+                Connections.Add(connection);
+                //Trace.WriteLine(_count++, "Open");
+                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                connection.Open();
+                return connection;
+            }
+        }
+        
+        #endregion
+
         #region 连接
 
         /// <summary>
@@ -115,13 +156,7 @@ namespace Gboxt.Common.DataModel.MySql
         /// </summary>
         /// <returns></returns>
         protected abstract string LoadConnectionStringSetting();
-        MySqlConnection _connection;
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public MySqlConnection Connection => _connection ?? (_connection = InitConnection());
-
-        private static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
+        
         /// <summary>
         ///     打开连接
         /// </summary>
@@ -138,11 +173,11 @@ namespace Gboxt.Common.DataModel.MySql
                 if (_connection == null)
                 {
                     result = true;
-                    _connection = new MySqlConnection(ConnectionString);
-                    Connections.Add(_connection);
+                    _connection = InitConnection();
+                    return true;
                     //Trace.WriteLine("Create _connection", "MySqlDataBase");
                 }
-                else if (string.IsNullOrEmpty(_connection.ConnectionString))
+                if (string.IsNullOrEmpty(_connection.ConnectionString))
                 {
                     result = true;
                     //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
@@ -159,18 +194,6 @@ namespace Gboxt.Common.DataModel.MySql
             return true;
         }
 
-        private MySqlConnection InitConnection()
-        {
-            lock (LockData)
-            {
-                var connection = new MySqlConnection(ConnectionString);
-                Connections.Add(connection);
-                //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
-                connection.Open();
-                return connection;
-            }
-        }
         /// <summary>
         ///     关闭连接
         /// </summary>
@@ -186,42 +209,27 @@ namespace Gboxt.Common.DataModel.MySql
                 {
                     if (_connection.State == ConnectionState.Open)
                     {
-                        //Trace.WriteLine("Close Connection", "MySqlDataBase");
                         _connection.Close();
+                        //Trace.WriteLine("Close Connection", "MySqlDataBase");
                     }
-                    Connections.Remove(_connection);
                     LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
                     _connection.Dispose();
-                    _connection = null;
 
                 }
                 catch (Exception exception)
                 {
-                    _connection.Dispose();
+                    _connection?.Dispose();
                     Debug.WriteLine("Close Error", "MySqlDataBase");
-                    LogRecorder.Error(exception.ToString());
+                    LogRecorder.Exception(exception);
                 }
                 finally
                 {
                     if (_default == this)
                         _default = null;
+                    Connections.Remove(_connection);
+                    _connection = null;
                 }
             }
-        }
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public MySqlConnection GetCurrentConnection()
-        {
-            return Connection;
-        }
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public void ClearCurrentConnection()
-        {
-            _connection = null;
         }
 
 

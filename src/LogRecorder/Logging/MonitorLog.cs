@@ -11,14 +11,15 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 当前上下文数据
         /// </summary>
-        private static readonly AsyncLocal<MonitorItem> DataLocal = new AsyncLocal<MonitorItem>();
+        private static readonly AsyncLocal<MonitorItem> MonitorItemLocal = new AsyncLocal<MonitorItem>();
 
         [ThreadStatic]
-        private static MonitorItem _data;
+        private static MonitorItem _monitorItem;
+
         /// <summary>
         /// 当前范围数据
         /// </summary>
-        internal static MonitorItem Data => _data ?? (_data = DataLocal.Value ?? (DataLocal.Value = new MonitorItem()));
+        internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = MonitorItemLocal.Value ?? (MonitorItemLocal.Value = new MonitorItem()));
 
         /// <summary>
         /// 开始检测资源
@@ -27,7 +28,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            Data.BeginMonitor(title);
+            MonitorItem.BeginMonitor(title);
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            Data.BeginStep(title);
+            MonitorItem.BeginStep(title);
         }
 
         /// <summary>
@@ -45,9 +46,9 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void EndStepMonitor()
         {
-            if (!LogMonitor)
+            if (!LogMonitor || !MonitorItem.InMonitor)
                 return;
-            Data.EndStepMonitor();
+            MonitorItem.EndStepMonitor();
         }
 
         /// <summary>
@@ -55,41 +56,40 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void MonitorTrace(string message)
         {
-            if (!LogMonitor)
+            if (!LogMonitor || !MonitorItem.InMonitor)
                 return;
-            Data.Write(message, 4, false);
+            MonitorItem.Write(message, MonitorItem.ItemType.Item, false);
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void FlushMonitor(string title, bool number = false)
         {
-            if (!LogMonitor)
+            if (!LogMonitor || !MonitorItem.InMonitor)
                 return;
-            Data.Flush(title, number);
+            MonitorItem.Flush(title, number);
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void FlushMonitor(string fmt, params object[] args)
         {
-            if (!LogMonitor)
+            if (!LogMonitor || !MonitorItem.InMonitor)
                 return;
-            Data.Flush(string.Format(fmt, args));
+            MonitorItem.Flush(string.Format(fmt, args));
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void EndMonitor()
         {
-            if (!LogMonitor)
+            if (!LogMonitor || !MonitorItem.InMonitor)
                 return;
-            var log = Data.End();
+            var log = MonitorItem.End();
             if (log != null)
                 RecordInner(LogLevel.Trace, "Monitor", log, LogType.Monitor);
-            _data = null;
-            DataLocal.Value = null;
-
+            _monitorItem = null;
+            MonitorItemLocal.Value = null;
         }
     }
 }

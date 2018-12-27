@@ -100,7 +100,7 @@ namespace Agebull.Common.DataModel
         /// </summary>
         /// <param name="state">审核状态类型</param>
         /// <returns>中文名称</returns>
-        public static string ToCapition(this AuditStateType state)
+        public static string ToCaption(this AuditStateType state)
         {
             switch (state)
             {

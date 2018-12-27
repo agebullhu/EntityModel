@@ -38,7 +38,7 @@ namespace Agebull.Common.Logging
         internal double TotalTime;
 
 
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
         /// <summary>
         /// 内存分配
         /// </summary>
@@ -65,7 +65,7 @@ namespace Agebull.Common.Logging
             Space = "";
 
             TotalTime = 0F;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             TotalProcessorTime = 0F;
             TotalSurvivedMemorySize = 0;
             TotalAllocatedMemorySize = 0;
@@ -89,7 +89,7 @@ namespace Agebull.Common.Logging
         internal void FlushMessage()
         {
             var a = DateTime.Now - PreTime;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             var b = AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime;
             var c = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize - MonitoringTotalAllocatedMemorySize;
             var d = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
@@ -114,7 +114,7 @@ namespace Agebull.Common.Logging
         internal void Coll()
         {
             TotalTime += (DateTime.Now - PreTime).TotalMilliseconds;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             TotalProcessorTime +=
  (AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime).TotalMilliseconds;
             TotalSurvivedMemorySize +=
@@ -136,7 +136,7 @@ namespace Agebull.Common.Logging
                 return;
             }
             TotalTime += item.TotalTime;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             TotalProcessorTime += item.TotalProcessorTime;
             TotalSurvivedMemorySize += item.TotalSurvivedMemorySize;
             TotalAllocatedMemorySize += item.TotalAllocatedMemorySize;
@@ -149,7 +149,7 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         internal void Flush()
         {
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             MonitoringTotalAllocatedMemorySize = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
             MonitoringSurvivedMemorySize = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
             MonitoringTotalProcessorTime = AppDomain.CurrentDomain.MonitoringTotalProcessorTime;
@@ -163,7 +163,7 @@ namespace Agebull.Common.Logging
         internal void EndMessage()
         {
             var a = DateTime.Now - StartTime;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             var d = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
             var f = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
             Message = string.Format("|完成| {0:HH:mm:ss} |{1}/{7}|{2}|{3}|{4}|{5}|{6}|"

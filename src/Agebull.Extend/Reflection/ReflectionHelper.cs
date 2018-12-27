@@ -26,7 +26,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
 using Microsoft.CSharp;
 using System.Runtime.Serialization.Formatters.Soap;
 #endif
@@ -44,7 +44,7 @@ namespace Agebull.Common.Reflection
     /// </summary>
     public sealed class ReflectionHelper
     {
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
         /*// <summary>
         ///   载入动态编译的结果并运行一个缺省的静态方法
         /// </summary>
@@ -758,7 +758,7 @@ namespace Agebull.Common.Reflection
             }
             throw new WarningException(SerializeException(null, "调用的方法不存在 "));
         }
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
         ///// <summary>
         ///// 以SOAP方式序列化未标记为序列化的对象
         ///// </summary>

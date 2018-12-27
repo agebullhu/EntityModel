@@ -50,6 +50,11 @@ namespace Agebull.Common.Logging
         /// 是否初始化成功
         /// </summary>
         public bool IsInitialized { get; set; }
+
+        /// <summary>
+        /// 是否初始化成功
+        /// </summary>
+        private bool pathIsCheck;
         /// <summary>
         ///     初始化
         /// </summary>
@@ -67,23 +72,34 @@ namespace Agebull.Common.Logging
                 LogPath = cfgpath;
                 SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
                 dayFolder = sec.GetBool("dayFolder", true);
-                if (LogPath != null && !Directory.Exists(LogPath))
-                    Directory.CreateDirectory(LogPath);
             }
             catch (Exception ex)
             {
                 LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.Initialize", ex);
             }
 
+            try
+            {
+                if (string.IsNullOrWhiteSpace(LogPath))
+                    LogPath = Path.Combine(Environment.CurrentDirectory, "logs");
+            }
+            catch (Exception ex)
+            {
+                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.Initialize LogPath", ex);
+            }
             Trace.Listeners.Add(this);
             IsInitialized = true;
         }
 
+        private bool _isDispose;
         /// <summary>
         ///     停止
         /// </summary>
         public void Shutdown()
         {
+            if (_isDispose)
+                return;
+            _isDispose = true;
             DisposeWriters();
         }
 
@@ -157,6 +173,8 @@ namespace Agebull.Common.Logging
                 try
                 {
                     var writer = GetWriter(name);
+                    if (writer == null)
+                        return;
                     writer.Size += log.Length;
                     writer.Stream.WriteLine(log);
                 }
@@ -172,18 +190,20 @@ namespace Agebull.Common.Logging
         /// </summary>
         private void WriteFile(string log, string type)
         {
-            var info = GetWriter(type);
+            var writer = GetWriter(type);
+            if (writer == null)
+                return;
             try
             {
-                info.Size += log.Length;
-                info.Stream.WriteLine(log);
+                writer.Size += log.Length;
+                writer.Stream.WriteLine(log);
             }
             catch (Exception ex)
             {
                 LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.WriteFile", type, ex);
-                info.Stream.Dispose();
-                info.Stream.Close();
-                ResetFile(type, info);
+                writer.Stream.Dispose();
+                writer.Stream.Close();
+                ResetFile(type, writer);
             }
         }
 
@@ -243,6 +263,19 @@ namespace Agebull.Common.Logging
 
         private FileInfo GetWriter(string sub)
         {
+            if (_isDispose)
+                return null;
+            if (!pathIsCheck)
+            {
+                pathIsCheck = true;
+                if (LogPath == null)
+                {
+                    Initialize();
+                }
+                // ReSharper disable once AssignNullToNotNullAttribute
+                if (!Directory.Exists(LogPath))
+                    Directory.CreateDirectory(LogPath);
+            }
             CheckTimePoint();
             if (_writers.TryGetValue(sub, out var info) && info.Size < SplitNumber)
             {
