@@ -10,9 +10,6 @@ using System.Xml ;
 
 #endregion
 
-#if !SILVERLIGHT
-#endif
-
 namespace Agebull.Common
 {
     /// <summary>
@@ -70,7 +67,6 @@ namespace Agebull.Common
             }
         }
 
-#if !SILVERLIGHT
         /// <summary>
         ///   反序列化异常
         /// </summary>
@@ -146,7 +142,6 @@ namespace Agebull.Common
             }
             return item ;
         }
-#endif
     }
 
     /// <summary>

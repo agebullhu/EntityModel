@@ -11,8 +11,6 @@ using Agebull.Common.Frame;
 
 #endregion
 
-#if !SILVERLIGHT
-
 namespace Agebull.Common.Security.Certificate.X509
 {
     /// <summary>
@@ -197,5 +195,3 @@ namespace Agebull.Common.Security.Certificate.X509
         }
     }
 }
-
-#endif

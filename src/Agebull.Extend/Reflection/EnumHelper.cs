@@ -21,7 +21,6 @@ namespace Agebull.Common.Reflection
     /// </summary>
     public class EnumHelper
     {
-#if !SILVERLIGHT
         /// <summary>
         ///   得到枚举中文表示的值
         /// </summary>
@@ -126,143 +125,6 @@ namespace Agebull.Common.Reflection
         /// </summary>
         private static readonly Dictionary<Type, List<IEnumInfomation>> EnumInfomationMaps = new Dictionary<Type, List<IEnumInfomation>>();
 
-#if CLIENT
-        /// <summary>
-        ///   直接将枚举绑定到下拉列表
-        /// </summary>
-        /// <returns> </returns>
-        public static List<EnumInfomation<T>> BindMenu<T>(ToolStripMenuItem item, Action<object, EventArgs> onClick) where T : struct
-        {
-            List<EnumInfomation<T>> kvs = KeyValue<T>();
-            foreach (var kv in kvs)
-            {
-                var m = item.DropDownItems.Add(kv.Caption);
-                m.Tag = kv;
-                m.Click += new EventHandler(onClick);
-            }
-            return kvs;
-        }
-
-        /// <summary>
-        ///   直接将枚举绑定到下拉列表
-        /// </summary>
-        /// <returns> </returns>
-        public static List<EnumInfomation<T>> BindComboBox<T>(ComboBox cb) where T : struct
-        {
-            List<EnumInfomation<T>> kvs = KeyValue<T>();
-            cb.DataSource = kvs;
-            cb.ValueMember = "Value";
-            cb.DisplayMember = "Caption";
-            return kvs;
-        }
-#endif
-
-#else
-        /// <summary>
-        ///   得到枚举中文表示的值
-        /// </summary>
-        /// <returns> </returns>
-        public static string GetCaption<T>(T value) where T : struct
-        {
-            return FindDisplayName(typeof(T) , value) ;
-        }
-        /// <summary>
-        /// 枚举以中文表示的值的字典，以防止每次都需要做反序列化
-        /// </summary>
-        private static readonly Dictionary<Type, List<IEnumInfomation>> EnumInfomationMaps = new Dictionary<Type, List<IEnumInfomation>>();
-
-        /// <summary>
-        ///   得到枚举以中文表示的值
-        /// </summary>
-        /// <returns> </returns>
-        public static List<IEnumInfomation> KeyValue<T>(bool keepNone = false) where T : struct
-        {
-            if (EnumInfomationMaps.ContainsKey(typeof (T)))
-            {
-                return EnumInfomationMaps[typeof (T)];
-            }
-            List<IEnumInfomation> kvs = new List<IEnumInfomation>();
-            EnumInfomationMaps.Add(typeof (T), kvs);
-
-            FieldInfo[] enumFieldInfos = typeof (T).GetFields();
-            foreach (FieldInfo fieldInfo in enumFieldInfos)
-            {
-                T value;
-                if (!Enum.TryParse(fieldInfo.Name, true, out value))
-                {
-                    continue;
-                }
-                if (keepNone && Convert.ToInt64(value) == 0)
-                {
-                    continue;
-                }
-                kvs.Add(new EnumInfomation<T>
-                    {
-                            Value = value,
-                            Caption = fieldInfo.GetDisplay(),
-                            LValue = Convert.ToInt64(value)
-                    });
-            }
-            return kvs;
-        }
-
-        /// <summary>
-        ///   得到枚举以中文表示的值
-        /// </summary>
-        /// <returns> </returns>
-        public static List<IEnumInfomation> GetEnumInfomation(string typeName)
-        {
-            Type type = Type.GetType(typeName);
-            if (type == null)
-            {
-                return new List<IEnumInfomation>();
-            }
-            if (EnumInfomationMaps.ContainsKey(type))
-            {
-                return EnumInfomationMaps[type];
-            }
-
-            FieldInfo[] enumFieldInfos = type.GetFields();
-            List<IEnumInfomation> kvs = enumFieldInfos.Select(fieldInfo => (IEnumInfomation) new EnumInfomation
-                {
-                        Caption = fieldInfo.GetDisplay(),
-                        Value = Enum.Parse(type, fieldInfo.Name, true),
-                        LValue = Convert.ToInt64(Enum.Parse(type, fieldInfo.Name, true))
-                }).ToList();
-
-            EnumInfomationMaps.Add(type, kvs);
-
-            return kvs;
-        }
-
-        /// <summary>
-        ///   得到枚举以中文表示的值
-        /// </summary>
-        /// <returns> </returns>
-        public static List<IEnumInfomation> GetEnumInfomation(Type type)
-        {
-            if (type == null)
-            {
-                return new List<IEnumInfomation>();
-            }
-            if (EnumInfomationMaps.ContainsKey(type))
-            {
-                return EnumInfomationMaps[type];
-            }
-            FieldInfo[] enumFieldInfos = type.GetFields();
-
-            List<IEnumInfomation> kvs = enumFieldInfos.Select(fieldInfo => (IEnumInfomation) new EnumInfomation
-                {
-                        Caption = fieldInfo.GetDisplay(),
-                        Value = Enum.Parse(type, fieldInfo.Name, true),
-                        LValue = Convert.ToInt64(Enum.Parse(type, fieldInfo.Name, true))
-                }).ToList();
-
-            EnumInfomationMaps.Add(type, kvs);
-
-            return kvs;
-        }
-#endif
     }
 
     /// <summary>
@@ -341,13 +203,7 @@ namespace Agebull.Common.Reflection
         /// <summary>
         ///   内容
         /// </summary>
-        object IEnumInfomation.Value
-        {
-            get
-            {
-                return Value;
-            }
-        }
+        object IEnumInfomation.Value => Value;
 
         /// <summary>
         ///   到文本

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
@@ -25,7 +26,7 @@ namespace Agebull.Common.Rpc
         /// <summary>
         ///     依赖对象字典
         /// </summary>
-        public DependencyObjects DependencyObjects { get; } = new DependencyObjects();
+        public DependencyObjects DependencyObjects { get; private set; } = new DependencyObjects();
 
         #endregion
 
@@ -93,9 +94,14 @@ namespace Agebull.Common.Rpc
         /// <summary>
         /// 用户组织信息泛化的辅助类
         /// </summary>
-        private static IGlobalContextHelper Helper => _helper ?? (_helper = IocHelper.Create<IGlobalContextHelper>());
+        private static IGlobalContextHelper Helper => _helper ?? (_helper = IocHelper.Create<IGlobalContextHelper>()) ?? new DefaultGlobalContextHelper();
 
-        private static readonly AsyncLocal<GlobalContext> Local = new AsyncLocal<GlobalContext>();
+        [ThreadStatic] private static AsyncLocal<GlobalContext> _local;
+
+        /// <summary>
+        ///     当前线程的调用上下文
+        /// </summary>
+        public static AsyncLocal<GlobalContext> Local => _local ?? (_local = new AsyncLocal<GlobalContext>());
 
         /// <summary>
         ///     当前线程的调用上下文
@@ -104,29 +110,59 @@ namespace Agebull.Common.Rpc
         {
             get
             {
-                if (Local.Value != null && !Local.Value.IsDisposed)
-                    return Local.Value;
-                Local.Value = IocHelper.Create<GlobalContext>();
-                if (Local.Value != null) return Local.Value;
+                if (_local == null)
+                    _local = new AsyncLocal<GlobalContext>();
+                else if (_local.Value != null && !_local.Value.IsDisposed)
+                    return _local.Value;
+                _local.Value = IocHelper.Create<GlobalContext>();
+                if (_local.Value != null)
+                    return _local.Value;
                 IocHelper.AddScoped<GlobalContext, GlobalContext>();
-                Local.Value = IocHelper.Create<GlobalContext>();
+                _local.Value = IocHelper.Create<GlobalContext>();
 
-                return Local.Value;
+                return _local.Value;
             }
         }
 
         /// <summary>
         ///     当前线程的调用上下文(无懒构造)
         /// </summary>
-        public static GlobalContext CurrentNoLazy => Local.Value;
+        public static GlobalContext CurrentNoLazy => _local?.Value;
+
+        /// <summary>
+        ///     内部构造
+        /// </summary>
+        public static GlobalContext Reset()
+        {
+            if (_local == null)
+                _local = new AsyncLocal<GlobalContext>();
+            else if (_local.Value != null && !_local.Value.IsDisposed)
+                _local.Value.Dispose();
+            _local.Value = IocHelper.Create<GlobalContext>();
+            if (_local.Value != null)
+                return _local.Value;
+            IocHelper.AddScoped<GlobalContext, GlobalContext>();
+            _local.Value = IocHelper.Create<GlobalContext>();
+            return _local.Value;
+        }
+
+        /// <summary>
+        ///     置空并销毁当前上下文
+        /// </summary>
+        public static void SetEmpty()
+        {
+            _local.Value?.Dispose();
+            _local.Value = null;
+            _local = null;
+        }
+
 
         /// <summary>
         ///     内部构造
         /// </summary>
         public GlobalContext()
         {
-            var helper = Helper ?? new DefaultGlobalContextHelper();
-            _requestInfo = new RequestInfo(ServiceKey, $"{ServiceKey}-{RandomOperate.Generate(8)}");
+            var helper = Helper;
             _user = helper.CreateUserObject(1);
             _organizational = helper.CreateOrganizationalObject();
         }
@@ -137,29 +173,36 @@ namespace Agebull.Common.Rpc
         /// <param name="context"></param>
         public static void SetContext(GlobalContext context)
         {
-            if (Current == context)
-                return;
-            if (context._user != null)
-                Current._user = context._user;
-            if (context._requestInfo != null)
-                Current._requestInfo = context._requestInfo;
+            if (null == context || context.IsDisposed)
+            {
+                _local.Value?.Dispose();
+                _local.Value = null;
+                _local = null;
+            }
+            else if (_local == null)
+                _local = new AsyncLocal<GlobalContext>
+                {
+                    Value = context
+                };
+            else if (_local.Value != context)
+                _local.Value = context;
         }
 
         /// <summary>
         ///     设置当前上下文（框架内调用，外部误用后果未知）
         /// </summary>
-        public static void SetRequestContext(string globalId, string serviceKey, string requestId)
+        public void SetRequestContext(string callId, string globalId, string requestId)
         {
-            Current._requestInfo = new RequestInfo(globalId, serviceKey, requestId);
+            _requestInfo = new RequestInfo(callId, globalId, requestId);
         }
 
 
         /// <summary>
         ///     设置当前上下文（框架内调用，外部误用后果未知）
         /// </summary>
-        public static void SetRequestContext(string serviceKey, string requestId)
+        public void SetRequestContext(string requestId)
         {
-            Current._requestInfo = new RequestInfo(serviceKey, requestId);
+            _requestInfo = new RequestInfo(requestId);
         }
 
         /// <summary>
@@ -192,9 +235,10 @@ namespace Agebull.Common.Rpc
         /// <inheritdoc />
         protected override void OnDispose()
         {
-            var local = new AsyncLocal<GlobalContext>();
-            if (local.Value != null)
-                local.Value = null;
+            if (_local == null)
+                return;
+            _local.Value = null;
+            _local = null;
         }
 
         /// <summary>
@@ -202,7 +246,8 @@ namespace Agebull.Common.Rpc
         /// </summary>
         public static void TryCheckByAnymouse()
         {
-            if (Current._requestInfo != null) return;
+            if (Current._requestInfo != null)
+                return;
             Current._requestInfo = new RequestInfo();
             Current._user = LoginUserInfo.Anymouse;
         }
@@ -310,7 +355,7 @@ namespace Agebull.Common.Rpc
 
         static GlobalContext()
         {
-#if !NETSTANDARD
+#if !NETCOREAPP
             ServiceKey = System.Configuration.ConfigurationManager.AppSettings["ServiceKey"];
             ServiceName = System.Configuration.ConfigurationManager.AppSettings["ServiceName"];
             ServiceRealName = $"{ServiceName}-{RandomOperate.Generate(8)}";
@@ -343,31 +388,5 @@ namespace Agebull.Common.Rpc
         public static string ServiceRealName { get; set; }
 
         #endregion
-    }
-}
-
-namespace Agebull.Common.WebApi
-{
-    /// <summary>
-    ///     全局上下文(版本兼容)
-    /// </summary>
-    [DataContract]
-    [Category("上下文")]
-    [JsonObject(MemberSerialization.OptIn)]
-    public class ApiContext : GlobalContext
-    {
-    }
-}
-
-namespace Agebull.ZeroNet.Core
-{
-    /// <summary>
-    ///     全局上下文(版本兼容)
-    /// </summary>
-    [DataContract]
-    [Category("上下文")]
-    [JsonObject(MemberSerialization.OptIn)]
-    public class ApiContext : GlobalContext
-    {
     }
 }

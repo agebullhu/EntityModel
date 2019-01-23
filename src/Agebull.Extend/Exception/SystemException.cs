@@ -9,7 +9,7 @@ using System;
 using System.Data.Common;
 using System.Runtime.Serialization;
 
-#if !NETSTANDARD
+#if !NETCOREAPP
 using System.Data.SqlClient ;
 #endif
 
@@ -100,7 +100,7 @@ namespace Agebull.Common
         protected AgebullSystemException(SerializationInfo info , StreamingContext context) : base(info , context)
         {
         }
-#if !NETSTANDARD
+#if !NETCOREAPP
         /// <summary>
         ///   基本构造
         /// </summary>

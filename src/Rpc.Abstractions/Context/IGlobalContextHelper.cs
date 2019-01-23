@@ -1,5 +1,4 @@
 using Agebull.Common.OAuth;
-
 namespace Agebull.Common
 {
     /// <summary>

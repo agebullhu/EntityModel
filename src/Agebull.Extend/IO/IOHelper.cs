@@ -10,13 +10,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-#if !SILVERLIGHT
 using System.Runtime.Serialization.Formatters.Binary;
-#endif
 using System.Text;
 using System.Xml;
 
-#if CLIENT
+#if WPF
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Cache;
@@ -35,8 +33,6 @@ namespace Agebull.Common
     public static class IOHelper
     {
         #region 保存与载入
-
-#if !SILVERLIGHT
         /// <summary>
         ///   删除或清除一个目录下的所有文件和目录
         /// </summary>
@@ -248,8 +244,6 @@ namespace Agebull.Common
             }
             return t;
         }
-#endif
-
         #endregion
 
         #region XML序列化
@@ -338,33 +332,21 @@ namespace Agebull.Common
                 return default(T);
             }
             byte[] buffers;
-#if !SILVERLIGHT
             long len;
-#endif
             using (MemoryStream ms = new MemoryStream())
             {
                 StreamWriter sw = new StreamWriter(ms);
                 sw.Write(args);
                 sw.Flush();
-#if !SILVERLIGHT
                 len = ms.Position;
-#endif
                 buffers = ms.GetBuffer();
             }
-#if SILVERLIGHT
-                using (MemoryStream ms = new MemoryStream(buffers))
-                {
-                    DataContractSerializer ds = new DataContractSerializer(typeof (T));
-                    return (T) ds.ReadObject(ms);
-                }
-#else
             using (XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(buffers, 0, (int)len, new XmlDictionaryReaderQuotas()))
             {
                 DataContractSerializer ds = new DataContractSerializer(typeof(T));
                 T re = (T)ds.ReadObject(reader, false);
                 return re;
             }
-#endif
         }
 
         #endregion
@@ -396,15 +378,9 @@ namespace Agebull.Common
         /// <returns> </returns>
         public static string ReadString(string filename)
         {
-#if !SILVERLIGHT
             return !File.Exists(filename)
-                           ? null
-                           : File.ReadAllText(filename, GetEncoding(filename));
-#else
-                return !File.Exists(filename)
-                               ? null
-                               : File.ReadAllText(filename);
-#endif
+                ? null
+                : File.ReadAllText(filename, GetEncoding(filename));
         }
 #if WINFORM
         /// <summary>
@@ -480,7 +456,6 @@ namespace Agebull.Common
             sb.Replace('\\', '_').Replace('(', '_').Replace(')', '_');
             return sb.ToString();
         }
-#if !SILVERLIGHT
         /// <summary>
         ///   得到一个路径下所有文件名
         /// </summary>
@@ -492,7 +467,7 @@ namespace Agebull.Common
             List<string> fs = new List<string>();
             if (ext != null && ext.IndexOf("*", StringComparison.Ordinal) < 0 && ext.IndexOf("?", StringComparison.Ordinal) < 0)
             {
-                ext = string.Format("*.{0}", ext);
+                ext = $"*.{ext}";
             }
             GetAllFiles(fs, path, ext);
             return fs.Distinct().ToList();
@@ -508,7 +483,7 @@ namespace Agebull.Common
             List<string> fs = new List<string>();
             if (ext != null && ext.IndexOf("*", StringComparison.Ordinal) < 0 && ext.IndexOf("?", StringComparison.Ordinal) < 0)
             {
-                ext = string.Format("*.{0}", ext);
+                ext = $"*.{ext}";
             }
             GetAllFiles(fs, path, ext);
             return fs.Distinct().ToList();
@@ -572,16 +547,14 @@ namespace Agebull.Common
                 {
                     continue;
                 }
-                CopyPath(ch, Path.Combine(destPath, Path.GetFileName(ch)), ext, true, replace, excludes);
+                CopyPath(ch, Path.Combine(destPath, Path.GetFileName(ch) ?? throw new InvalidOperationException()), ext, true, replace, excludes);
             }
         }
-#endif
 
         #endregion
 
         #region 文本文件编码来自网友
 
-#if !SILVERLIGHT
         /// <summary>
         ///   取得一个文本文件的编码方式。如果无法在文件头部找到有效的前导符，Encoding.Default将被返回。
         /// </summary>
@@ -625,49 +598,47 @@ namespace Agebull.Common
         public static Encoding GetEncoding(Stream stream, Encoding defaultEncoding)
         {
             Encoding targetEncoding = defaultEncoding;
-            if (stream != null && stream.Length >= 2)
-            {
-                //保存文件流的前4个字节
-                byte byte3 = 0;
-                //保存当前Seek位置
-                long origPos = stream.Seek(0, SeekOrigin.Begin);
-                stream.Seek(0, SeekOrigin.Begin);
+            if (stream == null || stream.Length < 2)
+                return targetEncoding;
+            //保存文件流的前4个字节
+            byte byte3 = 0;
+            //保存当前Seek位置
+            long origPos = stream.Seek(0, SeekOrigin.Begin);
+            stream.Seek(0, SeekOrigin.Begin);
 
-                int nByte = stream.ReadByte();
-                byte byte1 = Convert.ToByte(nByte);
-                byte byte2 = Convert.ToByte(stream.ReadByte());
-                if (stream.Length >= 3)
-                {
-                    byte3 = Convert.ToByte(stream.ReadByte());
-                }
-                if (stream.Length >= 4)
-                {
-                    // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-                    Convert.ToByte(stream.ReadByte());
-                    // ReSharper restore ReturnValueOfPureMethodIsNotUsed
-                }
-                //根据文件流的前4个字节判断Encoding
-                //Unicode {0xFF, 0xFE};
-                //BE-Unicode {0xFE, 0xFF};
-                //UTF8 = {0xEF, 0xBB, 0xBF};
-                if (byte1 == 0xFE && byte2 == 0xFF) //UnicodeBe
-                {
-                    targetEncoding = Encoding.BigEndianUnicode;
-                }
-                if (byte1 == 0xFF && byte2 == 0xFE && byte3 != 0xFF) //Unicode
-                {
-                    targetEncoding = Encoding.Unicode;
-                }
-                if (byte1 == 0xEF && byte2 == 0xBB && byte3 == 0xBF) //UTF8
-                {
-                    targetEncoding = Encoding.UTF8;
-                }
-                //恢复Seek位置       
-                stream.Seek(origPos, SeekOrigin.Begin);
+            int nByte = stream.ReadByte();
+            byte byte1 = Convert.ToByte(nByte);
+            byte byte2 = Convert.ToByte(stream.ReadByte());
+            if (stream.Length >= 3)
+            {
+                byte3 = Convert.ToByte(stream.ReadByte());
             }
+            if (stream.Length >= 4)
+            {
+                // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+                Convert.ToByte(stream.ReadByte());
+                // ReSharper restore ReturnValueOfPureMethodIsNotUsed
+            }
+            //根据文件流的前4个字节判断Encoding
+            //Unicode {0xFF, 0xFE};
+            //BE-Unicode {0xFE, 0xFF};
+            //UTF8 = {0xEF, 0xBB, 0xBF};
+            if (byte1 == 0xFE && byte2 == 0xFF) //UnicodeBe
+            {
+                targetEncoding = Encoding.BigEndianUnicode;
+            }
+            if (byte1 == 0xFF && byte2 == 0xFE && byte3 != 0xFF) //Unicode
+            {
+                targetEncoding = Encoding.Unicode;
+            }
+            if (byte1 == 0xEF && byte2 == 0xBB && byte3 == 0xBF) //UTF8
+            {
+                targetEncoding = Encoding.UTF8;
+            }
+            //恢复Seek位置       
+            stream.Seek(origPos, SeekOrigin.Begin);
             return targetEncoding;
         }
-#endif
 
         #endregion
         #region WPF资源文件

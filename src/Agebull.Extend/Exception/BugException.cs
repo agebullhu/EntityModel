@@ -69,7 +69,6 @@ namespace Agebull.Common
         {
         }
 
-#if !SILVERLIGHT
         /// <summary>
         ///   序列化构造
         /// </summary>
@@ -79,6 +78,5 @@ namespace Agebull.Common
             : base(info, context)
         {
         }
-#endif
     }
 }

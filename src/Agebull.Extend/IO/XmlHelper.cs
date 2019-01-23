@@ -96,7 +96,6 @@ namespace Agebull.Common.Xml
 
         #endregion
 
-#if !SILVERLIGHT
         /// <summary>
         ///   读取当前位位置的一个属性的值
         /// </summary>
@@ -134,7 +133,5 @@ namespace Agebull.Common.Xml
             }
             return doc.ToString();
         }
-#endif
-
     }
 }

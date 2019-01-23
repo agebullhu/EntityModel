@@ -8,14 +8,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
-  </PropertyGroup>
-  <PropertyGroup>
     <Description>一些常用的基础功能扩展</Description>
     <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
-    <Version>2.3.2.71</Version>
+    <Version>2.3.3</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.Common.Extend</AssemblyName>
     <PackageId>Agebull.Common.Extend</PackageId>
@@ -42,7 +39,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.1|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -62,7 +59,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Web" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +73,7 @@
   <ItemGroup>
     <Compile Remove="Ioc\AppConfigHelper.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="SystemExtend\AppConfigHelper.cs" />
     <Compile Remove="SystemExtend\Configuration.cs" />
     <Compile Remove="SystemExtend\ConfigurationSettings.cs" />
   </ItemGroup>

@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+    
   </PropertyGroup>
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.3.2.71</Version>
+    <Version>2.3.3</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.Core</AssemblyName>
     <PackageId>Agebull.EntityModel.Core</PackageId>

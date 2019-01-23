@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD
+﻿#if !NETCOREAPP
 using Microsoft.Win32;
 
 namespace Agebull.Common.Base

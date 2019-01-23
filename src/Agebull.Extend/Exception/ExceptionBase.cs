@@ -17,12 +17,7 @@ namespace Agebull.Common
     ///   老牛软件使用的异常基类
     /// </summary>
     [Serializable]
-    public class AgebullException
-#if !SILVERLIGHT
-            : ApplicationException
-#else
-            : Exception
-#endif
+    public class AgebullException : ApplicationException
     {
         /// <summary>
         ///   格式化异常
@@ -35,25 +30,20 @@ namespace Agebull.Common
             {
                 return string.Empty ;
             }
-#if !SILVERLIGHT
             try
             {
-                return string.Format("发生错误\"{0}\":\r\n源{1} {2}\r\n堆栈:{3}\r\n{4}" ,
-                                     err.Message ,
-                                     err.Source ,
-                                     err.TargetSite != null
-                                             ? err.TargetSite.Name
-                                             : "" ,
-                                     err.StackTrace ,
-                                     FormatException(err.InnerException)) ;
+                return $@"发生错误""{err.Message}"":
+源{err.Source} {err.TargetSite?.Name}
+堆栈:{err.StackTrace}
+{FormatException(err.InnerException)}";
             }
             catch
             {
-                return string.Format("发生错误\"{0}\":\r\n源{1} {2}\r\n堆栈:{3}\r\n{4}" , err.Message , err.Source , "" , err.StackTrace , FormatException(err.InnerException)) ;
+                return $@"发生错误""{err.Message}"":
+源{err.Source}
+堆栈:{err.StackTrace}
+{FormatException(err.InnerException)}";
             }
-#else
-            return string.Format("发生错误\"{0}\":\r\n堆栈:{1}\r\n{2}", err.Message, err.StackTrace, FormatException(err.InnerException));
-#endif
         }
 
         /// <summary>
@@ -80,15 +70,13 @@ namespace Agebull.Common
         {
         }
 
-#if !SILVERLIGHT
         /// <summary>
         ///   序列化构造
         /// </summary>
         /// <param name="info"> 序列化对象 </param>
         /// <param name="context"> 数据流上下文 </param>
-        protected AgebullException(SerializationInfo info , StreamingContext context) : base(info , context)
+        protected AgebullException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-#endif
     }
 }

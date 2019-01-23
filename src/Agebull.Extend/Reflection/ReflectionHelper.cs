@@ -26,7 +26,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-#if !NETSTANDARD
+#if !NETCOREAPP
 using Microsoft.CSharp;
 using System.Runtime.Serialization.Formatters.Soap;
 #endif
@@ -44,7 +44,7 @@ namespace Agebull.Common.Reflection
     /// </summary>
     public sealed class ReflectionHelper
     {
-#if !NETSTANDARD
+#if !NETCOREAPP
         /*// <summary>
         ///   载入动态编译的结果并运行一个缺省的静态方法
         /// </summary>
@@ -187,8 +187,7 @@ namespace Agebull.Common.Reflection
         /// <returns> 类型的实例 </returns>
         public static object CreateObject(string typeName)
         {
-            Type value;
-            if (unKnowTypes.TryGetValue(typeName, out value))
+            if (unKnowTypes.TryGetValue(typeName, out var value))
             {
                 return CreateObject(value);
             }
@@ -420,7 +419,7 @@ namespace Agebull.Common.Reflection
             ThisType = type;
             ThisObject = CreateObject(type);
         }
-        
+
         /// <summary>
         ///     读取或配置类型实例的属性
         /// </summary>
@@ -428,14 +427,8 @@ namespace Agebull.Common.Reflection
         /// <returns> </returns>
         public object this[string property]
         {
-            get
-            {
-                return GetProperty(ThisType, property, ThisObject);
-            }
-            set
-            {
-                SetProperty(ThisType, property, ThisObject, value);
-            }
+            get => GetProperty(ThisType, property, ThisObject);
+            set => SetProperty(ThisType, property, ThisObject, value);
         }
 
         /// <summary>
@@ -479,7 +472,7 @@ namespace Agebull.Common.Reflection
             {
                 return pars[1];
             }
-            throw new ArgumentException(string.Format("Argument[{0}] is bad!", value));
+            throw new ArgumentException($"Argument[{value}] is bad!");
         }
 
         /// <summary>
@@ -575,41 +568,9 @@ namespace Agebull.Common.Reflection
         public static bool IsNullableType(ITypeInfomation info)
         {
             return info.Type.IsValueType && info.GenericArguments.Count == 1 && info.GenericArguments[0].Type.IsValueType &&
-                   info.TypeName == string.Format("Nullable<{0}>", info.GenericArguments[0].FullName);
+                   info.TypeName == $"Nullable<{info.GenericArguments[0].FullName}>";
         }
 
-#if SILVERLIGHT
-        /// <summary>
-        ///   得到一个基类的所有已知类型
-        /// </summary>
-        /// <param name="type"> </param>
-        /// <returns> </returns>
-        public static List<Type> GetKnowTypes(Type type, Assembly asm)
-        {
-            List<Type> types = new List<Type>();
-            List<Type> knows = new List<Type>();
-            knows.Add(type);
-            GetKnowTypes(knows, asm.GetTypes(), type);
-            return knows;
-        }
-
-        private static void GetKnowTypes(List<Type> knows, Type[] types, Type type)
-        {
-            foreach (Type tp in types.Where(p => !knows.Contains(p) && p.IsSubclassOf(type)))
-            {
-                if (!tp.IsGenericType)
-                {
-                    knows.Add(tp);
-                }
-                if (tp.BaseType.IsGenericType)
-                {
-                    knows.Add(tp.BaseType);
-                }
-                GetKnowTypes(knows, types, tp);
-            }
-        }
-        
-#else
         /// <summary>
         ///     得到一个基类的所有已知类型
         /// </summary>
@@ -632,7 +593,8 @@ namespace Agebull.Common.Reflection
 
         private static void GetKnowTypes(ICollection<Type> knows, IEnumerable<Type> types, Type type)
         {
-            foreach (Type tp in types.Where(p => !knows.Contains(p) && p.IsSubclassOf(type)))
+            var enumerable = types as Type[] ?? types.ToArray();
+            foreach (Type tp in enumerable.Where(p => !knows.Contains(p) && p.IsSubclassOf(type)))
             {
                 if (!tp.IsGenericType)
                 {
@@ -642,7 +604,7 @@ namespace Agebull.Common.Reflection
                 {
                     knows.Add(tp.BaseType);
                 }
-                GetKnowTypes(knows, types, tp);
+                GetKnowTypes(knows, enumerable, tp);
             }
         }
 
@@ -654,7 +616,8 @@ namespace Agebull.Common.Reflection
         /// <returns> </returns>
         public static bool HaseSubclass(IEnumerable<Type> knows, Type type)
         {
-            return knows.Any(p => !knows.Contains(p) && p.IsSubclassOf(type));
+            var enumerable = knows as Type[] ?? knows.ToArray();
+            return enumerable.Any(p => !enumerable.Contains(p) && p.IsSubclassOf(type));
         }
 
         /// <summary>
@@ -758,7 +721,7 @@ namespace Agebull.Common.Reflection
             }
             throw new WarningException(SerializeException(null, "调用的方法不存在 "));
         }
-#if !NETSTANDARD
+#if !NETCOREAPP
         ///// <summary>
         ///// 以SOAP方式序列化未标记为序列化的对象
         ///// </summary>
@@ -870,7 +833,8 @@ namespace Agebull.Common.Reflection
 
         private static void BuildKnowType(ICollection<Type> knows, IEnumerable<Type> types, Type type, StringBuilder sb, string format)
         {
-            foreach (Type tp in types.Where(p => !knows.Contains(p) && p.IsSubclassOf(type)))
+            var enumerable = types as Type[] ?? types.ToArray();
+            foreach (Type tp in enumerable.Where(p => !knows.Contains(p) && p.IsSubclassOf(type)))
             {
                 knows.Add(tp);
                 if (!tp.IsGenericType)
@@ -883,7 +847,7 @@ namespace Agebull.Common.Reflection
                     sb.AppendFormat(format, GetTypeFullName(tp.BaseType));
                 }
                 sb.AppendLine();
-                BuildKnowType(knows, types, tp, sb, "\t" + format);
+                BuildKnowType(knows, enumerable, tp, sb, "\t" + format);
             }
         }
 
@@ -906,7 +870,7 @@ namespace Agebull.Common.Reflection
         {
             return value == null
                     ? null
-                    : GetTypeName2(value is Type ? (Type)value : value.GetType(), false);
+                    : GetTypeName2(value is Type type ? type : value.GetType(), false);
         }
 
         /// <summary>
@@ -949,7 +913,7 @@ namespace Agebull.Common.Reflection
             {
                 tp = type.GetElementType();
             }
-            if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (tp != null && (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
                 tp = tp.GetGenericArguments()[0];
             }
@@ -958,16 +922,15 @@ namespace Agebull.Common.Reflection
             {
                 sb.Append('?');
             }
-            if (type.IsArray)
+
+            if (!type.IsArray) return sb.ToString();
+            sb.Append('[');
+            int mks = type.GetArrayRank();
+            for (int i = 1; i < mks; i++)
             {
-                sb.Append('[');
-                int mks = type.GetArrayRank();
-                for (int i = 1; i < mks; i++)
-                {
-                    sb.Append(',');
-                }
-                sb.Append(']');
+                sb.Append(',');
             }
+            sb.Append(']');
             return sb.ToString();
         }
 
@@ -1374,7 +1337,6 @@ namespace Agebull.Common.Reflection
             Trace.WriteLine(sb.ToString());
             return sb.ToString();
         }
-#endif
 
         #region 异常序列化
 
@@ -1386,80 +1348,75 @@ namespace Agebull.Common.Reflection
         /// <returns> 格式化后的文本 </returns>
         public static string ReadExctption(Exception err, string ti)
         {
+            if (err == null)
+                return "";
             StringBuilder sb = new StringBuilder();
-            if (err != null)
+            Type tp = err.GetType();
+            string type = tp.ToString();
+            string message = err.Message;
+            string source = err.Source;
+            string stack = err.StackTrace;
+            Exception inner = err.InnerException;
+            if (type.IndexOf("FaultException", StringComparison.Ordinal) >= 0)
             {
-                Type tp = err.GetType();
-                string type = tp.ToString();
-                string message = err.Message;
-#if !SILVERLIGHT
-                string source = err.Source;
-#else
-                string source = string.Empty;
-#endif
-                string stack = err.StackTrace;
-                Exception inner = err.InnerException;
-                if (type.IndexOf("FaultException", StringComparison.Ordinal) >= 0)
+                //直接处理SSO的异常,并中止递归
+                object innererr = TryGetProperty(tp, "Detail", err);
+                if (innererr != null)
                 {
-                    //直接处理SSO的异常,并中止递归
-                    object innererr = TryGetProperty(tp, "Detail", err);
-                    if (innererr != null)
-                    {
-                        object reason = TryGetProperty(tp, "Reason", err);
-                        object errorCode = TryGetProperty(tp, "ErrorCode", err);
-                        object errorMessage = TryGetProperty(tp, "ErrorMessage", err);
-                        sb.AppendFormat(
+                    object reason = TryGetProperty(tp, "Reason", err);
+                    object errorCode = TryGetProperty(tp, "ErrorCode", err);
+                    object errorMessage = TryGetProperty(tp, "ErrorMessage", err);
+                    sb.AppendFormat(
 #if DEBUG
 "{4}Fault Type:{0}<br/>" +
 #endif
- "{4}Message:{1}<br/>" + "{4}Error Code:{2}<br/>"
+                        "{4}Message:{1}<br/>" + "{4}Error Code:{2}<br/>"
 #if DEBUG
  + "{4}Error Info:<br/>{4}   {3}"
 #endif
-,
-                                type,
-                                reason == null
-                                        ? ""
-                                        : reason.ToString().Replace("<br/>", "<br/>" + ti),
-                                errorCode == null
-                                        ? ""
-                                        : errorCode.ToString().Replace("<br/>", "<br/>" + ti),
-                                errorMessage == null
-                                        ? ""
-                                        : errorMessage.ToString().Replace("<br/>", "<br/>" + ti),
-                                ti);
-                    }
+                        ,
+                        type,
+                        reason == null
+                            ? ""
+                            : reason.ToString().Replace("<br/>", "<br/>" + ti),
+                        errorCode == null
+                            ? ""
+                            : errorCode.ToString().Replace("<br/>", "<br/>" + ti),
+                        errorMessage == null
+                            ? ""
+                            : errorMessage.ToString().Replace("<br/>", "<br/>" + ti),
+                        ti);
                 }
-                //以递归方式去格式化异常(递归InnerException)
-                sb.AppendFormat(
+            }
+            //以递归方式去格式化异常(递归InnerException)
+            sb.AppendFormat(
 #if DEBUG
 "{0}Exception:{1}<br/>" +
 #endif
- "{0}Message:{2}<br/>" +
+                "{0}Message:{2}<br/>" +
 #if DEBUG
  "{0}Source:{3}<br/>" + "{0}StackTrace:<br/>{0}   {4}<br/>" +
 #endif
- "{0}InnerException:<br/>{5}",
-                        ti,
-                        type,
-                        string.IsNullOrWhiteSpace(message)
-                                ? ""
-                                : message.Replace("<br/>", "<br/>" + ti),
-                        string.IsNullOrWhiteSpace(source)
-                                ? ""
-                                : source.Replace("<br/>", "<br/>" + ti),
-                        string.IsNullOrWhiteSpace(stack)
-                                ? ""
-                                : stack.Replace("<br/>", "<br/>" + ti),
-                        inner != null
-                                ? ReadExctption(inner, ti + ti)
-                                : "" //递归
-                        );
-            }
+                "{0}InnerException:<br/>{5}",
+                ti,
+                type,
+                string.IsNullOrWhiteSpace(message)
+                    ? ""
+                    : message.Replace("<br/>", "<br/>" + ti),
+                string.IsNullOrWhiteSpace(source)
+                    ? ""
+                    : source.Replace("<br/>", "<br/>" + ti),
+                string.IsNullOrWhiteSpace(stack)
+                    ? ""
+                    : stack.Replace("<br/>", "<br/>" + ti),
+                inner != null
+                    ? ReadExctption(inner, ti + ti)
+                    : "" //递归
+            );
             return sb.ToString();
         }
 
-#region 名称检查
+        #region 名称检查
 
         /// <summary>
         /// 取得this属性的正确名称
@@ -1471,7 +1428,7 @@ namespace Agebull.Common.Reflection
             if (name.IndexOf('.') < 0)
                 return "this";
             var itns = GetTypeShowName(name).Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            return string.Format("{0}.this", itns[itns.Length - 2]);
+            return $"{itns[itns.Length - 2]}.this";
         }
 
         /// <summary>
@@ -1487,7 +1444,7 @@ namespace Agebull.Common.Reflection
 
             if (name.IndexOf('<') < 0)
             {
-                return string.Format("{0}.{1}", itns[itns.Length - 2], itns[itns.Length - 1]);
+                return $"{itns[itns.Length - 2]}.{itns[itns.Length - 1]}";
             }
             StringBuilder sb = new StringBuilder();
             StringBuilder word = new StringBuilder();
@@ -1581,7 +1538,7 @@ namespace Agebull.Common.Reflection
             }
             return type;
         }
-#endregion
+        #endregion
         /// <summary>
         ///     序列化异常到XML
         /// </summary>
@@ -1607,18 +1564,15 @@ namespace Agebull.Common.Reflection
                 return;
             }
             par.Add(new XElement("ExceptionMessage", err.Message));
-            if (err is AgebullSystemException)
+            if (err is AgebullSystemException serr)
             {
-                AgebullSystemException serr = err as AgebullSystemException;
                 par.Add(new XElement("InnerMessage", serr.InnerMessage));
                 par.Add(new XElement("Extend", serr.Extend));
             }
-            XElement xe = new XElement("Exception",
-                    new XElement("Type", err.GetType().ToString()),
-#if !SILVERLIGHT
- new XElement("Source", err.Source),
-#endif
- new XElement("StackTrace", err.StackTrace));
+            var xe = new XElement("Exception",
+                new XElement("Type", err.GetType().ToString()),
+                new XElement("Source", err.Source),
+                new XElement("StackTrace", err.StackTrace));
             par.Add(xe);
             /*
             if (err is FaultException)
@@ -1663,9 +1617,9 @@ namespace Agebull.Common.Reflection
             SerializeException(err.InnerException, inner);
         }
 
-#endregion
+        #endregion
 
-#region Lambda表达式支持
+        #region Lambda表达式支持
 
         /// <summary>
         ///     取得名称
@@ -1755,7 +1709,7 @@ namespace Agebull.Common.Reflection
         /// <param name="expression"></param>
         /// <param name="arg"></param>
         /// <returns></returns>
-        public static object GetValue<TArg, TResult>(Expression<Func<TArg, TResult>> expression,TArg arg)
+        public static object GetValue<TArg, TResult>(Expression<Func<TArg, TResult>> expression, TArg arg)
         {
             Func<TArg, TResult> func = expression.Compile();
             return func(arg);
@@ -1792,6 +1746,6 @@ namespace Agebull.Common.Reflection
             Action func = lambda.Compile();
             func();
         }
-#endregion
+        #endregion
     }
 }

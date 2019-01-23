@@ -42,7 +42,6 @@ namespace Agebull.Common
         {
         }
 
-#if !SILVERLIGHT
         /// <summary>
         ///   序列化构造
         /// </summary>
@@ -51,6 +50,5 @@ namespace Agebull.Common
         protected AgebullBusinessException(SerializationInfo info , StreamingContext context) : base(info , context)
         {
         }
-#endif
     }
 }

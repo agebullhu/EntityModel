@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Gboxt.Common.DataModel;
@@ -15,63 +14,61 @@ namespace Agebull.Common.Rpc
         /// <summary>
         /// 修改值
         /// </summary>
-        /// <param name="globalId"></param>
-        /// <param name="serviceKey"></param>
+        /// <param name="callId"></param>
         /// <param name="requestId"></param>
-        public void SetValue(string globalId, string serviceKey, string requestId)
+        public void SetValue(string callId, string requestId)
         {
-            CallGlobalId = globalId;
-            ServiceKey = serviceKey;
+            CallGlobalId = callId;
             RequestId = requestId;
         }
         /// <summary>
         /// 构造
         /// </summary>
-        public RequestInfo() : this(GlobalContext.ServiceKey, RandomOperate.Generate(8))
+        public RequestInfo() : this($"{GlobalContext.ServiceName}-{RandomOperate.Generate(6)}")
         {
-        }
-
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        /// <param name="globalId"></param>
-        /// <param name="serviceKey"></param>
-        /// <param name="requestId"></param>
-        public RequestInfo(string globalId, string serviceKey, string requestId) : this(serviceKey, requestId)
-        {
-            CallGlobalId = globalId;
         }
 
         /// <summary>
         /// 构造
         /// </summary>
-        /// <param name="serviceKey"></param>
         /// <param name="requestId"></param>
-        public RequestInfo(string serviceKey, string requestId)
+        public RequestInfo(string requestId)
         {
-            ServiceKey = serviceKey;
             RequestId = requestId;
             Token = "?";
         }
 
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="callId"></param>
+        /// <param name="globalId"></param>
+        /// <param name="requestId"></param>
+        public RequestInfo(string callId, string globalId, string requestId) : this(requestId)
+        {
+            CallGlobalId = callId;
+            LocalGlobalId = globalId;
+            RequestId = requestId;
+            Token = "?";
+        }
         /// <summary>
         /// 当前的全局标识(本地)
         /// </summary>
         [JsonProperty("localGlobalId", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
-        public string LocalGlobalId;
+        public string LocalGlobalId { get; set; }
 
         /// <summary>
         /// 请求的全局标识(传递)
         /// </summary>
         [JsonProperty("callGlobalId", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
-        public String CallGlobalId { get; set; }
+        public string CallGlobalId { get; set; }
 
         /// <summary>
         /// 请求服务身份
         /// </summary>
-        [JsonProperty("serviceKe", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
-        public string ServiceKey { get; set; }
+        [JsonProperty("service", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
+        public string Service => GlobalContext.ServiceName;
 
         /// <summary>
         /// 全局请求标识（源头为用户请求）

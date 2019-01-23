@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+    
   </PropertyGroup>
   <PropertyGroup>
     <Description>扩展日志记录器(日志装饰器),可支持Log4等,默认实现一个简单的文本记录器</Description>
     <AssemblyTitle>Agebull.Common.Extend</AssemblyTitle>
-    <Version>2.3.2.71</Version>
+    <Version>2.3.3</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.Common.LogRecorder</AssemblyName>
     <PackageId>Agebull.Common.LogRecorder</PackageId>
@@ -42,12 +42,12 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.1|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
     <DefineConstants>TRACE;NETSTANDARD;RELEASE;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
 
@@ -70,6 +70,9 @@
     <Compile Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <None Remove="Properties\PublishProfiles\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="project.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />

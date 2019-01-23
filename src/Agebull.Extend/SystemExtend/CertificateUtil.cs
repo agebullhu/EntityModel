@@ -2,8 +2,6 @@
 // 整理用户：bull2
 // 建立时间：2012-08-13 5:35
 // 整理时间：2012-08-30 3:12
-#if !SILVERLIGHT
-
 #region
 
 using System ;
@@ -50,14 +48,15 @@ namespace Agebull.Common.Security.Certificate.X509
                     {
                         if(result != null)
                         {
-                            throw new ApplicationException(string.Format("There is more than one certificate found for subject Name {0}" , certInfo)) ;
+                            throw new ApplicationException(
+                                $"There is more than one certificate found for subject Name {certInfo}") ;
                         }
                         result = new X509Certificate2(cert) ;
                     }
                 }
                 if(result == null)
                 {
-                    throw new ApplicationException(string.Format("No certificate was found for subject Name {0}" , certInfo)) ;
+                    throw new ApplicationException($"No certificate was found for subject Name {certInfo}") ;
                 }
                 return result ;
             }
@@ -149,5 +148,3 @@ namespace Agebull.Common.Security.Certificate.X509
         }
     }
 }
-
-#endif

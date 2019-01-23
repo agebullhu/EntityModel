@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+    
   </PropertyGroup>
   <PropertyGroup>
     <Description>Rpc的基础抽象,同步支持WebApi与ZeroNet两种构架</Description>
     <AssemblyTitle>Agebull.Rpc.Abstractions</AssemblyTitle>
-    <Version>2.3.2.71</Version>
+    <Version>2.3.3</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.Rpc.Abstractions</AssemblyName>
     <PackageId>Agebull.Rpc.Abstractions</PackageId>
@@ -42,7 +42,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.1|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -62,7 +62,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Web" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />

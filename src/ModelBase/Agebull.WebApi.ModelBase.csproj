@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
+    
   </PropertyGroup>
   <PropertyGroup>
     <Description>业务模型支持</Description>
     <AssemblyTitle>Agebull.WebApi.ModelBase</AssemblyTitle>
-    <Version>2.3.2.71</Version>
+    <Version>2.3.0</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.WebApi.ModelBase</AssemblyName>
     <PackageId>Agebull.WebApi.ModelBase</PackageId>
@@ -65,13 +65,32 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Context\**" />
+    <Compile Remove="DataAccess\**" />
+    <Compile Remove="docs\**" />
     <Compile Remove="Interface\**" />
+    <Compile Remove="Ioc\**" />
+    <Compile Remove="Page\**" />
+    <Compile Remove="Type\**" />
+    <EmbeddedResource Remove="Context\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <EmbeddedResource Remove="docs\**" />
     <EmbeddedResource Remove="Interface\**" />
+    <EmbeddedResource Remove="Ioc\**" />
+    <EmbeddedResource Remove="Page\**" />
+    <EmbeddedResource Remove="Type\**" />
+    <None Remove="Context\**" />
+    <None Remove="DataAccess\**" />
+    <None Remove="docs\**" />
     <None Remove="Interface\**" />
+    <None Remove="Ioc\**" />
+    <None Remove="Page\**" />
+    <None Remove="Type\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="BusinessLogic\BusinessLogicByHistory.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="WebSeitch\AjaxResult.cs" />
   </ItemGroup>
 

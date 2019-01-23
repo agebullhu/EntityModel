@@ -1,5 +1,5 @@
 using System;
-#if !NETSTANDARD
+#if !NETCOREAPP
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

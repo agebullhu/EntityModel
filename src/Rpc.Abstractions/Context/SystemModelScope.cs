@@ -12,7 +12,7 @@ namespace Agebull.Common.Rpc
         private readonly bool _preIs;
         private readonly ILoginUserInfo _preUser;
 
-        SystemModelScope()
+        private SystemModelScope()
         {
             _preIs = GlobalContext.Current.IsSystemMode;
             if (_preIs) return;
