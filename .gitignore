@@ -24,3 +24,15 @@ Debug
 /src/Workflow
 /src/Test
 /src/System
+/src/BusinessLogic/docs/MySqlCommand.xml
+/src/BusinessLogic/docs/MySqlCommandBuilder.xml
+/src/BusinessLogic/docs/MySqlConnection.xml
+/src/BusinessLogic/docs/MySqlConnectionStringBuilder.xml
+/src/BusinessLogic/docs/MySqlDataAdapter.xml
+/src/BusinessLogic/docs/MySqlDataReader.xml
+/src/BusinessLogic/docs/MySqlException.xml
+/src/BusinessLogic/docs/MySqlHelper.xml
+/src/BusinessLogic/docs/MySqlParameter.xml
+/src/BusinessLogic/docs/MySqlParameterCollection.xml
+/src/BusinessLogic/docs/MySqlTransaction.xml
+/src/BusinessLogic/packages.config
