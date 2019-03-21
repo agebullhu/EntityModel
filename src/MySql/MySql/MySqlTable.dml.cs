@@ -14,9 +14,9 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Agebull.EntityModel.Common.ExtendEvents;
 using Newtonsoft.Json;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 
 #endregion
 

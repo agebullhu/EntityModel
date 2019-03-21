@@ -2,7 +2,7 @@
 using System.Data.Common;
 using System.Text;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Common.Extends;
+using Agebull.EntityModel.Interfaces;
 
 namespace Agebull.EntityModel.Redis
 {

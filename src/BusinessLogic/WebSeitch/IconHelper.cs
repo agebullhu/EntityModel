@@ -1,6 +1,6 @@
 using Agebull.EntityModel.Common;
 
-namespace Agebull.EntityModel.Common.WebUI
+namespace Agebull.EntityModel.EasyUI
 {
     /// <summary>
     /// ×´Ì¬Í¼±êÊ¶¸¨Öú

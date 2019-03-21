@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace Agebull.EntityModel.Common.WebUI
+namespace Agebull.EntityModel.EasyUI
 {
     /// <summary>
     /// 支持Easy combobox的键值对象

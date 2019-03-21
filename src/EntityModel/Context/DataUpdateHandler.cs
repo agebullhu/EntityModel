@@ -11,9 +11,9 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common.ExtendEvents;
+using Agebull.EntityModel.Common;
 
-namespace Agebull.EntityModel.Common
+namespace Agebull.EntityModel.Events
 {
     /// <summary>
     ///     数据更新处理器

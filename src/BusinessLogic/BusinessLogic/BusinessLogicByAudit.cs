@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 
-using Agebull.EntityModel.Common.Extends;
+using Agebull.EntityModel.Interfaces;
 using Agebull.EntityModel.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.Common.Context;

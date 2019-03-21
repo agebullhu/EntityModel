@@ -76,7 +76,7 @@
     <None Remove="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Agebull.Extend\Agebull.Common.Extend.Core.csproj" />
+    <ProjectReference Include="..\Extend\Agebull.Common.Extend.Core.csproj" />
   </ItemGroup>
 
 </Project>

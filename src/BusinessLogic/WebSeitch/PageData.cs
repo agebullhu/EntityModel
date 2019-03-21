@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Agebull.EntityModel.Common.WebUI
+namespace Agebull.EntityModel.EasyUI
 {
     /// <summary>
     ///     两层树形数据

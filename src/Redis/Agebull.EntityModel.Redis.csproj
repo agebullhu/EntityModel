@@ -66,7 +66,7 @@
 
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.0.519" />
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
+    <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>
 
 

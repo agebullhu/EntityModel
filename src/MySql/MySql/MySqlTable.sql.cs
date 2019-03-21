@@ -15,6 +15,7 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 
 #endregion
 

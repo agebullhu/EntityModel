@@ -1,9 +1,9 @@
 using System.Data;
 using Agebull.Common.Logging;
-
+using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 
-namespace Agebull.EntityModel.Common.ExtendEvents
+namespace Agebull.EntityModel.Events
 {
     /// <summary>
     /// 查询参数

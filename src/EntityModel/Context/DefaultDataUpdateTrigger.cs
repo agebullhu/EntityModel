@@ -1,9 +1,10 @@
+
+using Agebull.Common.Context;
+using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
-using Agebull.EntityModel.Common.Extends;
-using Agebull.Common.Context;
 
 namespace Agebull.EntityModel.Common
 {

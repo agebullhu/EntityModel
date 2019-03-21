@@ -12,7 +12,7 @@ using System;
 
 #endregion
 
-namespace Agebull.EntityModel.Common.Extends
+namespace Agebull.EntityModel.Interfaces
 {
 
     /// <summary>

@@ -103,7 +103,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
+    <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
     <ProjectReference Include="..\Redis\Agebull.EntityModel.Redis.csproj" />
   </ItemGroup>
 </Project>

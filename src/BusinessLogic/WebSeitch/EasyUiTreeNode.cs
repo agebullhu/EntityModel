@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace Agebull.EntityModel.Common.WebUI
+namespace Agebull.EntityModel.EasyUI
 {
     /// <summary>
     ///     EasyUi树数据的格式
