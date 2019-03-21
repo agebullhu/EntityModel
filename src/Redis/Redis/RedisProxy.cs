@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Ioc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.MySql;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.MySql;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// REDIS¥˙¿Ì¿‡

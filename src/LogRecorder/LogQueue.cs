@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using Agebull.Common.Logging;
 
 namespace Agebull.Common
@@ -23,7 +21,7 @@ namespace Agebull.Common
         /// </summary>
         public List<RecordInfo> Line2 = new List<RecordInfo>();
 
-        private bool UseOnce = true;
+        private bool _useOnce = true;
 
         /// <summary>
         /// 加入队列
@@ -31,7 +29,7 @@ namespace Agebull.Common
         /// <param name="t"></param>
         public void Push(RecordInfo t)
         {
-            if (UseOnce)
+            if (_useOnce)
                 Line1.Add(t);
             else
                 Line2.Add(t);
@@ -42,8 +40,10 @@ namespace Agebull.Common
         /// </summary>
         public List<RecordInfo> Switch()
         {
-            UseOnce = !UseOnce;
-            return UseOnce ? Line2 : Line1;
+            _useOnce = !_useOnce;
+            return _useOnce ? Line2 : Line1;
         }
+
+        public bool IsEmpty => Line2.Count == 0 && Line1.Count == 0;
     }
 }

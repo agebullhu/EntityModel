@@ -21,3 +21,6 @@ Debug
 /src/Lib
 /nuget
 /src/ModelBase/docs
+/src/Workflow
+/src/Test
+/src/System

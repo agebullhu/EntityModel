@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
-using Gboxt.Common.DataModel;
+using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -656,20 +656,22 @@ namespace Agebull.Common.Logging
             {
                 type = LogType.Message;
             }
-
-            RecordInfos.Push(new RecordInfo
-            {
-                Local = InRecording,
-                RequestID = GetRequestId(),
-                Machine = GetMachineName(),
-                User = GetUserName(),
-                Name = name,
-                Type = type,
-                Message = msg,
-                Time = DateTime.Now,
-                ThreadID = Thread.CurrentThread.ManagedThreadId,
-                TypeName = typeName ?? LogEnumHelper.TypeToString(type)
-            });
+            if (State == LogRecorderStatus.Shutdown || level < Level)
+                SystemTrace(level, name, msg);
+            else
+                RecordInfos.Push(new RecordInfo
+                {
+                    Local = InRecording,
+                    RequestID = GetRequestId(),
+                    Machine = GetMachineName(),
+                    User = GetUserName(),
+                    Name = name,
+                    Type = type,
+                    Message = msg,
+                    Time = DateTime.Now,
+                    ThreadID = Thread.CurrentThread.ManagedThreadId,
+                    TypeName = typeName ?? LogEnumHelper.TypeToString(type)
+                });
         }
 
         /// <summary>
@@ -679,7 +681,7 @@ namespace Agebull.Common.Logging
         {
             SystemTrace(LogLevel.System, "日志开始");
             int cnt = 0;
-            while (State != LogRecorderStatus.Shutdown)
+            while (State != LogRecorderStatus.Shutdown || !RecordInfos.IsEmpty)
             {
                 //Thread.Sleep(10);//让子弹飞一会
                 if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
@@ -714,7 +716,7 @@ namespace Agebull.Common.Logging
                     SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
                 }
 
-                if (++cnt != 24)
+                if (++cnt < 24)
                     continue;
                 GC.Collect();
                 cnt = 0;
@@ -728,13 +730,10 @@ namespace Agebull.Common.Logging
         {
             try
             {
-                if (Listener != null)
+                Listener?.Trace(info);
+                if (TraceToConsole)
                 {
-                    Listener.Trace(info);
-                }
-                else if (TraceToConsole && info.Type.Level() >= Level)
-                {
-                    SystemTrace(info.Type.Level(), info.TypeName, info.Message);
+                    SystemTrace(info.Type.Level(), info.Name, info.Message);
                 }
             }
             catch (Exception ex)
@@ -753,6 +752,7 @@ namespace Agebull.Common.Logging
         {
             lock (BaseRecorder)
             {
+                var color = Console.ForegroundColor;
                 switch (level)
                 {
                     case LogLevel.Warning:
@@ -764,13 +764,16 @@ namespace Agebull.Common.Logging
                     case LogLevel.Error:
                         Console.ForegroundColor = ConsoleColor.Red;
                         break;
-                    default:
-                        Console.ForegroundColor = ConsoleColor.Blue;
+                    case LogLevel.Debug:
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        break;
+                    case LogLevel.Trace:
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         break;
                 }
-                Console.Write($"{DateTime.Now} [{title}]");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(arg.LinkToString(" > "));
+                Console.Write($"{DateTime.Now:O} [{title}]");
+                Console.ForegroundColor = color;
+                Console.WriteLine(arg.LinkToString(" | "));
             }
         }
 

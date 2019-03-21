@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
-using Agebull.Common.DataModel.Redis;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.Extends;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Common.Extends;
 
-namespace Agebull.Common.DataModel
+namespace Agebull.EntityModel.Redis
 {
 
     /// <summary>

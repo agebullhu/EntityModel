@@ -69,7 +69,7 @@ namespace System.Linq
         ///   栈底为固定值,即保证最后栈中总有一个值
         /// </summary>
         /// <remarks>
-        ///   当调用了SetDefault后为真
+        ///   当调用了SetFix后为真
         /// </remarks>
         public bool FixStackBottom { get; private set; }
 
@@ -120,10 +120,6 @@ namespace System.Linq
         {
             using (ThreadLockScope.Scope(this))
             {
-                if (Equals(value, default(T)))
-                {
-                    return;
-                }
                 IsEmpty = false;
                 _value.Add(value);
                 Current = value;

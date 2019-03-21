@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Agebull.Common.DataModel
+namespace Agebull.EntityModel.Common
 {
     /// <summary>
     /// 数字与BYTE的转换辅助对象

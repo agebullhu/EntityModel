@@ -4,12 +4,12 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>2.3.3</Version>
+    <Version>2.4.0</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
@@ -24,7 +24,7 @@
     <PackageReleaseNotes>Agebull.EntityModel.Redis</PackageReleaseNotes>
     <AssemblyName>Agebull.EntityModel.Redis</AssemblyName>
     <PackageId>Agebull.EntityModel.Redis</PackageId>
-    <Product>Agebull.EntityModel.Redis</Product>
+    <Product>Agebull.EntityModel</Product>
     <PackageTags>Agebull.EntityModel.Redis</PackageTags>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -53,7 +53,7 @@
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="NServiceKit.Text" Version="1.0.10" />
     <PackageReference Include="NServiceKit.Redis" Version="1.0.20" />
   </ItemGroup>
@@ -65,7 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.519" />
     <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>
 

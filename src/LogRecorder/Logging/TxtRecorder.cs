@@ -45,7 +45,8 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 每日一个文件夹吗
         /// </summary>
-        public static bool dayFolder { get; set; }
+        public static bool DayFolder { get; set; }
+
         /// <summary>
         /// 是否初始化成功
         /// </summary>
@@ -71,7 +72,7 @@ namespace Agebull.Common.Logging
                 }
                 LogPath = cfgpath;
                 SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
-                dayFolder = sec.GetBool("dayFolder", true);
+                DayFolder = sec.GetBool("dayFolder", true);
             }
             catch (Exception ex)
             {
@@ -242,7 +243,7 @@ namespace Agebull.Common.Logging
             if (day == _recordTimePoint)
                 return;
             pointTime = DateTime.Today;
-            if (dayFolder)
+            if (DayFolder)
             {
                 IOHelper.CheckPath(LogPath, $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}");
             }
@@ -313,7 +314,7 @@ namespace Agebull.Common.Logging
             do
             {
                 info.Index++;
-                var fileName = dayFolder
+                var fileName = DayFolder
                     ? Path.Combine(LogPath,
                         $"{pointTime.Year}{pointTime.Month:D2}{pointTime.Day:D2}",
                         $"{sub}.{info.Index:D3}.log")

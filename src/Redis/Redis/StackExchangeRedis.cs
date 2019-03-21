@@ -4,11 +4,11 @@ using Agebull.Common.Configuration;
 using System.Diagnostics;
 using System.Threading;
 using Agebull.Common.Logging;
-using Gboxt.Common.DataModel;
+using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// REDIS¥˙¿Ì¿‡

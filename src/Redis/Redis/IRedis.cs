@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gboxt.Common.DataModel;
+using Agebull.EntityModel.Common;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// Redis操作接口
