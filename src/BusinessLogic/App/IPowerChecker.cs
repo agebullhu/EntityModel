@@ -14,7 +14,7 @@ using Agebull.Common.OAuth;
 
 #endregion
 
-namespace Agebull.Common.WebApi.Auth
+namespace Agebull.Common.OAuth
 {
     /// <summary>
     ///     权限操作后期注入对象

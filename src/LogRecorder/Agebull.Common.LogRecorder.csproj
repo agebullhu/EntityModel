@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>扩展日志记录器(日志装饰器),默认实现一个简单的文本记录器</Description>
     <AssemblyTitle>Agebull.Common.LogRecorder</AssemblyTitle>
-    <Version>2.4.0</Version>
+    <Version>2.4.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>

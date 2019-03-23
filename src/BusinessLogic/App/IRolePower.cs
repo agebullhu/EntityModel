@@ -6,7 +6,7 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-namespace Agebull.Common.WebApi.Auth
+namespace Agebull.Common.OAuth
 {
     /// <summary>
     /// 角色权限类型

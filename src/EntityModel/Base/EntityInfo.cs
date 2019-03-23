@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Agebull.Common.WebApi
+namespace Agebull.EntityModel
 {
     /// <summary>
     ///     实体信息

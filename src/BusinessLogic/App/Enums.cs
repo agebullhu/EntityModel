@@ -1,4 +1,5 @@
-using Agebull.Common.WebApi.Auth;
+
+using Agebull.Common.OAuth;
 
 namespace Agebull.EntityModel.Common
 {
