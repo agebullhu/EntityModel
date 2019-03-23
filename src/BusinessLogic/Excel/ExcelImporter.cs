@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using Agebull.EntityModel.BusinessLogic.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
@@ -19,6 +20,496 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
 #endregion
+
+namespace Agebull.EntityModel.Excel
+{
+    /// <summary>
+    ///     Excel导入类
+    /// </summary>
+    public class ExcelImporter<TData>
+        where TData : EditDataObject, IIdentityData, new()
+    {
+        /// <summary>
+        ///     分析出的字段名称(列号对应的字段)
+        /// </summary>
+        protected Dictionary<int, string> ColumnFields;
+
+        /// <summary>
+        ///     分析出的字段名称(字段对应的列号)
+        /// </summary>
+        protected Dictionary<string, int> ColumnFields2;
+
+        /// <summary>
+        ///     内部字段与Excel列的对照表
+        /// </summary>
+        public Dictionary<string, string> FieldMap { get; set; }
+
+        /// <summary>
+        ///     最大列
+        /// </summary>
+        public int MaxColumn { get; private set; }
+
+        /// <summary>
+        ///     当前导入的工作表
+        /// </summary>
+        public ISheet Sheet { get; private set; }
+
+        /// <summary>
+        ///     准备导入Excel
+        /// </summary>
+        /// <param name="sheet">导入所在的工作表</param>
+        /// <param name="map">内部字段与Excel列的对照表</param>
+        /// <returns>导入数量</returns>
+        public bool Proper(ISheet sheet, Dictionary<string, string> map)
+        {
+            FieldMap = map;
+            Sheet = sheet;
+            if (!CheckFieldMaps())
+            {
+                return false;
+            }
+
+            ColumnFields2 = new Dictionary<string, int>();
+            foreach (var mf in ColumnFields)
+            {
+                ColumnFields2.Add(mf.Value, mf.Key);
+            }
+            return Initiate();
+        }
+
+        /// <summary>
+        ///     构造并初始化数据对象
+        /// </summary>
+        /// <returns></returns>
+        protected virtual TData CreateEntity(IRow row)
+        {
+            return new TData();
+        }
+
+        /// <summary>
+        ///     初始化
+        /// </summary>
+        protected virtual bool Initiate()
+        {
+            return true;
+        }
+
+
+        /// <summary>
+        ///     数据取到后的处理
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool OnRead(TData data, IRow row,out string msg)
+        {
+            msg = null;
+            return true;
+        }
+
+        /// <summary>
+        ///     导入Excel
+        /// </summary>
+        /// <param name="action">读到数据时的处理回调</param>
+        /// <returns>导入数量</returns>
+        public bool ImportExcel(Func<TData,int, string> action)
+        {
+            var success = true;
+            var emptyRow = 0;
+            for (var line = 1; line < short.MaxValue; line++)
+            {
+                switch (ReadRow(line, out var data, out var row))
+                {
+                    case -1:
+                        if (++emptyRow > 2)
+                            return success;
+                        break;
+                    case 0:
+                        var info = data.Validate();
+                        if (info.Succeed)
+                        {
+                            var msg = action(data, line);
+                            if (!string.IsNullOrWhiteSpace(msg))
+                            {
+                                success = false;
+                                row.SafeGetCell(MaxColumn + 1).SetCellValue(msg);
+                                row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
+                            }
+                        }
+                        else
+                        {
+                            success = false;
+                            WriteCellState(line, MaxColumn, "错误", true);
+                            StringBuilder msg = new StringBuilder();
+                            foreach (var item in info.Items)
+                            {
+                                if (ColumnFields2.TryGetValue(item.Name, out var col))
+                                {
+                                    WriteCellState(line, col, item.Message, true);
+                                    msg.AppendFormat("{0}:{1}\r\n", item.Caption, item.Message);
+                                }
+                                else
+                                    msg.AppendFormat("字段{0}未提供导入内容且校验不通过:{1}\r\n", item.Caption, item.Message);
+                            }
+                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                            row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
+                            row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
+                        }
+                        break;
+                    default:
+                        success = false;
+                        break;
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
+        ///     导入Excel
+        /// </summary>
+        /// <returns>导入数量</returns>
+        public bool ImportExcel()
+        {
+            var success = true;
+            var emptyRow = 0;
+            for (var line = 1; line < short.MaxValue; line++)
+            {
+                switch (ReadRow(line, out var data,out var row))
+                {
+                    case -1:
+                        if (++emptyRow > 2)
+                            return success;
+                        break;
+                    case 0:
+                        var info = data.Validate();
+                        if (info.Succeed)
+                        {
+                            if (!OnRead(data, row, out var msg))
+                            {
+                                success = false;
+                                row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                                row.SafeGetCell(MaxColumn+1).SetCellValue(msg);
+                                row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
+                            }
+                        }
+                        else
+                        {
+                            success = false;
+                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                            var msg = new StringBuilder();
+                            foreach (var item in info.Items)
+                            {
+                                if (ColumnFields2.TryGetValue(item.Name, out var col))
+                                {
+                                    WriteCellState(line, col, item.Message, true);
+                                    msg.AppendFormat("{0}:{1}\r\n", item.Caption, item.Message);
+                                }
+                                else
+                                    msg.AppendFormat("字段{0}未提供导入内容且校验不通过:{1}\r\n", item.Caption, item.Message);
+                            }
+                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                            row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
+                            row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
+                        }
+                        break;
+                    default:
+                        success = false;
+                        break;
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
+        ///     读取一条数据
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="entity"></param>
+        /// <param name="row"></param>
+        /// <returns>是否成功读取</returns>
+        private int ReadRow(int line, out TData entity,out IRow row)
+        {
+            row = Sheet.GetRow(line);
+            if (row == null || row.Cells.Count == 0)
+            {
+                entity = null;
+                return -1;
+            }
+            entity = CreateEntity(row);
+            return ReadRowFields(row, entity) ? 1 : 0;
+        }
+
+        /// <summary>
+        ///     读取一行的各个字段
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="entity"></param>
+        private bool ReadRowFields(IRow row, TData entity)
+        {
+            bool success = true;
+            foreach (var column in ColumnFields.Keys)
+            {
+                if (!GetCellValue(row, column, out var cell, out var value))
+                {
+                    success = false;
+                    continue;
+                }
+
+                if (value == "#REF!" || value == "#N/A")
+                {
+                    WriteCellState(row, column, "公式错误,使用默认值", false);
+                    success = false;
+                }
+                else
+                {
+                    SetValue(entity, cell.ColumnIndex, value, row);
+                }
+            }
+
+            return success;
+        }
+        /// <summary>
+        /// 取一个单元格的值
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="cell"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private bool GetCellValue(IRow row, int column, out ICell cell, out string value)
+        {
+            cell = row.GetCell(column);
+            if (cell == null)
+            {
+                value = null;
+                return true;
+            }
+            var style = Sheet.Workbook.CreateCellStyle();
+            style.CloneStyleFrom(cell.CellStyle);
+            style.FillForegroundColor = HSSFColor.White.Index;
+            cell.CellStyle = style;
+            switch (cell.CellType)
+            {
+                case CellType.Error:
+                    WriteCellState(row, column, "数据错误,使用默认值", false);
+                    value = null;
+                    return false;
+                case CellType.Blank:
+                    value = null;
+                    break;
+                case CellType.Numeric:
+                    value = GetNumericValue(cell, cell.NumericCellValue);
+                    break;
+                case CellType.String:
+                    value = cell.StringCellValue;
+                    break;
+                case CellType.Boolean:
+                    value = cell.BooleanCellValue.ToString();
+                    break;
+                case CellType.Formula: //公式列
+                    var e = new XSSFFormulaEvaluator(Sheet.Workbook);
+                    var vc = e.Evaluate(cell);
+                    switch (vc.CellType)
+                    {
+                        case CellType.Error:
+                            WriteCellState(row, column, "数据错误,使用默认值", false);
+                            value = null;
+                            return false;
+                        case CellType.Blank:
+                            value = null;
+                            return false;
+                        case CellType.Numeric:
+                            value = GetNumericValue(cell, vc.NumberValue);
+                            break;
+                        case CellType.String:
+                            value = vc.StringValue?.Trim();
+                            break;
+                        case CellType.Boolean:
+                            value = vc.BooleanValue.ToString();
+                            break;
+                        default:
+                            value = vc.StringValue?.Trim();
+                            break;
+                    }
+                    break;
+                default:
+                    cell.SetCellType(CellType.String);
+                    value = cell.StringCellValue?.Trim();
+                    break;
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///     设置字段值
+        /// </summary>
+        /// <param name="data">数据类对象</param>
+        /// <param name="column">列号</param>
+        /// <param name="value">读取出的文本值</param>
+        /// <param name="row">当前行</param>
+        protected virtual void SetValue(TData data, int column, string value, IRow row)
+        {
+            var field = ColumnFields[column];
+            try
+            {
+                data.SetValue(field, value);
+            }
+            catch
+            {
+                WriteCellState(row, column, $"值[{value}]写入到字段[{field}]失败。", true);
+            }
+        }
+
+        #region 列与字段对应分析
+
+        /// <summary>
+        ///     分析得出列号与字段的对应图
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool CheckFieldMaps()
+        {
+            var row = Sheet.GetRow(0);
+            ColumnFields = new Dictionary<int, string>();
+            var emptyCnt = 0;
+            MaxColumn = 0;
+            for (var column = 0; column < short.MaxValue; column++)
+            {
+                var cell = row.GetCell(column);
+                if (cell == null)
+                {
+                    if (++emptyCnt > 3)
+                    {
+                        break;
+                    }
+                    continue;
+                }
+                MaxColumn = column;
+                if (cell.CellType != CellType.String)
+                {
+                    cell.SetCellType(CellType.String);
+                }
+                var field = cell.StringCellValue;
+                if (string.IsNullOrWhiteSpace(field))
+                {
+                    if (++emptyCnt > 3)
+                    {
+                        break;
+                    }
+                    continue;
+                }
+                if (emptyCnt > 0)
+                {
+                    WriteCellState(row, column, "字段名字为空白,导入直接中止", true);
+                    return false;
+                }
+
+                if (!FieldMap.TryGetValue(field.Trim(), out var innerFile))
+                {
+                    WriteCellState(row, column, $"字段名字{field}映射关系不正确,导入直接中止", true);
+                    return false;
+                }
+                emptyCnt = 0;
+                ColumnFields.Add(cell.ColumnIndex, innerFile);
+            }
+            MaxColumn += 1;
+            {
+                var cell = row.GetCell(MaxColumn);
+                cell.SetCellValue("校验状态");
+                cell = row.GetCell(MaxColumn + 1);
+                cell.SetCellValue("校验信息");
+            }
+            return true;
+        }
+
+        #endregion
+
+        #region 辅助方法
+
+        /// <summary>
+        ///     批注生成对象
+        /// </summary>
+        private IDrawing _drawingPatriarch;
+
+        /// <summary>
+        ///     通过批注写入单元格的导入状态
+        /// </summary>
+        /// <param name="line">行号</param>
+        /// <param name="col">列号</param>
+        /// <param name="message">状态消息</param>
+        /// <param name="isError">是否错误(否则显示为警告)</param>
+        protected void WriteCellState(int line, int col, string message, bool isError)
+        {
+            WriteCellState(Sheet.GetRow(line), col, message, isError);
+        }
+
+        /// <summary>
+        ///     通过批注写入单元格的导入状态
+        /// </summary>
+        /// <param name="row">行</param>
+        /// <param name="col">列号</param>
+        /// <param name="message">状态消息</param>
+        /// <param name="isError">是否错误(否则显示为警告)</param>
+        protected void WriteCellState(IRow row, int col, string message, bool isError)
+        {
+            var cell = row.SafeGetCell(col);
+            if (_drawingPatriarch == null)
+            {
+                _drawingPatriarch = Sheet.CreateDrawingPatriarch();
+            }
+            var msg = $"{(isError ? "错误" : "警告")}\r\n{message}";
+            var comment = _drawingPatriarch.CreateCellComment(new XSSFClientAnchor(0, 0, 1, 1, col, row.RowNum, col + 3, row.RowNum + 3));
+            comment.String = new XSSFRichTextString(msg);
+            comment.Column = col;
+            comment.Row = row.RowNum;
+            cell.CellComment = comment;
+            cell.CellStyle.FillForegroundColor = isError ? HSSFColor.Red.Index : HSSFColor.Yellow.Index;
+        }
+
+        /// <summary>
+        ///     写入行的导入状态
+        /// </summary>
+        /// <param name="line">行号</param>
+        /// <param name="succeed">是否错误(否则显示为警告)</param>
+        /// <param name="message">状态消息</param>
+        protected void WriteRowState(int line, bool succeed, string message)
+        {
+            WriteRowState(Sheet.GetRow(line), succeed, message);
+        }
+
+        /// <summary>
+        ///     写入行的导入状态
+        /// </summary>
+        /// <param name="row">行</param>
+        /// <param name="succeed">是否错误(否则显示为警告)</param>
+        /// <param name="message">状态消息</param>
+        protected void WriteRowState(IRow row, bool succeed, string message)
+        {
+            if (!succeed)
+            {
+                row.SetCellValue("错误", MaxColumn);
+            }
+            if (!string.IsNullOrEmpty(message))
+            {
+                row.SetCellValue(message, MaxColumn + 1);
+            }
+        }
+
+        /// <summary>
+        ///     得数字类型的值(日期或数字)
+        /// </summary>
+        /// <param name="cell">单元格</param>
+        /// <param name="vl">要取的值</param>
+        /// <returns>数字类型的值(日期或数字)</returns>
+        protected static string GetNumericValue(ICell cell, double vl)
+        {
+            if (DateUtil.IsCellDateFormatted(cell))
+            {
+                return ExcelHelper.ExcelBaseDate.AddDays(vl).ToString("s");
+            }
+            return (decimal)vl == (int)vl ? ((int)vl).ToString() : vl.ToString("s");
+        }
+
+        #endregion
+    }
+}
 
 namespace Agebull.EntityModel.Excel.MySql
 {
@@ -39,6 +530,11 @@ namespace Agebull.EntityModel.Excel.MySql
         protected Dictionary<int, string> ColumnFields;
 
         /// <summary>
+        ///     内部字段与Excel列的对照表
+        /// </summary>
+        public Dictionary<string, string> FieldMap;
+
+        /// <summary>
         ///     当前导入的工作表
         /// </summary>
         protected ISheet Sheet;
@@ -47,12 +543,13 @@ namespace Agebull.EntityModel.Excel.MySql
         ///     导入Excel
         /// </summary>
         /// <param name="sheet">导入所在的工作表</param>
+        /// <param name="map">内部字段与Excel列的对照表</param>
         /// <returns>导入数量</returns>
-        public int ImportExcel(ISheet sheet)
+        public int ImportExcel(ISheet sheet, Dictionary<string, string> map)
         {
-
             Debug.WriteLine($"导入工作表名为:{sheet.SheetName}");
 
+            FieldMap = map;
             Sheet = sheet;
             Initiate();
 
@@ -113,7 +610,7 @@ namespace Agebull.EntityModel.Excel.MySql
                 return false;
             }
             var vmsg = entity.Validate();
-            if (!vmsg.succeed)
+            if (!vmsg.Succeed)
             {
                 WriteRowState(row, false, "数据不合格,不导入。" + "\r\n" + vmsg);
                 return false;
@@ -142,9 +639,7 @@ namespace Agebull.EntityModel.Excel.MySql
         {
             foreach (var field in ColumnFields.Keys)
             {
-                ICell cell;
-                string value;
-                if (!GetCellValue(row, field, out cell, out value))
+                if (!GetCellValue(row, field, out var cell, out var value))
                     continue;
 
                 if (value == "#REF!" || value == "#N/A")
@@ -243,7 +738,7 @@ namespace Agebull.EntityModel.Excel.MySql
             {
                 data.SetValue(field, value);
             }
-            catch 
+            catch
             {
                 WriteCellState(row, column, $"值[{value}]写入到字段[{field}]失败。", true);
             }
@@ -364,7 +859,7 @@ namespace Agebull.EntityModel.Excel.MySql
             comment.Column = col;
             comment.Row = row.RowNum;
             cell.CellComment = comment;
-            //cell.CellStyle.FillForegroundColor = isError ? HSSFColor.Red.Index : HSSFColor.Yellow.Index;
+            cell.CellStyle.FillForegroundColor = isError ? HSSFColor.Red.Index : HSSFColor.Yellow.Index;
         }
 
         /// <summary>
@@ -388,7 +883,7 @@ namespace Agebull.EntityModel.Excel.MySql
         {
             if (!succeed)
             {
-                row.SetCellValue( "错误", MaxColumn);
+                row.SetCellValue("错误", MaxColumn);
             }
             if (!string.IsNullOrEmpty(message))
             {

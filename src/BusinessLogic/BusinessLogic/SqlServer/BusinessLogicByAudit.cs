@@ -590,7 +590,7 @@ namespace Agebull.EntityModel.BusinessLogic.SqlServer
                 return false;
             }
             var result = data.Validate();
-            if (result.succeed) return ValidateExtend(data);
+            if (result.Succeed) return ValidateExtend(data);
             putError?.Invoke(result);
             GlobalContext.Current.LastMessage = result.ToString();
             return false;

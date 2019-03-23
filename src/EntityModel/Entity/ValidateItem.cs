@@ -55,10 +55,11 @@ namespace Agebull.EntityModel.Common
         public string Id { get; set; }
 
         /// <summary>
-        /// 类型: 0没错 1警告 2错误
+        /// 是否正确
         /// </summary>
         [JsonProperty("succeed", NullValueHandling = NullValueHandling.Ignore)]
-        public bool succeed => Items.Count == 0 || Items.All(p => p.succeed);
+        public bool Succeed => Items.Count == 0 || Items.All(p => p.Succeed || p.Warning);
+
         /// <summary>
         /// 节点
         /// </summary>
@@ -76,7 +77,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public override string ToString()
         {
-            return succeed ? "" : Items.Select(p => p.Message).LinkToString('。');
+            return Succeed ? "" : Items.Select(p => p.Message).LinkToString('。');
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public string ToJson()
         {
-            return succeed ? "{}" : Items.Select(p => $"\"{p.Name}\":\"{p.Message }\"").LinkToString("{", ",", "}");
+            return Succeed ? "{}" : Items.Select(p => $"\"{p.Name}\":\"{p.Message.Replace('\"', '\'') }\"").LinkToString("{", ",", "}");
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace Agebull.EntityModel.Common
         {
             Items.Add(new ValidateItem
             {
-                succeed = false,
+                Succeed = false,
                 Name = field,
                 Caption = caption,
                 Message = "不能为空"
@@ -121,7 +122,7 @@ namespace Agebull.EntityModel.Common
         {
             Items.Add(new ValidateItem
             {
-                succeed = false,
+                Succeed = false,
                 Name = field,
                 Caption = caption,
                 Message = message
@@ -137,7 +138,7 @@ namespace Agebull.EntityModel.Common
         {
             Items.Add(new ValidateItem
             {
-                warning = true,
+                Warning = true,
                 Name = field,
                 Caption = caption,
                 Message = message
@@ -155,13 +156,13 @@ namespace Agebull.EntityModel.Common
         /// 正确
         /// </summary>
         [JsonProperty("succeed", NullValueHandling = NullValueHandling.Ignore)]
-        public bool succeed { get; set; }
+        public bool Succeed { get; set; }
 
         /// <summary>
         /// 1警告
         /// </summary>
         [JsonProperty("warning", NullValueHandling = NullValueHandling.Ignore)]
-        public bool warning { get; set; }
+        public bool Warning { get; set; }
 
         /// <summary>
         /// 字段名称
