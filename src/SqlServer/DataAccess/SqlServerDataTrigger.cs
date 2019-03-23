@@ -4,8 +4,9 @@ using Agebull.EntityModel.Interfaces;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
+using Agebull.EntityModel.Common;
 
-namespace Agebull.EntityModel.Common
+namespace Agebull.EntityModel.SqlServer
 {
     /// <summary>
     /// 版本数据更新触发器

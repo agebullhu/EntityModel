@@ -187,6 +187,28 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// </summary>
         /// <param name="condition">数据条件</param>
         /// <param name="order">排序字段</param>
+        /// <param name="desc">是否反序</param>
+        /// <returns>载入的SQL语句</returns>
+        private StringBuilder CreateOnceSql(string condition, string order,bool desc)
+        {
+            var sql = new StringBuilder();
+            sql.AppendLine(@"SELECT TOP 1");
+            sql.AppendLine(ContextLoadFields);
+            sql.AppendFormat(@"FROM {0}", ContextReadTable);
+            sql.AppendLine(ContitionSqlCode(condition));
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                sql.AppendLine();
+                sql.Append($"ORDER BY {order}");
+            }
+            sql.Append(";");
+            return sql;
+        }
+        /// <summary>
+        ///     生成载入的SQL语句
+        /// </summary>
+        /// <param name="condition">数据条件</param>
+        /// <param name="order">排序字段</param>
         /// <returns>载入的SQL语句</returns>
         private StringBuilder CreateLoadSql(string condition, string order)
         {

@@ -121,6 +121,15 @@ namespace Agebull.EntityModel.SqlServer
         }
 
         /// <summary>
+        ///     生成命令
+        /// </summary>
+        protected SqlCommand CreateOnceCommand(string condition, string order, bool desc, params SqlParameter[] args)
+        {
+            var sql = CreateOnceSql(condition, order, desc);
+            return DataBase.CreateCommand(sql.ToString(), args);
+        }
+        
+        /// <summary>
         ///     生成载入命令
         /// </summary>
         /// <param name="order">排序字段</param>

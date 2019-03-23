@@ -923,7 +923,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     ∑÷“≥∂¡»°
         /// </summary>
-        public ApiPageData<TData>  Page(int page, int limit, Expression<Func<TData, bool>> lambda)
+        public ApiPageData<TData> Page(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
             return Page(page, limit, KeyField, false, convert.ConditionSql, convert.Parameters);
@@ -1210,107 +1210,107 @@ namespace Agebull.EntityModel.SqlServer
                             pa.Value = item.Value;
                             break;
                         case DbType.Boolean:
-                        {
-                            pa.Value = bool.TryParse(item.Value, out var vl) && vl;
-                        }
+                            {
+                                pa.Value = bool.TryParse(item.Value, out var vl) && vl;
+                            }
                             break;
                         case DbType.Byte:
-                        {
-                            if (Byte.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = (Byte)0;
-                        }
+                            {
+                                if (Byte.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (Byte)0;
+                            }
                             break;
                         case DbType.VarNumeric:
                         case DbType.Decimal:
                         case DbType.Currency:
-                        {
-                            if (decimal.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = (decimal)0;
-                        }
+                            {
+                                if (decimal.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (decimal)0;
+                            }
                             break;
                         case DbType.Time:
                         case DbType.DateTime2:
                         case DbType.DateTime:
                         case DbType.Date:
-                        {
-                            if (DateTime.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (DateTime.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.DateTimeOffset:
-                        {
-                            if (TimeSpan.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (TimeSpan.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Double:
-                        {
-                            if (double.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (double.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Guid:
-                        {
-                            if (Guid.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (Guid.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int16:
-                        {
-                            if (short.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (short.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int32:
-                        {
-                            if (Int32.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (Int32.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int64:
-                        {
-                            if (Int64.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (Int64.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.SByte:
                             break;
                         case DbType.Single:
-                        {
-                            if (Single.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (Single.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt16:
-                        {
-                            if (UInt16.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (UInt16.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt32:
-                        {
-                            if (UInt32.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (UInt32.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt64:
-                        {
-                            if (UInt64.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (UInt64.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                     }
                 args.Add(pa);
@@ -1542,19 +1542,17 @@ namespace Agebull.EntityModel.SqlServer
         protected TData LoadFirstInner(string condition, SqlParameter[] args)
         {
             TData entity = null;
-
+            using (var cmd = CreateOnceCommand(condition, KeyField, true, args))
             {
-                using (var cmd = CreateLoadCommand(condition, args))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            entity = LoadEntity(reader);
-                    }
+                    if (reader.Read())
+                        entity = LoadEntity(reader);
                 }
-                if (entity != null)
-                    entity = EntityLoaded(entity);
             }
+
+            if (entity != null)
+                entity = EntityLoaded(entity);
             return entity;
         }
 
@@ -1573,19 +1571,17 @@ namespace Agebull.EntityModel.SqlServer
         protected TData LoadLastInner(string condition, SqlParameter[] args)
         {
             TData entity = null;
-
+            using (var cmd = CreateOnceCommand(condition, KeyField, false, args))
             {
-                using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            entity = LoadEntity(reader);
-                    }
+                    if (reader.Read())
+                        entity = LoadEntity(reader);
                 }
-                if (entity != null)
-                    entity = EntityLoaded(entity);
             }
+
+            if (entity != null)
+                entity = EntityLoaded(entity);
             return entity;
         }
 

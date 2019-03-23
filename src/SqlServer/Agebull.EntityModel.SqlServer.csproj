@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>数据实体SqlServer版本</Description>
     <AssemblyTitle>Agebull.EntityModel.SqlServer</AssemblyTitle>
-    <Version>2.4.0.3</Version>
+    <Version>2.4.0.5</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using Agebull.Common.Logging;
 using Agebull.EntityModel.BusinessLogic.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
@@ -58,13 +59,11 @@ namespace Agebull.EntityModel.Excel
         ///     准备导入Excel
         /// </summary>
         /// <param name="sheet">导入所在的工作表</param>
-        /// <param name="map">内部字段与Excel列的对照表</param>
         /// <returns>导入数量</returns>
-        public bool Proper(ISheet sheet, Dictionary<string, string> map)
+        public bool Prepare(ISheet sheet)
         {
-            FieldMap = map;
             Sheet = sheet;
-            if (!CheckFieldMaps())
+            if (!Initiate() || !CheckFieldMaps())
             {
                 return false;
             }
@@ -74,7 +73,30 @@ namespace Agebull.EntityModel.Excel
             {
                 ColumnFields2.Add(mf.Value, mf.Key);
             }
-            return Initiate();
+            return true;
+        }
+        /// <summary>
+        ///     准备导入Excel
+        /// </summary>
+        /// <param name="sheet">导入所在的工作表</param>
+        /// <param name="map">内部字段与Excel列的对照表</param>
+        /// <returns>导入数量</returns>
+        public bool Prepare(ISheet sheet, Dictionary<string, string> map)
+        {
+            FieldMap = map;
+            Sheet = sheet;
+            Sheet = sheet;
+            if (!Initiate() || !CheckFieldMaps())
+            {
+                return false;
+            }
+
+            ColumnFields2 = new Dictionary<string, int>();
+            foreach (var mf in ColumnFields)
+            {
+                ColumnFields2.Add(mf.Value, mf.Key);
+            }
+            return true;
         }
 
         /// <summary>
@@ -99,7 +121,7 @@ namespace Agebull.EntityModel.Excel
         ///     数据取到后的处理
         /// </summary>
         /// <returns></returns>
-        protected virtual bool OnRead(TData data, IRow row,out string msg)
+        protected virtual bool OnRead(TData data, IRow row, out string msg)
         {
             msg = null;
             return true;
@@ -110,54 +132,29 @@ namespace Agebull.EntityModel.Excel
         /// </summary>
         /// <param name="action">读到数据时的处理回调</param>
         /// <returns>导入数量</returns>
-        public bool ImportExcel(Func<TData,int, string> action)
+        public bool ImportExcel(Func<TData, int, string> action)
         {
             var success = true;
             var emptyRow = 0;
             for (var line = 1; line < short.MaxValue; line++)
             {
+                bool nowSuccess = true;
                 switch (ReadRow(line, out var data, out var row))
                 {
                     case -1:
                         if (++emptyRow > 2)
                             return success;
-                        break;
-                    case 0:
-                        var info = data.Validate();
-                        if (info.Succeed)
-                        {
-                            var msg = action(data, line);
-                            if (!string.IsNullOrWhiteSpace(msg))
-                            {
-                                success = false;
-                                row.SafeGetCell(MaxColumn + 1).SetCellValue(msg);
-                                row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
-                            }
-                        }
-                        else
-                        {
-                            success = false;
-                            WriteCellState(line, MaxColumn, "错误", true);
-                            StringBuilder msg = new StringBuilder();
-                            foreach (var item in info.Items)
-                            {
-                                if (ColumnFields2.TryGetValue(item.Name, out var col))
-                                {
-                                    WriteCellState(line, col, item.Message, true);
-                                    msg.AppendFormat("{0}:{1}\r\n", item.Caption, item.Message);
-                                }
-                                else
-                                    msg.AppendFormat("字段{0}未提供导入内容且校验不通过:{1}\r\n", item.Caption, item.Message);
-                            }
-                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
-                            row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
-                            row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
-                        }
-                        break;
-                    default:
-                        success = false;
+                        continue;
+                    case 1:
+                        nowSuccess = false;
                         break;
                 }
+                var msg = action(data, line);
+                if (nowSuccess && string.IsNullOrWhiteSpace(msg))
+                    continue;
+                success = false;
+                row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                row.SafeGetCell(MaxColumn + 1).SetCellValue(msg);
             }
             return success;
         }
@@ -172,48 +169,47 @@ namespace Agebull.EntityModel.Excel
             var emptyRow = 0;
             for (var line = 1; line < short.MaxValue; line++)
             {
-                switch (ReadRow(line, out var data,out var row))
+                bool nowSuccess = true;
+                var msg = new StringBuilder();
+                switch (ReadRow(line, out var data, out var row))
                 {
                     case -1:
                         if (++emptyRow > 2)
                             return success;
+                        continue;
+                    case 1:
+                        nowSuccess = false;
                         break;
-                    case 0:
-                        var info = data.Validate();
-                        if (info.Succeed)
+                }
+
+                var info = data.Validate();
+                if (!info.Succeed)
+                {
+                    nowSuccess = false;
+                    foreach (var item in info.Items)
+                    {
+                        if (ColumnFields2.TryGetValue(item.Name, out var col))
                         {
-                            if (!OnRead(data, row, out var msg))
-                            {
-                                success = false;
-                                row.SafeGetCell(MaxColumn).SetCellValue("错误");
-                                row.SafeGetCell(MaxColumn+1).SetCellValue(msg);
-                                row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
-                            }
+                            WriteCellState(line, col, item.Message, true);
+                            msg.AppendFormat("{0}:{1}", item.Caption, item.Message);
                         }
                         else
                         {
-                            success = false;
-                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
-                            var msg = new StringBuilder();
-                            foreach (var item in info.Items)
-                            {
-                                if (ColumnFields2.TryGetValue(item.Name, out var col))
-                                {
-                                    WriteCellState(line, col, item.Message, true);
-                                    msg.AppendFormat("{0}:{1}\r\n", item.Caption, item.Message);
-                                }
-                                else
-                                    msg.AppendFormat("字段{0}未提供导入内容且校验不通过:{1}\r\n", item.Caption, item.Message);
-                            }
-                            row.SafeGetCell(MaxColumn).SetCellValue("错误");
-                            row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
-                            row.RowStyle.FillBackgroundColor = HSSFColor.Yellow.Index;
+                            msg.AppendFormat("字段{0}未提供导入内容且校验不通过:{1}", item.Caption, item.Message);
                         }
-                        break;
-                    default:
-                        success = false;
-                        break;
+                        msg.AppendLine();
+                    }
                 }
+                if (!OnRead(data, row, out var msg2))
+                {
+                    nowSuccess = false;
+                    msg.AppendLine();
+                    msg.Append(msg2);
+                }
+                if (nowSuccess) continue;
+                success = false;
+                row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
             }
             return success;
         }
@@ -225,7 +221,7 @@ namespace Agebull.EntityModel.Excel
         /// <param name="entity"></param>
         /// <param name="row"></param>
         /// <returns>是否成功读取</returns>
-        private int ReadRow(int line, out TData entity,out IRow row)
+        private int ReadRow(int line, out TData entity, out IRow row)
         {
             row = Sheet.GetRow(line);
             if (row == null || row.Cells.Count == 0)
@@ -234,7 +230,7 @@ namespace Agebull.EntityModel.Excel
                 return -1;
             }
             entity = CreateEntity(row);
-            return ReadRowFields(row, entity) ? 1 : 0;
+            return ReadRowFields(row, entity) ? 0 : 1;
         }
 
         /// <summary>
@@ -260,7 +256,10 @@ namespace Agebull.EntityModel.Excel
                 }
                 else
                 {
-                    SetValue(entity, cell.ColumnIndex, value, row);
+                    if (!SetValue(entity, cell.ColumnIndex, value, row))
+                    {
+                        success = false;
+                    }
                 }
             }
 
@@ -279,6 +278,7 @@ namespace Agebull.EntityModel.Excel
             cell = row.GetCell(column);
             if (cell == null)
             {
+                cell = row.CreateCell(column);
                 value = null;
                 return true;
             }
@@ -345,16 +345,19 @@ namespace Agebull.EntityModel.Excel
         /// <param name="column">列号</param>
         /// <param name="value">读取出的文本值</param>
         /// <param name="row">当前行</param>
-        protected virtual void SetValue(TData data, int column, string value, IRow row)
+        protected virtual bool SetValue(TData data, int column, string value, IRow row)
         {
             var field = ColumnFields[column];
             try
             {
                 data.SetValue(field, value);
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                WriteCellState(row, column, $"值[{value}]写入到字段[{field}]失败。", true);
+                LogRecorder.Exception(ex);
+                WriteCellState(row, column, $"值[{value}]无法写入({ex.Message})。", true);
+                return false;
             }
         }
 
@@ -381,7 +384,6 @@ namespace Agebull.EntityModel.Excel
                     }
                     continue;
                 }
-                MaxColumn = column;
                 if (cell.CellType != CellType.String)
                 {
                     cell.SetCellType(CellType.String);
@@ -407,13 +409,14 @@ namespace Agebull.EntityModel.Excel
                     return false;
                 }
                 emptyCnt = 0;
+                MaxColumn = column;
                 ColumnFields.Add(cell.ColumnIndex, innerFile);
             }
             MaxColumn += 1;
             {
-                var cell = row.GetCell(MaxColumn);
+                var cell = row.SafeGetCell(MaxColumn);
                 cell.SetCellValue("校验状态");
-                cell = row.GetCell(MaxColumn + 1);
+                cell = row.SafeGetCell(MaxColumn + 1);
                 cell.SetCellValue("校验信息");
             }
             return true;
@@ -449,18 +452,25 @@ namespace Agebull.EntityModel.Excel
         /// <param name="isError">是否错误(否则显示为警告)</param>
         protected void WriteCellState(IRow row, int col, string message, bool isError)
         {
-            var cell = row.SafeGetCell(col);
-            if (_drawingPatriarch == null)
+            try
             {
-                _drawingPatriarch = Sheet.CreateDrawingPatriarch();
+                var cell = row.SafeGetCell(col);
+                if (_drawingPatriarch == null)
+                {
+                    _drawingPatriarch = Sheet.CreateDrawingPatriarch();
+                }
+                var msg = $"{(isError ? "错误" : "警告")}\r\n{message}";
+                var comment = _drawingPatriarch.CreateCellComment(new XSSFClientAnchor(0, 0, 1, 1, col, row.RowNum, col + 6, row.RowNum + 3));
+                comment.String = new XSSFRichTextString(msg);
+                comment.Column = col;
+                comment.Row = row.RowNum;
+                cell.CellComment = comment;
+                cell.CellStyle.FillBackgroundColor = isError ? HSSFColor.Red.Index : HSSFColor.Yellow.Index;
             }
-            var msg = $"{(isError ? "错误" : "警告")}\r\n{message}";
-            var comment = _drawingPatriarch.CreateCellComment(new XSSFClientAnchor(0, 0, 1, 1, col, row.RowNum, col + 3, row.RowNum + 3));
-            comment.String = new XSSFRichTextString(msg);
-            comment.Column = col;
-            comment.Row = row.RowNum;
-            cell.CellComment = comment;
-            cell.CellStyle.FillForegroundColor = isError ? HSSFColor.Red.Index : HSSFColor.Yellow.Index;
+            catch (Exception e)
+            {
+                LogRecorder.Exception(e);
+            }
         }
 
         /// <summary>
