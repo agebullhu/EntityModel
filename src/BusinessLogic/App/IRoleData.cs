@@ -6,7 +6,7 @@
 // 修改:2014-11-29
 // *****************************************************/
 
-namespace Agebull.Common.WebApi.Auth
+namespace Agebull.Common.OAuth
 {
     /// <summary>
     /// 表示一个角色数据

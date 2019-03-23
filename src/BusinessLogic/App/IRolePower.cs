@@ -6,26 +6,8 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-namespace Agebull.Common.WebApi.Auth
+namespace Agebull.Common.OAuth
 {
-    /// <summary>
-    /// 角色权限类型
-    /// </summary>
-    public enum RolePowerType
-    {
-        /// <summary>
-        /// 未设置
-        /// </summary>
-        None,
-        /// <summary>
-        /// 允许
-        /// </summary>
-        Allow,
-        /// <summary>
-        /// 拒绝
-        /// </summary>
-        Deny
-    }
     /// <summary>
     ///     角色权限
     /// </summary>

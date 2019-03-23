@@ -13,13 +13,13 @@
   <PropertyGroup>
     <Description>MicroZero的基础定义</Description>
     <AssemblyTitle>Agebull.ZeroNet.Abstractions</AssemblyTitle>
-    <Version>2.4.0</Version>
+    <Version>2.4.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.ZeroNet.Abstractions</AssemblyName>
-    <PackageId>Agebull.ZeroNet.Abstractions</PackageId>
-    <PackageTags>Agebull.ZeroNet.Abstractions</PackageTags>
+    <PackageId>Agebull.MicroZero.Abstractions</PackageId>
+    <PackageTags>Agebull.MicroZero.Abstractions</PackageTags>
     <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>

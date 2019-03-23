@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using Agebull.EntityModel.BusinessLogic.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using NPOI.HSSF.Util;
@@ -19,7 +20,7 @@ using NPOI.XSSF.UserModel;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql.BusinessLogic.Report
+namespace Agebull.EntityModel.Excel.MySql
 {
     /// <summary>
     ///     Excelµº»Î¿‡

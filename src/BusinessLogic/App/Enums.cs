@@ -1,49 +1,98 @@
-using Agebull.Common.WebApi.Auth;
 
-namespace Agebull.EntityModel.Common
+namespace Agebull.Common.OAuth
 {
     /// <summary>
-    /// 等级权限关联类型
+    /// 权限范围枚举类型
     /// </summary>
     /// <remark>
-    /// 等级权限关联类型
+    /// 权限范围
     /// </remark>
-    public enum SubjectionType
+    public enum DataScopeType
     {
         /// <summary>
-        /// 没有任何权限制
+        /// 无
         /// </summary>
         None = 0x0,
         /// <summary>
-        /// 仅限本人的数据
+        /// 本人
         /// </summary>
-        Self = 0x1,
+        Person = 0x1,
         /// <summary>
-        /// 本部门的数据
+        /// 本级
         /// </summary>
-        Department = 0x2,
+        Home = 0x2,
         /// <summary>
-        /// 本部门及下级的数据
+        /// 本人及本级
         /// </summary>
-        DepartmentAndLower = 0x3,
+        PersonAndHome = 0x3,
         /// <summary>
-        /// 本区域的数据
+        /// 下级
         /// </summary>
-        Company = 0x4,
+        Lower = 0x4,
         /// <summary>
-        /// 本区域及下级区域与部门的数据
+        /// 本级及以下
         /// </summary>
-        CompanyAndLower = 0x5,
+        HomeAndLower = 0x6,
         /// <summary>
-        /// 自定义
+        /// 本人本级及下级
         /// </summary>
-        Custom = 0x6,
+        Full = 0x7,
+        /// <summary>
+        /// 无限制
+        /// </summary>
+        Unlimited = 0x8,
+    }
+    /// <summary>
+    /// 角色权限类型
+    /// </summary>
+    public enum RolePowerType
+    {
+        /// <summary>
+        /// 未设置
+        /// </summary>
+        None,
+        /// <summary>
+        /// 允许
+        /// </summary>
+        Allow,
+        /// <summary>
+        /// 拒绝
+        /// </summary>
+        Deny
     }
     /// <summary>
     /// 枚举扩展
     /// </summary>
     public static class AuthEnumHelper
     {
+        /// <summary>
+        ///     权限范围枚举类型名称转换
+        /// </summary>
+        public static string ToCaption(this DataScopeType value)
+        {
+            switch (value)
+            {
+                case DataScopeType.None:
+                    return "无";
+                case DataScopeType.Person:
+                    return "本人";
+                case DataScopeType.Home:
+                    return "本级";
+                case DataScopeType.PersonAndHome:
+                    return "本人及本级";
+                case DataScopeType.Lower:
+                    return "下级";
+                case DataScopeType.HomeAndLower:
+                    return "本级及以下";
+                case DataScopeType.Full:
+                    return "本人本级及下级";
+                case DataScopeType.Unlimited:
+                    return "无限制";
+                default:
+                    return "权限范围枚举类型(错误)";
+            }
+        }
+
         /// <summary>
         ///     权限枚举类型名称转换
         /// </summary>
@@ -59,32 +108,6 @@ namespace Agebull.EntityModel.Common
                     return "拒绝";
                 default:
                     return "权限枚举类型(未知)";
-            }
-        }
-
-        /// <summary>
-        ///     等级权限关联类型名称转换
-        /// </summary>
-        public static string ToCaption(this SubjectionType value)
-        {
-            switch (value)
-            {
-                case SubjectionType.None:
-                    return "没有任何权限制";
-                case SubjectionType.Self:
-                    return "仅限本人的数据";
-                case SubjectionType.Department:
-                    return "本部门的数据";
-                case SubjectionType.DepartmentAndLower:
-                    return "本部门及下级的数据";
-                case SubjectionType.Company:
-                    return "本区域的数据";
-                case SubjectionType.CompanyAndLower:
-                    return "本区域及下级区域与部门的数据";
-                case SubjectionType.Custom:
-                    return "自定义";
-                default:
-                    return "等级权限关联类型(未知)";
             }
         }
 

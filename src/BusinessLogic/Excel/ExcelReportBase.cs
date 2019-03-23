@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using Agebull.EntityModel.BusinessLogic.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using NPOI.SS.UserModel;
@@ -16,7 +17,7 @@ using NPOI.XSSF.UserModel;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql.BusinessLogic.Report
+namespace Agebull.EntityModel.Excel.MySql
 {
     /// <summary>
     ///     Excel报表生成的基类

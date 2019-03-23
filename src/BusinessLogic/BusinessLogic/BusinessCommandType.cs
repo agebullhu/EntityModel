@@ -1,4 +1,4 @@
-namespace Agebull.EntityModel.MySql.BusinessLogic
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     /// 逻辑内部命令类型

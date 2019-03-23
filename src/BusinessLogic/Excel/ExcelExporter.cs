@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Agebull.EntityModel.BusinessLogic.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
-namespace Agebull.EntityModel.MySql.BusinessLogic.Report
+namespace Agebull.EntityModel.Excel.MySql
 {
     /// <summary>
     ///     Excelµ¼³öÀà

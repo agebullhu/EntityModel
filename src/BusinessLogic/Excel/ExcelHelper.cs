@@ -14,7 +14,7 @@ using NPOI.SS.Util;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql.BusinessLogic.Report
+namespace Agebull.EntityModel.Excel
 {
     /// <summary>
     ///     ±®±Ì(Excel)∞Ô÷˙¿‡
@@ -245,10 +245,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetDateCellValue(this IRow row, DateTime val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val > DateTime.MinValue)
             {
@@ -271,10 +268,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetCellValue(this IRow row, string val, int col, ICellStyle style, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val != null)
             {
@@ -295,10 +289,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetCellMoney(this IRow row, decimal val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val != 0)
             {
@@ -321,10 +312,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetCellMoney2(this IRow row, decimal val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             cell.SetCellValue((double)val);
             if (style != null)
@@ -343,10 +331,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetNumberValue(this IRow row, int val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val != 0)
             {
@@ -368,10 +353,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetCellValue(this IRow row, int val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val != 0)
             {
@@ -393,10 +375,7 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         /// <param name="prepare"></param>
         public static void SetCellValue(this IRow row, decimal val, int col, ICellStyle style = null, Action<IRow> prepare = null)
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
             if (val != 0)
             {
@@ -419,12 +398,9 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         public static void SetCellValue<T>(this IRow row, T val, int col, ICellStyle style = null, Action<IRow> prepare = null)
             where T : struct
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
-            if (!@Equals(val, default(T)))
+            if (!Equals(val, default(T)))
             {
                 cell.SetCellValue(val.ToString());
             }
@@ -446,12 +422,9 @@ namespace Agebull.EntityModel.MySql.BusinessLogic.Report
         public static void SetCellValue<T>(this IRow row, string format, T val, int col, ICellStyle style, Action<IRow> prepare = null)
             where T : struct
         {
-            if (prepare != null)
-            {
-                prepare(row);
-            }
+            prepare?.Invoke(row);
             var cell = row.GetCell(col) ?? row.CreateCell(col);
-            if (!@Equals(val, default(T)))
+            if (!Equals(val, default(T)))
             {
                 cell.SetCellValue(string.Format(format, val));
             }

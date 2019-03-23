@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>业务模型支持</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>2.4.0</Version>
+    <Version>2.4.0.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -105,5 +105,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
     <ProjectReference Include="..\Redis\Agebull.EntityModel.Redis.csproj" />
+    <ProjectReference Include="..\SqlServer\Agebull.EntityModel.SqlServer.csproj" />
   </ItemGroup>
 </Project>
