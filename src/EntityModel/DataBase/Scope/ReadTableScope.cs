@@ -6,6 +6,7 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
+using System;
 using Agebull.Common.Base;
 
 namespace Agebull.EntityModel.Common
@@ -42,6 +43,60 @@ namespace Agebull.EntityModel.Common
         protected override void OnDispose()
         {
             _table.SetDynamicReadTable(_oldName);
+        }
+    }
+
+
+    /// <summary>
+    ///     修改读写对象范围
+    /// </summary>
+    public sealed class TableSwitchScope : ScopeBase
+    {
+        private readonly IDataTable _table;
+        private readonly string _oldRead, _oldWrite;
+
+        private TableSwitchScope(IDataTable table, string read, string write)
+        {
+            _table = table;
+            if (read != null)
+                _oldRead = table.SetDynamicReadTable(read);
+            if (write != null)
+                _oldWrite = table.SetDynamicWriteTable(write);
+        }
+
+        /// <summary>
+        /// 生成读取对象范围
+        /// </summary>
+        /// <param name="table">作用的表对象</param>
+        /// <param name="read">读表名</param>
+        /// <returns>读取对象范围</returns>
+        public static IDisposable CreateScope(IDataTable table, string read)
+        {
+            return new TableSwitchScope(table, read,null);
+        }
+
+        /// <summary>
+        /// 生成读取对象范围
+        /// </summary>
+        /// <param name="table">作用的表对象</param>
+        /// <param name="read">读表名</param>
+        /// <param name="write">写表名</param>
+        /// <returns>读取对象范围</returns>
+        public static IDisposable CreateScope(IDataTable table, string read, string write)
+        {
+            return new TableSwitchScope(table, read, write);
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// 析构
+        /// </summary>
+        protected override void OnDispose()
+        {
+            if (_oldRead != null)
+                _table.SetDynamicReadTable(_oldRead);
+            if (_oldWrite != null)
+                _table.SetDynamicWriteTable(_oldWrite);
         }
     }
 }

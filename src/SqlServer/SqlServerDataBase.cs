@@ -557,7 +557,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var result = args.Length == 0
                 ? ExecuteScalarInner(sql)
-                : ExecuteScalarInner(sql, args.Select(p => p is SqlParameter ? (SqlParameter)p  : new SqlParameter { Value = p }).ToArray());
+                : ExecuteScalarInner(sql, args.Select(p => p is SqlParameter ? (SqlParameter)p : new SqlParameter { Value = p }).ToArray());
             return (T)result;
         }
 
@@ -692,18 +692,17 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>参数</returns>
         public static SqlParameter CreateParameter(string parameterName, object value)
         {
-            var s = value as string;
-            if (s != null)
+            switch (value)
             {
-                return CreateParameter(parameterName, s);
+                case string s:
+                    return CreateParameter(parameterName, s);
+                case null:
+                    return new SqlParameter(parameterName, SqlDbType.NVarChar)
+                    {
+                        Value = DBNull.Value
+                    };
             }
-            if (value == null)
-            {
-                return new SqlParameter(parameterName, SqlDbType.NVarChar)
-                {
-                    Value = DBNull.Value
-                };
-            }
+
             return new SqlParameter(parameterName, ToSqlDbType(value.GetType().Name))
             {
                 Value = value
@@ -927,22 +926,22 @@ namespace Agebull.EntityModel.SqlServer
 
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
-            return Execute(sql, args.OfType<SqlParameter>());
+            return Execute(sql, args?.OfType<SqlParameter>());
         }
 
         int IDataBase.Execute(string sql, params DbParameter[] args)
         {
-            return Execute(sql, args.OfType<SqlParameter>());
+            return Execute(sql, args?.OfType<SqlParameter>());
         }
 
         object IDataBase.ExecuteScalar(string sql, IEnumerable<DbParameter> args)
         {
-            return ExecuteScalar(sql, args.OfType<SqlParameter>());
+            return ExecuteScalar(sql, args?.OfType<SqlParameter>());
         }
 
         object IDataBase.ExecuteScalar(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar(sql, args.OfType<SqlParameter>().ToArray());
+            return ExecuteScalar(sql, args?.OfType<SqlParameter>().ToArray());
         }
 
         T IDataBase.ExecuteScalar<T>(string sql)
@@ -957,12 +956,12 @@ namespace Agebull.EntityModel.SqlServer
 
         T IDataBase.ExecuteScalar<T>(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar<T>(sql, args.OfType<SqlParameter>().ToArray());
+            return ExecuteScalar<T>(sql, args?.OfType<SqlParameter>().ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(params DbParameter[] args)
         {
-            return CreateCommand(args.OfType<SqlParameter>().ToArray());
+            return CreateCommand(args?.OfType<SqlParameter>().ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(string sql, DbParameter arg)
@@ -972,7 +971,7 @@ namespace Agebull.EntityModel.SqlServer
 
         DbCommand IDataBase.CreateCommand(string sql, IEnumerable<DbParameter> args)
         {
-            return CreateCommand(sql, args.OfType<SqlParameter>().ToArray());
+            return CreateCommand(sql, args?.OfType<SqlParameter>().ToArray());
         }
 
 

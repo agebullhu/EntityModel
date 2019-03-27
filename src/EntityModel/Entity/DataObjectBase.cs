@@ -9,7 +9,6 @@
 #region 引用
 
 using System;
-using Agebull.Common.Configuration;
 using System.Runtime.Serialization;
 
 #endregion
@@ -81,6 +80,15 @@ namespace Agebull.EntityModel.Common
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
+        /// <param name="value"></param>
+        public bool SetValue(string property, string value)
+        {
+            return SetValueInner(property, value);
+        }
+        /// <summary>
+        ///     设置属性值
+        /// </summary>
+        /// <param name="property"></param>
         public object GetValue(int property)
         {
             return GetValueInner(property);
@@ -120,6 +128,15 @@ namespace Agebull.EntityModel.Common
         ///     设置属性值
         /// </summary>
         /// <param name="property"></param>
+        /// <param name="value"></param>
+        protected virtual bool SetValueInner(string property, string value)
+        {
+            return false;
+        }
+        /// <summary>
+        ///     设置属性值
+        /// </summary>
+        /// <param name="property"></param>
         protected virtual object GetValueInner(string property)
         {
             return null;
@@ -149,7 +166,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="property"></param>
         protected virtual TValue GetValueInner<TValue>(string property)
         {
-            return (TValue) GetValue(property);
+            return (TValue)GetValue(property);
         }
 
         /// <summary>
@@ -158,7 +175,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="property"></param>
         protected virtual TValue GetValueInner<TValue>(int property)
         {
-            return (TValue) GetValue(property);
+            return (TValue)GetValue(property);
         }
 
         #endregion
@@ -182,7 +199,7 @@ namespace Agebull.EntityModel.Common
         //        return _version = string.IsNullOrWhiteSpace(ev) ? (byte) 1 : byte.Parse(ev);
         //    }
         //}
-        
+
         //#endregion
     }
 }

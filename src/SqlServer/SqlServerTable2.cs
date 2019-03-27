@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -54,6 +55,26 @@ namespace Agebull.EntityModel.SqlServer
         #endregion
 
         #region 数据结构
+
+        /// <summary>
+        ///     删除的SQL语句
+        /// </summary>
+        string IDataTable.DeleteSql => DeleteSqlCode;
+
+        /// <summary>
+        ///     插入的SQL语句
+        /// </summary>
+        string IDataTable.InsertSql => InsertSqlCode;
+
+        /// <summary>
+        ///     全部更新的SQL语句
+        /// </summary>
+        string IDataTable.UpdateSql => UpdateSqlCode;
+
+        /// <summary>
+        ///     全表读取的SQL语句
+        /// </summary>
+        string IDataTable.FullLoadSql => FullLoadSqlCode;
 
         /// <summary>
         ///     是否作为基类存在的
@@ -128,7 +149,7 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreateOnceSql(condition, order, desc);
             return DataBase.CreateCommand(sql.ToString(), args);
         }
-        
+
         /// <summary>
         ///     生成载入命令
         /// </summary>
@@ -338,7 +359,12 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected virtual string DeleteSqlCode => $@"DELETE FROM [{WriteTableName}]";
+        protected virtual string DeleteSqlCode => $@"DELETE FROM [{ContextWriteTable}]";
+
+        /// <summary>
+        ///     删除的SQL语句
+        /// </summary>
+        protected virtual string FullLoadSqlCode => $@"SELECT {FullLoadFields} FROM [{ContextReadTable}]";
 
         /// <summary>
         ///     插入的SQL语句
@@ -386,7 +412,7 @@ namespace Agebull.EntityModel.SqlServer
         ///     字段字典(动态覆盖)
         /// </summary>
         public Dictionary<string, string> OverrideFieldMap { get; set; }
-        
+
 
         #endregion
 
@@ -432,7 +458,28 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     当前上下文读取的表名
         /// </summary>
-        protected string ContextReadTable => DynamicReadTable ?? ReadTableName;
+        public string ContextReadTable => DynamicReadTable ?? ReadTableName;
+
+        /// <summary>
+        ///     动态写入的表
+        /// </summary>
+        protected string DynamicWriteTable;
+
+        /// <summary>
+        ///     取得实际设置的ContextWriteTable动态写入的表
+        /// </summary>
+        /// <returns>之前的动态写入的表名</returns>
+        public string SetDynamicWriteTable(string table)
+        {
+            var old = DynamicWriteTable;
+            DynamicWriteTable = string.IsNullOrWhiteSpace(table) ? null : table;
+            return old;
+        }
+
+        /// <summary>
+        ///     当前上下文写入的表名
+        /// </summary>
+        public string ContextWriteTable => DynamicWriteTable ?? WriteTableName;
 
         #endregion
 
@@ -482,6 +529,35 @@ namespace Agebull.EntityModel.SqlServer
         {
         }
 
+        /// <summary>
+        ///     设置更新数据的命令
+        /// </summary>
+        void IDataTable<TData>.SetUpdateCommandPara(TData entity, DbCommand cmd)
+        {
+            cmd.Parameters.Clear();
+            SetUpdateCommand(entity, (SqlCommand)cmd);
+        }
+
+        /// <summary>
+        ///     设置插入数据的命令
+        /// </summary>
+        /// <returns>返回真说明要取主键</returns>
+        void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
+        {
+            cmd.Parameters.Clear();
+            SetInsertCommand(entity,(SqlCommand) cmd);
+        }
+
+        /// <summary>
+        ///     载入数据
+        /// </summary>
+        /// <param name="reader">数据读取器</param>
+        TData IDataTable<TData>.Load(DbDataReader reader)
+        {
+            var entity = new TData();
+            LoadEntity((SqlDataReader)reader, entity);
+            return entity;
+        }
         #endregion
     }
 }

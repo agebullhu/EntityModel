@@ -67,6 +67,15 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         string WriteTableName { get; }
 
+        /// <summary>
+        ///     当前上下文写入的表名
+        /// </summary>
+        string ContextWriteTable { get; }
+
+        /// <summary>
+        ///     当前上下文读取的表名
+        /// </summary>
+        string ContextReadTable { get; }
 
         /// <summary>
         ///     字段字典(运行时)
@@ -77,6 +86,27 @@ namespace Agebull.EntityModel.Common
         ///     主键字段(可动态覆盖PrimaryKey)
         /// </summary>
         string KeyField { get; }
+
+        /// <summary>
+        ///     删除的SQL语句
+        /// </summary>
+        string DeleteSql { get; }
+
+        /// <summary>
+        ///     插入的SQL语句
+        /// </summary>
+        string InsertSql { get; }
+
+        /// <summary>
+        ///     全部更新的SQL语句
+        /// </summary>
+        string UpdateSql { get; }
+
+        /// <summary>
+        ///     全表读取的SQL语句
+        /// </summary>
+        string FullLoadSql { get; }
+
         #endregion
 
         #region 动态虚化
@@ -88,6 +118,12 @@ namespace Agebull.EntityModel.Common
         /// <returns>之前的动态读取的表名</returns>
         string SetDynamicReadTable(string table);
 
+        /// <summary>
+        ///     切换写入的表
+        /// </summary>
+        /// <returns>之前的动态读取的表名</returns>
+        string SetDynamicWriteTable(string table);
+        
         #endregion
 
         #region 聚合函数支持
@@ -694,6 +730,28 @@ namespace Agebull.EntityModel.Common
         int SetValue<TField, TKey>(Expression<Func<TData, TField>> fieldExpression, TField value, TKey key);
 
         #endregion
+
+
+        #endregion
+
+        #region 扩展剥离
+
+        /// <summary>
+        ///     设置更新数据的命令
+        /// </summary>
+        void SetUpdateCommandPara(TData entity, DbCommand cmd);
+
+        /// <summary>
+        ///     设置插入数据的命令
+        /// </summary>
+        /// <returns>返回真说明要取主键</returns>
+        void SetInsertCommandPara(TData entity, DbCommand cmd);
+
+        /// <summary>
+        ///     载入数据
+        /// </summary>
+        /// <param name="reader">数据读取器</param>
+        TData Load(DbDataReader reader);
 
         #endregion
 

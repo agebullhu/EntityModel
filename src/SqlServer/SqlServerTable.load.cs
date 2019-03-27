@@ -750,10 +750,7 @@ namespace Agebull.EntityModel.SqlServer
         protected object CollectInner(string fun, string field, string condition, params SqlParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-
-            {
-                return DataBase.ExecuteScalar(sql, args);
-            }
+            return DataBase.ExecuteScalar(sql, args);
         }
 
         #endregion
@@ -1488,7 +1485,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <returns>读取数据的实体</returns>
-        private TData LoadEntity(SqlDataReader reader)
+        public TData LoadEntity(SqlDataReader reader)
         {
             var entity = new TData();
             using (new EntityLoadScope(entity))

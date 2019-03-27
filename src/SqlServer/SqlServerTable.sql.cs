@@ -58,7 +58,7 @@ namespace Agebull.EntityModel.SqlServer
         private string CreateUpdateSql(string valueExpression, string condition)
         {
             return $@"{BeforeUpdateSql(condition)}
-UPDATE [{WriteTableName}]
+UPDATE [{ContextWriteTable}]
    SET {valueExpression} 
  WHERE {condition};
 {AfterUpdateSql(condition)}";

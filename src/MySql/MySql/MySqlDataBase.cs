@@ -930,22 +930,22 @@ namespace Agebull.EntityModel.MySql
 
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
-            return Execute(sql, args.OfType<MySqlParameter>());
+            return Execute(sql, args?.OfType<MySqlParameter>());
         }
 
         int IDataBase.Execute(string sql, params DbParameter[] args)
         {
-            return Execute(sql, args.OfType<MySqlParameter>());
+            return Execute(sql, args?.OfType<MySqlParameter>());
         }
 
         object IDataBase.ExecuteScalar(string sql, IEnumerable<DbParameter> args)
         {
-            return ExecuteScalar(sql, args.OfType<MySqlParameter>());
+            return ExecuteScalar(sql, args?.OfType<MySqlParameter>());
         }
 
         object IDataBase.ExecuteScalar(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar(sql, args.OfType<MySqlParameter>().ToArray());
+            return ExecuteScalar(sql, args?.OfType<MySqlParameter>().ToArray());
         }
 
         T IDataBase.ExecuteScalar<T>(string sql)
@@ -960,12 +960,12 @@ namespace Agebull.EntityModel.MySql
 
         T IDataBase.ExecuteScalar<T>(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar<T>(sql, args.OfType<MySqlParameter>().ToArray());
+            return ExecuteScalar<T>(sql, args?.OfType<MySqlParameter>().ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(params DbParameter[] args)
         {
-            return CreateCommand(args.OfType<MySqlParameter>().ToArray());
+            return CreateCommand(args?.OfType<MySqlParameter>().ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(string sql, DbParameter arg)
@@ -975,7 +975,7 @@ namespace Agebull.EntityModel.MySql
 
         DbCommand IDataBase.CreateCommand(string sql, IEnumerable<DbParameter> args)
         {
-            return CreateCommand(sql, args.OfType<MySqlParameter>().ToArray());
+            return CreateCommand(sql, args?.OfType<MySqlParameter>().ToArray());
         }
 
 

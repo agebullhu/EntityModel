@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     É¾³ýµÄSQLÓï¾ä
         /// </summary>
-        protected sealed override string DeleteSqlCode => $@"UPDATE `{WriteTableName}` SET `{FieldDictionary["DataState"]}`=255";
+        protected sealed override string DeleteSqlCode => $@"UPDATE `{ContextWriteTable}` SET `{FieldDictionary["DataState"]}`=255";
 
         /// <summary>
         ///     ÖØÖÃ×´Ì¬µÄSQLÓï¾ä
@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.MySql
         {
             //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
-                var sql = $@"UPDATE `{WriteTableName}` 
+                var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode} 
 WHERE {PrimaryKeyConditionSQL}";
                 return DataBase.Execute(sql, CreatePimaryKeyParameter(id)) == 1;
@@ -71,7 +71,7 @@ WHERE {PrimaryKeyConditionSQL}";
             //using (MySqlDataBaseScope.CreateScope(DataBase))
             {
                 var convert = Compile(lambda);
-                var sql = $@"UPDATE `{WriteTableName}` 
+                var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode} 
 WHERE {convert.ConditionSql}";
                 return DataBase.Execute(sql, convert.Parameters) >= 1;

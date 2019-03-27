@@ -61,7 +61,7 @@ namespace Agebull.EntityModel.SqlServer
             if (DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
             {
                 code.Append($@"
-UPDATE [{table.WriteTableName}`]
+UPDATE [{table.ContextWriteTable}`]
 SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.LoginUserId},
     [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = Now()");
                 if (!string.IsNullOrEmpty(condition))

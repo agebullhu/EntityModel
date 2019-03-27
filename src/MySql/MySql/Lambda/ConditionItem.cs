@@ -146,7 +146,7 @@ namespace Agebull.EntityModel.MySql
             }
             else if (!string.IsNullOrWhiteSpace(condition))
             {
-                ConditionSql = $"({ConditionSql}) Or ({condition})";
+                ConditionSql = $"({ConditionSql}) OR ({condition})";
             }
             AddParameter(parameter);
         }

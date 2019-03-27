@@ -53,7 +53,7 @@ namespace Agebull.EntityModel.Excel
         /// <summary>
         ///     当前导入的工作表
         /// </summary>
-        public ISheet Sheet { get; private set; }
+        public ISheet Sheet { get; set; }
 
         /// <summary>
         ///     准备导入Excel
@@ -121,7 +121,7 @@ namespace Agebull.EntityModel.Excel
         ///     数据取到后的处理
         /// </summary>
         /// <returns></returns>
-        protected virtual bool OnRead(TData data, IRow row, out string msg)
+        protected virtual bool OnRead(TData data, IRow row, bool isFailed, out string msg)
         {
             msg = null;
             return true;
@@ -133,6 +133,38 @@ namespace Agebull.EntityModel.Excel
         /// <param name="action">读到数据时的处理回调</param>
         /// <returns>导入数量</returns>
         public bool ImportExcel(Func<TData, int, string> action)
+        {
+            var success = true;
+            var emptyRow = 0;
+            for (var line = 1; line < short.MaxValue; line++)
+            {
+                bool nowSuccess = true;
+                switch (ReadRow(line, out var data, out var row))
+                {
+                    case -1:
+                        if (++emptyRow > 2)
+                            return success;
+                        continue;
+                    case 1:
+                        nowSuccess = false;
+                        break;
+                }
+                var msg = action(data, line);
+                if (nowSuccess && string.IsNullOrWhiteSpace(msg))
+                    continue;
+                success = false;
+                row.SafeGetCell(MaxColumn).SetCellValue("错误");
+                row.SafeGetCell(MaxColumn + 1).SetCellValue(msg);
+            }
+            return success;
+        }
+
+        /// <summary>
+        ///     导入Excel
+        /// </summary>
+        /// <param name="action">读到数据时的处理回调</param>
+        /// <returns>导入数量</returns>
+        public bool ImportExcelSync(Func<TData, int, string> action)
         {
             var success = true;
             var emptyRow = 0;
@@ -200,13 +232,17 @@ namespace Agebull.EntityModel.Excel
                         msg.AppendLine();
                     }
                 }
-                if (!OnRead(data, row, out var msg2))
+                if (!OnRead(data, row, !nowSuccess, out var msg2))
                 {
                     nowSuccess = false;
                     msg.AppendLine();
                     msg.Append(msg2);
                 }
-                if (nowSuccess) continue;
+
+                if (nowSuccess)
+                {
+                    continue;
+                }
                 success = false;
                 row.SafeGetCell(MaxColumn).SetCellValue("错误");
                 row.SafeGetCell(MaxColumn + 1).SetCellValue(msg.ToString());
@@ -230,6 +266,7 @@ namespace Agebull.EntityModel.Excel
                 return -1;
             }
             entity = CreateEntity(row);
+            
             return ReadRowFields(row, entity) ? 0 : 1;
         }
 
@@ -251,6 +288,7 @@ namespace Agebull.EntityModel.Excel
 
                 if (value == "#REF!" || value == "#N/A")
                 {
+                    LogRecorder.Debug($"{row}行{column}列公式错误,使用默认值");
                     WriteCellState(row, column, "公式错误,使用默认值", false);
                     success = false;
                 }
@@ -289,6 +327,7 @@ namespace Agebull.EntityModel.Excel
             switch (cell.CellType)
             {
                 case CellType.Error:
+                    LogRecorder.Debug($"{row}行{column}列数据错误,使用默认值");
                     WriteCellState(row, column, "数据错误,使用默认值", false);
                     value = null;
                     return false;
@@ -310,6 +349,7 @@ namespace Agebull.EntityModel.Excel
                     switch (vc.CellType)
                     {
                         case CellType.Error:
+                            LogRecorder.Debug($"{row}行{column}列数据错误,使用默认值");
                             WriteCellState(row, column, "数据错误,使用默认值", false);
                             value = null;
                             return false;
@@ -355,7 +395,8 @@ namespace Agebull.EntityModel.Excel
             }
             catch (Exception ex)
             {
-                LogRecorder.Exception(ex);
+                //LogRecorder.Exception(ex);
+                LogRecorder.Debug($"{row}行{column}列值[{value}]无法写入({ex.Message})。");
                 WriteCellState(row, column, $"值[{value}]无法写入({ex.Message})。", true);
                 return false;
             }
@@ -397,16 +438,17 @@ namespace Agebull.EntityModel.Excel
                     }
                     continue;
                 }
-                if (emptyCnt > 0)
-                {
-                    WriteCellState(row, column, "字段名字为空白,导入直接中止", true);
-                    return false;
-                }
+                //if (emptyCnt > 0)
+                //{
+                //    WriteCellState(row, column, "字段名字为空白,导入直接中止", true);
+                //    return false;
+                //}
 
                 if (!FieldMap.TryGetValue(field.Trim(), out var innerFile))
                 {
-                    WriteCellState(row, column, $"字段名字{field}映射关系不正确,导入直接中止", true);
-                    return false;
+                    continue;
+                    //WriteCellState(row, column, $"字段名字{field}映射关系不正确,导入直接中止", true);
+                    //return false;
                 }
                 emptyCnt = 0;
                 MaxColumn = column;

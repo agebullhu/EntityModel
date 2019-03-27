@@ -10,6 +10,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using Agebull.Common.Ioc;
@@ -55,9 +57,24 @@ namespace Agebull.EntityModel.MySql
         #region 数据结构
 
         /// <summary>
-        ///     是否作为基类存在的
+        ///     删除的SQL语句
         /// </summary>
-        public bool IsBaseClass { get; set; }
+        string IDataTable.DeleteSql => DeleteSqlCode;
+
+        /// <summary>
+        ///     插入的SQL语句
+        /// </summary>
+        string IDataTable.InsertSql => InsertSqlCode;
+
+        /// <summary>
+        ///     全部更新的SQL语句
+        /// </summary>
+        string IDataTable.UpdateSql => UpdateSqlCode;
+
+        /// <summary>
+        ///     全表读取的SQL语句
+        /// </summary>
+        string IDataTable.FullLoadSql => FullLoadSqlCode;
 
         /// <summary>
         ///     设计时的主键字段
@@ -75,28 +92,9 @@ namespace Agebull.EntityModel.MySql
         string IDataTable.WriteTableName => WriteTableName;
 
         /// <summary>
-        ///     字段字典(运行时)
-        /// </summary>
-        public Dictionary<string, string> FieldDictionary => OverrideFieldMap ?? FieldMap;
-
-        /// <summary>
         ///     主键字段(可动态覆盖PrimaryKey)
         /// </summary>
-        private string _keyField;
-
-        /// <summary>
-        ///     主键字段(可动态覆盖PrimaryKey)
-        /// </summary>
-        public string KeyField
-        {
-            get
-            {
-                if (_keyField != null)
-                    return _keyField;
-                return _keyField = PrimaryKey;
-            }
-            set => _keyField = value;
-        }
+        string IDataTable.KeyField => KeyField;
 
         #endregion
 
@@ -312,6 +310,36 @@ namespace Agebull.EntityModel.MySql
         #region 数据结构
 
         /// <summary>
+        ///     是否作为基类存在的
+        /// </summary>
+        public bool IsBaseClass { get; set; }
+
+        /// <summary>
+        ///     字段字典(运行时)
+        /// </summary>
+        public Dictionary<string, string> FieldDictionary => OverrideFieldMap ?? FieldMap;
+
+        /// <summary>
+        ///     主键字段(可动态覆盖PrimaryKey)
+        /// </summary>
+        private string _keyField;
+
+        /// <summary>
+        ///     主键字段(可动态覆盖PrimaryKey)
+        /// </summary>
+        public string KeyField
+        {
+            get
+            {
+                if (_keyField != null)
+                    return _keyField;
+                return _keyField = PrimaryKey;
+            }
+            set => _keyField = value;
+        }
+
+
+        /// <summary>
         ///     全表读取的SQL语句
         /// </summary>
         protected abstract string FullLoadFields { get; }
@@ -328,7 +356,12 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected virtual string DeleteSqlCode => $@"DELETE FROM `{WriteTableName}`";
+        protected virtual string FullLoadSqlCode => $@"SELECT {FullLoadFields} FROM `{ContextReadTable}`";
+
+        /// <summary>
+        ///     删除的SQL语句
+        /// </summary>
+        protected virtual string DeleteSqlCode => $@"DELETE FROM `{ContextWriteTable}`";
 
         /// <summary>
         ///     插入的SQL语句
@@ -376,12 +409,18 @@ namespace Agebull.EntityModel.MySql
         ///     字段字典(动态覆盖)
         /// </summary>
         public Dictionary<string, string> OverrideFieldMap { get; set; }
-        
+
 
         #endregion
 
 
         #region 动态上下文扩展
+
+
+        /// <summary>
+        /// 当前上下文的读取器
+        /// </summary>
+        public Action<MySqlDataReader, TData> DynamicLoadAction { get; set; }
 
 
         /// <summary>
@@ -393,12 +432,6 @@ namespace Agebull.EntityModel.MySql
         ///     动态读取的表
         /// </summary>
         protected string DynamicReadTable;
-
-        /// <summary>
-        /// 当前上下文的读取器
-        /// </summary>
-        public Action<MySqlDataReader, TData> DynamicLoadAction { get; set; }
-
         /// <summary>
         ///     取得实际设置的ContextReadTable动态读取的表
         /// </summary>
@@ -422,7 +455,29 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     当前上下文读取的表名
         /// </summary>
-        protected string ContextReadTable => DynamicReadTable ?? ReadTableName;
+        public string ContextReadTable => DynamicReadTable ?? ReadTableName;
+
+
+        /// <summary>
+        ///     动态写入的表
+        /// </summary>
+        protected string DynamicWriteTable;
+
+        /// <summary>
+        ///     取得实际设置的ContextWriteTable动态写入的表
+        /// </summary>
+        /// <returns>之前的动态写入的表名</returns>
+        public string SetDynamicWriteTable(string table)
+        {
+            var old = DynamicWriteTable;
+            DynamicWriteTable = string.IsNullOrWhiteSpace(table) ? null : table;
+            return old;
+        }
+
+        /// <summary>
+        ///     当前上下文写入的表名
+        /// </summary>
+        public string ContextWriteTable => DynamicWriteTable ?? WriteTableName;
 
         #endregion
 
@@ -472,6 +527,35 @@ namespace Agebull.EntityModel.MySql
         {
         }
 
+        /// <summary>
+        ///     设置更新数据的命令
+        /// </summary>
+        void IDataTable<TData>.SetUpdateCommandPara(TData entity, DbCommand cmd)
+        {
+            cmd.Parameters.Clear();
+            SetUpdateCommand(entity, (MySqlCommand)cmd);
+        }
+
+        /// <summary>
+        ///     设置插入数据的命令
+        /// </summary>
+        /// <returns>返回真说明要取主键</returns>
+        void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
+        {
+            cmd.Parameters.Clear();
+            SetInsertCommand(entity, (MySqlCommand)cmd);
+        }
+
+        /// <summary>
+        ///     载入数据
+        /// </summary>
+        /// <param name="reader">数据读取器</param>
+        TData IDataTable<TData>.Load(DbDataReader reader)
+        {
+            var entity = new TData();
+            LoadEntity((MySqlDataReader)reader, entity);
+            return entity;
+        }
         #endregion
     }
 }

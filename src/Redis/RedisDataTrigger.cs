@@ -53,7 +53,7 @@ namespace Agebull.EntityModel.Redis
                     ver = proxy.Redis.Incr($"ent:ver:{table.Name}");
                 }
                 code.Append($@"
-UPDATE `{table.WriteTableName}` 
+UPDATE `{table.ContextWriteTable}` 
 SET `{table.FieldDictionary[nameof(IVersionData.DataVersion)]}` = {ver}");
                 if (!string.IsNullOrEmpty(condition))
                 {
