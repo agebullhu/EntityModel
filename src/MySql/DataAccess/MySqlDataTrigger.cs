@@ -13,6 +13,11 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     public class MySqlDataTrigger : IDataTrigger
     {
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.MySql;
+
         void IDataUpdateTrigger.ContitionSqlCode<TEntity>(List<string> conditions)
         {
             if (GlobalContext.Current.IsSystemMode || GlobalContext.Current.User.UserId == LoginUserInfo.SystemUserId)

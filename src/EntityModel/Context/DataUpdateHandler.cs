@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using Agebull.Common;
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 
@@ -40,12 +41,7 @@ namespace Agebull.EntityModel.Events
         /// <summary>
         ///     更新注入处理器
         /// </summary>
-        private static Dictionary<int, List<IDataUpdateTrigger>> _triggers;
-
-        /// <summary>
-        ///     更新注入处理器
-        /// </summary>
-        private static Dictionary<int, List<IDataUpdateTrigger>> Triggers => _triggers;
+        private static Dictionary<int, List<IDataUpdateTrigger>> Triggers { get; set; }
 
 
         /// <summary>
@@ -72,8 +68,8 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public static void RegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
-            if (_triggers == null)
-                _triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
+            if (Triggers == null)
+                Triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
             if (Triggers.ContainsKey(entityId))
             {
                 if (Triggers[entityId].All(p => p.GetType() != handler.GetType()))
@@ -88,14 +84,12 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public static void UnRegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
-            if (_triggers != null && Triggers.ContainsKey(entityId))
-            {
-                Triggers[entityId].Remove(handler);
-                if (Triggers[entityId].Count == 0)
-                    Triggers.Remove(entityId);
-                if (Triggers.Count == 0)
-                    _triggers = null;
-            }
+            if (Triggers == null || !Triggers.ContainsKey(entityId)) return;
+            Triggers[entityId].Remove(handler);
+            if (Triggers[entityId].Count == 0)
+                Triggers.Remove(entityId);
+            if (Triggers.Count == 0)
+                Triggers = null;
         }
 
 
@@ -106,9 +100,11 @@ namespace Agebull.EntityModel.Events
         /// <param name="operatorType">操作类型</param>
         public static void OnPrepareSave(EditDataObject data, DataOperatorType operatorType)
         {
+            if (operatorType == DataOperatorType.Insert && data is ISnowFlakeId flakeId)
+                flakeId.Id = SnowFlake.NewId;
             foreach (var trigger in _generalTriggers)
                 trigger.OnPrepareSave(data, operatorType);
-            if (_triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+            if (Triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
                 foreach (var trigger in triggers)
                     trigger.OnPrepareSave(data, operatorType);
         }
@@ -122,7 +118,7 @@ namespace Agebull.EntityModel.Events
         {  
             foreach (var trigger in _generalTriggers)
                 trigger.OnDataSaved(data, operatorType);
-            if (_triggers != null && _triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+            if (Triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
                 foreach (var trigger in triggers)
                     trigger.OnDataSaved(data, operatorType);
         }
@@ -139,7 +135,7 @@ namespace Agebull.EntityModel.Events
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
-            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
                 foreach (var trigger in triggers)
                     trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
 
@@ -157,7 +153,7 @@ namespace Agebull.EntityModel.Events
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
-            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
                 foreach (var trigger in triggers)
                     trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
         }
@@ -172,7 +168,7 @@ namespace Agebull.EntityModel.Events
         {
             foreach (var trigger in _generalTriggers)
                 trigger.ContitionSqlCode<T>(conditions);
-            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
+            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
                 foreach (var trigger in triggers)
                     trigger.ContitionSqlCode<T>(conditions);
         }
@@ -199,15 +195,15 @@ namespace Agebull.EntityModel.Events
         public static void BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, int entityId, string condition)
             where TEntity : EditDataObject, new()
         {
-            foreach (var trigger in _generalTriggers)
+            foreach (var trigger in _generalTriggers.Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))
             {
                 trigger.BeforeUpdateSql(table, condition, code);
             }
-            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
-            {
-                foreach (var trigger in triggers)
-                    trigger.BeforeUpdateSql(table, condition, code);
-            }
+
+            if (Triggers == null || !Triggers.TryGetValue(entityId, out var triggers))
+                return;
+            foreach (var trigger in triggers.Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))
+                trigger.BeforeUpdateSql(table, condition, code);
         }
 
         /// <summary>
@@ -221,15 +217,15 @@ namespace Agebull.EntityModel.Events
         public static void AfterUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, int entityId, string condition)
             where TEntity : EditDataObject, new()
         {
-            foreach (var trigger in _generalTriggers)
+            foreach (var trigger in _generalTriggers.Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))
             {
                 trigger.AfterUpdateSql(table, condition, code);
             }
-            if (_triggers != null && _triggers.TryGetValue(entityId, out var triggers))
-            {
-                foreach (var trigger in triggers)
-                    trigger.AfterUpdateSql(table, condition, code);
-            }
+
+            if (Triggers == null || !Triggers.TryGetValue(entityId, out var triggers))
+                return;
+            foreach (var trigger in triggers.Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))
+                trigger.AfterUpdateSql(table, condition, code);
         }
     }
 }

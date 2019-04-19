@@ -16,12 +16,12 @@ namespace Agebull.Common
     ///   老牛软件使用的业务逻辑异常类
     /// </summary>
     [Serializable]
-    public class AgebullBusinessException : AgebullException
+    public class BusinessException : ExceptionEx
     {
         /// <summary>
         ///   基本构造
         /// </summary>
-        public AgebullBusinessException()
+        public BusinessException()
         {
         }
 
@@ -29,7 +29,7 @@ namespace Agebull.Common
         ///   消息构造
         /// </summary>
         /// <param name="message"> 消息 </param>
-        public AgebullBusinessException(string message) : base(message)
+        public BusinessException(string message) : base(message)
         {
         }
 
@@ -38,7 +38,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="message"> 消息 </param>
         /// <param name="innerException"> 内联消息 </param>
-        public AgebullBusinessException(string message , Exception innerException) : base(message , innerException)
+        public BusinessException(string message , Exception innerException) : base(message , innerException)
         {
         }
 
@@ -47,7 +47,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="info"> 序列化对象 </param>
         /// <param name="context"> 数据流上下文 </param>
-        protected AgebullBusinessException(SerializationInfo info , StreamingContext context) : base(info , context)
+        protected BusinessException(SerializationInfo info , StreamingContext context) : base(info , context)
         {
         }
     }

@@ -16,7 +16,7 @@ namespace Agebull.Common
     ///   代码缺陷异常类
     /// </summary>
     [Serializable]
-    public class BugException : AgebullException
+    public class BugException : ExceptionEx
     {
         /// <summary>
         ///   消息构造

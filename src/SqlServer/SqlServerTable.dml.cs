@@ -497,7 +497,7 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreateUpdateSql(valueExpression, condition);
             var arg2 = new List<SqlParameter>
             {
-                CreateFieldParameter(KeyField, key)
+                CreateFieldParameter(KeyField,GetDbType(KeyField), key)
             };
             int result;
             using (var scope = TransactionScope.CreateScope(DataBase))

@@ -22,7 +22,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="time">时间</param>
         /// <returns>long</returns>
-        public static double ConvertDateTimeToUnixTime(this System.DateTime time)
+        public static double ConvertDateTimeToUnixTime(this DateTime time)
         {
             return (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
         }

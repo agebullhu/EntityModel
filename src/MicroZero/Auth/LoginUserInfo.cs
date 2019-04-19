@@ -123,6 +123,18 @@ namespace Agebull.Common.OAuth
         [JsonProperty("app", NullValueHandling = NullValueHandling.Ignore)]
         public string App { get; set; }
 
+        /// <summary>
+        ///     组织标识
+        /// </summary>
+        [JsonProperty("gid", NullValueHandling = NullValueHandling.Ignore)]
+        public long GroupId { get; set; }
+
+        /// <summary>
+        ///     扩展信息
+        /// </summary>
+        [JsonProperty("ext", NullValueHandling = NullValueHandling.Ignore)]
+        public string ExtendValue { get; set; }
+
         #region 预定义
 
         /// <summary>

@@ -548,11 +548,11 @@ namespace Agebull.Common.Logging
                     return "发生未处理异常";
                 case SystemException _:
                     return $"发生系统错误,系统标识:{GetRequestId()}";
-                case AgebullSystemException _:
+                case SystemExException _:
                     return $"发生内部错误,系统标识:{GetRequestId()}";
                 case BugException _:
                     return $"发生设计错误,系统标识:{GetRequestId()}";
-                case AgebullBusinessException _:
+                case BusinessException _:
                     return string.Format("发生业务逻辑错误,内容为:{1},系统标识:{0}", GetRequestId(), ex.Message);
             }
 
@@ -572,13 +572,13 @@ namespace Agebull.Common.Logging
             {
                 switch (ex)
                 {
-                    case AgebullSystemException _:
+                    case SystemExException _:
                         sb.AppendLine("系统致命错误");
                         break;
                     case BugException _:
                         sb.AppendLine("存在设计缺陷");
                         break;
-                    case AgebullBusinessException _:
+                    case BusinessException _:
                         sb.AppendLine("业务逻辑错误");
                         break;
                     case SystemException _:

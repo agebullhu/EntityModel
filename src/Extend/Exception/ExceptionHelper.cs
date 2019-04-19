@@ -35,11 +35,11 @@ namespace Agebull.Common
             {
                 return "存在设计缺陷";
             }
-            if (ex is AgebullBusinessException)
+            if (ex is BusinessException)
             {
                 return string.Format(@"服务器因为数据错误无法正确执行，错误信息：{0}", ex.Message);
             }
-            if (ex is AgebullSystemException)
+            if (ex is SystemExException)
             {
                 return "服务器发生内部错误";
             }

@@ -19,13 +19,23 @@ namespace Agebull.MicroZero.ZeroApis
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiValueResult Succees(string data)
+        public static ApiValueResult Succees(string data, string message = null)
         {
-            return new ApiValueResult
-            {
-                Success = true,
-                ResultData = data
-            };
+            return message == null
+                ? new ApiValueResult
+                {
+                    Success = true,
+                    ResultData = data
+                }
+                : new ApiValueResult
+                {
+                    Success = true,
+                    ResultData = data,
+                    Status = new OperatorStatus
+                    {
+                        ClientMessage = message
+                    }
+                };
         }
 
         /// <summary>
@@ -104,13 +114,23 @@ namespace Agebull.MicroZero.ZeroApis
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiValueResult<TData> Succees(TData data)
+        public static ApiValueResult<TData> Succees(TData data, string message = null)
         {
-            return new ApiValueResult<TData>
-            {
-                Success = true,
-                ResultData = data
-            };
+            return message == null
+                ? new ApiValueResult<TData>
+                {
+                    Success = true,
+                    ResultData = data
+                }
+                : new ApiValueResult<TData>
+                {
+                    Success = true,
+                    ResultData = data,
+                    Status = new OperatorStatus
+                    {
+                        ClientMessage = message
+                    }
+                };
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.4.0.34</Version>
+    <Version>2.4.0.47</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -76,6 +76,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="DataBase\Interface\DataBaseType.cs" />
     <Compile Include="DataBase\Interface\IDataBase.cs" />
     <Compile Include="DataBase\Interface\IDataTable.cs" />
     <Compile Include="DataBase\Interface\ITransactionScope.cs" />

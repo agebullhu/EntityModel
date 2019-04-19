@@ -22,6 +22,13 @@ namespace Agebull.EntityModel.Common
     public interface IDataUpdateTrigger
     {
         /// <summary>
+        /// 数据库类型
+        /// </summary>
+        DataBaseType DataBaseType
+        {
+            get;
+        }
+        /// <summary>
         ///     与更新同时执行的SQL(更新之前立即执行)
         /// </summary>
         /// <param name="table">当前数据操作对象</param>

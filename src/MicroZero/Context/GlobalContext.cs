@@ -44,7 +44,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前调用的客户信息
         /// </summary>
-        [JsonProperty("user")] internal ILoginUserInfo _user;
+        [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)] internal ILoginUserInfo _user;
 
         /// <summary>
         ///     当前调用的客户信息
@@ -59,7 +59,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前调用的组织信息
         /// </summary>
-        [JsonProperty("org")] private IOrganizational _organizational;
+        [JsonProperty("org", NullValueHandling = NullValueHandling.Ignore)] private IOrganizational _organizational;
 
         /// <summary>
         ///     当前调用的组织信息
@@ -69,7 +69,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前调用的客户的角色信息
         /// </summary>
-        [JsonProperty("role")]
+        [JsonProperty("role", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, IRole> Role { get; set; }
 
         #endregion
@@ -79,7 +79,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前调用上下文
         /// </summary>
-        [JsonProperty("req")] private RequestInfo _requestInfo;
+        [JsonProperty("req", NullValueHandling = NullValueHandling.Ignore)] private RequestInfo _requestInfo;
 
         /// <summary>
         ///     当前调用上下文

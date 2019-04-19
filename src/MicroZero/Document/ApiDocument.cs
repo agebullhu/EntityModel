@@ -48,6 +48,14 @@ namespace Agebull.MicroZero.ApiDocuments
         [JsonProperty("api", NullValueHandling = NullValueHandling.Ignore)]
         [Category]
         public string ApiName;
-        
+
+        /// <summary>
+        ///     承载页面
+        /// </summary>
+        [DataMember]
+        [JsonProperty("page", NullValueHandling = NullValueHandling.Ignore)]
+        [Category]
+        public string PageUrl;
+
     }
 }

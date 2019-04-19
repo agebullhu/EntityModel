@@ -105,6 +105,10 @@ namespace Agebull.EntityModel.SqlServer
         #endregion
 
         #region 连接
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.SqlServer;
 
         /// <summary>
         ///     连接字符串
@@ -139,13 +143,28 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     连接对象
         /// </summary>
-        public SqlConnection Connection
+        public SqlConnection Connection => _connection ?? (_connection = InitConnection());
+
+
+        /// <summary>
+        ///     连接对象
+        /// </summary>
+        public static readonly List<SqlConnection> Connections = new List<SqlConnection>();
+
+        /// <summary>
+        /// 初始化连接对象
+        /// </summary>
+        /// <returns></returns>
+        private SqlConnection InitConnection()
         {
-            get { return _connection; }
-            internal set
+            lock (LockData)
             {
-                _connection = value;
-                //Trace.WriteLine(this.GetHashCode(), "Connection");
+                var connection = new SqlConnection(ConnectionString);
+                Connections.Add(connection);
+                //Trace.WriteLine(_count++, "Open");
+                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                connection.Open();
+                return connection;
             }
         }
         /// <summary>
@@ -154,30 +173,29 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         public bool Open()
         {
-            //if (_isClosed)
-            //{
-            //    //throw new Exception("已关闭的数据库对象不能再次使用");
-            //}
-            bool result = false;
-            if (_connection == null)
+            lock (LockData)
             {
-                result = true;
-                _connection = new SqlConnection(ConnectionString);
-                //Trace.WriteLine("Create Connection", "SqlServerDataBase");
+                bool result = false;
+                if (_connection == null)
+                {
+                    _connection = InitConnection();
+                    return true;
+                    //Trace.WriteLine("Create _connection", "MySqlDataBase");
+                }
+                if (string.IsNullOrEmpty(_connection.ConnectionString))
+                {
+                    result = true;
+                    //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
+                    _connection.ConnectionString = ConnectionString;
+                }
+                if (_connection.State == ConnectionState.Open)
+                {
+                    return result;
+                }
+                //Trace.WriteLine(_count++, "Open");
+                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                _connection.Open();
             }
-            else if (string.IsNullOrEmpty(_connection.ConnectionString))
-            {
-                result = true;
-                //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
-                _connection.ConnectionString = ConnectionString;
-            }
-            if (_connection.State == ConnectionState.Open)
-            {
-                return result;
-            }
-            //Trace.WriteLine(_count++, "Open");
-            //Trace.WriteLine("Opened Connection", "SqlServerDataBase");
-            _connection.Open();
             return true;
         }
 

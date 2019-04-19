@@ -22,7 +22,7 @@ namespace Agebull.Common
     ///   老牛软件使用的系统(操作系统,.NET,IIS,数据库等)异常类
     /// </summary>
     [Serializable]
-    public class AgebullSystemException : AgebullException
+    public class SystemExException : ExceptionEx
     {
         /// <summary>
         ///   内容的详细信息
@@ -37,7 +37,7 @@ namespace Agebull.Common
         /// <summary>
         ///   基本构造
         /// </summary>
-        public AgebullSystemException()
+        public SystemExException()
         {
         }
 
@@ -45,7 +45,7 @@ namespace Agebull.Common
         ///   消息构造
         /// </summary>
         /// <param name="message"> 消息 </param>
-        public AgebullSystemException(string message)
+        public SystemExException(string message)
             : base(message)
         {
         }
@@ -53,7 +53,7 @@ namespace Agebull.Common
         /// <summary>
         ///   基本构造
         /// </summary>
-        public AgebullSystemException(Exception serr) : this(serr.Message , serr)
+        public SystemExException(Exception serr) : this(serr.Message , serr)
         {
         }
 
@@ -65,7 +65,7 @@ namespace Agebull.Common
         /// <summary>
         ///   基本构造
         /// </summary>
-        public AgebullSystemException(System.Data.Common.DbException serr) : this(serr.Message , serr)
+        public SystemExException(DbException serr) : this(serr.Message , serr)
         {
         }
 
@@ -74,7 +74,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="message"> 消息 </param>
         /// <param name="innerException"> 内联消息 </param>
-        public AgebullSystemException(string message , Exception innerException) : base(message , innerException)
+        public SystemExException(string message , Exception innerException) : base(message , innerException)
         {
             ErrorType = SystemErrorType.UnknowError ;
         }
@@ -86,7 +86,7 @@ namespace Agebull.Common
         /// <param name="innerException"> 内联消息 </param>
         /// <param name="errtype"> 异常类型 </param>
         /// <param name="innermessage"> 内部扩展消息 </param>
-        public AgebullSystemException(string message , SystemErrorType errtype , string innermessage , Exception innerException) : base(message , innerException)
+        public SystemExException(string message , SystemErrorType errtype , string innermessage , Exception innerException) : base(message , innerException)
         {
             ErrorType = errtype ;
             InnerMessage = innermessage ;
@@ -97,18 +97,18 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="info"> 序列化对象 </param>
         /// <param name="context"> 数据流上下文 </param>
-        protected AgebullSystemException(SerializationInfo info , StreamingContext context) : base(info , context)
+        protected SystemExException(SerializationInfo info , StreamingContext context) : base(info , context)
         {
         }
 #if !NETCOREAPP
         /// <summary>
         ///   基本构造
         /// </summary>
-        public static AgebullException OnAgebullDatabaseException(SqlException serr)
+        public static ExceptionEx OnAgebullDatabaseException(SqlException serr)
         {
             if(SqlExceptionLevel(serr) > 16)
             {
-                return new AgebullSystemException("系统内部错误" , SystemErrorType.DataBaseError , serr.Message , serr) ;
+                return new SystemExException("系统内部错误" , SystemErrorType.DataBaseError , serr.Message , serr) ;
             }
             return new BugException(serr.Message , serr) ;
         }
@@ -135,7 +135,7 @@ namespace Agebull.Common
         /// <returns> </returns>
         public static Exception OnAgebullDatabaseException(DbException serr)
         {
-            return new AgebullSystemException("系统内部错误" , SystemErrorType.DataBaseError , serr.Message , serr) ;
+            return new SystemExException("系统内部错误" , SystemErrorType.DataBaseError , serr.Message , serr) ;
         }
     }
 }

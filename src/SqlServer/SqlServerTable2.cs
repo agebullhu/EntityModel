@@ -32,6 +32,10 @@ namespace Agebull.EntityModel.SqlServer
         where TDataBase : SqlServerDataBase
     {
         #region 数据库
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.SqlServer;
 
         /// <summary>
         ///     自动数据连接对象
@@ -216,7 +220,7 @@ namespace Agebull.EntityModel.SqlServer
                 throw new ArgumentException(@"值的长度和字段长度必须一致", nameof(values));
             var res = new SqlParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
-                res[i] = CreateFieldParameter(fields[i], values[i]);
+                res[i] = CreateFieldParameter(fields[i], GetDbType(fields[i]), values[i]);
             return res;
         }
 
@@ -233,10 +237,11 @@ namespace Agebull.EntityModel.SqlServer
         ///     生成字段的参数
         /// </summary>
         /// <param name="field">生成参数的字段</param>
+        /// <param name="type">数据类型</param>
         /// <param name="value">值</param>
-        public SqlParameter CreateFieldParameter(string field, object value)
+        public SqlParameter CreateFieldParameter(string field,SqlDbType type, object value)
         {
-            return SqlServerDataBase.CreateParameter(field, value, GetDbType(field));
+            return SqlServerDataBase.CreateParameter(field, value, type);
         }
 
         /// <summary>
@@ -246,7 +251,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="entity">取值的实体</param>
         public SqlParameter CreateFieldParameter(string field, TData entity)
         {
-            return CreateFieldParameter(field, entity.GetValue(field));
+            return CreateFieldParameter(field, GetDbType(field), entity.GetValue(field));
         }
 
         /// <summary>
@@ -257,7 +262,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="entityField">取值的字段</param>
         public SqlParameter CreateFieldParameter(string field, DataObjectBase entity, string entityField)
         {
-            return CreateFieldParameter(field, entity.GetValue(entityField));
+            return CreateFieldParameter(field, GetDbType(field), entity.GetValue(entityField));
         }
 
         /// <summary>

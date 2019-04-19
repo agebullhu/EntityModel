@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using Agebull.Common.Ioc;
@@ -33,6 +32,10 @@ namespace Agebull.EntityModel.MySql
     {
         #region 数据库
 
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.MySql;
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
@@ -183,7 +186,7 @@ namespace Agebull.EntityModel.MySql
                 throw new ArgumentException(@"值的长度和字段长度必须一致", nameof(values));
             var res = new MySqlParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
-                res[i] = CreateFieldParameter(fields[i], values[i]);
+                res[i] = CreateFieldParameter(fields[i], GetDbType(fields[i]), values[i]);
             return res;
         }
 
@@ -200,10 +203,11 @@ namespace Agebull.EntityModel.MySql
         ///     生成字段的参数
         /// </summary>
         /// <param name="field">生成参数的字段</param>
+        /// <param name="type"></param>
         /// <param name="value">值</param>
-        public MySqlParameter CreateFieldParameter(string field, object value)
+        public MySqlParameter CreateFieldParameter(string field, MySqlDbType type, object value)
         {
-            return MySqlDataBase.CreateParameter(field, value, GetDbType(field));
+            return MySqlDataBase.CreateParameter(field, value, type);
         }
 
         /// <summary>
@@ -213,7 +217,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entity">取值的实体</param>
         public MySqlParameter CreateFieldParameter(string field, TData entity)
         {
-            return CreateFieldParameter(field, entity.GetValue(field));
+            return CreateFieldParameter(field,GetDbType(field), entity.GetValue(field));
         }
 
         /// <summary>
@@ -224,7 +228,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entityField">取值的字段</param>
         public MySqlParameter CreateFieldParameter(string field, DataObjectBase entity, string entityField)
         {
-            return CreateFieldParameter(field, entity.GetValue(entityField));
+            return CreateFieldParameter(field, GetDbType(field), entity.GetValue(entityField));
         }
 
         /// <summary>

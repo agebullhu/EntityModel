@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.SqlServer
             if (value is string || value is DateTime || value is byte[])
             {
                 var name = "v_" + field;
-                parameters.Add(CreateFieldParameter(name, value));
+                parameters.Add(CreateFieldParameter(name, GetDbType(field), value));
                 return $"[{field}] = @{name}";
             }
             if (value is bool)

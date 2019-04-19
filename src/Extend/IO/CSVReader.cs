@@ -147,7 +147,7 @@ namespace Agebull.Common.Help
             }
             catch
             {
-                throw new AgebullSystemException("文件无法打开");
+                throw new SystemExException("文件无法打开");
             }
 
             var lines = Split(s);

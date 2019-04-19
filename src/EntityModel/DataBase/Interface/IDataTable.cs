@@ -26,6 +26,13 @@ namespace Agebull.EntityModel.Common
         #region 数据库
 
         /// <summary>
+        /// 数据库类型
+        /// </summary>
+        DataBaseType DataBaseType
+        {
+            get;
+        }
+        /// <summary>
         ///     自动数据连接对象
         /// </summary>
         IDataBase DataBase

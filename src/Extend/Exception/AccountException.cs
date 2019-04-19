@@ -7,7 +7,7 @@ namespace Agebull.Common
     /// <summary>
     ///   表示用户登录方面的异常
     /// </summary>
-    public class AccountException : AgebullException
+    public class AccountException : ExceptionEx
     {
         /// <summary>
         ///   构造

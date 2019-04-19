@@ -1564,7 +1564,7 @@ namespace Agebull.Common.Reflection
                 return;
             }
             par.Add(new XElement("ExceptionMessage", err.Message));
-            if (err is AgebullSystemException serr)
+            if (err is SystemExException serr)
             {
                 par.Add(new XElement("InnerMessage", serr.InnerMessage));
                 par.Add(new XElement("Extend", serr.Extend));

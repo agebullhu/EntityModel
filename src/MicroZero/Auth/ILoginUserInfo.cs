@@ -78,6 +78,11 @@ namespace Agebull.Common.OAuth
         /// </summary>
         string AccessToken { get; set; }
 
+        /// <summary>
+        ///     组织标识
+        /// </summary>
+        long GroupId { get; set; }
+
 
         /// <summary>
         ///     组织标识
@@ -100,5 +105,9 @@ namespace Agebull.Common.OAuth
         /// </remarks>
         string Position { get; set; }
 
+        /// <summary>
+        ///     扩展信息
+        /// </summary>
+        string ExtendValue { get; set; }
     }
 }

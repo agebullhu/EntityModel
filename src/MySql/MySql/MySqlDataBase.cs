@@ -100,6 +100,11 @@ namespace Agebull.EntityModel.MySql
 
         #region 数据库连接对象
 
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.MySql;
+
         private MySqlConnection _connection;
         /// <summary>
         ///     连接对象
@@ -173,7 +178,6 @@ namespace Agebull.EntityModel.MySql
                 bool result = false;
                 if (_connection == null)
                 {
-                    result = true;
                     _connection = InitConnection();
                     return true;
                     //Trace.WriteLine("Create _connection", "MySqlDataBase");

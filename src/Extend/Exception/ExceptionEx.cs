@@ -17,7 +17,7 @@ namespace Agebull.Common
     ///   老牛软件使用的异常基类
     /// </summary>
     [Serializable]
-    public class AgebullException : ApplicationException
+    public class ExceptionEx : ApplicationException
     {
         /// <summary>
         ///   格式化异常
@@ -49,7 +49,7 @@ namespace Agebull.Common
         /// <summary>
         ///   基本构造
         /// </summary>
-        public AgebullException()
+        public ExceptionEx()
         {
         }
 
@@ -57,7 +57,7 @@ namespace Agebull.Common
         ///   消息构造
         /// </summary>
         /// <param name="message"> 消息 </param>
-        public AgebullException(string message) : base(message)
+        public ExceptionEx(string message) : base(message)
         {
         }
 
@@ -66,7 +66,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="message"> 消息 </param>
         /// <param name="innerException"> 内联消息 </param>
-        public AgebullException(string message , Exception innerException) : base(message , innerException)
+        public ExceptionEx(string message , Exception innerException) : base(message , innerException)
         {
         }
 
@@ -75,7 +75,7 @@ namespace Agebull.Common
         /// </summary>
         /// <param name="info"> 序列化对象 </param>
         /// <param name="context"> 数据流上下文 </param>
-        protected AgebullException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ExceptionEx(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

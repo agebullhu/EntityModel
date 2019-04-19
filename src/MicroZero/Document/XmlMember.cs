@@ -88,7 +88,7 @@ namespace Agebull.MicroZero.ApiDocuments
         /// <returns></returns>
         public static XmlMember Find(Type type, string sub, string subType = "P")
         {
-            if (type == typeof(object) || type.Namespace.IndexOf("System") == 0)
+            if (type == typeof(object) || type.Namespace.IndexOf("System", StringComparison.Ordinal) == 0)
                 return null;
             if (!Assemblies.Contains(type.Assembly))
                 Load(type.Assembly);

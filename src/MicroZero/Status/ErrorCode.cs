@@ -38,24 +38,29 @@ namespace Agebull.EntityModel.Common
         public const int NetworkError = -5;
 
         /// <summary>
+        ///     参数错误
+        /// </summary>
+        public const int ArgumentError = -6;
+
+        /// <summary>
         ///     系统未就绪
         /// </summary>
-        public const int NoReady = -10;
+        public const int NoReady = -0xA;
 
         /// <summary>
         ///     客户端应中止请求
         /// </summary>
-        public const int Ignore = -11;
+        public const int Ignore = -0xB;
 
         /// <summary>
         ///     客户端应重新请求
         /// </summary>
-        public const int ReTry = -12;
+        public const int ReTry = -0xC;
 
         /// <summary>
         ///     拒绝访问
         /// </summary>
-        public const int DenyAccess = -13;
+        public const int DenyAccess = -0xD;
 
         /// <summary>
         ///     方法不存在
@@ -73,21 +78,6 @@ namespace Agebull.EntityModel.Common
         public const int Auth_UnknowToken = 40001;
 
         /// <summary>
-        ///     未知的RefreshToken
-        /// </summary>
-        public const int Auth_RefreshToken_Unknow = 40083;
-
-        /// <summary>
-        ///     未知的ServiceKey
-        /// </summary>
-        public const int Auth_ServiceKey_Unknow = 40082;
-
-        /// <summary>
-        ///     未知的AccessToken
-        /// </summary>
-        public const int Auth_AccessToken_Unknow = 40081;
-
-        /// <summary>
         ///     未知的用户
         /// </summary>
         public const int Auth_User_Unknow = 40421;
@@ -102,6 +92,21 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public const int Auth_AccessToken_TimeOut = 40036;
 
+        /// <summary>
+        ///     未知的ServiceKey
+        /// </summary>
+        public const int Auth_ServiceKey_Unknow = 40082;
+
+        /// <summary>
+        ///     未知的AccessToken
+        /// </summary>
+        public const int Auth_AccessToken_Unknow = 40081;
+
+        /// <summary>
+        ///     未知的RefreshToken
+        /// </summary>
+        public const int Auth_RefreshToken_Unknow = 40083;
+
         #region 消息字典
 
         private static readonly Dictionary<int, string> Map = new Dictionary<int, string>
@@ -112,6 +117,7 @@ namespace Agebull.EntityModel.Common
             {RemoteError, "服务器外部错误"},
             {LocalError, "服务器一般错误"},
             {NetworkError, "网络错误"},
+            {ArgumentError, "参数错误"},
             {DenyAccess, "拒绝访问"},
             {NoReady, "系统未就绪"},
             {ReTry, "客户端应重新请求"},

@@ -34,7 +34,7 @@ namespace Agebull.MicroZero.ZeroApis
         public string OperatorId { get; set; }
 
 
-        int IApiResult.ErrorCode =>  Status?.ErrorCode ?? (Success ? 0 : -1);
+        int IApiResult.ErrorCode => Status?.ErrorCode ?? (Success ? 0 : -1);
 
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Agebull.MicroZero.ZeroApis
         [JsonProperty("success")]
         public bool Success { get; set; } = true;
 
-        
+
         [JsonIgnore]
         IOperatorStatus IApiResult.Status
         {
@@ -177,13 +177,24 @@ namespace Agebull.MicroZero.ZeroApis
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiResult<TData> Succees<TData>(TData data)
+        public static ApiResult<TData> Succees<TData>(TData data, string message = null)
         {
-            return new ApiResult<TData>
-            {
-                Success = true,
-                ResultData = data
-            };
+            return message == null
+                ?
+                new ApiResult<TData>
+                {
+                    Success = true,
+                    ResultData = data
+                }
+                : new ApiResult<TData>
+                {
+                    Success = true,
+                    ResultData = data,
+                    Status = new OperatorStatus
+                    {
+                        ClientMessage = message
+                    }
+                };
         }
 
         /// <summary>
@@ -367,7 +378,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数错误字符串
         /// </summary>
-        public static ApiResult ArgumentError => Error(ErrorCode.LogicalError, "参数错误");
+        public static ApiResult ArgumentError => Error(ErrorCode.ArgumentError, "参数错误");
 
         /// <summary>
         ///     逻辑错误字符串
@@ -455,12 +466,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数错误字符串
         /// </summary>
-        public static string ArgumentErrorJson =>JsonConvert.SerializeObject(ArgumentError);
+        public static string ArgumentErrorJson => JsonConvert.SerializeObject(ArgumentError);
 
         /// <summary>
         ///     逻辑错误字符串
         /// </summary>
-        public static string LogicalErrorJson =>JsonConvert.SerializeObject(LogicalError);
+        public static string LogicalErrorJson => JsonConvert.SerializeObject(LogicalError);
 
         /// <summary>
         ///     拒绝访问的Json字符串
@@ -470,7 +481,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     服务器无返回值的字符串
         /// </summary>
-        public static string RemoteEmptyErrorJson =>JsonConvert.SerializeObject(RemoteEmptyError);
+        public static string RemoteEmptyErrorJson => JsonConvert.SerializeObject(RemoteEmptyError);
 
         /// <summary>
         ///     服务器访问异常
@@ -541,13 +552,23 @@ namespace Agebull.MicroZero.ZeroApis
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiResult<TData> Succees(TData data)
+        public static ApiResult<TData> Succees(TData data, string message = null)
         {
-            return new ApiResult<TData>
-            {
-                Success = true,
-                ResultData = data
-            };
+            return message == null
+                ? new ApiResult<TData>
+                {
+                    Success = true,
+                    ResultData = data
+                }
+                : new ApiResult<TData>
+                {
+                    Success = true,
+                    ResultData = data,
+                    Status = new OperatorStatus
+                    {
+                        ClientMessage = message
+                    }
+                };
         }
 
         /// <summary>

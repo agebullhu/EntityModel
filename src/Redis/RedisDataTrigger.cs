@@ -39,29 +39,45 @@ namespace Agebull.EntityModel.Redis
         {
         }
 
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.Full;
+
         void IDataUpdateTrigger.BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
         }
 
         void IDataUpdateTrigger.AfterUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
-            if (DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIVersionData))
+            if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIVersionData))
+                return;
+
+            long ver;
+            using (RedisProxy proxy = new RedisProxy(RedisProxy.DbSystem))
             {
-                long ver;
-                using (RedisProxy proxy = new RedisProxy(RedisProxy.DbSystem))
-                {
-                    ver = proxy.Redis.Incr($"ent:ver:{table.Name}");
-                }
-                code.Append($@"
+                ver = proxy.Redis.Incr($"ent:ver:{table.Name}");
+            }
+
+            switch (table.DataBaseType)
+            {
+                case DataBaseType.MySql:
+                    code.Append($@"
 UPDATE `{table.ContextWriteTable}` 
 SET `{table.FieldDictionary[nameof(IVersionData.DataVersion)]}` = {ver}");
-                if (!string.IsNullOrEmpty(condition))
-                {
+                    break;
+                default:
                     code.Append($@"
-WHERE {condition}");
-                }
-                code.AppendLine(";");
+UPDATE [{table.ContextWriteTable}]
+SET [{table.FieldDictionary[nameof(IVersionData.DataVersion)]}] = {ver}");
+                    break;
             }
+            if (!string.IsNullOrEmpty(condition))
+            {
+                code.Append($@"
+WHERE {condition}");
+            }
+            code.AppendLine(";");
         }
     }
 }

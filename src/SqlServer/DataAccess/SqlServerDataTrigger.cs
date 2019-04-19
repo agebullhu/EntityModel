@@ -13,6 +13,11 @@ namespace Agebull.EntityModel.SqlServer
     /// </summary>
     public class SqlServerDataTrigger : IDataTrigger
     {
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.SqlServer;
+
         void IDataUpdateTrigger.ContitionSqlCode<TEntity>(List<string> conditions)
         {
             if (GlobalContext.Current.IsSystemMode || GlobalContext.Current.User.UserId == LoginUserInfo.SystemUserId)
@@ -58,20 +63,19 @@ namespace Agebull.EntityModel.SqlServer
 
         void IDataUpdateTrigger.AfterUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
-            if (DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
+            if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
+                return;
+            code.Append($@"
+UPDATE [{table.ContextWriteTable}]
+SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.LoginUserId},
+    [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = GetDate()");
+            if (!string.IsNullOrEmpty(condition))
             {
                 code.Append($@"
-UPDATE [{table.ContextWriteTable}`]
-SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.LoginUserId},
-    [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = Now()");
-                if (!string.IsNullOrEmpty(condition))
-                {
-                    code.Append($@"
 WHERE {condition}");
-                }
-
-                code.AppendLine(";");
             }
+
+            code.AppendLine(";");
         }
     }
 }

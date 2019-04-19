@@ -1052,7 +1052,7 @@ namespace Agebull.EntityModel.MySql
         public object Read<TField, TKey>(Expression<Func<TData, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
-            var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, key));
+            var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, GetDbType(KeyField), key));
             return vl == DBNull.Value || vl == null ? default(TField) : vl;
         }
 
@@ -1065,7 +1065,7 @@ namespace Agebull.EntityModel.MySql
         public TField LoadValue<TField, TKey>(Expression<Func<TData, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
-            var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, key));
+            var vl = LoadValueInner(fn, FieldConditionSQL(KeyField), CreateFieldParameter(KeyField, GetDbType(KeyField), key));
             return vl == DBNull.Value || vl == null ? default(TField) : (TField)vl;
         }
 
@@ -1397,7 +1397,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public TData LoadFirst(string foreignKey, object key)
         {
-            return LoadFirstInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, key));
+            return LoadFirstInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
@@ -1421,7 +1421,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public TData LoadLast(string foreignKey, object key)
         {
-            return LoadLastInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, key));
+            return LoadLastInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
@@ -1429,7 +1429,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public List<TData> LoadByForeignKey(string foreignKey, object key)
         {
-            return LoadDataInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, key));
+            return LoadDataInner(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
@@ -1437,10 +1437,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public void ReLoad(TData entity)
         {
-
-            {
-                ReLoadInner(entity);
-            }
+            ReLoadInner(entity);
             entity.OnStatusChanged(NotificationStatusType.Refresh);
         }
 
@@ -1449,10 +1446,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public void ReLoad(ref TData entity)
         {
-
-            {
-                ReLoadInner(entity);
-            }
+            ReLoadInner(entity);
             entity.OnStatusChanged(NotificationStatusType.Refresh);
         }
 

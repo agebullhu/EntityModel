@@ -10,6 +10,7 @@
 
 using Agebull.EntityModel.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -427,12 +428,13 @@ namespace Agebull.EntityModel.SqlServer
                         return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
                 }
             }
-            if (expression.Method.DeclaringType.IsGenericTypeDefinition && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+            if (expression.Method.DeclaringType.IsArray ||  expression.Method.DeclaringType.IsSupperInterface(typeof(ICollection)))
             {
                 switch (expression.Method.Name)
                 {
                     case "Contains":
-                        return $"{GetArguments(expression)} in ({ConvertExpression(expression.Object)})";
+                        var vl = ConvertExpression(expression.Object);
+                        return !string.IsNullOrWhiteSpace(vl) ? $"{GetArguments(expression)} in ({vl})" : null;
                 }
             }
             var name = _condition.AddParameter(GetValue(expression));
@@ -483,22 +485,18 @@ namespace Agebull.EntityModel.SqlServer
             {
                 return $"@{_condition.AddParameter(vl)}";
             }
-            if (vl is string)
+            switch (vl)
             {
-                return $"@{_condition.AddParameter(vl)}";
+                case string _:
+                    return $"@{_condition.AddParameter(vl)}";
+                case IEnumerable<string> slist:
+                    return slist.LinkToString("'", "','", "'");
+                case IEnumerable<DateTime> dlist:
+                    return dlist.LinkToString("'", "','", "'");
+                case IEnumerable ilist:
+                    return ilist.LinkToString(',');
             }
-            if (vl is IList<int> ilist)
-            {
-                return string.Join(",", ilist);
-            }
-            if (vl is IList<string> slist)
-            {
-                return "'" + string.Join("','", slist) + "'";
-            }
-            if (vl is IList<DateTime> dlist)
-            {
-                return "'" + string.Join("','", dlist) + "'";
-            }
+
             return $"@{_condition.AddParameter(vl)}";
         }
 

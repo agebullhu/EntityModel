@@ -22,6 +22,13 @@ namespace Agebull.EntityModel.Common
     public interface IDataBase : IConfig, IDisposable
     {
         /// <summary>
+        /// 数据库类型
+        /// </summary>
+        DataBaseType DataBaseType
+        {
+            get;
+        }
+        /// <summary>
         /// 生成数据库使用范围
         /// </summary>
         /// <returns></returns>

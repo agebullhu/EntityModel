@@ -35,6 +35,12 @@ namespace Agebull.EntityModel.Common
         /// 表示
         /// </summary>
         public const int TypeofIVersionData = 8;
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.Full;
+
         /// <summary>
         /// 初始化类型
         /// </summary>

@@ -132,15 +132,25 @@ namespace Agebull.MicroZero.ZeroApis
         ///     生成一个成功的标准返回
         /// </summary>
         /// <returns></returns>
-        public static ApiArrayResult<TData> Succees(List<TData> data)
+        public static ApiArrayResult<TData> Succees(List<TData> data, string message = null)
         {
-            return new ApiArrayResult<TData>
-            {
-                Success = true,
-                ResultData = data
-            };
+            return message == null
+                ? new ApiArrayResult<TData>
+                {
+                    Success = true,
+                    ResultData = data
+                }
+                : new ApiArrayResult<TData>
+                {
+                    Success = true,
+                    ResultData = data,
+                    Status = new OperatorStatus
+                    {
+                        ClientMessage = message
+                    }
+                };
         }
-        
+
         /// <summary>
         ///     生成一个成功的标准返回
         /// </summary>
@@ -153,6 +163,6 @@ namespace Agebull.MicroZero.ZeroApis
                 Status = GlobalContext.Current.LastStatus
             };
         }
-        
+
     }
 }
