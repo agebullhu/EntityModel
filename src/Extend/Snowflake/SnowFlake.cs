@@ -20,14 +20,14 @@ namespace Agebull.Common
 
         private const long MachineIdBits = 5L; //机器码字节数  
         private const long DataCenterIdBits = 5L; //数据中心ID长度  
-        private const long MaxMachineId = -1L ^ -1L << (int) MachineIdBits; //最大支持机器节点数0~31，一共32个  
-        private const long MaxDataCenterId = -1L ^ (-1L << (int) DataCenterIdBits); //最大支持数据中心节点数0~31，一共32个 
+        private const long MaxMachineId = -1L ^ -1L << (int)MachineIdBits; //最大支持机器节点数0~31，一共32个  
+        private const long MaxDataCenterId = -1L ^ (-1L << (int)DataCenterIdBits); //最大支持数据中心节点数0~31，一共32个 
 
         private const long SequenceBits = 12L; //序列号12位，12个字节用来保存计数码，机器节点左移12位        
         private const long MachineIdShift = SequenceBits; //机器码数据左移位数，就是后面计数器占用的位数，数据中心节点左移17位
         private const long DataCenterIdShift = SequenceBits + MachineIdBits;
         private const long TimestampLeftShift = SequenceBits + MachineIdBits + DataCenterIdBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数，时间毫秒数左移22位  
-        private const long SequenceMask = -1L ^ -1L << (int) SequenceBits; //一微秒内可以产生计数，如果达到该值则等到下一微秒在进行生成，4095  
+        private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一微秒内可以产生计数，如果达到该值则等到下一微秒在进行生成，4095  
         private static long _lastTimestamp = -1L;//最后时间戳  
 
         private static readonly object SyncRoot = new object();//加锁对象  
@@ -82,7 +82,8 @@ namespace Agebull.Common
             string hostName = Dns.GetHostName() ?? "XJXX-001";
             var idx = hostName.IndexOf("-", StringComparison.Ordinal) + 1;
             string machineId = hostName.Substring(idx, hostName.Length - idx);
-            _machineId = int.Parse(machineId);
+            //_machineId = int.Parse(machineId);
+            _machineId = int.TryParse(machineId, out var id) ? id : 1;
         }
         private static void Snowflakes(long machineId, long dataCenterId)
         {

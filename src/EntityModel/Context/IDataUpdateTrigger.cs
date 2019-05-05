@@ -83,7 +83,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        void OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType);
+        void OnOperatorExecuted(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType);
     }
 
 

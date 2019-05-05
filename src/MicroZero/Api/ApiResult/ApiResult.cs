@@ -23,6 +23,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     API请求标识
         /// </summary>
+        /// <example>AxV6389FC</example>
         [JsonProperty("requestId")]
         public string RequestId { get; set; }
 
@@ -30,6 +31,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     API操作标识
         /// </summary>
+        /// <example>#ABCD456789</example>
         [JsonProperty("operatorId")]
         public string OperatorId { get; set; }
 
@@ -53,6 +55,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     成功或失败标记
         /// </summary>
+        /// <example>true</example>
         [JsonProperty("success")]
         public bool Success { get; set; } = true;
 

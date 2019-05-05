@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>MicroZero的基础定义</Description>
     <AssemblyTitle>Agebull.ZeroNet.Abstractions</AssemblyTitle>
-    <Version>2.4.0.46</Version>
+    <Version>2.4.1.9</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -65,7 +65,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LogRecorder\Agebull.Common.LogRecorder.csproj" />

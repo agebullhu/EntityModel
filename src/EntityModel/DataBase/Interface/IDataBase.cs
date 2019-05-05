@@ -42,7 +42,11 @@ namespace Agebull.EntityModel.Common
 
 
         #region 连接
-        
+        /// <summary>
+        ///     引用计数
+        /// </summary>
+        int QuoteCount { get; set; }
+
         /// <summary>
         ///     连接字符串
         /// </summary>
@@ -169,7 +173,47 @@ namespace Agebull.EntityModel.Common
         DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null);
 
         #endregion
-        
-    }
 
+    }
+    /// <summary>
+    /// 参数生成器
+    /// </summary>
+    public interface IParameterCreater
+    {
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="csharpType">C#的类型</param>
+        /// <param name="parameterName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <returns>参数</returns>
+        DbParameter CreateParameter(string csharpType, string parameterName, object value);
+
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="parameterName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <returns>参数</returns>
+        DbParameter CreateParameter(string parameterName, object value);
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="parameterName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <returns>参数</returns>
+        DbParameter CreateParameter(string parameterName, string value);
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="parameterName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <returns>参数</returns>
+        DbParameter CreateParameter<T>(string parameterName, T value)
+            where T : struct;
+    }
 }

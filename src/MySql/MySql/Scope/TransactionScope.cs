@@ -50,14 +50,14 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         //private int _beginType;
 
-        //private readonly MySqlDataBaseScope dbScope;*/
+        //private readonly DataBaseScope dbScope;*/
         /// <summary>
         ///     构造
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
         private TransactionScope(MySqlDataBase dataBase)
         {
-            //dbScope = MySqlDataBaseScope.CreateScope(dataBase);
+            //dbScope = DataBaseScope.CreateScope(dataBase);
             //_preScope = CurrentScope;
             //CurrentScope = this;
 

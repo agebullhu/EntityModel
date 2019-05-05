@@ -18,7 +18,7 @@ namespace Agebull.Common.Logging
     /// <summary>
     ///     文本记录器
     /// </summary>
-    public sealed class TxtRecorder : TraceListener, ILogRecorder
+    internal sealed class TxtRecorder : TraceListener, ILogRecorder
     {
         /// <summary>
         ///     初始化
@@ -35,7 +35,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///     文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
         /// </summary>
-        public static string LogPath { get; set; }
+        public static string LogPath => LogRecorderX.LogPath;
 
         /// <summary>
         /// 拆分日志的数量
@@ -64,29 +64,36 @@ namespace Agebull.Common.Logging
             try
             {
                 var sec = ConfigurationManager.Get("LogRecorder");
-                var cfgpath = sec["txtPath"];
-                if (string.IsNullOrWhiteSpace(cfgpath))
+                if(sec != null)
                 {
-                    cfgpath = Path.Combine(Environment.CurrentDirectory, "logs");
-                    sec["txtPath"] = cfgpath;
+                    var cfgpath = sec["txtPath"];
+                    if (string.IsNullOrWhiteSpace(cfgpath))
+                    {
+                        cfgpath = IOHelper.CheckPath(Environment.CurrentDirectory, "logs");
+                        sec["txtPath"] = cfgpath;
+                    }
+                    LogRecorderX.LogPath = cfgpath;
+                    SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
+                    DayFolder = sec.GetBool("dayFolder", true);
                 }
-                LogPath = cfgpath;
-                SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
-                DayFolder = sec.GetBool("dayFolder", true);
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.Initialize", ex);
+                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.Initialize", ex);
             }
 
             try
             {
                 if (string.IsNullOrWhiteSpace(LogPath))
-                    LogPath = Path.Combine(Environment.CurrentDirectory, "logs");
+                {
+                    LogRecorderX.LogPath = IOHelper.CheckPath(Environment.CurrentDirectory, "logs");
+                    SplitNumber = 10240 * 1024;
+                    DayFolder = true;
+                }
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.Initialize LogPath", ex);
+                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.Initialize LogPath", ex);
             }
             Trace.Listeners.Add(this);
             IsInitialized = true;
@@ -181,7 +188,7 @@ namespace Agebull.Common.Logging
                 }
                 catch (Exception ex)
                 {
-                    LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.RecordLog4", name, ex);
+                    LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.RecordLog4", name, ex);
                 }
             }
         }
@@ -201,7 +208,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace(LogLevel.Error, "TextRecorder.WriteFile", type, ex);
+                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.WriteFile", type, ex);
                 writer.Stream.Dispose();
                 writer.Stream.Close();
                 ResetFile(type, writer);

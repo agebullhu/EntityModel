@@ -23,7 +23,7 @@ using Agebull.EntityModel.Common;
 namespace Agebull.EntityModel.MySql
 {
     /// <summary>
-    ///     用于Sql Servr 的Lambda表达式解析器(仅支持查询条件)
+    ///     用于MySql的Lambda表达式解析器(仅支持查询条件)
     /// </summary>
     public sealed class PredicateConvert
     {
@@ -83,7 +83,7 @@ namespace Agebull.EntityModel.MySql
             }
             catch (Exception e)
             {
-                LogRecorder.Exception(e, expression.ToString());
+                LogRecorderX.Exception(e, expression.ToString());
                 return null;
             }
         }
@@ -160,7 +160,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>结果条件对象(SQL条件和参数)</returns>
         public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> filter)
         {
-            var condition = new ConditionItem();
+            var condition = new ConditionItem(new MySqlDataBase_());
             Convert(map, filter, condition, true);
             return condition;
         }
@@ -190,7 +190,7 @@ namespace Agebull.EntityModel.MySql
                 Convert(map, ch, condition, true);
             }
 
-            ConditionItem item = new ConditionItem
+            ConditionItem item = new ConditionItem(new MySqlDataBase_())
             {
                 ParaIndex = root._condition.ParaIndex
             };
@@ -217,7 +217,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (_condition == null)
             {
-                _condition = new ConditionItem();
+                _condition = new ConditionItem(new MySqlDataBase_());
             }
             var old = _condition.ConditionSql;
             var sql = ConvertExpression(predicate.Body);
@@ -251,33 +251,32 @@ namespace Agebull.EntityModel.MySql
         /// <returns>解释后的SQL文本</returns>
         private string ConvertExpression(Expression expression)
         {
-            var binaryExpression = expression as BinaryExpression;
-            if (binaryExpression != null)
+            if (expression is BinaryExpression binaryExpression)
             {
                 return Convert(binaryExpression);
             }
-            var unary = expression as UnaryExpression;
-            if (unary != null)
+
+            if (expression is UnaryExpression unary)
             {
                 return Convert(unary);
             }
-            var call = expression as MethodCallExpression;
-            if (call != null)
+
+            if (expression is MethodCallExpression call)
             {
                 return Convert(call);
             }
-            var memberExpression = expression as MemberExpression;
-            if (memberExpression != null)
+
+            if (expression is MemberExpression memberExpression)
             {
                 return Convert(memberExpression);
             }
-            var constantExpression = expression as ConstantExpression;
-            if (constantExpression != null)
+
+            if (expression is ConstantExpression constantExpression)
             {
                 return Convert(constantExpression);
             }
-            var array = expression as NewArrayExpression;
-            if (array != null)
+
+            if (expression is NewArrayExpression array)
             {
                 var sb = new StringBuilder();
                 foreach (var arg in array.Expressions)
@@ -400,8 +399,7 @@ namespace Agebull.EntityModel.MySql
             switch (expression.NodeType)
             {
                 case ExpressionType.Not:
-                    var parameterExpression = expression.Operand as ParameterExpression;
-                    return parameterExpression != null
+                    return expression.Operand is ParameterExpression parameterExpression
                         ? $"`{parameterExpression.Name}` == 0"
                         : $"NOT({ConvertExpression(expression.Operand)})";
                 case ExpressionType.Convert:
@@ -434,7 +432,7 @@ namespace Agebull.EntityModel.MySql
                      (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))))
                     return "(1 = 1)";
 
-                if (left == null || string.Equals(left, "null", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(left, "null", StringComparison.OrdinalIgnoreCase))
                     return $"({right} IS NULL)";
                 if (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))
                     return $"({left} IS NULL)";
@@ -548,8 +546,7 @@ namespace Agebull.EntityModel.MySql
             {
                 if (!vlType.IsArray)
                     return $"'{(int)vl}'";
-                var array = vl as IEnumerable;
-                if (array == null)
+                if (!(vl is IEnumerable array))
                     return $"'{(int) vl}'";
                 StringBuilder sb = new StringBuilder();
                 sb.Append("'");
@@ -564,8 +561,8 @@ namespace Agebull.EntityModel.MySql
                 }
                 return sb.ToString();
             }
-            var enumerable = vl as IEnumerable;
-            if (enumerable != null)
+
+            if (vl is IEnumerable enumerable)
             {
                 return enumerable.LinkToString("'", "','", "'");
             }

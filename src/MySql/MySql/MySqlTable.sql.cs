@@ -10,9 +10,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
-using MySql.Data.MySqlClient;
 using System.Text;
+using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
 
 #endregion
@@ -30,7 +31,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="value">值</param>
         /// <param name="parameters">参数列表</param>
         /// <returns>单个字段更新的SQL</returns>
-        private string FileUpdateSql(string field, object value, IList<MySqlParameter> parameters)
+        private string FileUpdateSql(string field, object value, IList<DbParameter> parameters)
         {
             field = FieldDictionary[field];
             if (value == null)
@@ -73,7 +74,7 @@ UPDATE `{ContextWriteTable}`
         /// <param name="condition">条件</param>
         /// <param name="parameters">参数列表</param>
         /// <returns>更新的SQL</returns>
-        private string CreateUpdateSql(string field, object value, string condition, IList<MySqlParameter> parameters)
+        private string CreateUpdateSql(string field, object value, string condition, IList<DbParameter> parameters)
         {
             return CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
         }

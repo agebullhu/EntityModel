@@ -26,7 +26,7 @@ namespace Agebull.MicroZero.ApiDocuments
         /// <summary>
         ///     分类
         /// </summary>
-        [DataMember] [JsonProperty("category", NullValueHandling = NullValueHandling.Ignore)] [Category]
+        [DataMember] [JsonProperty("category", NullValueHandling = NullValueHandling.Ignore)]
         public string Category;
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Agebull.MicroZero.ApiDocuments
         /// <summary>
         ///     Api路由名称
         /// </summary>
-        [DataMember] [JsonProperty("route", NullValueHandling = NullValueHandling.Ignore)] [Category]
+        [DataMember] [JsonProperty("route", NullValueHandling = NullValueHandling.Ignore)]
         public string RouteName;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Agebull.MicroZero.ApiDocuments
         /// </summary>
         [DataMember]
         [JsonProperty("api", NullValueHandling = NullValueHandling.Ignore)]
-        [Category]
+       
         public string ApiName;
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Agebull.MicroZero.ApiDocuments
         /// </summary>
         [DataMember]
         [JsonProperty("page", NullValueHandling = NullValueHandling.Ignore)]
-        [Category]
+       
         public string PageUrl;
 
     }

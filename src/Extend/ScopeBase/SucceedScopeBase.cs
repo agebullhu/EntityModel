@@ -12,10 +12,7 @@
         /// </summary>
         public bool? Succeed
         {
-            get
-            {
-                return _succeed;
-            }
+            get => _succeed;
             set
             {
                 _succeed = value;

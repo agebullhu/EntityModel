@@ -49,7 +49,7 @@ namespace Agebull.Common.Logging
                     Title = title
                 });
                 Texter.AppendLine($@"
- Date:{DateTime.Now}    RequestId:{LogRecorder.GetRequestId()}    Machine:{LogRecorder.GetMachineName()}");
+ Date:{DateTime.Now}    RequestId:{LogRecorderX.GetRequestId()}    Machine:{LogRecorderX.GetMachineName()}");
                 Texter.Append(' ', 24);
                 Texter.Append("БъЬт");
                 Texter.Append(' ', 24);
@@ -108,7 +108,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorder.SystemTrace(LogLevel.Error, "EndMonitor", ex);
+                LogRecorderX.SystemTrace(LogLevel.Error, "EndMonitor", ex);
                 return null;
             }
             finally
@@ -210,12 +210,12 @@ namespace Agebull.Common.Logging
         {
             var scope= new MonitorScope
             {
-                _isStep = LogRecorder.MonitorItem.InMonitor
+                _isStep = LogRecorderX.MonitorItem.InMonitor
             };
-            if (LogRecorder.MonitorItem.InMonitor)
-                LogRecorder.BeginStepMonitor(name);
+            if (LogRecorderX.MonitorItem.InMonitor)
+                LogRecorderX.BeginStepMonitor(name);
             else
-                LogRecorder.BeginMonitor(name);
+                LogRecorderX.BeginMonitor(name);
             return scope;
         }
 
@@ -225,9 +225,9 @@ namespace Agebull.Common.Logging
         protected override void OnDispose()
         {
             if (_isStep)
-                LogRecorder.EndStepMonitor();
+                LogRecorderX.EndStepMonitor();
             else
-                LogRecorder.EndMonitor();
+                LogRecorderX.EndMonitor();
         }
     }
 

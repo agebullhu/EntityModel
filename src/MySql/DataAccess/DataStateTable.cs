@@ -12,9 +12,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Agebull.Common.Context;
 using Agebull.EntityModel.Common;
+using MySql.Data.MySqlClient;
 
 namespace Agebull.EntityModel.MySql
 {
@@ -54,7 +56,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public virtual bool ResetState(long id)
         {
-            //using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (DataBaseScope.CreateScope(DataBase))
             {
                 var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode} 
@@ -68,13 +70,13 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
-            //using (MySqlDataBaseScope.CreateScope(DataBase))
+            //using (DataBaseScope.CreateScope(DataBase))
             {
                 var convert = Compile(lambda);
                 var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode} 
 WHERE {convert.ConditionSql}";
-                return DataBase.Execute(sql, convert.Parameters) >= 1;
+                return DataBase.Execute(sql, convert.Parameters.Cast<MySqlParameter>()) >= 1;
             }
         }
     }

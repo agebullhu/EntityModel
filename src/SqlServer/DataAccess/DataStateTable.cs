@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public virtual bool ResetState(long id)
         {
-            //using (SqlServerDataBaseScope.CreateScope(DataBase))
+            //using (DataBaseScope.CreateScope(DataBase))
             {
                 var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode} 
@@ -68,7 +68,7 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
-            //using (SqlServerDataBaseScope.CreateScope(DataBase))
+            //using (DataBaseScope.CreateScope(DataBase))
             {
                 var convert = Compile(lambda);
                 var sql = $@"UPDATE [{ContextWriteTable}]

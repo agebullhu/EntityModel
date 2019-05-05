@@ -12,30 +12,35 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     当前页号（从1开始）
         /// </summary>
+        /// <example>1</example>
         [JsonProperty("page")]
         public int PageIndex { get; set; }
 
         /// <summary>
-        ///     页行数
+        ///     一页行数
         /// </summary>
+        /// <example>16</example>
         [JsonProperty("pageSize")]
         public int PageSize { get; set; }
 
         /// <summary>
         ///     总页数
         /// </summary>
+        /// <example>999</example>
         [JsonProperty("pageCount")]
         public int PageCount { get; set; }
 
         /// <summary>
         ///     总行数
         /// </summary>
+        /// <example>9999</example>
         [JsonProperty("rowCount")]
         public int RowCount { get; set; }
 
         /// <summary>
         ///     总行数
         /// </summary>
+        /// <example>9999</example>
         [JsonProperty("total", Required = Required.Always)]
         public int Total => RowCount;
     }

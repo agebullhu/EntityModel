@@ -53,7 +53,7 @@ namespace Agebull.EntityModel.Common
         /// <remarks>
         /// 系统在哪一个节点发生错误的标识
         /// </remarks>
-        /// <example>1</example>
+        /// <example>http-gateway</example>
         [JsonProperty("point")]
         public string Point { get; set; }
 
@@ -73,7 +73,7 @@ namespace Agebull.EntityModel.Common
         /// <remarks>
         ///  内部使用:不清楚请不要使用
         /// </remarks>
-        /// <example>404</example>
+        /// <example>200</example>
         [JsonProperty("http")]
         public string HttpCode { get; set; } = "200";
 

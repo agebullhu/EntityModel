@@ -66,7 +66,7 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         public static ScopeBase CreateScope()
         {
-            LogRecorder.InRecording = true;
+            LogRecorderX.InRecording = true;
             return new LogRecordingScope();
         }
 
@@ -79,7 +79,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         protected override void OnDispose()
         {
-            LogRecorder.InRecording = false;
+            LogRecorderX.InRecording = false;
         }
     }
 }

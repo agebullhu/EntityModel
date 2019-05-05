@@ -17,7 +17,7 @@ namespace Agebull.EntityModel.Redis
 
         }
 
-        void IDataUpdateTrigger.OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        void IDataUpdateTrigger.OnOperatorExecuted(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
 
         }

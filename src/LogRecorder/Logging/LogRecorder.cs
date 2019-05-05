@@ -19,11 +19,16 @@ using Agebull.EntityModel.Common;
 namespace Agebull.Common.Logging
 {
     /// <summary>
-    ///   文本记录器
+    ///   日志记录器
     /// </summary>
-    public static partial class LogRecorder
+    public static partial class LogRecorderX
     {
         #region 对象
+
+        /// <summary>
+        ///     文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
+        /// </summary>
+        public static string LogPath { get; set; }
 
         /// <summary>
         /// 是否将日志输出到控制台
@@ -59,7 +64,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///  基础记录器
         /// </summary>
-        public static TxtRecorder BaseRecorder { get; }
+        public static ILogRecorder BaseRecorder { get; }
 
         /// <summary>
         /// 是否仅使用文本记录器
@@ -138,7 +143,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///   静态构造
         /// </summary>
-        static LogRecorder()
+        static LogRecorderX()
         {
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();

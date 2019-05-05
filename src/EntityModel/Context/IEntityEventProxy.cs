@@ -146,7 +146,7 @@ namespace Agebull.EntityModel.Events
                 Value = value
             });
             bool re = MicroZero.MessageQueue.Publish("EntityEvent", database, entity, arg);
-            LogRecorder.Debug($@"EntityEvent : {database}, {entity},{re}
+            LogRecorderX.Debug($@"EntityEvent : {database}, {entity},{re}
 {arg}");
         }
     }

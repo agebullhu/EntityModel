@@ -4,7 +4,7 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>2.4.0.46</Version>
+    <Version>2.4.1.9</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -65,8 +65,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.519" />
-    <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 
 

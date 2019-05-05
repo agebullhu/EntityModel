@@ -148,14 +148,14 @@ namespace Agebull.EntityModel.Events
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecutd(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        public static void OnOperatorExecuted(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             foreach (var trigger in _generalTriggers)
-                trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
+                trigger.OnOperatorExecuted(entityId, condition, mySqlParameters, operatorType);
             if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
                 foreach (var trigger in triggers)
-                    trigger.OnOperatorExecutd(entityId, condition, mySqlParameters, operatorType);
+                    trigger.OnOperatorExecuted(entityId, condition, mySqlParameters, operatorType);
         }
 
         /// <summary>

@@ -75,8 +75,8 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public static TransactionScope CurrentScope
         {
-            get { return _currentScope; }
-            private set { _currentScope = value; }
+            get => _currentScope;
+            private set => _currentScope = value;
         }
 
         /// <summary>

@@ -118,6 +118,10 @@ namespace Agebull.EntityModel.Common
 
         #region 动态虚化
 
+        /// <summary>
+        ///     动态读取的字段
+        /// </summary>
+        string DynamicReadFields { get; set; }
 
         /// <summary>
         ///     切换读取的表
@@ -214,6 +218,27 @@ namespace Agebull.EntityModel.Common
     public interface IDataTable<TData> : IDataTable, IConfig
     where TData : EditDataObject, new()
     {
+        /// <summary>
+        /// 当前上下文的读取器
+        /// </summary>
+        Action<DbDataReader, TData> DynamicLoadAction { get; set; }
+
+
+        #region 查询条件相关(包含lambda编译)
+
+        /// <summary>
+        ///     编译查询条件
+        /// </summary>
+        /// <param name="lambda">条件</param>
+        ConditionItem Compile(Expression<Func<TData, bool>> lambda);
+
+        /// <summary>
+        ///     编译查询条件
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        ConditionItem Compile(LambdaItem<TData> lambda);
+
+        #endregion
         #region 读
 
         #region 遍历所有

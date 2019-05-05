@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>业务模型支持</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>2.4.0.46</Version>
+    <Version>2.4.1.2</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -91,10 +91,11 @@
   <ItemGroup>
     <Compile Remove="BusinessLogic\BusinessLogicByHistory.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="WebSeitch\AjaxResult.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="BusinessLogic\Mysql\" />
+    <Folder Include="BusinessLogic\SqlServer\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

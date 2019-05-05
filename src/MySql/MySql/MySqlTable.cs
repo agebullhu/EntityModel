@@ -106,7 +106,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(string condition, params MySqlParameter[] args)
+        protected MySqlCommand CreateLoadCommand(string condition, params DbParameter[] args)
         {
             return CreateLoadCommand(condition, null, args);
         }
@@ -114,7 +114,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(string condition, string order, params MySqlParameter[] args)
+        protected MySqlCommand CreateLoadCommand(string condition, string order, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, order);
             return DataBase.CreateCommand(sql.ToString(), args);
@@ -129,7 +129,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="args">条件中的参数</param>
         /// <returns>载入命令</returns>
         protected MySqlCommand CreateLoadCommand(string order, bool desc, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
             var field = !string.IsNullOrEmpty(order) ? order : KeyField;
             Debug.Assert(FieldDictionary.ContainsKey(field));
@@ -164,11 +164,11 @@ namespace Agebull.EntityModel.MySql
         ///     生成多个字段的参数
         /// </summary>
         /// <param name="fields">生成参数的字段</param>
-        public MySqlParameter[] CreateFieldsParameters(params string[] fields)
+        public DbParameter[] CreateFieldsParameters(params string[] fields)
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(fields));
-            return fields.Select(field => new MySqlParameter(field, GetDbType(field))).ToArray();
+            return fields.Select(field => (DbParameter)new MySqlParameter(field, GetDbType(field))).ToArray();
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="fields">生成参数的字段</param>
         /// <param name="values">生成参数的值(长度和字段长度必须一致)</param>
-        public MySqlParameter[] CreateFieldsParameters(string[] fields, object[] values)
+        public DbParameter[] CreateFieldsParameters(string[] fields, object[] values)
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(fields));
@@ -184,7 +184,7 @@ namespace Agebull.EntityModel.MySql
                 throw new ArgumentException(@"没有值用于生成参数", nameof(values));
             if (values.Length != fields.Length)
                 throw new ArgumentException(@"值的长度和字段长度必须一致", nameof(values));
-            var res = new MySqlParameter[fields.Length];
+            var res = new DbParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
                 res[i] = CreateFieldParameter(fields[i], GetDbType(fields[i]), values[i]);
             return res;
@@ -207,7 +207,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="value">值</param>
         public MySqlParameter CreateFieldParameter(string field, MySqlDbType type, object value)
         {
-            return MySqlDataBase.CreateParameter(field, value, type);
+            return MySqlDataBase_.CreateParameter(field, value, type);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="value">主键值</param>
         public MySqlParameter CreatePimaryKeyParameter(object value)
         {
-            return MySqlDataBase.CreateParameter(KeyField, value, GetDbType(KeyField));
+            return MySqlDataBase_.CreateParameter(KeyField, value, GetDbType(KeyField));
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entity">取值的实体</param>
         public MySqlParameter CreatePimaryKeyParameter(TData entity)
         {
-            return MySqlDataBase.CreateParameter(KeyField, entity.GetValue(KeyField),
+            return MySqlDataBase_.CreateParameter(KeyField, entity.GetValue(KeyField),
                 GetDbType(KeyField));
         }
 
@@ -269,7 +269,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
-            return new ConditionItem
+            return new ConditionItem(DataBase)
             {
                 ConditionSql = FieldConditionSQL(isAnd, fields),
                 Parameters = CreateFieldsParameters(fields)
@@ -287,7 +287,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
-            return new ConditionItem
+            return new ConditionItem(DataBase)
             {
                 ConditionSql = FieldConditionSQL(isAnd, fields),
                 Parameters = CreateFieldsParameters(fields, values)
@@ -424,13 +424,13 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 当前上下文的读取器
         /// </summary>
-        public Action<MySqlDataReader, TData> DynamicLoadAction { get; set; }
+        public Action<DbDataReader, TData> DynamicLoadAction { get; set; }
 
 
         /// <summary>
         ///     动态读取的字段
         /// </summary>
-        internal string DynamicReadFields;
+        public string DynamicReadFields { get; set; }
 
         /// <summary>
         ///     动态读取的表

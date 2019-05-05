@@ -27,7 +27,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     表示SQL SERVER数据库对象
     /// </summary>
-    public abstract class MySqlDataBase : SimpleConfig, IDataBase
+    public abstract class MySqlDataBase : MySqlDataBase_, IDataBase
     {
         #region 事务
 
@@ -49,7 +49,7 @@ namespace Agebull.EntityModel.MySql
         /// 生成数据库使用范围
         /// </summary>
         /// <returns></returns>
-        IDisposable IDataBase.CreateDataBaseScope() => MySqlDataBaseScope.CreateScope(this);
+        IDisposable IDataBase.CreateDataBaseScope() => DataBaseScope.CreateScope(this);
 
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     引用数量
         /// </summary>
-        protected internal int QuoteCount { get; set; }
+        public int QuoteCount { get; set; }
 
         #endregion
 
@@ -141,7 +141,7 @@ namespace Agebull.EntityModel.MySql
                 return connection;
             }
         }
-        
+
         #endregion
 
         #region 连接
@@ -162,7 +162,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <returns></returns>
         protected abstract string LoadConnectionStringSetting();
-        
+
         /// <summary>
         ///     打开连接
         /// </summary>
@@ -217,7 +217,7 @@ namespace Agebull.EntityModel.MySql
                         _connection.Close();
                         //Trace.WriteLine("Close Connection", "MySqlDataBase");
                     }
-                    LogRecorder.MonitorTrace($"未关闭总数{Connections.Count}");
+                    LogRecorderX.MonitorTrace($"未关闭总数{Connections.Count}");
                     _connection.Dispose();
 
                 }
@@ -225,7 +225,7 @@ namespace Agebull.EntityModel.MySql
                 {
                     _connection?.Dispose();
                     Debug.WriteLine("Close Error", "MySqlDataBase");
-                    LogRecorder.Exception(exception);
+                    LogRecorderX.Exception(exception);
                 }
                 finally
                 {
@@ -270,7 +270,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public int Execute(string sql)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return ExecuteInner(sql);
             }
@@ -285,7 +285,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public int Execute(string sql, IEnumerable<MySqlParameter> args)
+        public int Execute(string sql, IEnumerable<DbParameter> args)
         {
             return ExecuteInner(sql, args.ToArray());
         }
@@ -300,7 +300,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public int Execute(string sql, params MySqlParameter[] args)
+        public int Execute(string sql, params DbParameter[] args)
         {
             return args.Length == 0
                 ? ExecuteInner(sql)
@@ -316,9 +316,9 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public object ExecuteScalar(string sql, IEnumerable<MySqlParameter> args)
+        public object ExecuteScalar(string sql, IEnumerable<DbParameter> args)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return ExecuteScalarInner(sql, args.ToArray());
             }
@@ -333,9 +333,9 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public object ExecuteScalar(string sql, params MySqlParameter[] args)
+        public object ExecuteScalar(string sql, params DbParameter[] args)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return args == null || args.Length == 0
                     ? ExecuteScalarInner(sql)
@@ -353,7 +353,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public T ExecuteScalar<T>(string sql)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return ExecuteScalarInner<T>(sql);
             }
@@ -369,7 +369,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public object ExecuteScalar(string sql)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return ExecuteScalarInner(sql);
             }
@@ -385,9 +385,9 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public T ExecuteScalar<T>(string sql, params MySqlParameter[] args)
+        public T ExecuteScalar<T>(string sql, params DbParameter[] args)
         {
-            //using (MySqlDataBaseScope.CreateScope(this))
+            //using (DataBaseScope.CreateScope(this))
             {
                 return ExecuteScalarInner<T>(sql, args);
             }
@@ -429,7 +429,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        protected int ExecuteInner(string sql, params MySqlParameter[] args)
+        protected int ExecuteInner(string sql, params DbParameter[] args)
         {
             lock (this)
             {
@@ -451,7 +451,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        protected object ExecuteScalarInner(string sql, params MySqlParameter[] args)
+        protected object ExecuteScalarInner(string sql, params DbParameter[] args)
         {
             lock (this)
             {
@@ -486,7 +486,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        protected T ExecuteScalarInner<T>(string sql, params MySqlParameter[] args)
+        protected T ExecuteScalarInner<T>(string sql, params DbParameter[] args)
         {
             var result = args.Length == 0
                 ? ExecuteScalarInner(sql)
@@ -502,9 +502,9 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(MySqlCommand cmd)
         {
-            if (!LogRecorder.LogDataSql)
+            if (!LogRecorderX.LogDataSql)
                 return;
-            TraceSql(cmd.CommandText, cmd.Parameters.OfType<MySqlParameter>());
+            TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
         {
-            if (!LogRecorder.LogDataSql)
+            if (!LogRecorderX.LogDataSql)
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
@@ -532,7 +532,7 @@ namespace Agebull.EntityModel.MySql
                 code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
             code.AppendLine(sql);
-            LogRecorder.RecordDataLog(code.ToString());
+            LogRecorderX.RecordDataLog(code.ToString());
         }
 
 
@@ -543,7 +543,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(params MySqlParameter[] args)
+        public MySqlCommand CreateCommand(params DbParameter[] args)
         {
             return CreateCommand(null, args);
         }
@@ -551,7 +551,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(string sql, MySqlParameter arg)
+        public MySqlCommand CreateCommand(string sql, DbParameter arg)
         {
             return CreateCommand(sql, new[] { arg });
         }
@@ -559,7 +559,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(string sql, IEnumerable<MySqlParameter> args = null)
+        public MySqlCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null)
         {
             var cmd = Connection.CreateCommand();
 
@@ -573,14 +573,11 @@ namespace Agebull.EntityModel.MySql
             }
             if (args != null)
             {
-                var parameters = args as MySqlParameter[] ?? args.ToArray();
+                var parameters = args as MySqlParameter[] ?? args.Cast<MySqlParameter>().ToArray();
                 if (parameters.Any(p => p != null))
                 {
-                    cmd.Parameters.AddRange(
-                        parameters.Where(p => p != null)
-                            .Select(
-                                p =>
-                                    new MySqlParameter(p.ParameterName, p.MySqlDbType, p.Size, p.Direction, p.IsNullable, p.Precision, p.Scale,
+                    cmd.Parameters.AddRange(parameters.Where(p => p != null)
+                            .Select(p => new MySqlParameter(p.ParameterName, p.MySqlDbType, p.Size, p.Direction, p.IsNullable, p.Precision, p.Scale,
                                         p.SourceColumn, p.SourceVersion, p.Value)).ToArray());
                 }
             }
@@ -605,269 +602,6 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-        #region 生成Sql参数
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="csharpType">C#的类型</param>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string csharpType, string parameterName, object value)
-        {
-            if (value is Enum)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.Int32)
-                {
-                    Value = Convert.ToInt32(value)
-                };
-            }
-            if (value is bool b)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.Byte)
-                {
-                    Value = b ? (byte)1 : (byte)0
-                };
-            }
-            return CreateParameter(parameterName, value, ToSqlDbType(csharpType));
-        }
-
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <param name="type">类型</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string parameterName, object value, MySqlDbType type)
-        {
-            switch (value)
-            {
-                case null:
-                    return new MySqlParameter(parameterName, MySqlDbType.VarChar)
-                    {
-                        Value = DBNull.Value
-                    };
-                case string s:
-                    return CreateParameter(parameterName, s);
-                case Enum _:
-                    return new MySqlParameter(parameterName, MySqlDbType.Int32)
-                    {
-                        Value = Convert.ToInt32(value)
-                    };
-                case bool _:
-                    return new MySqlParameter(parameterName, MySqlDbType.Byte)
-                    {
-                        Value = (bool)value ? (byte)1 : (byte)0
-                    };
-            }
-
-            return new MySqlParameter(parameterName, type)
-            {
-                Value = value
-            };
-        }
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string parameterName, object value)
-        {
-            return CreateParameter(parameterName, value, ToSqlDbType(value?.GetType().Name));
-        }
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string parameterName, string value)
-        {
-            MySqlDbType type = MySqlDbType.VarString;
-            if (value == null)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.VarString, 10);
-            }
-            if (value.Length >= 4000)
-            {
-                type = MySqlDbType.Text;
-            }
-            else if (value.Length >= ushort.MaxValue)
-            {
-                type = MySqlDbType.LongText;
-            }
-            return new MySqlParameter(parameterName, type, value.Length)
-            {
-                Value = value
-            };
-        }
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string parameterName, bool value)
-        {
-            return new MySqlParameter(parameterName, MySqlDbType.Byte)
-            {
-                Value = value ? (byte)1 : (byte)0
-            };
-        }
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter<T>(string parameterName, T value)
-            where T : struct
-        {
-            if (value is Enum)
-            {
-                return new MySqlParameter(parameterName, MySqlDbType.Int32)
-                {
-                    Value = Convert.ToInt32(value)
-                };
-            }
-            return new MySqlParameter(parameterName, ToSqlDbType(typeof(T).Name))
-            {
-                Value = value
-            };
-        }
-
-
-        /// <summary>
-        ///     从C#的类型转为DBType
-        /// </summary>
-        /// <param name="csharpType"> </param>
-        public static MySqlDbType ToSqlDbType(string csharpType)
-        {
-            switch (csharpType)
-            {
-                case "Boolean":
-                case "bool":
-                    return MySqlDbType.Bit;
-                case "byte":
-                case "Byte":
-                case "sbyte":
-                case "SByte":
-                case "Char":
-                case "char":
-                    return MySqlDbType.Byte;
-                case "short":
-                case "Int16":
-                case "ushort":
-                case "UInt16":
-                    return MySqlDbType.Int16;
-                case "int":
-                case "Int32":
-                case "IntPtr":
-                case "uint":
-                case "UInt32":
-                case "UIntPtr":
-                    return MySqlDbType.Int32;
-                case "long":
-                case "Int64":
-                case "ulong":
-                case "UInt64":
-                    return MySqlDbType.Int64;
-                case "float":
-                case "Float":
-                    return MySqlDbType.Float;
-                case "double":
-                case "Double":
-                    return MySqlDbType.Double;
-                case "decimal":
-                case "Decimal":
-                    return MySqlDbType.Decimal;
-                case "Guid":
-                    return MySqlDbType.Guid;
-                case "DateTime":
-                    return MySqlDbType.DateTime;
-                case "String":
-                case "string":
-                    return MySqlDbType.VarChar;
-                case "Binary":
-                case "byte[]":
-                case "Byte[]":
-                    return MySqlDbType.Binary;
-                default:
-                    return MySqlDbType.Binary;
-            }
-        }
-
-        /// <summary>
-        ///     从C#的类型转为DBType
-        /// </summary>
-        /// <param name="csharpType"> </param>
-        public static DbType ToDbType(string csharpType)
-        {
-            switch (csharpType)
-            {
-                case "Boolean":
-                case "bool":
-                    return DbType.Boolean;
-                case "byte":
-                case "Byte":
-                    return DbType.Byte;
-                case "sbyte":
-                case "SByte":
-                    return DbType.SByte;
-                case "short":
-                case "Int16":
-                    return DbType.Int16;
-                case "ushort":
-                case "UInt16":
-                    return DbType.UInt16;
-                case "int":
-                case "Int32":
-                case "IntPtr":
-                    return DbType.Int32;
-                case "uint":
-                case "UInt32":
-                case "UIntPtr":
-                    return DbType.UInt32;
-                case "long":
-                case "Int64":
-                    return DbType.Int64;
-                case "ulong":
-                case "UInt64":
-                    return DbType.UInt64;
-                case "float":
-                case "Float":
-                    return DbType.Single;
-                case "double":
-                case "Double":
-                    return DbType.Double;
-                case "decimal":
-                case "Decimal":
-                    return DbType.Decimal;
-                case "Guid":
-                    return DbType.Guid;
-                case "DateTime":
-                    return DbType.DateTime;
-                case "Binary":
-                case "byte[]":
-                case "Byte[]":
-                    return DbType.Binary;
-                case "string":
-                case "String":
-                    return DbType.String;
-                default:
-                    return DbType.String;
-            }
-        }
-
-        #endregion
 
         #region 数据缓存
 
@@ -934,22 +668,22 @@ namespace Agebull.EntityModel.MySql
 
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
-            return Execute(sql, args?.OfType<MySqlParameter>());
+            return Execute(sql, args);
         }
 
         int IDataBase.Execute(string sql, params DbParameter[] args)
         {
-            return Execute(sql, args?.OfType<MySqlParameter>());
+            return Execute(sql, args);
         }
 
         object IDataBase.ExecuteScalar(string sql, IEnumerable<DbParameter> args)
         {
-            return ExecuteScalar(sql, args?.OfType<MySqlParameter>());
+            return ExecuteScalar(sql, args);
         }
 
         object IDataBase.ExecuteScalar(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar(sql, args?.OfType<MySqlParameter>().ToArray());
+            return ExecuteScalar(sql, args.ToArray());
         }
 
         T IDataBase.ExecuteScalar<T>(string sql)
@@ -964,22 +698,22 @@ namespace Agebull.EntityModel.MySql
 
         T IDataBase.ExecuteScalar<T>(string sql, params DbParameter[] args)
         {
-            return ExecuteScalar<T>(sql, args?.OfType<MySqlParameter>().ToArray());
+            return ExecuteScalar<T>(sql, args.ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(params DbParameter[] args)
         {
-            return CreateCommand(args?.OfType<MySqlParameter>().ToArray());
+            return CreateCommand(args.ToArray());
         }
 
         DbCommand IDataBase.CreateCommand(string sql, DbParameter arg)
         {
-            return CreateCommand((MySqlParameter)arg);
+            return CreateCommand(arg);
         }
 
         DbCommand IDataBase.CreateCommand(string sql, IEnumerable<DbParameter> args)
         {
-            return CreateCommand(sql, args?.OfType<MySqlParameter>().ToArray());
+            return CreateCommand(sql, args.ToArray());
         }
 
 

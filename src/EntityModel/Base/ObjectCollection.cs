@@ -150,7 +150,7 @@ namespace Agebull.EntityModel.Common
             }
             catch (Exception ex)
             {
-                LogRecorder.Exception(ex, "ObjectCollection.RaiseStatusChangedInner");
+                LogRecorderX.Exception(ex, "ObjectCollection.RaiseStatusChangedInner");
                 throw;
             }
         }

@@ -169,6 +169,50 @@ namespace System.Linq
         ///   连接到文本
         /// </summary>
         /// <param name="em"> 集合本身 </param>
+        /// <param name="lt"> </param>
+        /// <param name="rt"> </param>
+        /// <returns> </returns>
+        public static string LinkToSql(this IEnumerable<string> em, char lt = '[', char rt = ']')
+        {
+            if (em == null)
+            {
+                return null;
+            }
+            var sb = new StringBuilder();
+            var first = true; var maxLen = 0;
+            var ll = new List<KeyValuePair<int, string>>();
+            foreach (var str in em)
+            {
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    continue;
+                }
+                var len = str.StrLenght();
+                ll.Add(new KeyValuePair<int, string>(len, str));
+                if (len > maxLen)
+                {
+                    maxLen = len;
+                }
+            }
+            foreach (var kv in ll)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    sb.Append(',');
+                }
+                sb.Append($"{lt}{kv.Value}{rt}");
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        ///   连接到文本
+        /// </summary>
+        /// <param name="em"> 集合本身 </param>
         /// <param name="sp"> </param>
         /// <param name="maxCol"> </param>
         /// <param name="empty"> </param>

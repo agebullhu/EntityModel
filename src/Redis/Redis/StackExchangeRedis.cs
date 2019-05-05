@@ -73,7 +73,7 @@ namespace Agebull.EntityModel.Redis
                 }
                 catch (Exception e1)
                 {
-                    LogRecorder.Exception(e1, "StackExchangeRedis.ctor");
+                    LogRecorderX.Exception(e1, "StackExchangeRedis.ctor");
                     try
                     {
                         connect.Close();
@@ -81,7 +81,7 @@ namespace Agebull.EntityModel.Redis
                     }
                     catch (Exception e)
                     {
-                        LogRecorder.Exception(e, "StackExchangeRedis.ctor");
+                        LogRecorderX.Exception(e, "StackExchangeRedis.ctor");
                     }
                     connect = ConnectionMultiplexer.Connect(ConnectString);
                 }
@@ -153,7 +153,7 @@ namespace Agebull.EntityModel.Redis
             }
             catch (Exception ex)
             {
-                LogRecorder.Exception(ex, ConnectString);
+                LogRecorderX.Exception(ex, ConnectString);
                 throw;
             }
             finally

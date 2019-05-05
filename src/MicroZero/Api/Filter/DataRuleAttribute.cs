@@ -3,7 +3,7 @@
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
-    /// 数据规则
+    /// 数据规则(仅用于文档生成)
     /// </summary>
     public class DataRuleAttribute : Attribute
     {
@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 包含的最大时间
         /// </summary>
-        public DateTime MaxDate { get; set; }
+        public DateTime MaxDate { get; set; } = DateTime.MaxValue;
         /// <summary>
         /// 最小(包含的数值或文本长度)
         /// </summary>

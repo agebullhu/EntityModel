@@ -14,12 +14,12 @@ namespace Agebull.MicroZero
         None,
 
         /// <summary>
-        ///     公开访问
+        ///     公开访问(无需授权)
         /// </summary>
         Public = 0x1,
 
         /// <summary>
-        ///     内部访问
+        ///     内部访问(需要授权)
         /// </summary>
         Internal = 0x2,
 
@@ -43,7 +43,7 @@ namespace Agebull.MicroZero
         /// </summary>
         Business = 0x40,
 
-        /// <summary>
+        /*// <summary>
         ///     扩展用户性质3
         /// </summary>
         User1 = 0x80,
@@ -81,11 +81,16 @@ namespace Agebull.MicroZero
         /// <summary>
         ///     扩展用户性质8
         /// </summary>
-        User8 = 0x8000,
+        User8 = 0x8000,*/
 
         /// <summary>
         ///     参数可以为null
         /// </summary>
-        ArgumentCanNil = 0x10000
+        ArgumentCanNil = 0x10000,
+
+        /// <summary>
+        ///     参数仅为定义,其实不使用
+        /// </summary>
+        ArgumentIsDefault = 0x20000
     }
 }

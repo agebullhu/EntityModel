@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.MySql;
 
 namespace Agebull.EntityModel.Redis
 {
@@ -405,35 +404,32 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         /// <typeparam name="TDataAccess"></typeparam>
         /// <typeparam name="TData"></typeparam>
-        /// <typeparam name="TDatabase"></typeparam>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns></returns>
-        public void CacheData<TData, TDataAccess, TDatabase>(Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void CacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var access = new TDataAccess();
             var datas = access.All();
             CacheData(datas, keyFunc);
         }
+
         /// <summary>
         /// 缓存这些对象
         /// </summary>
         /// <typeparam name="TDataAccess"></typeparam>
         /// <typeparam name="TData"></typeparam>
-        /// <typeparam name="TDatabase"></typeparam>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns></returns>
-        public void TryCacheData<TData, TDataAccess, TDatabase>(Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void TryCacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var key = DataKeyBuilder.DataKey<TData>(0);
             var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
-                CacheData<TData, TDataAccess, TDatabase>(keyFunc);
+                CacheData<TData, TDataAccess>(keyFunc);
         }
 
         /// <summary>
@@ -442,15 +438,14 @@ namespace Agebull.EntityModel.Redis
         /// <param name="lambda">查询表达式</param>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns>数据</returns>
-        public void TryCacheData<TData, TDataAccess, TDatabase>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void TryCacheData<TData, TDataAccess>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var key = DataKeyBuilder.DataKey<TData>(0);
             var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
-                CacheData<TData, TDataAccess, TDatabase>(lambda, keyFunc);
+                CacheData<TData, TDataAccess>(lambda, keyFunc);
         }
 
         /// <summary>
@@ -459,10 +454,9 @@ namespace Agebull.EntityModel.Redis
         /// <param name="lambda">查询表达式</param>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns>数据</returns>
-        public void CacheData<TData, TDataAccess, TDatabase>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void CacheData<TData, TDataAccess>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var access = new TDataAccess();
             var datas = access.All(lambda);
@@ -483,7 +477,7 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         /// <returns>数据</returns>
         public void RefreshCache<TData, TDataAccess>(long id, Func<TData, bool> lambda = null)
-            where TDataAccess : MySqlTable<TData, MySqlDataBase>, new()
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
         {
             if (id <= 0)

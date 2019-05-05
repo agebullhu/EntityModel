@@ -160,7 +160,7 @@ namespace Agebull.EntityModel.MySql
         ///     是否存在数据
         /// </summary>
         /// <returns>是否存在数据</returns>
-        public TData First(string condition, MySqlParameter[] args)
+        public TData First(string condition, DbParameter[] args)
         {
             return LoadFirst(condition, args);
         }
@@ -199,7 +199,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">查询条件</param>
         /// <param name="args">参数</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public TData FirstOrDefault(string condition, MySqlParameter[] args)
+        public TData FirstOrDefault(string condition, DbParameter[] args)
         {
             return LoadFirst(condition, args);
         }
@@ -256,7 +256,7 @@ namespace Agebull.EntityModel.MySql
         ///     是否存在数据
         /// </summary>
         /// <returns>是否存在数据</returns>
-        public TData Last(string condition, MySqlParameter[] args)
+        public TData Last(string condition, DbParameter[] args)
         {
             return LoadLast(condition, args);
         }
@@ -295,7 +295,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">查询条件</param>
         /// <param name="args">参数</param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        public TData LastOrDefault(string condition, MySqlParameter[] args)
+        public TData LastOrDefault(string condition, DbParameter[] args)
         {
             return LoadLast(condition, args);
         }
@@ -356,7 +356,7 @@ namespace Agebull.EntityModel.MySql
         ///     读取数据
         /// </summary>
         /// <returns>数据</returns>
-        public List<TData> All(string condition, MySqlParameter[] args)
+        public List<TData> All(string condition, DbParameter[] args)
         {
             return LoadDataInner(condition, args);
         }
@@ -458,7 +458,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     汇总方法
         /// </summary>
-        public object Collect(string fun, string field, string condition, params MySqlParameter[] args)
+        public object Collect(string fun, string field, string condition, params DbParameter[] args)
         {
             return CollectInner(fun, FieldMap[field], condition, args);
         }
@@ -488,7 +488,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        public bool Exist(string condition, params MySqlParameter[] args)
+        public bool Exist(string condition, params DbParameter[] args)
         {
             return Count(condition, args) > 0;
         }
@@ -520,16 +520,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public long Count(string condition, params DbParameter[] args)
         {
-            var obj = CollectInner("Count", "*", condition, args.Cast<MySqlParameter>().ToArray());
-            return obj == DBNull.Value || obj == null ? 0L : Convert.ToInt64(obj);
-        }
-
-        /// <summary>
-        ///     总数
-        /// </summary>
-        public long Count(string condition, params MySqlParameter[] args)
-        {
-            var obj = CollectInner("Count", "*", condition, args);
+            var obj = CollectInner("Count", "*", condition, args.ToArray());
             return obj == DBNull.Value || obj == null ? 0L : Convert.ToInt64(obj);
         }
 
@@ -581,7 +572,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">查询表达式</param>
         /// <param name="args"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public long Count<TValue>(Expression<Func<TData, TValue>> field, string condition, params MySqlParameter[] args)
+        public long Count<TValue>(Expression<Func<TData, TValue>> field, string condition, params DbParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
             var obj = CollectInner("Count", FieldMap[expression.Member.Name], condition, args);
@@ -605,7 +596,7 @@ namespace Agebull.EntityModel.MySql
         ///     是否存在数据
         /// </summary>
         /// <returns>是否存在数据</returns>
-        public bool Any(string condition, MySqlParameter[] args)
+        public bool Any(string condition, DbParameter[] args)
         {
             return ExistInner(condition, args);
         }
@@ -654,7 +645,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     汇总
         /// </summary>
-        public decimal Sum(string field, string condition, params MySqlParameter[] args)
+        public decimal Sum(string field, string condition, params DbParameter[] args)
         {
             var obj = CollectInner("Sum", FieldMap[field], condition, args);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
@@ -707,7 +698,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="args"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
         public decimal Sum<TValue>(Expression<Func<TData, TValue>> field, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
             var obj = CollectInner("Sum", FieldMap[expression.Member.Name], condition, args);
@@ -721,15 +712,15 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        protected bool ExistInner(string condition = null, MySqlParameter args = null)
+        protected bool ExistInner(string condition = null, DbParameter args = null)
         {
-            return ExistInner(condition, args == null ? new MySqlParameter[0] : new[] { args });
+            return ExistInner(condition, args == null ? new DbParameter[0] : new[] { args });
         }
 
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        protected bool ExistInner(string condition, MySqlParameter[] args)
+        protected bool ExistInner(string condition, DbParameter[] args)
         {
             var obj = CollectInner("Count", "*", condition, args);
             return obj != DBNull.Value && obj != null && Convert.ToInt64(obj) > 0;
@@ -738,7 +729,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     总数据量
         /// </summary>
-        protected long CountInner(string condition = null, MySqlParameter args = null)
+        protected long CountInner(string condition = null, DbParameter args = null)
         {
             var obj = CollectInner("Count", "*", condition, args);
             return obj == DBNull.Value || obj == null ? 0 : Convert.ToInt64(obj);
@@ -747,7 +738,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     总数据量
         /// </summary>
-        protected object CollectInner(string fun, string field, string condition, params MySqlParameter[] args)
+        protected object CollectInner(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
 
@@ -773,7 +764,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     分页读取
         /// </summary>
-        public List<TData> PageData(int page, int limit, string condition, params MySqlParameter[] args)
+        public List<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, KeyField, false, condition, args);
         }
@@ -801,20 +792,35 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
         {
-            return PageData(page, limit, order, desc, condition, args.Cast<MySqlParameter>().ToArray());
+            return PageData(page, limit, order, desc, condition, args);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
+        /// <param name="page">页号(从1开始)</param>
+        /// <param name="limit">每页行数(小于不分页）</param>
+        /// <param name="order">排序字段</param>
+        /// <param name="desc">是否反序</param>
+        /// <param name="condition">查询条件</param>
+        /// <param name="args">查询参数</param>
+        /// <returns></returns>
         public List<TData> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
         {
-            return PageData(page, limit, order, desc, condition, args.Cast<MySqlParameter>().ToArray());
+            if (page <= 0)
+                page = 1;
+            if (limit == 0)
+                limit = 20;
+            else if (limit == 9999)
+                limit = -1;
+            else if (limit > 500)
+                limit = 500;
+            return LoadPageData(page, limit, order, desc, condition, args);
         }
         /// <summary>
         ///     分页读取
         /// </summary>
-        public List<TData> LoadData(int page, int limit, string order, string condition, params MySqlParameter[] args)
+        public List<TData> LoadData(int page, int limit, string order, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, order, false, condition, args);
         }
@@ -822,7 +828,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     分页读取
         /// </summary>
-        public List<TData> PageData(int page, int limit, string order, string condition, params MySqlParameter[] args)
+        public List<TData> PageData(int page, int limit, string order, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, order, false, condition, args);
         }
@@ -857,32 +863,9 @@ namespace Agebull.EntityModel.MySql
         }
 
 
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        /// <param name="page">页号(从1开始)</param>
-        /// <param name="limit">每页行数(小于不分页）</param>
-        /// <param name="order">排序字段</param>
-        /// <param name="desc">是否反序</param>
-        /// <param name="condition">查询条件</param>
-        /// <param name="args">查询参数</param>
-        /// <returns></returns>
-        public List<TData> PageData(int page, int limit, string order, bool desc, string condition,
-            params MySqlParameter[] args)
-        {
-            if (page <= 0)
-                page = 1;
-            if (limit == 0)
-                limit = 20;
-            else if (limit == 9999)
-                limit = -1;
-            else if (limit > 500)
-                limit = 500;
-            return LoadPageData(page, limit, order, desc, condition, args);
-        }
 
         private List<TData> LoadPageData(int page, int limit, string order, bool desc, string condition,
-            MySqlParameter[] args)
+            DbParameter[] args)
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
@@ -917,15 +900,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     分页读取
         /// </summary>
-        public ApiPageData<TData> Page(int page, int limit, string condition, params MySqlParameter[] args)
-        {
-            return Page(page, limit, KeyField, false, condition, args);
-        }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public ApiPageData<TData>  Page(int page, int limit, Expression<Func<TData, bool>> lambda)
+        public ApiPageData<TData> Page(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
             return Page(page, limit, KeyField, false, convert.ConditionSql, convert.Parameters);
@@ -943,15 +918,16 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     分页读取
         /// </summary>
-        public ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
+        public ApiPageData<TData> Page(int page, int limit, string condition, params DbParameter[] args)
         {
-            return Page(page, limit, order, desc, condition, args.Cast<MySqlParameter>().ToArray());
+            return Page(page, limit, KeyField, false, condition, args);
         }
+
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public ApiPageData<TData> Page(int page, int limit, string order, string condition, params MySqlParameter[] args)
+        public ApiPageData<TData> Page(int page, int limit, string order, string condition, params DbParameter[] args)
         {
             return Page(page, limit, order, false, condition, args);
         }
@@ -985,7 +961,6 @@ namespace Agebull.EntityModel.MySql
             return Page(page, limit, GetPropertyName(field), desc, convert.ConditionSql, convert.Parameters);
         }
 
-
         /// <summary>
         ///     分页读取
         /// </summary>
@@ -997,7 +972,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="args">查询参数</param>
         /// <returns></returns>
         public ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
             if (page <= 0)
                 page = 1;
@@ -1011,7 +986,7 @@ namespace Agebull.EntityModel.MySql
         }
 
         private ApiPageData<TData> LoadPage(int page, int limit, string order, bool desc, string condition,
-            MySqlParameter[] args)
+            DbParameter[] args)
         {
             var data = PageData(page, limit, order, desc, condition, args);
             var count = (int)Count(condition, args);
@@ -1134,7 +1109,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public object LoadValue(string field, string condition, params MySqlParameter[] args)
+        public object LoadValue(string field, string condition, params DbParameter[] args)
         {
             return LoadValueInner(field, condition, args);
         }
@@ -1142,7 +1117,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取值
         /// </summary>
-        protected object LoadValueInner(string field, string condition, params MySqlParameter[] args)
+        protected object LoadValueInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
 
@@ -1156,7 +1131,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取多个值
         /// </summary>
-        protected List<object> LoadValuesInner(string field, string condition, params MySqlParameter[] args)
+        protected List<object> LoadValuesInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
@@ -1193,7 +1168,7 @@ namespace Agebull.EntityModel.MySql
                 return new List<TData>();
             if (condition.Parameters == null)
                 return LoadDataInner(condition.Condition);
-            List<MySqlParameter> args = new List<MySqlParameter>();
+            List<DbParameter> args = new List<DbParameter>();
             foreach (var item in condition.Parameters)
             {
                 var pa = new MySqlParameter(item.Name, item.Type);
@@ -1212,107 +1187,107 @@ namespace Agebull.EntityModel.MySql
                             pa.Value = item.Value;
                             break;
                         case DbType.Boolean:
-                        {
-                            pa.Value = bool.TryParse(item.Value, out var vl) && vl;
-                        }
+                            {
+                                pa.Value = bool.TryParse(item.Value, out var vl) && vl;
+                            }
                             break;
                         case DbType.Byte:
-                        {
-                            if (Byte.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = (Byte)0;
-                        }
+                            {
+                                if (byte.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (byte)0;
+                            }
                             break;
                         case DbType.VarNumeric:
                         case DbType.Decimal:
                         case DbType.Currency:
-                        {
-                            if (decimal.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = (decimal)0;
-                        }
+                            {
+                                if (decimal.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (decimal)0;
+                            }
                             break;
                         case DbType.Time:
                         case DbType.DateTime2:
                         case DbType.DateTime:
                         case DbType.Date:
-                        {
-                            if (DateTime.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (DateTime.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.DateTimeOffset:
-                        {
-                            if (TimeSpan.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (TimeSpan.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Double:
-                        {
-                            if (double.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (double.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Guid:
-                        {
-                            if (Guid.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (Guid.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int16:
-                        {
-                            if (short.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (short.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int32:
-                        {
-                            if (Int32.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (int.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.Int64:
-                        {
-                            if (Int64.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (long.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.SByte:
                             break;
                         case DbType.Single:
-                        {
-                            if (Single.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (float.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt16:
-                        {
-                            if (UInt16.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (ushort.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt32:
-                        {
-                            if (UInt32.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (uint.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                         case DbType.UInt64:
-                        {
-                            if (UInt64.TryParse(item.Value, out var vl))
-                                pa.Value = vl;
-                            else pa.Value = DBNull.Value;
-                        }
+                            {
+                                if (ulong.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
                             break;
                     }
                 args.Add(pa);
@@ -1344,7 +1319,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     条件读取
         /// </summary>
-        public List<TData> LoadData(string condition, params MySqlParameter[] args)
+        public List<TData> LoadData(string condition, params DbParameter[] args)
         {
             return LoadDataInner(condition, args);
         }
@@ -1387,7 +1362,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public TData LoadFirst(string condition, params MySqlParameter[] args)
+        public TData LoadFirst(string condition, params DbParameter[] args)
         {
             return LoadFirstInner(condition, args);
         }
@@ -1411,7 +1386,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        public TData LoadLast(string condition, params MySqlParameter[] args)
+        public TData LoadLast(string condition, params DbParameter[] args)
         {
             return LoadLastInner(condition, args);
         }
@@ -1527,30 +1502,28 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取首行
         /// </summary>
-        protected TData LoadFirstInner(string condition = null, MySqlParameter args = null)
+        protected TData LoadFirstInner(string condition = null, DbParameter args = null)
         {
-            return LoadFirstInner(condition, args == null ? new MySqlParameter[0] : new[] { args });
+            return LoadFirstInner(condition, args == null ? new DbParameter[0] : new[] { args });
         }
 
         /// <summary>
         ///     读取首行
         /// </summary>
-        protected TData LoadFirstInner(string condition, MySqlParameter[] args)
+        protected TData LoadFirstInner(string condition, DbParameter[] args)
         {
             TData entity = null;
-
+            using (var cmd = CreateLoadCommand(condition, args))
             {
-                using (var cmd = CreateLoadCommand(condition, args))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            entity = LoadEntity(reader);
-                    }
+                    if (reader.Read())
+                        entity = LoadEntity(reader);
                 }
-                if (entity != null)
-                    entity = EntityLoaded(entity);
             }
+
+            if (entity != null)
+                entity = EntityLoaded(entity);
             return entity;
         }
 
@@ -1558,15 +1531,15 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取尾行
         /// </summary>
-        protected TData LoadLastInner(string condition = null, MySqlParameter args = null)
+        protected TData LoadLastInner(string condition = null, DbParameter args = null)
         {
-            return LoadLastInner(condition, args == null ? new MySqlParameter[0] : new[] { args });
+            return LoadLastInner(condition, args == null ? new DbParameter[0] : new[] { args });
         }
 
         /// <summary>
         ///     读取尾行
         /// </summary>
-        protected TData LoadLastInner(string condition, MySqlParameter[] args)
+        protected TData LoadLastInner(string condition, DbParameter[] args)
         {
             TData entity = null;
 
@@ -1588,15 +1561,15 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取全部
         /// </summary>
-        protected List<TData> LoadDataInner(string condition = null, MySqlParameter args = null)
+        protected List<TData> LoadDataInner(string condition = null, DbParameter args = null)
         {
-            return LoadDataInner(condition, args == null ? new MySqlParameter[0] : new[] { args }, null);
+            return LoadDataInner(condition, args == null ? new DbParameter[0] : new[] { args }, null);
         }
 
         /// <summary>
         ///     读取全部
         /// </summary>
-        protected List<TData> LoadDataInner(string condition, MySqlParameter[] args)
+        protected List<TData> LoadDataInner(string condition, DbParameter[] args)
         {
             return LoadDataInner(condition, args, null);
         }
@@ -1604,7 +1577,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取全部
         /// </summary>
-        protected List<TData> LoadDataInner(string condition, MySqlParameter[] args, string orderBy)
+        protected List<TData> LoadDataInner(string condition, DbParameter[] args, string orderBy)
         {
             var results = new List<TData>();
 
@@ -1626,7 +1599,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取全部(SQL语句是重写的,字段名称和顺序与设计时相同)
         /// </summary>
-        protected List<TData> LoadDataBySql(string sql, MySqlParameter[] args)
+        protected List<TData> LoadDataBySql(string sql, DbParameter[] args)
         {
             var results = new List<TData>();
 
@@ -1648,7 +1621,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取存储过程
         /// </summary>
-        public List<TData> LoadDataByProcedure(string procedure, MySqlParameter[] args)
+        public List<TData> LoadDataByProcedure(string procedure, DbParameter[] args)
         {
             var results = new List<TData>();
 

@@ -107,6 +107,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     返回值
         /// </summary>
+        /// <example>0</example>
         [JsonProperty("data")]
         public TData ResultData { get; set; }
 

@@ -6,7 +6,7 @@ namespace Agebull.Common.Logging
     /// <summary>
     ///   文本记录器
     /// </summary>
-    partial class LogRecorder
+    partial class LogRecorderX
     {
         /// <summary>
         /// 当前上下文数据

@@ -150,7 +150,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>结果条件对象(SQL条件和参数)</returns>
         public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> root)
         {
-            var condition = new ConditionItem();
+            var condition = new ConditionItem(new SqlServerDataBase_());
             Convert(map, root, condition, true);
             return condition;
         }
@@ -196,7 +196,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             if (_condition == null)
             {
-                _condition = new ConditionItem();
+                _condition = new ConditionItem(new SqlServerDataBase_());
             }
             var old = _condition.ConditionSql;
             var sql = ConvertExpression(predicate.Body);

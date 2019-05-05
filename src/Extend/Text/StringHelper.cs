@@ -24,6 +24,27 @@ namespace System
     public static class ValueToStringHelper
     {
         /// <summary>
+        /// 安全清除首尾空白
+        /// </summary>
+        /// <param name="str">字符</param>
+        /// <returns>无空白字符串,如全为空白则返回nul</returns>
+        public static string SafeTrim(this string str)
+        {
+            return string.IsNullOrWhiteSpace(str) ? null : str.Trim();
+        }
+
+        /// <summary>
+        /// 安全清除首尾空白
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <param name="chars">首尾清除的字符</param>
+        /// <returns>无空白字符串,如全为空白则返回nul</returns>
+        public static string SafeTrim(this string str,params char[] chars)
+        {
+            return string.IsNullOrWhiteSpace(str) ? null : str.Trim(chars);
+        }
+
+        /// <summary>
         /// 转为Ascii字节
         /// </summary>
         /// <param name="word">单词</param>

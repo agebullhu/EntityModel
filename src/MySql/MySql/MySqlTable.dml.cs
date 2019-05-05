@@ -10,7 +10,7 @@
 
 using System;
 using System.Collections.Generic;
-using MySql.Data.MySqlClient;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -377,7 +377,7 @@ namespace Agebull.EntityModel.MySql
                 var result = DataBase.Execute($@"DELETE FROM `{ContextWriteTable}` WHERE {condition};", para);
                 if (result == 0)
                     return false;
-                OnOperatorExecutd(condition, paras, DataOperatorType.Delete);
+                OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
                 scope.SetState(true);
             }
 
@@ -399,7 +399,7 @@ namespace Agebull.EntityModel.MySql
                 cnt = DataBase.Execute(CreateDeleteSql(convert), convert.Parameters);
                 if (cnt == 0)
                     return 0;
-                OnOperatorExecutd(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+                OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
                 scope.SetState(true);
             }
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
@@ -409,7 +409,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     条件删除
         /// </summary>
-        public int Delete(string condition, params MySqlParameter[] args)
+        public int Delete(string condition, params DbParameter[] args)
         {
             //throw new Exception("批量删除功能被禁用");
             if (string.IsNullOrWhiteSpace(condition))
@@ -421,7 +421,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     条件删除
         /// </summary>
-        private int DeleteByCondition(string condition, MySqlParameter[] args)
+        private int DeleteByCondition(string condition, DbParameter[] args)
         {
             int cnt;
             using (var scope = TransactionScope.CreateScope(DataBase))
@@ -430,7 +430,7 @@ namespace Agebull.EntityModel.MySql
                 cnt = DeleteInner(condition, args);
                 if (cnt == 0)
                     return 0;
-                OnOperatorExecutd(condition, args, DataOperatorType.Delete);
+                OnOperatorExecuted(condition, args, DataOperatorType.Delete);
                 scope.SetState(true);
             }
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
@@ -440,7 +440,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     删除
         /// </summary>
-        private int DeleteInner(string condition, params MySqlParameter[] args)
+        private int DeleteInner(string condition, params DbParameter[] args)
         {
             if (string.IsNullOrEmpty(DeleteSqlCode))
                 return 0;
@@ -494,7 +494,7 @@ namespace Agebull.EntityModel.MySql
         {
             var condition = PrimaryKeyConditionSQL;
             var sql = CreateUpdateSql(valueExpression, condition);
-            var arg2 = new List<MySqlParameter>
+            var arg2 = new List<DbParameter>
             {
                 CreateFieldParameter(KeyField,GetDbType(KeyField), key)
             };
@@ -505,7 +505,7 @@ namespace Agebull.EntityModel.MySql
                 result = DataBase.Execute(sql, arg2);
                 if (result == 0)
                     return 0;
-                OnOperatorExecutd(condition, arg2, DataOperatorType.Update);
+                OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
                 scope.SetState(true);
             }
             OnKeyEvent(DataOperatorType.Delete, key);
@@ -542,7 +542,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public int SetValue(string field, object value, string condition, params MySqlParameter[] args)
+        public int SetValue(string field, object value, string condition, params DbParameter[] args)
         {
             return SetValueByCondition(field, value, condition, args);
         }
@@ -555,7 +555,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public int SetValue(Expression<Func<TData, bool>> field, bool value, string condition, params MySqlParameter[] args)
+        public int SetValue(Expression<Func<TData, bool>> field, bool value, string condition, params DbParameter[] args)
         {
             return SetValueByCondition(GetPropertyName(field), value ? 0 : 1, condition, args);
         }
@@ -569,7 +569,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
         public int SetValue(Expression<Func<TData, Enum>> field, Enum value, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
             return SetValueByCondition(GetPropertyName(field), Convert.ToInt32(value), condition, args);
         }
@@ -583,7 +583,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
         public int SetValue<TField>(Expression<Func<TData, TField>> field, TField value, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
             return SetValueByCondition(GetPropertyName(field), value, condition, args);
         }
@@ -620,7 +620,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private int SetValueByCondition(string field, object value, string condition, params MySqlParameter[] args)
+        private int SetValueByCondition(string field, object value, string condition, params DbParameter[] args)
         {
             int result = DoUpdateValue(field, value, condition, args);
             OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
@@ -635,7 +635,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private int SetValueInner(string field, object value, string condition, params MySqlParameter[] args)
+        private int SetValueInner(string field, object value, string condition, params DbParameter[] args)
         {
             return DoUpdateValue(field, value, condition, args);
         }
@@ -648,11 +648,11 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private int DoUpdateValue(string field, object value, string condition, MySqlParameter[] args)
+        private int DoUpdateValue(string field, object value, string condition, DbParameter[] args)
         {
             field = FieldDictionary[field];
 
-            var arg2 = new List<MySqlParameter>();
+            var arg2 = new List<DbParameter>();
             if (args != null)
                 arg2.AddRange(args);
             var sql = CreateUpdateSql(field, value, condition, arg2);
@@ -664,7 +664,7 @@ namespace Agebull.EntityModel.MySql
                 result = DataBase.Execute(sql, arg2.ToArray());
                 if (result <= 0)
                     return 0;
-                OnOperatorExecutd(condition, args, DataOperatorType.MulitUpdate);
+                OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
                 scope.SetState(true);
             }
 
@@ -690,12 +690,12 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>更新行数</returns>
-        public int SetMulitValue(string expression, Expression<Func<TData, bool>> condition, params MySqlParameter[] args)
+        public int SetMulitValue(string expression, Expression<Func<TData, bool>> condition, params DbParameter[] args)
         {
             var convert = Compile(condition);
-            var arg = new List<MySqlParameter>();
+            var arg = new List<DbParameter>();
             if (convert.HaseParameters)
-                arg.AddRange(convert.MySqlParameter);
+                arg.AddRange(convert.DbParameter);
             if (args.Length > 0)
                 arg.AddRange(args);
             return SetMulitValue(expression, convert.ConditionSql, arg.ToArray());
@@ -708,7 +708,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>更新行数</returns>
-        public int SetMulitValue(string expression, string condition, MySqlParameter[] args)
+        public int SetMulitValue(string expression, string condition, DbParameter[] args)
         {
             var sql = CreateUpdateSql(expression, condition);
             int result;
@@ -719,7 +719,7 @@ namespace Agebull.EntityModel.MySql
                 result = DataBase.Execute(sql, args);
                 if (result == 0)
                     return 0;
-                OnOperatorExecutd(condition, args, DataOperatorType.MulitUpdate);
+                OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
                 scope.SetState(true);
             }
             return result;
@@ -809,7 +809,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        protected virtual void OnOperatorExecuting(DataOperatorType operatorType, string condition, IEnumerable<MySqlParameter> args)
+        protected virtual void OnOperatorExecuting(DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
         {
         }
 
@@ -819,7 +819,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        protected virtual void OnOperatorExecutd(DataOperatorType operatorType, string condition, IEnumerable<MySqlParameter> args)
+        protected virtual void OnOperatorExecuted(DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
         {
         }
 
@@ -851,9 +851,9 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        private void OnOperatorExecuting(string condition, IEnumerable<MySqlParameter> args, DataOperatorType operatorType)
+        private void OnOperatorExecuting(string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
-            var sqlParameters = args as MySqlParameter[] ?? args.ToArray();
+            var sqlParameters = args as DbParameter[] ?? args.ToArray();
             OnOperatorExecuting(operatorType, condition, sqlParameters);
             DataUpdateHandler.OnOperatorExecuting(TableId, condition, sqlParameters, operatorType);
         }
@@ -864,11 +864,11 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        private void OnOperatorExecutd(string condition, IEnumerable<MySqlParameter> args, DataOperatorType operatorType)
+        private void OnOperatorExecuted(string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
         {
-            var mySqlParameters = args as MySqlParameter[] ?? args.ToArray();
-            OnOperatorExecutd(operatorType, condition, mySqlParameters);
-            DataUpdateHandler.OnOperatorExecutd(TableId, condition, mySqlParameters, operatorType);
+            var mySqlParameters = args as DbParameter[] ?? args.ToArray();
+            OnOperatorExecuted(operatorType, condition, mySqlParameters);
+            DataUpdateHandler.OnOperatorExecuted(TableId, condition, mySqlParameters, operatorType);
         }
 
         #endregion
@@ -900,7 +900,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
-        private void OnMulitUpdateEvent(DataOperatorType operatorType, string condition, MySqlParameter[] args)
+        private void OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
         {
             if (!GlobalEvent)
                 return;

@@ -144,10 +144,10 @@ namespace Agebull.MicroZero.WebApi
 		/// <returns></returns>
 		public ApiResult<TResult> Get<TResult>(string apiName, string arguments) 
 		{
-			LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
 			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-			LogRecorder.MonitorTrace(ctx);
-			LogRecorder.MonitorTrace("Arguments:" + arguments);
+			LogRecorderX.MonitorTrace(ctx);
+			LogRecorderX.MonitorTrace("Arguments:" + arguments);
 			if (!string.IsNullOrWhiteSpace(arguments))
 			{
 				apiName = $"{apiName}?{arguments}";
@@ -192,10 +192,10 @@ namespace Agebull.MicroZero.WebApi
 		/// <returns></returns>
 		public ApiResult<TResult> Post<TResult>(string apiName, string form) 
 		{
-			LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
 			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-			LogRecorder.MonitorTrace(ctx);
-			LogRecorder.MonitorTrace("Arguments:" + form);
+			LogRecorderX.MonitorTrace(ctx);
+			LogRecorderX.MonitorTrace("Arguments:" + form);
 			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "POST";
 			req.ContentType = "application/x-www-form-urlencoded";
@@ -210,8 +210,8 @@ namespace Agebull.MicroZero.WebApi
 			}
 			catch (Exception ex)
 			{
-				LogRecorder.Exception(ex);
-				LogRecorder.EndStepMonitor();
+				LogRecorderX.Exception(ex);
+				LogRecorderX.EndStepMonitor();
 				return ApiResult.Error<TResult>(ErrorCode.RemoteError);
 			}
 			return GetResult<TResult>(req);
@@ -233,7 +233,7 @@ namespace Agebull.MicroZero.WebApi
 					Stream receivedStream2 = webResponse.GetResponseStream();
 					if (receivedStream2 == null)
 					{
-						LogRecorder.EndStepMonitor();
+						LogRecorderX.EndStepMonitor();
 						return ApiResult.Error<TResult>(-1, "服务器无返回值");
 					}
 					jsonResult = new StreamReader(receivedStream2).ReadToEnd();
@@ -245,7 +245,7 @@ namespace Agebull.MicroZero.WebApi
 			{
 				if (e.Status != WebExceptionStatus.ProtocolError)
 				{
-					LogRecorder.EndStepMonitor();
+					LogRecorderX.EndStepMonitor();
 					switch (e.Status)
 					{
 					case WebExceptionStatus.CacheEntryNotFound:
@@ -293,7 +293,7 @@ namespace Agebull.MicroZero.WebApi
 					Stream receivedStream = response.GetResponseStream();
 					if (receivedStream == null)
 					{
-						LogRecorder.EndStepMonitor();
+						LogRecorderX.EndStepMonitor();
 						return ApiResult.Error<TResult>(-1, "服务器无返回值");
 					}
 					jsonResult = new StreamReader(receivedStream).ReadToEnd();
@@ -303,11 +303,11 @@ namespace Agebull.MicroZero.WebApi
 			}
 			catch (Exception ex)
 			{
-				LogRecorder.Exception(ex);
-				LogRecorder.EndStepMonitor();
+				LogRecorderX.Exception(ex);
+				LogRecorderX.EndStepMonitor();
 				return ApiResult.Error<TResult>(ErrorCode.RemoteError);
 			}
-			LogRecorder.MonitorTrace(jsonResult);
+			LogRecorderX.MonitorTrace(jsonResult);
 			try
 			{
 				if (!string.IsNullOrWhiteSpace(jsonResult))
@@ -318,12 +318,12 @@ namespace Agebull.MicroZero.WebApi
 			}
 			catch (Exception ex2)
 			{
-				LogRecorder.Exception(ex2);
+				LogRecorderX.Exception(ex2);
 				return ApiResult.Error<TResult>(-1);
 			}
 			finally
 			{
-				LogRecorder.EndStepMonitor();
+				LogRecorderX.EndStepMonitor();
 			}
 		}
 
@@ -367,10 +367,10 @@ namespace Agebull.MicroZero.WebApi
 		/// <returns></returns>
 		public ApiValueResult Get(string apiName, string arguments)
 		{
-			LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
 			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-			LogRecorder.MonitorTrace(ctx);
-			LogRecorder.MonitorTrace("Arguments:" + arguments);
+			LogRecorderX.MonitorTrace(ctx);
+			LogRecorderX.MonitorTrace("Arguments:" + arguments);
 			if (!string.IsNullOrWhiteSpace(arguments))
 			{
 				apiName = $"{apiName}?{arguments}";
@@ -415,10 +415,10 @@ namespace Agebull.MicroZero.WebApi
 		/// <returns></returns>
 		public ApiValueResult Post(string apiName, string form)
 		{
-			LogRecorder.BeginStepMonitor("内部API调用" + ToUrl(apiName));
+			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
 			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
-			LogRecorder.MonitorTrace(ctx);
-			LogRecorder.MonitorTrace("Arguments:" + form);
+			LogRecorderX.MonitorTrace(ctx);
+			LogRecorderX.MonitorTrace("Arguments:" + form);
 			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "POST";
 			req.ContentType = "application/x-www-form-urlencoded";
@@ -433,8 +433,8 @@ namespace Agebull.MicroZero.WebApi
 			}
 			catch (Exception ex)
 			{
-				LogRecorder.Exception(ex);
-				LogRecorder.EndStepMonitor();
+				LogRecorderX.Exception(ex);
+				LogRecorderX.EndStepMonitor();
 				return ErrorResult(-3);
 		    }
 		    using (MonitorScope.CreateScope("Caller Remote"))
@@ -458,7 +458,7 @@ namespace Agebull.MicroZero.WebApi
 					Stream receivedStream2 = response.GetResponseStream();
 					if (receivedStream2 == null)
 					{
-						LogRecorder.EndStepMonitor();
+						LogRecorderX.EndStepMonitor();
 						return ErrorResult(-1, "服务器无返回值");
 					}
 					jsonResult = new StreamReader(receivedStream2).ReadToEnd();
@@ -472,7 +472,7 @@ namespace Agebull.MicroZero.WebApi
 			    {
                     if (e3.Status != WebExceptionStatus.ProtocolError)
                     {
-                        LogRecorder.EndStepMonitor();
+                        LogRecorderX.EndStepMonitor();
                         switch (e3.Status)
                         {
                             case WebExceptionStatus.CacheEntryNotFound:
@@ -510,7 +510,7 @@ namespace Agebull.MicroZero.WebApi
                             case WebExceptionStatus.Timeout:
                                 return ErrorResult(-3, "请求的超时期限内未不收到任何响应");
                             case WebExceptionStatus.TrustFailure:
-                                LogRecorder.EndStepMonitor();
+                                LogRecorderX.EndStepMonitor();
                                 return ErrorResult(-3, "无法验证服务器证书");
                             default:
                                 return ErrorResult(-3, "发生未知类型的异常");
@@ -527,7 +527,7 @@ namespace Agebull.MicroZero.WebApi
                         Stream receivedStream = webResponse.GetResponseStream();
                         if (receivedStream == null)
                         {
-                            LogRecorder.EndStepMonitor();
+                            LogRecorderX.EndStepMonitor();
                             return ErrorResult(-1, "服务器无返回值");
                         }
                         jsonResult = new StreamReader(receivedStream).ReadToEnd();
@@ -537,18 +537,18 @@ namespace Agebull.MicroZero.WebApi
                 }
 			    catch (Exception e)
 			    {
-			        LogRecorder.Exception(e);
-			        LogRecorder.EndStepMonitor();
+			        LogRecorderX.Exception(e);
+			        LogRecorderX.EndStepMonitor();
 			        return ErrorResult(-1, "未知错误", e.Message);
                 }
 			}
 			catch (Exception e2)
 			{
-				LogRecorder.Exception(e2);
-				LogRecorder.EndStepMonitor();
+				LogRecorderX.Exception(e2);
+				LogRecorderX.EndStepMonitor();
 				return ErrorResult(-1, "未知错误", e2.Message);
 			}
-			LogRecorder.MonitorTrace(jsonResult);
+			LogRecorderX.MonitorTrace(jsonResult);
 			try
 			{
 				if (!string.IsNullOrWhiteSpace(jsonResult))
@@ -560,7 +560,7 @@ namespace Agebull.MicroZero.WebApi
 			}
 			catch (Exception e)
 			{
-				LogRecorder.Exception(e);
+				LogRecorderX.Exception(e);
 				return ErrorResult(-1, "未知错误", e.Message);
 			}
 		}
