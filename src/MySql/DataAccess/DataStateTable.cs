@@ -46,7 +46,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         protected override void ContitionSqlCode(List<string> conditions)
         {
-            if (GlobalContext.Current.IsManageMode || GlobalContext.Current.IsSystemMode)
+            if (GlobalContext.Current.IsManageMode)
                 return;
             conditions.Add($"`{FieldDictionary["DataState"]}` < 255");
         }

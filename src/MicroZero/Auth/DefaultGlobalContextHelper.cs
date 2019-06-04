@@ -17,11 +17,29 @@ namespace Agebull.Common.Context
         ILoginUserInfo IGlobalContextHelper.CreateUserObject(int type)
         {
             switch (type)
-            {
+            { 
                 case 1:
-                    return LoginUserInfo.Anymouse;
+                    return new LoginUserInfo
+                    {
+                        UserId = LoginUserInfo.AnymouseUserId,
+                        Account = "anymouse",
+                        DeviceId = "%anymouse",
+                        App = "*",
+                        Os = "*",
+                        LoginType = 0,
+                        State = UserStateType.None
+                    };
                 case 2:
-                    return LoginUserInfo.System;
+                    return new LoginUserInfo
+                    {
+                        UserId = LoginUserInfo.SystemUserId,
+                        Account = "system",
+                        DeviceId = "%system",
+                        App = "sys",
+                        Os = "sys",
+                        LoginType = 0,
+                        State = UserStateType.Enable
+                    };
                 default:
                     return new LoginUserInfo();
             }

@@ -100,7 +100,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="operatorType">操作类型</param>
         public static void OnPrepareSave(EditDataObject data, DataOperatorType operatorType)
         {
-            if (operatorType == DataOperatorType.Insert && data is ISnowFlakeId flakeId)
+            if (operatorType == DataOperatorType.Insert && data is ISnowFlakeId flakeId && flakeId.Id <= 0)
                 flakeId.Id = SnowFlake.NewId;
             foreach (var trigger in _generalTriggers)
                 trigger.OnPrepareSave(data, operatorType);
@@ -115,7 +115,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="data">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
         public static void OnDataSaved(EditDataObject data, DataOperatorType operatorType)
-        {  
+        {
             foreach (var trigger in _generalTriggers)
                 trigger.OnDataSaved(data, operatorType);
             if (Triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))

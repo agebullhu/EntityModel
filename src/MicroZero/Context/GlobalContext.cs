@@ -160,8 +160,7 @@ namespace Agebull.Common.Context
             _local.Value = null;
             _local = null;
         }
-
-
+        
         /// <summary>
         ///     内部构造
         /// </summary>
@@ -172,6 +171,15 @@ namespace Agebull.Common.Context
             _organizational = helper.CreateOrganizationalObject();
         }
 
+        /// <summary>
+        ///     内部构造
+        /// </summary>
+        public GlobalContext(bool forJson)
+        {
+            var helper = Helper;
+            _user = helper.CreateUserObject(0);
+            _organizational = helper.CreateOrganizationalObject();
+        }
         /// <summary>
         ///     设置当前上下文（框架内调用，外部误用后果未知）
         /// </summary>

@@ -39,6 +39,12 @@ namespace Agebull.EntityModel.Interfaces
         long AuthorId { get; set; }
 
         /// <summary>
+        ///     作者
+        /// </summary>
+        /// <value>int</value>
+        string Author { get; set; }
+
+        /// <summary>
         ///     新增日期
         /// </summary>
         /// <value>DateTime</value>
@@ -55,6 +61,12 @@ namespace Agebull.EntityModel.Interfaces
         /// </summary>
         /// <value>int</value>
         long LastReviserId { get; set; }
+
+        /// <summary>
+        ///     最后修改者
+        /// </summary>
+        /// <value>int</value>
+        string LastReviser { get; set; }
 
         /// <summary>
         ///     最后修改日期

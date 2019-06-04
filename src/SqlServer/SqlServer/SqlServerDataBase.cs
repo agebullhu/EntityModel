@@ -156,7 +156,7 @@ namespace Agebull.EntityModel.SqlServer
                 var connection = new SqlConnection(ConnectionString);
                 Connections.Add(connection);
                 //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
                 connection.Open();
                 return connection;
             }
@@ -174,12 +174,12 @@ namespace Agebull.EntityModel.SqlServer
                 {
                     _connection = InitConnection();
                     return true;
-                    //Trace.WriteLine("Create _connection", "MySqlDataBase");
+                    //Trace.WriteLine("Create _connection", "SqlServerDataBase");
                 }
                 if (string.IsNullOrEmpty(_connection.ConnectionString))
                 {
                     result = true;
-                    //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
+                    //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
                     _connection.ConnectionString = ConnectionString;
                 }
                 if (_connection.State == ConnectionState.Open)
@@ -187,7 +187,7 @@ namespace Agebull.EntityModel.SqlServer
                     return result;
                 }
                 //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+                //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
                 _connection.Open();
             }
             return true;

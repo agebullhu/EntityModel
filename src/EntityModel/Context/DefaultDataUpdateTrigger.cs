@@ -128,11 +128,13 @@ namespace Agebull.EntityModel.Common
             if (entity is IAuthorData authorData)
             {
                 authorData.AddDate = DateTime.Now;
+                authorData.Author = GlobalContext.Current.User.NickName;
                 authorData.AuthorId = GlobalContext.Current.LoginUserId;
             }
             if (entity is IHistoryData historyData)
             {
                 historyData.LastModifyDate = DateTime.Now;
+                historyData.LastReviser = GlobalContext.Current.User.NickName;
                 historyData.LastReviserId = GlobalContext.Current.LoginUserId;
             }
         }

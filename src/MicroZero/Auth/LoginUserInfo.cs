@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Agebull.Common.OAuth
@@ -99,17 +100,22 @@ namespace Agebull.Common.OAuth
         public string Organization { get; set; }
 
         /// <summary>
-        ///     角色
+        ///     主要角色名称
         /// </summary>
         [JsonProperty("role", NullValueHandling = NullValueHandling.Ignore)]
         public string Role { get; set; }
 
         /// <summary>
-        ///     用户角色标识
+        ///     主要角色标识
         /// </summary>
         [JsonProperty("roleId", NullValueHandling = NullValueHandling.Ignore)]
         public long RoleId { get; set; }
-
+        
+        /// <summary>
+        ///     用户角色标识
+        /// </summary>
+        [JsonProperty("allRoleIds", NullValueHandling = NullValueHandling.Ignore)]
+        public List<long> AllRoleIds { get; set; }
 
         /// <summary>
         ///     登录设备的操作系统
@@ -150,7 +156,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     匿名用户
         /// </summary>
-        public static LoginUserInfo CreateAnymouse(string did, string app, string os)
+        public static LoginUserInfo CreateAnymouse(string did="*", string app = "*", string os = "*")
         {
             return new LoginUserInfo
             {
@@ -163,9 +169,9 @@ namespace Agebull.Common.OAuth
             };
         }
         /// <summary>
-        ///     匿名用户
+        ///     匿名用户(慎用)
         /// </summary>
-        public static LoginUserInfo Anymouse { get; } = new LoginUserInfo
+        internal static LoginUserInfo Anymouse => new LoginUserInfo
         {
             UserId = AnymouseUserId,
             Account = "anymouse",
@@ -177,9 +183,9 @@ namespace Agebull.Common.OAuth
         };
 
         /// <summary>
-        ///     系统用户
+        ///     系统用户(慎用)
         /// </summary>
-        public static LoginUserInfo System { get; } = new LoginUserInfo
+        internal static LoginUserInfo System => new LoginUserInfo
         {
             UserId = SystemUserId,
             Account = "system",

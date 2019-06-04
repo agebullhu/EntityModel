@@ -63,20 +63,21 @@ namespace Agebull.EntityModel.MySql
 
         void IDataUpdateTrigger.AfterUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
-            if (DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
-            {
-                code.Append($@"
+            if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
+                return;
+            var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
+            code.Append($@"
 UPDATE `{table.ContextWriteTable}` 
 SET `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = {GlobalContext.Current.LoginUserId},
+    `{table.FieldDictionary[nameof(IHistoryData.LastReviser)]}` = '{name}',
     `{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}` = Now()");
-                if (!string.IsNullOrEmpty(condition))
-                {
-                    code.Append($@"
+            if (!string.IsNullOrEmpty(condition))
+            {
+                code.Append($@"
 WHERE {condition}");
-                }
-
-                code.AppendLine(";");
             }
+
+            code.AppendLine(";");
         }
     }
 }

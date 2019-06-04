@@ -160,30 +160,41 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="map">关联字段</param>
-        /// <param name="root">Lambda表达式</param>
+        /// <param name="filter">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> root, ConditionItem condition, bool mergeByAnd)
+        public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
         {
-            var convert = new PredicateConvert(map)
+            var root = new PredicateConvert(map)
             {
                 _condition = condition,
                 _mergeByAnd = mergeByAnd
             };
-            if (root.Root != null)
+            if (filter.Root != null)
             {
-                convert.Convert(root.Root);
+                root.Convert(filter.Root);
             }
-            foreach (var ch in root.Ands)
+            foreach (var ch in filter.Roots)
             {
                 Convert(map, ch, condition, true);
             }
-            foreach (var ch in root.Ors)
+
+            ConditionItem item = new ConditionItem(new SqlServerDataBase_())
             {
-                Convert(map, ch, condition, false);
+                ParaIndex = root._condition.ParaIndex
+            };
+            foreach (var ch in filter.Ands)
+            {
+                Convert(map, ch, item, true);
             }
-            return convert._condition;
+            foreach (var ch in filter.Ors)
+            {
+                Convert(map, ch, item, false);
+            }
+            root._condition.ParaIndex = item.ParaIndex;
+            root._condition.AddAndCondition(item.ConditionSql, item.Parameters);
+            return root._condition;
         }
 
         /// <summary>

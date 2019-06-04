@@ -493,11 +493,13 @@ namespace Agebull.EntityModel.BusinessLogic.SqlServer
                 case AuditStateType.Pass:
                     state = DataStateType.Enable;
                     data.AuditDate = DateTime.Now;
+                    data.Auditor = GlobalContext.Current.User.NickName;
                     data.AuditorId = GlobalContext.Current.LoginUserId;
                     break;
                 case AuditStateType.Deny:
                     state = DataStateType.Discard;
                     data.AuditDate = DateTime.Now;
+                    data.Auditor = GlobalContext.Current.User.NickName;
                     data.AuditorId = GlobalContext.Current.LoginUserId;
                     break;
                 case AuditStateType.End:

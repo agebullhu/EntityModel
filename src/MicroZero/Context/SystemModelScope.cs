@@ -15,7 +15,8 @@ namespace Agebull.Common.Context
         private SystemModelScope()
         {
             _preIs = GlobalContext.Current.IsSystemMode;
-            if (_preIs) return;
+            if (_preIs)
+                return;
             _preUser = GlobalContext.Current.User;
             GlobalContext.Current._user = LoginUserInfo.System;
             GlobalContext.Current.IsSystemMode = true;

@@ -33,6 +33,13 @@ namespace Agebull.EntityModel.Common
 
 
         /// <summary>
+        ///     …Û∫À»À
+        /// </summary>
+        /// <value>string</value>
+        string Auditor { get; set; }
+
+
+        /// <summary>
         ///     …Û∫À»’∆⁄
         /// </summary>
         /// <value>DateTime</value>

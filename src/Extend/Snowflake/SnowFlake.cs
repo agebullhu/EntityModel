@@ -135,12 +135,14 @@ namespace Agebull.Common
         /// <returns></returns>  
         public long GetSerialId()
         {
+            long id;
             lock (SyncRoot)
             {
                 long timestamp = GetTimestamp();
                 if (_lastTimestamp == timestamp)
-                { //同一微秒中生成ID  
-                    _sequence = (_sequence + 1) & SequenceMask; //用&运算计算该微秒内产生的计数是否已经到达上限  
+                {
+                    //同一微秒中生成ID , 用&运算计算该微秒内产生的计数是否已经到达上限  
+                    _sequence = (_sequence + 1) & SequenceMask; 
                     if (_sequence == 0)
                     {
                         //一微秒内产生的ID计数已达上限，等待下一微秒 
@@ -157,9 +159,12 @@ namespace Agebull.Common
                     throw new Exception("时间戳比上一次生成ID时时间戳还小，故异常");
                 }
                 _lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳  
-                long id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | (_dataCenterId << (int)DataCenterIdShift) | (_machineId << (int)MachineIdShift) | _sequence;
-                return id;
+                id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | 
+                          (_dataCenterId << (int)DataCenterIdShift) | 
+                          (_machineId << (int)MachineIdShift) | 
+                          _sequence;
             }
+            return id;
         }
         #endregion
 

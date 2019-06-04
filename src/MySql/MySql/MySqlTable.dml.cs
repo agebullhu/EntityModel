@@ -396,7 +396,7 @@ namespace Agebull.EntityModel.MySql
             using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-                cnt = DataBase.Execute(CreateDeleteSql(convert), convert.Parameters);
+                cnt = DataBase.Execute($@"DELETE FROM `{ContextWriteTable}` WHERE {convert.ConditionSql};", convert.Parameters);
                 if (cnt == 0)
                     return 0;
                 OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);

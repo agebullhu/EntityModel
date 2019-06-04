@@ -65,9 +65,11 @@ namespace Agebull.EntityModel.SqlServer
         {
             if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
                 return;
+            var name = GlobalContext.Current.User.NickName?.Replace('\'','’');
             code.Append($@"
 UPDATE [{table.ContextWriteTable}]
 SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.LoginUserId},
+    [{table.FieldDictionary[nameof(IHistoryData.LastReviser)]}] = '{name}',
     [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = GetDate()");
             if (!string.IsNullOrEmpty(condition))
             {
