@@ -26,10 +26,10 @@ namespace Agebull.EntityModel.Common
         [ThreadStatic]
         private static EditScope _currentScope;
 
-        /*// <summary>
+        /// <summary>
         ///     锁定完成后是否发出属性修改事件
         /// </summary>
-        private readonly bool _endRaiseEvent;*/
+        private readonly bool _endRaiseEvent;
 
         /// <summary>
         ///     在这之前是否也在进行初始化
@@ -59,7 +59,7 @@ namespace Agebull.EntityModel.Common
             _status = status;
             _oldArrest = _status.Arrest;
             _status.Arrest = arrestMode;
-            //this._endRaiseEvent = endRaiseEvent;
+            _endRaiseEvent = endRaiseEvent;
         }
 
         /// <summary>

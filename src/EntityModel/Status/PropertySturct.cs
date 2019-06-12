@@ -40,6 +40,11 @@ namespace Agebull.EntityModel.Common
         public Type PropertyType { get; set; }
 
         /// <summary>
+        ///     数据库类型(直接对应特定数据库的类型,不是通用的DbType)
+        /// </summary>
+        public int DbType { get; set; }
+
+        /// <summary>
         ///     索引
         /// </summary>
         public int Index { get; set; }

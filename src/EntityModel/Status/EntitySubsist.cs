@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     已存在
         /// </summary>
-        Exist = None
+        Exist
     }
 
     /// <summary>

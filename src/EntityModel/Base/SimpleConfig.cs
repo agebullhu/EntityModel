@@ -55,7 +55,7 @@ namespace Agebull.EntityModel.Common
                     return;
                 }
                 _caption = !string.IsNullOrWhiteSpace(value) ? value.Trim() : null;
-                RaisePropertyChanged(nameof(Caption));
+                OnPropertyChanged(nameof(Caption));
             }
         }
 
@@ -79,9 +79,8 @@ namespace Agebull.EntityModel.Common
                     return;
                 }
                 _description = !string.IsNullOrWhiteSpace(value) ? value.Trim() : null; ;
-                RaisePropertyChanged(nameof(Description));
+                OnPropertyChanged(nameof(Description));
             }
         }
-
     }
 }

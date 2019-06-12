@@ -9,6 +9,7 @@
 #region 引用
 
 using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -38,5 +39,22 @@ namespace Agebull.EntityModel.Common
         ///     属性
         /// </summary>
         public Dictionary<int, PropertySturct> Properties { get; set; }
+
+
+        private Dictionary<string, string> _nameProperties;
+
+        /// <summary>
+        ///     属性字典
+        /// </summary>
+        public Dictionary<string, string> ColumnMap
+        {
+            get { return _nameProperties ?? (_nameProperties = Properties.Values.ToDictionary(p => p.PropertyName, p => p.ColumnName)); }
+        }
+
+        /// <summary>
+        ///     属性总量
+        /// </summary>
+        public int Count => Properties.Count;
+
     }
 }

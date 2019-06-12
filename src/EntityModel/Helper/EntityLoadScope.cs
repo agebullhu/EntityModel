@@ -36,8 +36,8 @@ namespace Agebull.EntityModel.Common
         public EntityLoadScope(EditDataObject entity)
         {
             _entity = entity;
-            _readOnly = entity.__IsReadOnly;
-            entity.__IsReadOnly = true;
+            _readOnly = entity.__status.IsReadOnly;
+            _entity.__status.IsReadOnly = true;
         }
 
         /// <summary>
@@ -45,7 +45,8 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         protected override void OnDispose()
         {
-            _entity.__IsReadOnly = _readOnly;
+            _entity.__status.Reset();
+            _entity.__status.IsReadOnly = _readOnly;
         }
     }
 }

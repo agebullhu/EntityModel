@@ -200,7 +200,7 @@ namespace Agebull.EntityModel.SqlServer
         }
 
         /// <summary>
-        ///     从C#的类型转为DBType
+        ///     从C#的类型转为DbType
         /// </summary>
         /// <param name="csharpType"> </param>
         public static DbType ToDbType(string csharpType)

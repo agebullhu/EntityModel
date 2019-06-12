@@ -150,22 +150,51 @@ namespace Agebull.EntityModel.MySql
         }
 
         /// <summary>
+        /// 取得仅更新的SQL语句
+        /// </summary>
+        protected virtual string GetModifiedSqlCode(TData data)
+        {
+            if (data.__status.IsReadOnly)
+            {
+                return UpdateSqlCode;
+            }
+            if (!data.__status.IsModified)
+                return null;
+            StringBuilder sql = new StringBuilder();
+            bool first = true;
+            sql.AppendLine($"UPDATE `{ContextWriteTable}` SET");
+            foreach (var pro in data.__Struct.Properties)
+            {
+                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0) continue;
+                if (first)
+                    first = false;
+                else
+                    sql.Append(',');
+                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
+            }
+            sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
+            return sql.ToString();
+        }
+
+        /// <summary>
         ///     插入数据
         /// </summary>
         /// <param name="entity">插入数据的实体</param>
         private bool UpdateInner(TData entity)
         {
-            if (UpdateByMidified && !entity.__EntityStatus.IsModified)
+            if (UpdateByMidified && !entity.__status.IsModified)
                 return false;
             int result;
+            string sql = GetModifiedSqlCode(entity);
             PrepareSave(entity, DataOperatorType.Update);
             using (var cmd = DataBase.CreateCommand())
             {
                 SetUpdateCommand(entity, cmd);
-                MySqlDataBase.TraceSql(cmd);
                 cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
-{UpdateSqlCode}
+{sql}
 {AfterUpdateSql(PrimaryKeyConditionSQL)}";
+
+                MySqlDataBase.TraceSql(cmd);
 
                 result = cmd.ExecuteNonQuery();
             }
@@ -220,7 +249,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (entity == null)
                 return false;
-            entity.__EntityStatus.IsDelete = true;
+            entity.__status.IsDelete = true;
             PrepareSave(entity, DataOperatorType.Delete);
             var result = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
             if (result == 0)
@@ -273,9 +302,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         private bool SaveInner(TData entity)
         {
-            if (entity.__EntityStatus.IsDelete)
+            if (entity.__status.IsDelete)
                 return DeleteInner(entity);
-            if (entity.__EntityStatus.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
+            if (entity.__status.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
                 return InsertInner(entity);
             return UpdateInner(entity);
         }
@@ -329,7 +358,7 @@ namespace Agebull.EntityModel.MySql
                         entity.OnStatusChanged(NotificationStatusType.Modified);
                         break;
                 }
-                entity.AcceptChanged();
+                entity.__status.AcceptChanged();
             }
             OnDataSaved(entity, operatorType);
             OnEvent(operatorType, entity);

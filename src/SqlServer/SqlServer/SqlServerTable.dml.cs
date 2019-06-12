@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -157,7 +156,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="entity">插入数据的实体</param>
         private bool UpdateInner(TData entity)
         {
-            if (UpdateByMidified && !entity.__EntityStatus.IsModified)
+            if (UpdateByMidified && !entity.__status.IsModified)
                 return false;
             int result;
             PrepareSave(entity, DataOperatorType.Update);
@@ -222,7 +221,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             if (entity == null)
                 return false;
-            entity.__EntityStatus.IsDelete = true;
+            entity.__status.IsDelete = true;
             PrepareSave(entity, DataOperatorType.Delete);
             var result = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
             if (result == 0)
@@ -275,9 +274,9 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         private bool SaveInner(TData entity)
         {
-            if (entity.__EntityStatus.IsDelete)
+            if (entity.__status.IsDelete)
                 return DeleteInner(entity);
-            if (entity.__EntityStatus.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
+            if (entity.__status.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
                 return InsertInner(entity);
             return UpdateInner(entity);
         }
@@ -331,7 +330,7 @@ namespace Agebull.EntityModel.SqlServer
                         entity.OnStatusChanged(NotificationStatusType.Modified);
                         break;
                 }
-                entity.AcceptChanged();
+                entity.__status.AcceptChanged();
             }
             OnDataSaved(entity, operatorType);
             OnEvent(operatorType, entity);

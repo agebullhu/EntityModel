@@ -1480,7 +1480,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         private void ReLoadInner(TData entity)
         {
-            entity.RejectChanged();
+            entity.__status.RejectChanged();
             using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
             {
                 using (var reader = cmd.ExecuteReader())

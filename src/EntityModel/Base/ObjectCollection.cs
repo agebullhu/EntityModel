@@ -25,36 +25,6 @@ namespace Agebull.EntityModel.Common
     public class ObjectCollection<TEntity> : ObservableCollection<TEntity>
         where TEntity : NotificationObject, new()
     {
-        /// <summary>
-        ///     发出属性修改事件
-        /// </summary>
-        /// <param name="action">属性字段</param>
-        protected void RaisePropertyChanged<T>(Expression<Func<T>> action)
-        {
-            OnPropertyChanged(GetPropertyName(action));
-        }
-
-        /// <summary>
-        ///     取属性字段
-        /// </summary>
-        /// <typeparam name="T">字段类型</typeparam>
-        /// <param name="action">字段方法</param>
-        /// <returns>字段名称</returns>
-        public static string GetPropertyName<T>(Expression<Func<T>> action)
-        {
-            var expression = (MemberExpression)action.Body;
-            return expression.Member.Name;
-        }
-
-        /// <summary>
-        ///     发出属性修改事件
-        /// </summary>
-        /// <param name="action">属性字段</param>
-        protected void OnPropertyChanged<T>(Expression<Func<T>> action)
-        {
-            OnPropertyChanged(GetPropertyName(action));
-        }
-
 
         /// <summary>
         ///     发出属性修改事件
@@ -80,15 +50,6 @@ namespace Agebull.EntityModel.Common
         }
 
         #region 状态修改事件
-
-        /// <summary>
-        ///     发出状态变化事件
-        /// </summary>
-        /// <param name="action">属性字段</param>
-        public void RaiseStatusChanged<T>(Expression<Func<T>> action)
-        {
-            RaiseStatusChanged(GetPropertyName(action));
-        }
 
         /// <summary>
         ///     发出状态变化事件
@@ -203,3 +164,44 @@ namespace Agebull.EntityModel.Common
 #endif
     }
 }
+/*
+
+        /// <summary>
+        ///     发出状态变化事件
+        /// </summary>
+        /// <param name="action">属性字段</param>
+        public void RaiseStatusChanged<T>(Expression<Func<T>> action)
+        {
+            RaiseStatusChanged(GetPropertyName(action));
+        }
+
+        /// <summary>
+        ///     发出属性修改事件
+        /// </summary>
+        /// <param name="action">属性字段</param>
+        protected void RaisePropertyChanged<T>(Expression<Func<T>> action)
+        {
+            OnPropertyChanged(GetPropertyName(action));
+        }
+
+        /// <summary>
+        ///     取属性字段
+        /// </summary>
+        /// <typeparam name="T">字段类型</typeparam>
+        /// <param name="action">字段方法</param>
+        /// <returns>字段名称</returns>
+        public static string GetPropertyName<T>(Expression<Func<T>> action)
+        {
+            var expression = (MemberExpression)action.Body;
+            return expression.Member.Name;
+        }
+
+        /// <summary>
+        ///     发出属性修改事件
+        /// </summary>
+        /// <param name="action">属性字段</param>
+        protected void OnPropertyChanged<T>(Expression<Func<T>> action)
+        {
+            OnPropertyChanged(GetPropertyName(action));
+        }
+*/

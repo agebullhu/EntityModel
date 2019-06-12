@@ -117,7 +117,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual bool PrepareSave(TData data, bool isAdd)
         {
-            if (data.__IsFromUser && !PrepareSaveByUser(data, isAdd))
+            if (data.__status.IsFromClient && !PrepareSaveByUser(data, isAdd))
                 return false;
             return OnSaving(data, isAdd);
         }
@@ -130,7 +130,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual bool LastSaved(TData data, bool isAdd)
         {
-            if (data.__IsFromUser && !LastSavedByUser(data, isAdd))
+            if (data.__status.IsFromClient && !LastSavedByUser(data, isAdd))
                 return false;
             return OnSaved(data, isAdd);
         }
@@ -201,7 +201,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                 {
                     return false;
                 }
-                if (!data.__EntityStatusNull && data.__EntityStatus.IsExist)
+                if (data.__status.IsExist)
                     Access.Update(data);
                 else
                     Access.Insert(data);

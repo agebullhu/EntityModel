@@ -180,7 +180,7 @@ namespace Agebull.EntityModel.Common
 
         #endregion
 
-        //#region 数据版本管理
+        #region 数据版本管理
 
         //private static byte _version;
 
@@ -200,6 +200,6 @@ namespace Agebull.EntityModel.Common
         //    }
         //}
 
-        //#endregion
+        #endregion
     }
 }

@@ -9,9 +9,7 @@
 #region 引用
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
@@ -23,76 +21,72 @@ namespace Agebull.EntityModel.Common
     ///     编辑支持的实体对象
     /// </summary>
     [DataContract, Serializable]
-    public abstract class EditDataObject<TStatus> : StatusDataObject<TStatus>, IEditObject
-        where TStatus : IndexEditStatus, new()
+    public abstract class EditDataObject : DataObjectBase//, IEditObject
     {
+        #region 构造
+
+        /// <summary>
+        ///     状态对象
+        /// </summary>
+        [Browsable(false), IgnoreDataMember, JsonIgnore]
+        public ObjectStatus __status { get; }
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        protected EditDataObject()
+        {
+            __status = new ObjectStatus
+            {
+                Entity = this
+            };
+        }
+
+        #endregion
         #region 复制支持
 
         /// <summary>
-        ///     复制修改状态
+        ///     复制值
         /// </summary>
-        /// <param name="target">要复制的源</param>
-        protected void CopyState(EditDataObject target)
+        /// <param name="source">复制的源字段</param>
+        protected override void CopyValueInner(DataObjectBase source)
         {
-            __EntityStatus.CopyState(target.__EntityStatus);
+            if (!__status.IsReadOnly && source is EditDataObject editData)
+                __status.Status.CopyState(editData.__status.Status);
+            base.CopyValueInner(source);
         }
-
         #endregion
 
         #region 仅可重载方法
 
-        /// <summary>
-        ///     构建状态对象
-        /// </summary>
-        protected override TStatus CreateStatus()
-        {
-            var status = new TStatus();
-            status.Initialize(this);
-            return status;
-        }
-
-        /// <summary>
-        ///     接受修改
-        /// </summary>
-        public void AcceptChanged()
-        {
-            AcceptChangedInner();
-            OnStatusChanged(NotificationStatusType.Modified);
-        }
-
-
-        /// <summary>
-        ///     回退修改
-        /// </summary>
-        public void RejectChanged()
-        {
-            RejectChangedInner();
-            if (__status != null && __status.IsNew)
-            {
-                return;
-            }
-            __status = null;
-        }
 
         /// <summary>
         ///     接受修改(只可重写,不可调用)
         /// </summary>
-        protected virtual void AcceptChangedInner()
+        protected internal virtual void AcceptChangedInner()
         {
-            __EntityStatus.AcceptChanged();
         }
 
         /// <summary>
         ///     回退修改(只可重写,不可调用)
         /// </summary>
-        protected virtual void RejectChangedInner()
+        protected internal virtual void RejectChangedInner()
         {
         }
 
         /// <summary>
         ///     已被修改(不可调用,只可重写)
         /// </summary>
-        protected internal virtual void OnModified(int field)
+
+        internal void OnModified(int field)
+        {
+            OnModifiedInner(field);
+        }
+
+        /// <summary>
+        ///     已被修改(不可调用,只可重写)
+        /// </summary>
+        protected virtual void OnModifiedInner(int field)
         {
         }
 
@@ -101,95 +95,19 @@ namespace Agebull.EntityModel.Common
         #region 修改状态
 
         /// <summary>
-        ///     是否修改
-        /// </summary>
-        bool IEditObject.IsModified => __status != null && __status.IsModified;
-
-        /// <summary>
-        ///     是否新增
-        /// </summary>
-        bool IEditObject.IsAdd => __status != null && __status.IsNew;
-
-        /// <summary>
-        ///     是否修改
-        /// </summary>
-        public bool FieldIsModified(int propertyIndex)
-        {
-            return !__IsReadOnly && __EntityStatus.FieldIsModified(propertyIndex);
-        }
-
-        /// <summary>
-        ///     设置为非改变
-        /// </summary>
-        /// <param name="propertyIndex"> 字段的名字 </param>
-        public virtual void SetUnModify(int propertyIndex)
-        {
-            if (__IsReadOnly)
-            {
-                return;
-            }
-            __EntityStatus.SetUnModify(propertyIndex);
-        }
-
-        /// <inheritdoc />
-        /// <summary>
-        ///     设置为改变
-        /// </summary>
-        /// <param name="propertyIndex"> 字段的名字 </param>
-        public void SetModify(int propertyIndex)
-        {
-            RecordModifiedInner(propertyIndex);
-        }
-
-
-        /// <summary>
         ///     记录属性修改
         /// </summary>
         /// <param name="propertyIndex">属性</param>
         protected sealed override void RecordModifiedInner(int propertyIndex)
         {
-            if (!__IsReadOnly && !__EntityStatus.Arrest.HasFlag(EditArrestMode.RecordChanged))
-            {
-                __EntityStatus.RecordModified(propertyIndex);
-            }
-        }
-
-        /// <summary>
-        ///     状态变化处理
-        /// </summary>
-        /// <param name="status">状态</param>
-        protected sealed override void StatusChangedInner(NotificationStatusType status)
-        {
-            if (__status != null && __status.Arrest.HasFlag(EditArrestMode.RecordChanged))
-            {
+            if (__status.IsReadOnly)
                 return;
-            }
-            OnStatusChangedInner(status);
-        }
-
-        /// <summary>
-        ///     发出状态变化事件
-        /// </summary>
-        /// <param name="status">状态</param>
-        protected sealed override void OnStatusChanged(string status)
-        {
-            if (__status != null && __status.Arrest.HasFlag(EditArrestMode.RecordChanged))
-            {
-                return;
-            }
-            OnStatusChangedInner(status);
+            __status.SetModify(propertyIndex);
         }
 
         #endregion
 
         #region 编辑方法
-
-        /// <inheritdoc />
-        /// <summary>
-        ///     是否已删除
-        /// </summary>
-        /// <returns></returns>
-        bool IEditObject.IsDelete => __EntityStatus.IsDelete;
 
         /// <summary>
         ///     对象删除时的同步处理(只可重写,不可调用)
@@ -208,7 +126,7 @@ namespace Agebull.EntityModel.Common
         #endregion
 
         #region 后期修改事件
-         
+
         /// <summary>
         ///     属性修改的后期处理(保存后)
         /// </summary>
@@ -217,8 +135,10 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         public void LaterPeriodByModify()
         {
-            OnLaterPeriodBySignleModified(__EntityStatus.Subsist, __EntityStatus.ModifiedProperties);
-            OnLaterPeriodByModified(__EntityStatus.Subsist, __EntityStatus.ModifiedProperties);
+            if (__status.IsReadOnly || __status._status == null)
+                return;
+            OnLaterPeriodBySignleModified(__status.Subsist, __status._status.modifiedProperties);
+            OnLaterPeriodByModified(__status.Subsist, __status._status.modifiedProperties);
         }
 
         /// <summary>
@@ -229,7 +149,9 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         public void LaterPeriodByModify(EntitySubsist subsist)
         {
-            OnLaterPeriodBySignleModified(subsist, __EntityStatus.ModifiedProperties);
+            if (__status.IsReadOnly || __status._status == null)
+                return;
+            OnLaterPeriodBySignleModified(subsist, __status._status.modifiedProperties);
         }
 
         /// <summary>
@@ -240,7 +162,9 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         public void DoLaterPeriodByAllModified()
         {
-            OnLaterPeriodBySignleModified(EntitySubsist.Added, __status?.modifiedProperties);
+            if (__status.IsReadOnly || __status._status == null)
+                return;
+            OnLaterPeriodBySignleModified(EntitySubsist.Added, __status._status.modifiedProperties);
         }
 
 
@@ -299,43 +223,6 @@ namespace Agebull.EntityModel.Common
         #endregion
 
         #region 属性
-
-        /// <summary>
-        /// 数据是否被用户处理过
-        /// </summary>
-        [IgnoreDataMember, Browsable(false), JsonIgnore] int _x_entity_state_xx_;
-
-        /// <summary>
-        /// 数据是否被用户处理过
-        /// </summary>
-        [IgnoreDataMember, Browsable(false), JsonIgnore]
-        public bool __IsFromUser
-        {
-            get => (_x_entity_state_xx_ & 0x1) == 0x1;
-            set
-            {
-                if (value)
-                    _x_entity_state_xx_ |= 0x1;
-                else
-                    _x_entity_state_xx_ &= ~0x1;
-            }
-        }
-
-        /// <summary>
-        ///     属性总量
-        /// </summary>
-        [IgnoreDataMember, Browsable(false), JsonIgnore]
-        public int __PropertyCount => __Struct.Properties.Count;
-
-        private Dictionary<string, string> _properties;
-
-        /// <summary>
-        ///     属性字典
-        /// </summary>
-        public Dictionary<string, string> __ColumnMap
-        {
-            get { return _properties ?? (_properties = __Struct.Properties.Values.ToDictionary(p => p.PropertyName, p => p.ColumnName)); }
-        }
 
         /// <summary>
         ///     实体结构
@@ -450,11 +337,9 @@ namespace Agebull.EntityModel.Common
         #endregion
     }
 
-    /// <summary>
-    ///     编辑支持的实体对象
-    /// </summary>
-    [DataContract, Serializable]
-    public abstract class EditDataObject : EditDataObject<IndexEditStatus>
-    {
-    }
 }
+
+/*
+ 
+
+ */

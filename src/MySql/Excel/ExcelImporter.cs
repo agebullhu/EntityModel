@@ -656,7 +656,7 @@ namespace Agebull.EntityModel.Excel.MySql
         /// <param name="entity"></param>
         protected virtual bool Save(IRow row, TData entity)
         {
-            if (!entity.__EntityStatus.IsModified)
+            if (!entity.__status.IsModified)
             {
                 WriteRowState(row, false, "数据全为默认值,不导入");
                 return false;

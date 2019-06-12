@@ -864,24 +864,21 @@ namespace Agebull.EntityModel.MySql
 
 
 
-        private List<TData> LoadPageData(int page, int limit, string order, bool desc, string condition,
-            DbParameter[] args)
+        private List<TData> LoadPageData(int page, int limit, string order, bool desc, string condition,DbParameter[] args)
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-
+            using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var cmd = DataBase.CreateCommand(sql, args))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
-                    }
+                    while (reader.Read())
+                        results.Add(LoadEntity(reader));
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 
@@ -1339,14 +1336,12 @@ namespace Agebull.EntityModel.MySql
         {
             var list = new List<TData>();
             var par = CreatePimaryKeyParameter();
-
+            foreach (var key in keies)
             {
-                foreach (var key in keies)
-                {
-                    par.Value = key;
-                    list.Add(LoadFirstInner(PrimaryKeyConditionSQL, par));
-                }
+                par.Value = key;
+                list.Add(LoadFirstInner(PrimaryKeyConditionSQL, par));
             }
+
             return list;
         }
 
@@ -1477,7 +1472,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         private void ReLoadInner(TData entity)
         {
-            entity.RejectChanged();
+            entity.__status.RejectChanged();
             using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
             {
                 using (var reader = cmd.ExecuteReader())

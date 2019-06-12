@@ -49,17 +49,24 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public static void RegisterUpdateHandler(IDataTrigger handler)
         {
-            if (_generalTriggers.All(p => p.GetType() != handler.GetType()))
-                _generalTriggers.Add(handler);
+            lock (_generalTriggers)
+            {
+                if (_generalTriggers.All(p => p.GetType() != handler.GetType()))
+                    _generalTriggers.Add(handler);
+            }
         }
+
         /// <summary>
         ///     反注册数据更新注入器
         /// </summary>
         public static void UnRegisterUpdateHandler(IDataTrigger handler)
         {
-            if (_generalTriggers != null && _generalTriggers.Contains(handler))
+            lock (_generalTriggers)
             {
-                _generalTriggers.Remove(handler);
+                if (_generalTriggers != null && _generalTriggers.Contains(handler))
+                {
+                    _generalTriggers.Remove(handler);
+                }
             }
         }
 
@@ -68,15 +75,18 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public static void RegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
-            if (Triggers == null)
-                Triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
-            if (Triggers.ContainsKey(entityId))
+            lock (Triggers)
             {
-                if (Triggers[entityId].All(p => p.GetType() != handler.GetType()))
-                    Triggers[entityId].Add(handler);
+                if (Triggers == null)
+                    Triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
+                if (Triggers.ContainsKey(entityId))
+                {
+                    if (Triggers[entityId].All(p => p.GetType() != handler.GetType()))
+                        Triggers[entityId].Add(handler);
+                }
+                else
+                    Triggers.Add(entityId, new List<IDataUpdateTrigger> { handler });
             }
-            else
-                Triggers.Add(entityId, new List<IDataUpdateTrigger> { handler });
         }
 
         /// <summary>
@@ -84,12 +94,15 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public static void UnRegisterUpdateHandler(int entityId, IDataUpdateTrigger handler)
         {
-            if (Triggers == null || !Triggers.ContainsKey(entityId)) return;
-            Triggers[entityId].Remove(handler);
-            if (Triggers[entityId].Count == 0)
-                Triggers.Remove(entityId);
-            if (Triggers.Count == 0)
-                Triggers = null;
+            lock (Triggers)
+            {
+                if (Triggers == null || !Triggers.ContainsKey(entityId)) return;
+                Triggers[entityId].Remove(handler);
+                if (Triggers[entityId].Count == 0)
+                    Triggers.Remove(entityId);
+                if (Triggers.Count == 0)
+                    Triggers = null;
+            }
         }
 
 
