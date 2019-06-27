@@ -1451,11 +1451,11 @@ namespace Agebull.Common.Base
         public static void CallNgen(string file)
         {
             var ngen = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework\v4.0.30319", "ngen.exe");
-            var process = Process.Start(ngen, string.Format("uninstall {0} /AppBase:{1}", file, AppDomain.CurrentDomain.BaseDirectory));
+            var process = Process.Start(ngen, $"uninstall {file} /AppBase:{AppDomain.CurrentDomain.BaseDirectory}");
             // ReSharper disable PossibleNullReferenceException
             process.WaitForExit();
             // ReSharper restore PossibleNullReferenceException
-            process = Process.Start(ngen, string.Format("install {0} /AppBase:{1}", file, AppDomain.CurrentDomain.BaseDirectory));
+            process = Process.Start(ngen, $"install {file} /AppBase:{AppDomain.CurrentDomain.BaseDirectory}");
             // ReSharper disable PossibleNullReferenceException
             process.WaitForExit();
             // ReSharper restore PossibleNullReferenceException
@@ -1468,7 +1468,7 @@ namespace Agebull.Common.Base
         public static void Install(string file)
         {
             var ngen = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework\v4.0.30319", "ngen.exe");
-            var process = Process.Start(ngen, string.Format("install {0} /AppBase:{1}", file, AppDomain.CurrentDomain.BaseDirectory));
+            var process = Process.Start(ngen, $"install {file} /AppBase:{AppDomain.CurrentDomain.BaseDirectory}");
             // ReSharper disable PossibleNullReferenceException
             process.WaitForExit();
             // ReSharper restore PossibleNullReferenceException
@@ -1481,7 +1481,7 @@ namespace Agebull.Common.Base
         public static void Uninstall(string file)
         {
             var ngen = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework\v4.0.30319", "ngen.exe");
-            var process = Process.Start(ngen, string.Format("uninstall {0} /AppBase:{1}", file, AppDomain.CurrentDomain.BaseDirectory));
+            var process = Process.Start(ngen, $"uninstall {file} /AppBase:{AppDomain.CurrentDomain.BaseDirectory}");
             // ReSharper disable PossibleNullReferenceException
             process.WaitForExit();
             // ReSharper restore PossibleNullReferenceException

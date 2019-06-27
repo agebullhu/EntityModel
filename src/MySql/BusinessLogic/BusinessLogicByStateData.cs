@@ -69,7 +69,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// <returns>如果为否将阻止后续操作</returns>
         protected override bool CanSave(TData data, bool isAdd)
         {
-            return !data.IsFreeze && data.DataState < DataStateType.Discard;
+            return !data.IsFreeze && data.DataState < DataStateType.Discard && base.CanSave(data, isAdd);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="cmd">命令</param>
-        protected sealed override void OnStateChanged(TData data, BusinessCommandType cmd)
+        protected override void OnStateChanged(TData data, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;

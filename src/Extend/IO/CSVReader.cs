@@ -191,7 +191,7 @@ namespace Agebull.Common.Help
         public static string Export<T>(IEnumerable<string> heads, IEnumerable<T> datas, Func<T, string> rFunc) where T : class
         {
             var sb = new StringBuilder();
-            sb.AppendLine(heads.LinkByFormat2(p => String.Format("\"{0}\"", p.MulitReplace(',', '，', '\"', '＂'))));
+            sb.AppendLine(heads.LinkByFormat2(p => $"\"{p.MulitReplace(',', '，', '\"', '＂')}\""));
             foreach (var value in datas)
             {
                 sb.AppendLine(rFunc(value));

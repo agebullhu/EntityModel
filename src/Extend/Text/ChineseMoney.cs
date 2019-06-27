@@ -92,7 +92,7 @@ namespace System.Text
             {
                 return;
             }
-            sc.Insert(0, string.Format("{0}{1}", Digit[Convert.ToInt32(data % 10)], Wei[pos]));
+            sc.Insert(0, $"{Digit[Convert.ToInt32(data % 10)]}{Wei[pos]}");
             GetString(data / 10, sc, pos + 1);
         }
 
@@ -145,7 +145,7 @@ namespace System.Text
             {
                 return ;
             }
-            sc.Insert(0 , string.Format("{0}{1}" , Digit[Convert.ToInt32(data % 10)] , Wei[pos])) ;
+            sc.Insert(0 , $"{Digit[Convert.ToInt32(data % 10)]}{Wei[pos]}") ;
             GetString(data / 10 , sc , pos + 1) ;
         }
 

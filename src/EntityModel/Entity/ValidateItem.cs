@@ -6,9 +6,9 @@ using Newtonsoft.Json;
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
-    /// 校验节点
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
+        /// 校验节点
+        /// </summary>
+        [JsonObject(MemberSerialization.OptIn)]
     public class ValidateResultDictionary
     {
         /// <summary>
@@ -32,10 +32,10 @@ namespace Agebull.EntityModel.Common
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("检查结果:<br/>");
+            sb.AppendLine("检查结果:");
             foreach (var item in Result)
             {
-                sb.Append($"{item.Id}:<br/>");
+                sb.AppendLine($"{item.Id}:");
                 sb.Append(item);
             }
             return sb.ToString();
@@ -77,7 +77,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public override string ToString()
         {
-            return Succeed ? "" : Items.Select(p => p.Message).LinkToString('。');
+            return Succeed ? "" : Items.Select(p => $"{p.Caption}:{p.Message}").LinkToString("\r\n");
         }
 
         /// <summary>

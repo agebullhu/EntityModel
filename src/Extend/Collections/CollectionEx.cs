@@ -35,7 +35,7 @@ namespace System.Linq
             var idx = 1;
             while (dictionary.ContainsKey(name))
             {
-                name = string.Format("{0}{1}", k, idx++);
+                name = $"{k}{idx++}";
             }
             dictionary.Add(name, v);
             return name;
@@ -723,7 +723,7 @@ namespace System.Linq
                 }
                 sb.Append(v);
             }
-            return first ? null : string.Format("{0}{1}{2}", head, sb, food).Trim();
+            return first ? null : $"{head}{sb}{food}".Trim();
         }
         /// <summary>
         ///   连接到文本

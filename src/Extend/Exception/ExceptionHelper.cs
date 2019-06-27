@@ -37,7 +37,7 @@ namespace Agebull.Common
             }
             if (ex is BusinessException)
             {
-                return string.Format(@"服务器因为数据错误无法正确执行，错误信息：{0}", ex.Message);
+                return $@"服务器因为数据错误无法正确执行，错误信息：{ex.Message}";
             }
             if (ex is SystemExException)
             {

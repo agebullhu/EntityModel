@@ -17,7 +17,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess, TDatabase> 
+    public class UiBusinessLogicBase<TData, TAccess, TDatabase>
         : BusinessLogicBase<TData, TAccess, TDatabase>, IUiBusinessLogicBase<TData>
         where TData : EditDataObject, IIdentityData, new()
         where TAccess : MySqlTable<TData, TDatabase>, new()
@@ -40,8 +40,9 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
             params MySqlParameter[] args)
         {
-            var data = Access.PageData(page, limit, sort, desc, condition, args);
-            var count = (int)Access.Count(condition, args);
+            var paras = args.Cast<DbParameter>().ToArray();
+            var data = Access.PageData(page, limit, sort, desc, condition, paras);
+            var count = (int)Access.Count(condition, paras);
             return new ApiPageData<TData>
             {
                 RowCount = count,
@@ -106,7 +107,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual bool CanSave(TData data, bool isAdd)
         {
-            return true;
+            return isAdd || data.__status.IsModified;
         }
 
         /// <summary>
@@ -202,14 +203,17 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                     return false;
                 }
                 if (data.__status.IsExist)
-                    Access.Update(data);
-                else
-                    Access.Insert(data);
-                var result = LastSaved(data, true);
-                OnStateChanged(data, BusinessCommandType.AddNew);
+                {
+                    if (!Access.Update(data))
+                        return false;
+                }
+                else if (!Access.Insert(data))
+                    return false;
+                if (!Saved(data, BusinessCommandType.AddNew))
+                    return false;
                 scope.SetState(true);
-                return result;
             }
+            return true;
         }
 
         /// <summary>
@@ -231,14 +235,25 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                 {
                     return false;
                 }
-                Access.Update(data);
-                var result = LastSaved(data, false);
-                OnStateChanged(data, BusinessCommandType.Update);
+                if (!Access.Update(data))
+                    return false;
+                if (!Saved(data, BusinessCommandType.Update))
+                    return false;
                 scope.SetState(true);
-                return result;
             }
+            return true;
         }
 
+        /// <summary>
+        ///     更新对象
+        /// </summary>
+        private bool Saved(TData data, BusinessCommandType type)
+        {
+            if (!LastSaved(data, BusinessCommandType.AddNew == type))
+                return false;
+            OnStateChanged(data, type);
+            return true;
+        }
 
         #endregion
 
@@ -348,9 +363,9 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
 
         ApiPageData<TData> IUiBusinessLogicBase<TData>.PageData(int page, int limit, string sort, bool desc, string condition, params DbParameter[] args)
         {
-            return PageData(page, limit, sort,desc, condition, args.Cast<MySqlParameter>().ToArray());
+            return PageData(page, limit, sort, desc, condition, args.Cast<MySqlParameter>().ToArray());
         }
-        
+
 
         #endregion
     }

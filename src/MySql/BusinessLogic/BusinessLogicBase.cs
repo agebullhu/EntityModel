@@ -12,7 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Excel;
 using Agebull.EntityModel.MySql;
+using Agebull.MicroZero.ZeroApis;
 
 #endregion
 
@@ -168,6 +170,27 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         public virtual TData Details(long id)
         {
             return id == 0 ? null : Access.LoadByPrimaryKey(id);
+        }
+        #endregion
+
+        #region 导入导出
+        
+        /// <summary>
+        /// 导出到Excel
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public ApiFileResult Import(string sheetName, LambdaItem<TData> filter)
+        {
+            var exporter = new ExcelExporter<TData, TAccess>();
+            var bytes = exporter.ExportExcel(filter, sheetName, null);
+            return new ApiFileResult
+            {
+                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+                Data = bytes
+            };
         }
 
         #endregion

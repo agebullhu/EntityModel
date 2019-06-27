@@ -138,8 +138,6 @@ namespace Agebull.EntityModel.MySql
                 {
                     if (UpdateInner(entity))
                         ++cnt;
-                    else
-                        return 0;
                 }
                 scope.SetState(true);
             }
@@ -154,7 +152,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         protected virtual string GetModifiedSqlCode(TData data)
         {
-            if (data.__status.IsReadOnly)
+            if (/*!UpdateByMidified ||*/ data.__status.IsReadOnly)
             {
                 return UpdateSqlCode;
             }
@@ -165,13 +163,16 @@ namespace Agebull.EntityModel.MySql
             sql.AppendLine($"UPDATE `{ContextWriteTable}` SET");
             foreach (var pro in data.__Struct.Properties)
             {
-                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0) continue;
+                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
                 if (first)
                     first = false;
                 else
                     sql.Append(',');
                 sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
             }
+            if (first)
+                return null;
             sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
             return sql.ToString();
         }
@@ -185,8 +186,10 @@ namespace Agebull.EntityModel.MySql
             if (UpdateByMidified && !entity.__status.IsModified)
                 return false;
             int result;
-            string sql = GetModifiedSqlCode(entity);
             PrepareSave(entity, DataOperatorType.Update);
+            string sql = GetModifiedSqlCode(entity);
+            if (sql == null)
+                return false;
             using (var cmd = DataBase.CreateCommand())
             {
                 SetUpdateCommand(entity, cmd);

@@ -74,9 +74,10 @@ namespace Agebull.Common
         /// </remarks>
         public static bool IsLocked(object al, string name)
         {
-            var ln = string.Format("{0}_{1}_{2}", al.GetType().FullName, al.GetHashCode(), name);
+            var ln = $"{al.GetType().FullName}_{al.GetHashCode()}_{name}";
             return AtomLocks.Contains(ln);
         }
+
         /// <summary>
         ///   ππ‘Ï
         /// </summary>

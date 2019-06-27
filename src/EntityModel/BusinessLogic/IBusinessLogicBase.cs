@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.EntityModel.Common;
+using Agebull.MicroZero.ZeroApis;
 
 #endregion
 
@@ -24,6 +25,8 @@ namespace Agebull.EntityModel.BusinessLogic
     public interface IBusinessLogicBase<TData>
         where TData : EditDataObject, new()
     {
+        #region 基础属性
+
         /// <summary>
         /// 数据访问对象
         /// </summary>
@@ -33,6 +36,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// 实体类型
         /// </summary>
         int EntityType { get; }
+
+        #endregion
+
         #region 便利操作
 
         /// <summary>
@@ -86,6 +92,18 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     载入当前操作的数据
         /// </summary>
         TData Details(long id);
+
+        #endregion
+
+        #region 导出到Excel
+        
+        /// <summary>
+        /// 导出到Excel
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        ApiFileResult Import(string sheetName, LambdaItem<TData> filter);
 
         #endregion
     }

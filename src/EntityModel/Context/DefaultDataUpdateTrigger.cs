@@ -69,6 +69,7 @@ namespace Agebull.EntityModel.Common
             }
             TypeInterfaces.Add(typeof(TEntity), type);
         }
+
         /// <summary>
         /// 是否指定类型
         /// </summary>
@@ -108,9 +109,23 @@ namespace Agebull.EntityModel.Common
         {
         }
 
-        void IDataUpdateTrigger.OnDataSaved(EditDataObject entity, DataOperatorType operatorType)
+        void IDataUpdateTrigger.OnPrepareSave(EditDataObject entity, DataOperatorType operatorType)
         {
-
+            if (operatorType == DataOperatorType.Insert)
+            {
+                if (entity is IAuthorData authorData)
+                {
+                    authorData.AddDate = DateTime.Now;
+                    authorData.Author = GlobalContext.Current.User.NickName;
+                    authorData.AuthorId = GlobalContext.Current.LoginUserId;
+                }
+                if (entity is IHistoryData historyData)
+                {
+                    historyData.LastModifyDate = DateTime.Now;
+                    historyData.LastReviser = GlobalContext.Current.User.NickName;
+                    historyData.LastReviserId = GlobalContext.Current.LoginUserId;
+                }
+            }
         }
 
         void IDataUpdateTrigger.OnOperatorExecuted(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
@@ -123,19 +138,22 @@ namespace Agebull.EntityModel.Common
 
         }
 
-        void IDataUpdateTrigger.OnPrepareSave(EditDataObject entity, DataOperatorType operatorType)
+        void IDataUpdateTrigger.OnDataSaved(EditDataObject entity, DataOperatorType operatorType)
         {
-            if (entity is IAuthorData authorData)
+            if (operatorType == DataOperatorType.Update)
             {
-                authorData.AddDate = DateTime.Now;
-                authorData.Author = GlobalContext.Current.User.NickName;
-                authorData.AuthorId = GlobalContext.Current.LoginUserId;
-            }
-            if (entity is IHistoryData historyData)
-            {
-                historyData.LastModifyDate = DateTime.Now;
-                historyData.LastReviser = GlobalContext.Current.User.NickName;
-                historyData.LastReviserId = GlobalContext.Current.LoginUserId;
+                if (entity is IAuthorData authorData)
+                {
+                    authorData.AddDate = DateTime.Now;
+                    authorData.Author = GlobalContext.Current.User.NickName;
+                    authorData.AuthorId = GlobalContext.Current.LoginUserId;
+                }
+                if (entity is IHistoryData historyData)
+                {
+                    historyData.LastModifyDate = DateTime.Now;
+                    historyData.LastReviser = GlobalContext.Current.User.NickName;
+                    historyData.LastReviserId = GlobalContext.Current.LoginUserId;
+                }
             }
         }
     }

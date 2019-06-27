@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.MicroZero.Abstracti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.SqlServer", "SqlServer\Agebull.EntityModel.SqlServer.csproj", "{7481912A-5D8A-4C95-A528-D2A937D5EA8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agebull.EntityModel.Excel", "Excel\Agebull.EntityModel.Excel.csproj", "{A6AB806C-9474-44B2-8390-12909C734265}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,14 @@ Global
 		{7481912A-5D8A-4C95-A528-D2A937D5EA8D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7481912A-5D8A-4C95-A528-D2A937D5EA8D}.Release|x64.ActiveCfg = Release|Any CPU
 		{7481912A-5D8A-4C95-A528-D2A937D5EA8D}.Release|x64.Build.0 = Release|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Debug|x64.Build.0 = Debug|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Release|x64.ActiveCfg = Release|Any CPU
+		{A6AB806C-9474-44B2-8390-12909C734265}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +103,7 @@ Global
 		{1643AD52-B84C-439B-933C-C1489C5431B7} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
 		{4E2D483C-53B5-4283-AA54-FF5373B3067E} = {7C71CF3C-D7F7-44CB-839A-2B4A2A18D235}
 		{7481912A-5D8A-4C95-A528-D2A937D5EA8D} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
+		{A6AB806C-9474-44B2-8390-12909C734265} = {F2563A12-18F3-4BA7-BDF5-1A995F715518}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F65055-833D-450A-80E3-D58986FBA4B6}

@@ -17,11 +17,11 @@ namespace Agebull.Common.Base
     public abstract class ScopeBase : IDisposable
     {
         /// <summary>
-        ///   记录失败的调用堆栈
+        /// 析构
         /// </summary>
-        protected void RecordFailedStack()
+        ~ScopeBase()
         {
-            //LogRecorder.RecordStackTrace(string.Format("在范围对象{0}的析构时,确认范围对象结论为失败,调用堆栈如下:", this.GetType()));
+            DoDispose();
         }
 
         /// <summary>
@@ -38,6 +38,14 @@ namespace Agebull.Common.Base
         ///   析构
         /// </summary>
         public void Dispose()
+        {
+            DoDispose();
+        }
+
+        /// <summary>
+        ///   析构
+        /// </summary>
+        public void DoDispose()
         {
             if (IsDisposed)
                 return;
