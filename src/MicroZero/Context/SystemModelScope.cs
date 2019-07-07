@@ -33,8 +33,10 @@ namespace Agebull.Common.Context
         /// <inheritdoc />
         protected override void OnDispose()
         {
-            if (!_preIs)
-                GlobalContext.Current._user = _preUser;
+            if (_preIs)
+                return;
+            GlobalContext.Current._user = _preUser;
+            GlobalContext.Current.IsSystemMode = false;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.SqlServer
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
     /// <typeparam name="TSqlServerDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
-    public abstract class DataStateTable<TData, TSqlServerDataBase> : SqlServerTable<TData, TSqlServerDataBase>
+    public abstract class DataStateTable<TData, TSqlServerDataBase> : SqlServerTable<TData, TSqlServerDataBase>, IStateDataTable<TData>
         where TData : EditDataObject, IStateData, IIdentityData, new()
         where TSqlServerDataBase : SqlServerDataBase
     {

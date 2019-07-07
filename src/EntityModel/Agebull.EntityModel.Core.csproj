@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.4.2.3</Version>
+    <Version>2.4.2.5</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -66,6 +66,7 @@
 
   <ItemGroup>
     <Compile Remove="Base\TableSql.cs" />
+    <Compile Remove="BusinessLogic\IDataExtendChecker.cs" />
     <Compile Remove="Helper\EditScope.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="Status\EditArrestMode.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="DataBase\Scope\DbReaderScope.cs" />
     <Compile Include="DataBase\Scope\ReadTableScope.cs" />
     <Compile Include="DataBase\Scope\DataBaseScope.cs" />
+    <Compile Include="DataBase\Scope\TransactionScope.cs" />
   </ItemGroup>
 
   <ItemGroup>

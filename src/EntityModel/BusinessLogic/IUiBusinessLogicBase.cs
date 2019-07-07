@@ -37,6 +37,18 @@ namespace Agebull.EntityModel.BusinessLogic
         ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda);
         #endregion
 
+        #region 导出到Excel
+
+        /// <summary>
+        /// 导出到Excel
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        ApiFileResult Import(string sheetName, LambdaItem<TData> filter);
+
+        #endregion
+
         #region 写数据
 
         /// <summary>

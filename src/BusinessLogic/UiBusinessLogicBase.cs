@@ -5,31 +5,66 @@ using System.Linq;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.MySql;
+using Agebull.EntityModel.Excel;
 using Agebull.MicroZero.ZeroApis;
-using MySql.Data.MySqlClient;
 
-namespace Agebull.EntityModel.BusinessLogic.MySql
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     /// 支持界面操作的业务逻辑对象基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess, TDatabase>
-        : BusinessLogicBase<TData, TAccess, TDatabase>, IUiBusinessLogicBase<TData>
+    public class UiBusinessLogicBase<TData, TAccess>
+        : BusinessLogicBase<TData, TAccess>, IUiBusinessLogicBase<TData>
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess : MySqlTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+        where TAccess : class, IDataTable<TData>, new()
     {
 
         #region 读数据
 
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return PageData(page, limit, null, false, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return PageData(page, limit, null, false, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc,
+            Expression<Func<TData, bool>> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
+        }
+
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        public ApiPageData<TData> PageData(int page, int limit, string condition, params MySqlParameter[] args)
+        public ApiPageData<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, null, false, condition, args);
         }
@@ -38,62 +73,60 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         ///     取得列表数据
         /// </summary>
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
-            params MySqlParameter[] args)
+            params DbParameter[] args)
         {
-            var paras = args.Cast<DbParameter>().ToArray();
-            var data = Access.PageData(page, limit, sort, desc, condition, paras);
-            var count = (int)Access.Count(condition, paras);
-            return new ApiPageData<TData>
+            if (!string.IsNullOrEmpty(BaseQueryCondition))
             {
-                RowCount = count,
-                Rows = data,
-                PageIndex = page,
-                PageSize = limit,
-                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-            };
+                if (string.IsNullOrEmpty(condition))
+                    condition = BaseQueryCondition;
+                else if (condition != BaseQueryCondition && !condition.Contains(BaseQueryCondition))
+                    condition = $"({BaseQueryCondition}) AND ({condition})";
+            }
+
+            if (!DataExtendChecker.PrepareQuery<TData>(Access, ref condition, ref args))
+            {
+                return null;
+            }
+
+            var datas = Access.Page(page, limit, sort, desc, condition, args);
+            OnListLoaded(datas.Rows);
+            return datas;
         }
 
         /// <summary>
-        ///     分页读取
+        ///     数据载入的处理
         /// </summary>
-        public ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
+        /// <param name="datas"></param>
+        protected virtual void OnListLoaded(IList<TData> datas)
         {
-            if (limit <= 0 || limit >= 999)
+        }
+
+        #endregion
+
+        #region 导入导出
+
+        /// <summary>
+        /// 导出到Excel
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public ApiFileResult Import(string sheetName, LambdaItem<TData> filter)
+        {
+            var exporter = new ExcelExporter<TData, TAccess>
             {
-                limit = 30;
-            }
-            var data = Access.PageData(page, limit, lambda);
-            var count = (int)Access.Count(lambda);
-            return new ApiPageData<TData>
+                OnDataLoad = OnListLoaded
+            };
+            var data = new TData();
+            var bytes = exporter.ExportExcel(filter, sheetName ?? data.__Struct.ImportName, null);
+            return new ApiFileResult
             {
-                RowCount = count,
-                Rows = data,
-                PageIndex = page,
-                PageSize = limit,
-                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+                Data = bytes
             };
         }
 
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
-        {
-            if (limit <= 0 || limit >= 999)
-            {
-                limit = 30;
-            }
-            var data = Access.PageData(page, limit, lambda);
-            var count = (int)Access.Count(lambda);
-            return new ApiPageData<TData>
-            {
-                RowCount = count,
-                Rows = data,
-                PageIndex = page,
-                PageSize = limit,
-                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-            };
-        }
         #endregion
 
         #region 写数据
@@ -187,21 +220,29 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         {
             return data.Id == 0 ? AddNew(data) : Update(data);
         }
+
         /// <summary>
         ///     新增
         /// </summary>
         public virtual bool AddNew(TData data)
         {
+            if (!DataExtendChecker.PrepareAddnew(data))
+            {
+                return false;
+            }
+
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!CanSave(data, true))
                 {
                     return false;
                 }
+
                 if (!PrepareSave(data, true))
                 {
                     return false;
                 }
+
                 if (data.__status.IsExist)
                 {
                     if (!Access.Update(data))
@@ -209,10 +250,12 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                 }
                 else if (!Access.Insert(data))
                     return false;
+
                 if (!Saved(data, BusinessCommandType.AddNew))
                     return false;
                 scope.SetState(true);
             }
+
             return true;
         }
 
@@ -225,22 +268,31 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
             {
                 return AddNew(data);
             }
+
+            if (!DataExtendChecker.PrepareUpdate(data))
+            {
+                return false;
+            }
+
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 if (!CanSave(data, false))
                 {
                     return false;
                 }
+
                 if (!PrepareSave(data, false))
                 {
                     return false;
                 }
+
                 if (!Access.Update(data))
                     return false;
                 if (!Saved(data, BusinessCommandType.Update))
                     return false;
                 scope.SetState(true);
             }
+
             return true;
         }
 
@@ -262,17 +314,25 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// <summary>
         ///     删除对象
         /// </summary>
-        public bool Delete(IEnumerable<long> lid)
+        public bool Delete(IEnumerable<long> ids)
         {
+            var list = ids.ToArray();
+            if (!DataExtendChecker.PrepareDelete<TData>(list))
+            {
+                return false;
+            }
+
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                foreach (var id in lid)
+                foreach (var id in list)
                 {
-                    if (!Delete(id))
+                    if (!DeleteInner(id))
                         return false;
                 }
+
                 scope.SetState(true);
             }
+
             return true;
         }
 
@@ -281,19 +341,39 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// </summary>
         public bool Delete(long id)
         {
+            if (!DataExtendChecker.PrepareDelete<TData>(new[] {id}))
+            {
+                return false;
+            }
+
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
-                if (!PrepareDelete(id))
+                if (!DeleteInner(id))
                 {
                     return false;
                 }
-                if (!DoDelete(id))
-                    return false;
-                OnDeleted(id);
-                LogRecorderX.MonitorTrace("Delete");
-                OnStateChanged(id, BusinessCommandType.Delete);
+
                 scope.SetState(true);
             }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        private bool DeleteInner(long id)
+        {
+            if (!PrepareDelete(id))
+            {
+                return false;
+            }
+
+            if (!DoDelete(id))
+                return false;
+            OnDeleted(id);
+            LogRecorderX.MonitorTrace("Delete");
+            OnStateChanged(id, BusinessCommandType.Delete);
             return true;
         }
 
@@ -320,6 +400,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         {
 
         }
+
         #endregion
 
         #region 状态处理
@@ -356,17 +437,20 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
             OnInnerCommand(data, cmd);
         }
 
-        ApiPageData<TData> IUiBusinessLogicBase<TData>.PageData(int page, int limit, string condition, params DbParameter[] args)
-        {
-            return PageData(page, limit, condition, args.Cast<MySqlParameter>().ToArray());
-        }
-
-        ApiPageData<TData> IUiBusinessLogicBase<TData>.PageData(int page, int limit, string sort, bool desc, string condition, params DbParameter[] args)
-        {
-            return PageData(page, limit, sort, desc, condition, args.Cast<MySqlParameter>().ToArray());
-        }
-
-
         #endregion
+    }
+
+
+    /// <summary>
+    /// 支持界面操作的业务逻辑对象基类
+    /// </summary>
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TAccess">数据访问对象</typeparam>
+    /// <typeparam name="TDatabase">数据库对象</typeparam>
+    public class UiBusinessLogicBase<TData, TAccess, TDatabase>
+        : UiBusinessLogicBase<TData, TAccess>
+        where TData : EditDataObject, IIdentityData, new()
+        where TAccess : class, IDataTable<TData>, new()
+    {
     }
 }

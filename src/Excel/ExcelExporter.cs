@@ -21,6 +21,8 @@ namespace Agebull.EntityModel.Excel
         where TAccess :class, IDataTable<TData>, new()
     {
 
+
+
         private TAccess _access;
 
         /// <summary>
@@ -86,13 +88,9 @@ namespace Agebull.EntityModel.Excel
         public void ExportExcel(ISheet sheet, LambdaItem<TData> lambda)
         {
             var datas = Access.All(lambda);
-            OnDataLoaded?.Invoke(datas);
+            OnDataLoad?.Invoke(datas);
             WriteToSheet(sheet, datas);
         }
-        /// <summary>
-        /// 数据载入的自定义处理
-        /// </summary>
-        public Action<List<TData>> OnDataLoaded;
 
         /// <summary>
         ///     导出Excel
@@ -125,6 +123,11 @@ namespace Agebull.EntityModel.Excel
         }
 
         /// <summary>
+        /// 数据载入的处理
+        /// </summary>
+        public Action<List<TData>> OnDataLoad;
+
+        /// <summary>
         ///     导出Excel
         /// </summary>
         /// <param name="sheet">导入所在的工作表</param>
@@ -132,8 +135,10 @@ namespace Agebull.EntityModel.Excel
         public void ExportExcel(ISheet sheet)
         {
             var datas = Access.All();
+            OnDataLoad?.Invoke(datas);
             WriteToSheet(sheet, datas);
         }
+
         /// <summary>
         /// 写入数据到工作表
         /// </summary>
@@ -143,6 +148,7 @@ namespace Agebull.EntityModel.Excel
         {
             WriteToSheetByConfig(sheet, datas);
         }
+
         /// <summary>
         /// 写入数据到工作表
         /// </summary>

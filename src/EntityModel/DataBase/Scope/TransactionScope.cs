@@ -13,7 +13,7 @@ using System;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql
+namespace Agebull.EntityModel.Common
 {
     /// <summary>
     ///     数据库事务范围对象
@@ -55,7 +55,7 @@ namespace Agebull.EntityModel.MySql
         ///     构造
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
-        private TransactionScope(MySqlDataBase dataBase)
+        private TransactionScope(IDataBase dataBase)
         {
             //dbScope = DataBaseScope.CreateScope(dataBase);
             //_preScope = CurrentScope;
@@ -110,7 +110,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
         
-        public static TransactionScope CreateScope(MySqlDataBase dataBase)
+        public static TransactionScope CreateScope(IDataBase dataBase)
         {
             return new TransactionScope(dataBase);
         }

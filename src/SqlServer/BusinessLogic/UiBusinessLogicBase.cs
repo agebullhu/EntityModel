@@ -48,16 +48,15 @@ namespace Agebull.EntityModel.BusinessLogic.SqlServer
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition,
             params DbParameter[] args)
         {
-            var data = Access.PageData(page, limit, sort, desc, condition, args);
-            var count = (int)Access.Count(condition, args);
-            return new ApiPageData<TData>
+            if (!string.IsNullOrEmpty(BaseQueryCondition))
             {
-                RowCount = count,
-                Rows = data,
-                PageIndex = page,
-                PageSize = limit,
-                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
-            };
+                if (string.IsNullOrEmpty(condition))
+                    condition = BaseQueryCondition;
+                else if (condition != BaseQueryCondition && !condition.Contains(BaseQueryCondition))
+                    condition = $"({BaseQueryCondition}) AND ({condition})";
+            }
+
+            return Access.Page(page, limit, sort, desc, condition, args);
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace Agebull.EntityModel.BusinessLogic.SqlServer
             {
                 limit = 30;
             }
-            var data = Access.PageData(page, limit, lambda);
+            var data = Access.Page(page, limit, lambda);
             var count = (int)Access.Count(lambda);
             return new ApiPageData<TData>
             {

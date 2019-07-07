@@ -12,25 +12,22 @@ using System;
 using System.Collections.Generic;
 
 using Agebull.EntityModel.Interfaces;
-using Agebull.EntityModel.MySql;
 using Agebull.EntityModel.Common;
 using Agebull.Common.Context;
 
 #endregion
 
-namespace Agebull.EntityModel.BusinessLogic.MySql
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     ///     基于审核扩展的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicByAudit<TData, TAccess, TDatabase>
-        : BusinessLogicByStateData<TData, TAccess, TDatabase>, IBusinessLogicByAudit<TData>
+    public class BusinessLogicByAudit<TData, TAccess>
+        : BusinessLogicByStateData<TData, TAccess>, IBusinessLogicByAudit<TData>
         where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+        where TAccess :class , IStateDataTable<TData>, new()
     {
         #region 消息
 
@@ -731,5 +728,18 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     基于审核扩展的业务逻辑基类
+    /// </summary>
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TAccess">数据访问对象</typeparam>
+    /// <typeparam name="TDatabase">数据库对象</typeparam>
+    public class BusinessLogicByAudit<TData, TAccess, TDatabase>
+        : BusinessLogicByAudit<TData, TAccess>
+        where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
+        where TAccess : class, IStateDataTable<TData>, new()
+    {
     }
 }

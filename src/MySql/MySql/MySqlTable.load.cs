@@ -993,7 +993,7 @@ namespace Agebull.EntityModel.MySql
                 Rows = data,
                 PageIndex = page,
                 PageSize = limit,
-                PageCount = count / limit + (((count % limit) > 0 ? 1 : 0))
+                PageCount = count / limit + ((count % limit) > 0 ? 1 : 0)
             };
         }
 

@@ -21,6 +21,11 @@ namespace Agebull.EntityModel.Common
     public sealed class EntitySturct : SimpleConfig
     {
         /// <summary>
+        ///     导出的名称
+        /// </summary>
+        public string ImportName { get; set; }
+
+        /// <summary>
         ///     实体名称
         /// </summary>
         public string EntityName { get => Name; set => Name = value; }

@@ -12,24 +12,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Excel;
-using Agebull.EntityModel.MySql;
-using Agebull.MicroZero.ZeroApis;
 
 #endregion
 
-namespace Agebull.EntityModel.BusinessLogic.MySql
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     /// 业务逻辑对象基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicBase<TData, TAccess,TDatabase>: IBusinessLogicBase<TData>
+    public class BusinessLogicBase<TData, TAccess>: IBusinessLogicBase<TData>
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess : MySqlTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+        where TAccess :class, IDataTable<TData>, new()
     {
         #region 基础支持对象
 
@@ -64,6 +59,12 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         protected BusinessLogicBase()
         {
         }
+
+        /// <summary>
+        ///     基本查询条件(SQL表述方式)
+        /// </summary>
+        protected virtual string BaseQueryCondition => null;
+
         #endregion
 
         #region 便利操作
@@ -129,34 +130,6 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         #region 读数据
 
         /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        public List<TData> All()
-        {
-            return Access.All();
-        }
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>是否存在数据</returns>
-        public List<TData> All(LambdaItem<TData> lambda)
-        {
-            return Access.All(lambda);
-        }
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>是否存在数据</returns>
-        public List<TData> All(Expression<Func<TData, bool>> lambda)
-        {
-            return Access.All(lambda);
-        }
-
-        /// <summary>
         ///     载入当前操作的数据
         /// </summary>
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
@@ -169,30 +142,33 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// </summary>
         public virtual TData Details(long id)
         {
-            return id == 0 ? null : Access.LoadByPrimaryKey(id);
+            if (id == 0)
+                return null;
+            var data= Access.LoadByPrimaryKey(id);
+            if (data == null)
+                return null;
+            OnDetailsLoaded(data, false);
+            return data;
         }
-        #endregion
 
-        #region 导入导出
-        
         /// <summary>
-        /// 导出到Excel
+        ///     详细数据载入
         /// </summary>
-        /// <param name="sheetName"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public ApiFileResult Import(string sheetName, LambdaItem<TData> filter)
+        protected virtual void OnDetailsLoaded(TData data, bool isNew)
         {
-            var exporter = new ExcelExporter<TData, TAccess>();
-            var bytes = exporter.ExportExcel(filter, sheetName, null);
-            return new ApiFileResult
-            {
-                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
-                Data = bytes
-            };
+        }
+
+        /// <summary>
+        ///     新增一条带默认值的数据
+        /// </summary>
+        public virtual TData CreateData()
+        {
+            var data = new TData();
+            OnDetailsLoaded(data, true);
+            return data;
         }
 
         #endregion
+
     }
 }

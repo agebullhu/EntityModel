@@ -65,46 +65,11 @@ namespace Agebull.EntityModel.BusinessLogic
         #region 读数据
 
         /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        List<TData> All();
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>是否存在数据</returns>
-        List<TData> All(LambdaItem<TData> lambda);
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>是否存在数据</returns>
-        List<TData> All(Expression<Func<TData, bool>> lambda);
-
-        /// <summary>
-        ///     载入当前操作的数据
-        /// </summary>
-        TData FirstOrDefault(Expression<Func<TData, bool>> lambda);
-
-        /// <summary>
         ///     载入当前操作的数据
         /// </summary>
         TData Details(long id);
 
         #endregion
 
-        #region 导出到Excel
-        
-        /// <summary>
-        /// 导出到Excel
-        /// </summary>
-        /// <param name="sheetName"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        ApiFileResult Import(string sheetName, LambdaItem<TData> filter);
-
-        #endregion
     }
 }

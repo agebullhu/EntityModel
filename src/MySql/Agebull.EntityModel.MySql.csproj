@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>2.4.2.3</Version>
+    <Version>2.4.2.5</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -51,12 +51,15 @@
     <PackageReference Include="MySql.Data" Version="6.10.5" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="BusinessLogic\**" />
     <Compile Remove="Excel\**" />
     <Compile Remove="Interface\**" />
     <Compile Remove="SQLite\**" />
+    <EmbeddedResource Remove="BusinessLogic\**" />
     <EmbeddedResource Remove="Excel\**" />
     <EmbeddedResource Remove="Interface\**" />
     <EmbeddedResource Remove="SQLite\**" />
+    <None Remove="BusinessLogic\**" />
     <None Remove="Excel\**" />
     <None Remove="Interface\**" />
     <None Remove="SQLite\**" />
@@ -79,6 +82,10 @@
   <ItemGroup>
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
     <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MySql\Scope\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

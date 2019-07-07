@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.Common
         public string PropertyName { get=>Name; set=>Name=value; }
         
         /// <summary>
-        ///     字段名称
+        ///     数据库字段名称
         /// </summary>
         public string ColumnName { get; set; }
 

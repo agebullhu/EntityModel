@@ -397,6 +397,21 @@ namespace Agebull.EntityModel.SqlServer
             {
                 throw new ArgumentException("不支持参数的方法(仅支持属性的方法)");
             }
+            if (expression.Method.Name == "Equals")
+            {
+                var left = ConvertExpression(expression.Object);
+                var right = GetArguments(expression);
+                var lnull = left == null;
+                var rnull = right == null;
+                if (lnull && rnull)
+                    return "(1 = 1)";
+
+                if (lnull)
+                    return $"({right} IS NULL)";
+                if (rnull)
+                    return $"({left} IS NULL)";
+                return $"({left} = {right})";
+            }
             if (expression.Method.DeclaringType == typeof(string))
             {
                 switch (expression.Method.Name)
@@ -419,7 +434,7 @@ namespace Agebull.EntityModel.SqlServer
                     case "Replace":
                         return $"replace({ConvertExpression(expression.Object)},{GetArguments(expression)})";
                 }
-                throw new ArgumentException("不支持方法");
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType.IsValueType && expression.Method.Name == "Equals")
                 return $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})";
@@ -430,6 +445,7 @@ namespace Agebull.EntityModel.SqlServer
                     case "Abs":
                         return $"abs({GetArguments(expression)})";
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Enum))
             {
@@ -438,15 +454,17 @@ namespace Agebull.EntityModel.SqlServer
                     case "HasFlag":
                         return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
-            if (expression.Method.DeclaringType.IsArray ||  expression.Method.DeclaringType.IsSupperInterface(typeof(ICollection)))
+            if (expression.Method.Name == "Contains")
             {
-                switch (expression.Method.Name)
+                if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    case "Contains":
-                        var vl = ConvertExpression(expression.Object);
-                        return !string.IsNullOrWhiteSpace(vl) ? $"{GetArguments(expression)} in ({vl})" : null;
+                    var vl = ConvertExpression(expression.Object);
+                    if (!string.IsNullOrWhiteSpace(vl))
+                        return $"{GetArguments(expression)} in ({vl})";
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             var name = _condition.AddParameter(GetValue(expression));
             return $"@{name}";
@@ -489,7 +507,7 @@ namespace Agebull.EntityModel.SqlServer
                             return $"@{_condition.AddParameter(DateTime.Today)}";
                     }
                 }
-                throw new ArgumentException("不支持的扩展方法");
+                throw new ArgumentException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
             }
             var vl = GetValue(expression);
             if (vl.GetType().IsValueType)
@@ -498,14 +516,16 @@ namespace Agebull.EntityModel.SqlServer
             }
             switch (vl)
             {
+                case Array array:
+                    return array.LinkToString("'", "','", "'");
                 case string _:
                     return $"@{_condition.AddParameter(vl)}";
                 case IEnumerable<string> slist:
                     return slist.LinkToString("'", "','", "'");
                 case IEnumerable<DateTime> dlist:
                     return dlist.LinkToString("'", "','", "'");
-                case IEnumerable ilist:
-                    return ilist.LinkToString(',');
+                case ICollection list:
+                    return list.LinkToString("'", "','", "'");
             }
 
             return $"@{_condition.AddParameter(vl)}";

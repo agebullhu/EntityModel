@@ -11,7 +11,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -422,19 +421,20 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Method.DeclaringType == null)
             {
-                throw new ArgumentException("不支持参数的方法(仅支持属性的方法)");
+                throw new ArgumentException($"不支持方法:{expression.Method.Name}");
             }
             if (expression.Method.Name == "Equals")
             {
                 var left = ConvertExpression(expression.Object);
                 var right = GetArguments(expression);
-                if ((left == null || string.Equals(left, "null", StringComparison.OrdinalIgnoreCase) &&
-                     (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))))
+                var lnull = left == null;
+                var rnull = right == null;
+                if (lnull && rnull)
                     return "(1 = 1)";
 
-                if (string.Equals(left, "null", StringComparison.OrdinalIgnoreCase))
+                if (lnull)
                     return $"({right} IS NULL)";
-                if (right == null || string.Equals(right, "null", StringComparison.OrdinalIgnoreCase))
+                if (rnull)
                     return $"({left} IS NULL)";
                 return $"({left} = {right})";
             }
@@ -445,8 +445,7 @@ namespace Agebull.EntityModel.MySql
                     case "ToUpper":
                         return $"UPPER({ConvertExpression(expression.Object)})";
                     case "Contains":
-                        return
-                            $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))";
+                        return $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))";
                     case "ToLower":
                         return $"LOWER({ConvertExpression(expression.Object)})";
                     case "Trim":
@@ -458,7 +457,7 @@ namespace Agebull.EntityModel.MySql
                     case "Replace":
                         return $"REPLACE({ConvertExpression(expression.Object)},{GetArguments(expression)})";
                 }
-                throw new ArgumentException("不支持方法");
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Math))
             {
@@ -467,6 +466,7 @@ namespace Agebull.EntityModel.MySql
                     case "Abs":
                         return $"ABS({GetArguments(expression)})";
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Enum))
             {
@@ -475,22 +475,20 @@ namespace Agebull.EntityModel.MySql
                     case "HasFlag":
                         return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
 
-            if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+            if (expression.Method.Name == "Contains")
             {
-                switch (expression.Method.Name)
+                if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    case "Contains":
-                        var vl = ConvertExpression(expression.Object);
-                        if (!string.IsNullOrWhiteSpace(vl))
-                            return $"{GetArguments(expression)} in ({vl})";
-                        else
-                            return null;
+                    var vl = ConvertExpression(expression.Object);
+                    if (!string.IsNullOrWhiteSpace(vl))
+                        return $"{GetArguments(expression)} in ({vl})";
                 }
+                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
-            var name = _condition.AddParameter(GetValue(expression));
-            return $"?{name}";
+            return CheckDynamicValue(GetValue(expression));
         }
 
         /// <summary>
@@ -502,36 +500,41 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Expression is ParameterExpression)
             {
-                Debug.Assert(_columnMap.ContainsKey(expression.Member.Name));
-                return $"`{_columnMap[expression.Member.Name]}`";
+                if (_columnMap.TryGetValue(expression.Member.Name,out var field))
+                    return $"`{field}`";
+                throw new ArgumentException(@"字段不存在于数据库中", expression.Member.Name);
             }
             var par1 = expression.Expression as MemberExpression;
-            if (par1?.Expression is ParameterExpression)
+            if (!(par1?.Expression is ParameterExpression))
+                return CheckDynamicValue(GetValue(expression));
+
+            if (par1.Type == typeof(string))
             {
-                if (par1.Type == typeof(string))
+                switch (expression.Member.Name)
                 {
-                    switch (expression.Member.Name)
-                    {
-                        case "Length":
-                            return $"LENGTH(`{par1.Member.Name}`)";
-                    }
+                    case "Length":
+                        return $"LENGTH(`{par1.Member.Name}`)";
                 }
-                if (par1.Type == typeof(DateTime))
-                {
-                    switch (expression.Member.Name)
-                    {
-                        case "Now":
-                            return $"?{_condition.AddParameter(DateTime.Now)}";
-                        case "Today":
-                            return $"?{_condition.AddParameter(DateTime.Today)}";
-                    }
-                }
-                throw new ArgumentException("不支持的扩展方法");
             }
-            var vl = GetValue(expression);
+            else if (par1.Type == typeof(DateTime))
+            {
+                switch (expression.Member.Name)
+                {
+                    case "Now":
+                        return $"?{_condition.AddParameter(DateTime.Now)}";
+                    case "Today":
+                        return $"?{_condition.AddParameter(DateTime.Today)}";
+                }
+            }
+            throw new ArgumentException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
+        }
+
+        string CheckDynamicValue(object vl)
+        {
+
             if (vl == null)
             {
-                return $"?{_condition.AddParameter((object) null)}";
+                return $"?{_condition.AddParameter((object)null)}";
             }
             if (vl is string)
             {
@@ -547,7 +550,7 @@ namespace Agebull.EntityModel.MySql
                 if (!vlType.IsArray)
                     return $"'{(int)vl}'";
                 if (!(vl is IEnumerable array))
-                    return $"'{(int) vl}'";
+                    return $"'{(int)vl}'";
                 StringBuilder sb = new StringBuilder();
                 sb.Append("'");
                 bool first = true;
@@ -572,7 +575,6 @@ namespace Agebull.EntityModel.MySql
             }
             return $"?{_condition.AddParameter(vl)}";
         }
-
         /// <summary>
         ///     转换表达式
         /// </summary>
@@ -616,18 +618,17 @@ namespace Agebull.EntityModel.MySql
                     return (bool)expression.Value ? "1" : "0";
                 case "char":
                 case "Char":
+                    switch ((char)expression.Value)
                     {
-                        switch ((char)expression.Value)
-                        {
-                            case '\t':
-                                return "'\t'";
-                            case '\r':
-                                return "'\r'";
-                            case '\n':
-                                return "'\n'";
-                        }
-                        return $"'{expression.Value}'";
+                        case '\t':
+                            return "'\t'";
+                        case '\r':
+                            return "'\r'";
+                        case '\n':
+                            return "'\n'";
                     }
+
+                    return $"'{expression.Value}'";
             }
             var name = _condition.AddParameter(expression.Value);
             return $"?{name}";

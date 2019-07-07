@@ -25,19 +25,19 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
     /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
-    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>
+    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>, IStateDataTable<TData>
         where TData : EditDataObject, IStateData, IIdentityData, new()
         where TMySqlDataBase : MySqlDataBase
     {
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected sealed override string DeleteSqlCode => $@"UPDATE `{ContextWriteTable}` SET `{FieldDictionary["DataState"]}`=255";
+        protected sealed override string DeleteSqlCode => $@"UPDATE `{ContextWriteTable}` SET `{FieldDictionary[nameof(IStateData.DataState)]}`=255";
 
         /// <summary>
         ///     重置状态的SQL语句
         /// </summary>
-        protected virtual string ResetStateFileSqlCode => $@"`{FieldDictionary["DataState"]}`=0,`{FieldDictionary["IsFreeze"]}`=0";
+        protected virtual string ResetStateFileSqlCode => $@"`{FieldDictionary[nameof(IStateData.DataState)]}`=0,`{FieldDictionary[nameof(IStateData.IsFreeze)]}`=0";
 
         /// <summary>
         ///     得到可正确拼接的SQL条件语句（可能是没有）
@@ -48,7 +48,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (GlobalContext.Current.IsManageMode)
                 return;
-            conditions.Add($"`{FieldDictionary["DataState"]}` < 255");
+            conditions.Add($"`{FieldDictionary[nameof(IStateData.DataState)]}` < 255");
         }
 
         /// <summary>

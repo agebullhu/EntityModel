@@ -1,19 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-  </PropertyGroup>
+  <PropertyGroup>
 
-  <PropertyGroup>
-    
   </PropertyGroup>
   <PropertyGroup>
-    <Description>业务模型支持</Description>
+    <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>2.4.1.2</Version>
+    <Version>2.4.2.6</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -32,17 +25,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
-    <Product>Agebull.EntityModel</Product>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-    <Copyright />
-    <PackageReleaseNotes>业务模型支持</PackageReleaseNotes>
+    <Product>Agebull.EntityModel.BusinessLogic</Product>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -58,54 +50,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Web" />
-    <PackageReference Include="NPOI" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Context\**" />
-    <Compile Remove="DataAccess\**" />
-    <Compile Remove="docs\**" />
-    <Compile Remove="Interface\**" />
-    <Compile Remove="Ioc\**" />
-    <Compile Remove="Page\**" />
-    <Compile Remove="Type\**" />
-    <EmbeddedResource Remove="Context\**" />
-    <EmbeddedResource Remove="DataAccess\**" />
-    <EmbeddedResource Remove="docs\**" />
-    <EmbeddedResource Remove="Interface\**" />
-    <EmbeddedResource Remove="Ioc\**" />
-    <EmbeddedResource Remove="Page\**" />
-    <EmbeddedResource Remove="Type\**" />
-    <None Remove="Context\**" />
-    <None Remove="DataAccess\**" />
-    <None Remove="docs\**" />
-    <None Remove="Interface\**" />
-    <None Remove="Ioc\**" />
-    <None Remove="Page\**" />
-    <None Remove="Type\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="BusinessLogic\BusinessLogicByHistory.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="BusinessLogic\Mysql\" />
-    <Folder Include="BusinessLogic\SqlServer\" />
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
-    <ProjectReference Include="..\Redis\Agebull.EntityModel.Redis.csproj" />
-    <ProjectReference Include="..\SqlServer\Agebull.EntityModel.SqlServer.csproj" />
+    <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
   </ItemGroup>
 </Project>

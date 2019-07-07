@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
+using Agebull.MicroZero.ZeroApis;
 
 #endregion
 
@@ -134,7 +135,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns>之前的动态读取的表名</returns>
         string SetDynamicWriteTable(string table);
-        
+
         #endregion
 
         #region 聚合函数支持
@@ -216,7 +217,7 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
     public interface IDataTable<TData> : IDataTable, IConfig
-    where TData : EditDataObject, new()
+        where TData : EditDataObject, new()
     {
         /// <summary>
         /// 当前上下文的读取器
@@ -426,10 +427,6 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        List<TData> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
         #endregion
 
         #region Where
@@ -553,6 +550,16 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
             Expression<Func<TData, bool>> lambda);
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        List<TData> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         #endregion
 
@@ -816,5 +823,23 @@ namespace Agebull.EntityModel.Common
         bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val);
 
         #endregion
+    }
+
+    /// <summary>
+    /// 数据状态表
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
+    public interface IStateDataTable<TData> : IDataTable<TData>
+        where TData : EditDataObject, new()
+    {
+        /// <summary>
+        /// 重置状态
+        /// </summary>
+        bool ResetState(long id);
+
+        /// <summary>
+        /// 重置状态
+        /// </summary>
+        bool ResetState(Expression<Func<TData, bool>> lambda);
     }
 }

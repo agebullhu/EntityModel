@@ -13,23 +13,20 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.MySql;
 
 #endregion
 
-namespace Agebull.EntityModel.BusinessLogic.MySql
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     /// 基于数据状态的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicByStateData<TData, TAccess, TDatabase>
-        : UiBusinessLogicBase<TData, TAccess, TDatabase>, IBusinessLogicByStateData<TData>
+    public class BusinessLogicByStateData<TData, TAccess>
+        : UiBusinessLogicBase<TData, TAccess>, IBusinessLogicByStateData<TData>
         where TData : EditDataObject, IIdentityData, IStateData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+        where TAccess : class, IStateDataTable<TData>, new()
     {
         #region 批量操作
 
@@ -57,6 +54,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         {
             return DoByIds(sels, Lock);
         }
+
         #endregion
 
         #region 数据状态逻辑
@@ -81,6 +79,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                 return false;
             return base.PrepareDelete(id);
         }
+
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
@@ -148,6 +147,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
             if (data != null)
                 OnStateChanged(data, cmd);
         }
+
         /// <summary>
         ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
         /// </summary>
@@ -160,6 +160,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         #endregion
 
         #region 状态处理
+
         /// <summary>
         ///     重置数据状态
         /// </summary>
@@ -206,7 +207,8 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// </summary>
         public virtual bool Enable(long id)
         {
-            return SetDataState(id, DataStateType.Enable, p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None), true);
+            return SetDataState(id, DataStateType.Enable,
+                p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None), true);
         }
 
         /// <summary>
@@ -214,8 +216,10 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         /// </summary>
         public virtual bool Disable(long id)
         {
-            return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable, true);
+            return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable,
+                true);
         }
+
         /// <summary>
         ///     弃用对象
         /// </summary>
@@ -223,6 +227,7 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
         {
             return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None, true);
         }
+
         /// <summary>
         ///     锁定对象
         /// </summary>
@@ -233,7 +238,8 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
             using (var scope = Access.DataBase.CreateTransactionScope())
             {
                 Access.SetValue(p => p.IsFreeze, true, id);
-                Access.SetValue(p => p.DataState, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.None);
+                Access.SetValue(p => p.DataState, DataStateType.Disable,
+                    p => p.Id == id && p.DataState == DataStateType.None);
 
                 OnStateChanged(id, BusinessCommandType.Lock);
                 return scope.SetState(true);
@@ -258,6 +264,20 @@ namespace Agebull.EntityModel.BusinessLogic.MySql
                 return scope.SetState(true);
             }
         }
+
         #endregion
+    }
+
+    /// <summary>
+    /// 基于数据状态的业务逻辑基类
+    /// </summary>
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TAccess">数据访问对象</typeparam>
+    /// <typeparam name="TDatabase">数据库对象</typeparam>
+    public class BusinessLogicByStateData<TData, TAccess, TDatabase>
+        : BusinessLogicByStateData<TData, TAccess>
+        where TData : EditDataObject, IIdentityData, IStateData, new()
+        where TAccess : class, IStateDataTable<TData>, new()
+    {
     }
 }

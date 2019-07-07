@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>数据实体SqlServer版本</Description>
     <AssemblyTitle>Agebull.EntityModel.SqlServer</AssemblyTitle>
-    <Version>2.4.2.3</Version>
+    <Version>2.4.2.5</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -45,15 +45,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="BusinessLogic\**" />
     <Compile Remove="Excel\**" />
+    <Compile Remove="Scope\**" />
+    <EmbeddedResource Remove="BusinessLogic\**" />
     <EmbeddedResource Remove="Excel\**" />
+    <EmbeddedResource Remove="Scope\**" />
+    <None Remove="BusinessLogic\**" />
     <None Remove="Excel\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Lambda\ConditionItem.cs" />
-    <Compile Remove="Scope\SqlServerDataTableScope.cs" />
-    <Compile Remove="SqlServerTable.cs" />
+    <None Remove="Scope\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,7 +62,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
-    <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy   $(OutDir)$(TargetFileName) C:\Projects\Agebull\hotfix\ /y&#xD;&#xA;xcopy   $(OutDir)$(TargetName).pdb C:\Projects\Agebull\hotfix\ /y" />

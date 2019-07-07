@@ -79,7 +79,8 @@ namespace Hpc.Project.ImportSkuCsv
             {
                 var tv = new T();
                 var vl = lines[i];
-                for (var cl = 0; cl < vl.Count; cl++) setValue(tv, line[cl], vl[cl]);
+                for (var cl = 0; cl < vl.Count; cl++)
+                    setValue(tv, line[cl], vl[cl]);
                 results.Add(tv);
             }
 
@@ -99,6 +100,7 @@ namespace Hpc.Project.ImportSkuCsv
             var inQuotation = false; //在引号中
             var preQuotation = false; //前一个也是引号
             var preSeparator = true; //前面是做字段分隔符号吗
+            bool isClose = false;
             foreach (var c in values)
             {
                 if (c == '\"')
@@ -132,6 +134,7 @@ namespace Hpc.Project.ImportSkuCsv
                 {
                     preQuotation = false;
                     inQuotation = false;
+                    isClose = true;
                     line.Add(sb.ToString());
                     sb.Clear();
                 }
@@ -144,40 +147,55 @@ namespace Hpc.Project.ImportSkuCsv
                 switch (c)
                 {
                     case ',':
-                        if (sb.Length == 0)
+                        if (isClose)
                         {
-                            line.Add(null);
+                            isClose = false;
                         }
                         else
                         {
-                            line.Add(sb.ToString());
-                            sb.Clear();
+                            if (sb.Length == 0)
+                            {
+                                line.Add(null);
+                            }
+                            else
+                            {
+                                line.Add(sb.ToString());
+                                sb.Clear();
+                            }
                         }
-
                         preSeparator = true;
                         continue;
                     case '\r':
                     case '\n':
-                        if (sb.Length != 0)
+                        if (isClose)
                         {
-                            line.Add(sb.ToString());
-                            sb.Clear();
-                            result.Add(line);
+                            isClose = false;
                         }
-                        else if (line.Count > 0)
+                        else
                         {
-                            line.Add(null);
-                            result.Add(line);
+                            if (sb.Length == 0)
+                            {
+                                line.Add(null);
+                            }
+                            else
+                            {
+                                line.Add(sb.ToString());
+                                sb.Clear();
+                            }
                         }
-
+                        if (line.Count > 0)
+                        {
+                            result.Add(line);
+                            line = new List<string>();
+                        }
                         preSeparator = true;
-                        line = new List<string>();
-                        break;
+                        continue;
                     case ' ':
                     case '\t':
                         break;
                     default:
-                        if (preSeparator) preSeparator = false;
+                        if (preSeparator)
+                            preSeparator = false;
                         break;
                 }
 
