@@ -12,7 +12,7 @@ namespace Agebull.EntityModel.Redis
         /// <summary>
         /// 当前数据库
         /// </summary>
-        long CurrentDb { get; }
+        long CurrentDb { get;}
 
         /// <summary>
         /// 不关闭

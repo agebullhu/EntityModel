@@ -73,18 +73,49 @@ namespace Hpc.Project.ImportSkuCsv
             if (lines.Count <= 1) return null;
 
             var results = new List<T>();
-            var line = new List<string>();
-            foreach (var field in lines[0]) line.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
+            var colunms = new List<string>();
+            foreach (var field in lines[0])
+                colunms.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
             for (var i = 1; i < lines.Count; i++)
             {
                 var tv = new T();
                 var vl = lines[i];
                 for (var cl = 0; cl < vl.Count; cl++)
-                    setValue(tv, line[cl], vl[cl]);
+                    setValue(tv, colunms[cl], vl[cl]);
                 results.Add(tv);
             }
-
             return results;
+        }
+
+        /// <summary>
+        ///     导入数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="csv">CSV内容</param>
+        /// <param name="setValue">列读入自定义处理</param>
+        /// <param name="rowEnd">行结束时的处理方法</param>
+        /// <returns></returns>
+        public static int Import<T>(string csv, Action<T, string, string> setValue, Action<T> rowEnd) where T : class, new()
+        {
+            int cnt = 0;
+            var lines = Split(csv);
+            if (lines.Count <= 1)
+                return 0;
+
+            var colunms = new List<string>();
+            foreach (var field in lines[0])
+                colunms.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
+            for (var i = 1; i < lines.Count; i++)
+            {
+                var tv = new T();
+                var vl = lines[i];
+                for (var cl = 0; cl < vl.Count; cl++)
+                    setValue(tv, colunms[cl], vl[cl]);
+                rowEnd(tv);
+                cnt++;
+            }
+
+            return cnt;
         }
 
         /// <summary>
