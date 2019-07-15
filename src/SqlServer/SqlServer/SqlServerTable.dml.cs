@@ -151,6 +151,36 @@ namespace Agebull.EntityModel.SqlServer
         }
 
         /// <summary>
+        /// 取得仅更新的SQL语句
+        /// </summary>
+        protected virtual string GetModifiedSqlCode(TData data)
+        {
+            if (/*!UpdateByMidified ||*/ data.__status.IsReadOnly)
+            {
+                return UpdateSqlCode;
+            }
+            if (!data.__status.IsModified)
+                return null;
+            StringBuilder sql = new StringBuilder();
+            bool first = true;
+            sql.AppendLine($"UPDATE [{ContextWriteTable}] SET");
+            foreach (var pro in data.__Struct.Properties)
+            {
+                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
+                if (first)
+                    first = false;
+                else
+                    sql.Append(',');
+                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
+            }
+            if (first)
+                return null;
+            sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
+            return sql.ToString();
+        }
+
+        /// <summary>
         ///     插入数据
         /// </summary>
         /// <param name="entity">插入数据的实体</param>
@@ -160,13 +190,17 @@ namespace Agebull.EntityModel.SqlServer
                 return false;
             int result;
             PrepareSave(entity, DataOperatorType.Update);
+            string sql = GetModifiedSqlCode(entity);
+            if (sql == null)
+                return false;
             using (var cmd = DataBase.CreateCommand())
             {
                 SetUpdateCommand(entity, cmd);
-                SqlServerDataBase.TraceSql(cmd);
                 cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
-{UpdateSqlCode}
+{sql}
 {AfterUpdateSql(PrimaryKeyConditionSQL)}";
+
+                SqlServerDataBase.TraceSql(cmd);
 
                 result = cmd.ExecuteNonQuery();
             }
@@ -178,6 +212,7 @@ namespace Agebull.EntityModel.SqlServer
             EndSaved(entity, DataOperatorType.Update);
             return true;
         }
+
         /// <summary>
         ///     删除数据
         /// </summary>

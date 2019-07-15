@@ -148,68 +148,6 @@ namespace Agebull.EntityModel.MySql
         }
 
         /// <summary>
-        /// 取得仅更新的SQL语句
-        /// </summary>
-        protected virtual string GetModifiedSqlCode(TData data)
-        {
-            if (/*!UpdateByMidified ||*/ data.__status.IsReadOnly)
-            {
-                return UpdateSqlCode;
-            }
-            if (!data.__status.IsModified)
-                return null;
-            StringBuilder sql = new StringBuilder();
-            bool first = true;
-            sql.AppendLine($"UPDATE `{ContextWriteTable}` SET");
-            foreach (var pro in data.__Struct.Properties)
-            {
-                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
-                    continue;
-                if (first)
-                    first = false;
-                else
-                    sql.Append(',');
-                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
-            }
-            if (first)
-                return null;
-            sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
-            return sql.ToString();
-        }
-
-        /// <summary>
-        ///     插入数据
-        /// </summary>
-        /// <param name="entity">插入数据的实体</param>
-        private bool UpdateInner(TData entity)
-        {
-            if (UpdateByMidified && !entity.__status.IsModified)
-                return false;
-            int result;
-            PrepareSave(entity, DataOperatorType.Update);
-            string sql = GetModifiedSqlCode(entity);
-            if (sql == null)
-                return false;
-            using (var cmd = DataBase.CreateCommand())
-            {
-                SetUpdateCommand(entity, cmd);
-                cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
-{sql}
-{AfterUpdateSql(PrimaryKeyConditionSQL)}";
-
-                MySqlDataBase.TraceSql(cmd);
-
-                result = cmd.ExecuteNonQuery();
-            }
-
-            if (result <= 0)
-            {
-                return false;
-            }
-            EndSaved(entity, DataOperatorType.Update);
-            return true;
-        }
-        /// <summary>
         ///     删除数据
         /// </summary>
         public int Delete(IEnumerable<TData> entities)
@@ -312,6 +250,69 @@ namespace Agebull.EntityModel.MySql
             return UpdateInner(entity);
         }
 
+
+        /// <summary>
+        /// 取得仅更新的SQL语句
+        /// </summary>
+        protected virtual string GetModifiedSqlCode(TData data)
+        {
+            if (/*!UpdateByMidified ||*/ data.__status.IsReadOnly)
+            {
+                return UpdateSqlCode;
+            }
+            if (!data.__status.IsModified)
+                return null;
+            StringBuilder sql = new StringBuilder();
+            bool first = true;
+            sql.AppendLine($"UPDATE `{ContextWriteTable}` SET");
+            foreach (var pro in data.__Struct.Properties)
+            {
+                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
+                if (first)
+                    first = false;
+                else
+                    sql.Append(',');
+                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
+            }
+            if (first)
+                return null;
+            sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
+            return sql.ToString();
+        }
+
+        /// <summary>
+        ///     插入数据
+        /// </summary>
+        /// <param name="entity">插入数据的实体</param>
+        private bool UpdateInner(TData entity)
+        {
+            if (UpdateByMidified && !entity.__status.IsModified)
+                return false;
+            int result;
+            PrepareSave(entity, DataOperatorType.Update);
+            string sql = GetModifiedSqlCode(entity);
+            if (sql == null)
+                return false;
+            using (var cmd = DataBase.CreateCommand())
+            {
+                SetUpdateCommand(entity, cmd);
+                cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
+{sql}
+{AfterUpdateSql(PrimaryKeyConditionSQL)}";
+
+                MySqlDataBase.TraceSql(cmd);
+
+                result = cmd.ExecuteNonQuery();
+            }
+
+            if (result <= 0)
+            {
+                return false;
+            }
+            EndSaved(entity, DataOperatorType.Update);
+            return true;
+        }
         /// <summary>
         ///     保存前处理(Insert/Update/Delete)
         /// </summary>

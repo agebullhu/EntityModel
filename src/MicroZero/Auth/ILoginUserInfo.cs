@@ -6,7 +6,12 @@ namespace Agebull.Common.OAuth
     public interface ILoginUserInfo
     {
         /// <summary>
-        ///     用户数字标识
+        ///     全局用户数字标识
+        /// </summary>
+        long GlobalUserId { get; set; }
+
+        /// <summary>
+        ///     应用用户数字标识
         /// </summary>
         long UserId { get; set; }
 

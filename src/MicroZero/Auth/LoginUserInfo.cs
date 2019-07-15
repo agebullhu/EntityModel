@@ -12,6 +12,12 @@ namespace Agebull.Common.OAuth
     public class LoginUserInfo : ILoginUserInfo
     {
         /// <summary>
+        ///     全局用户数字标识
+        /// </summary>
+        [JsonProperty("gid", NullValueHandling = NullValueHandling.Ignore)]
+        public long GlobalUserId { get; set; }
+
+        /// <summary>
         ///     用户数字标识
         /// </summary>
         [JsonProperty("userId", NullValueHandling = NullValueHandling.Ignore)]
@@ -87,7 +93,7 @@ namespace Agebull.Common.OAuth
         /// <remarks>
         ///     职位
         /// </remarks>
-        [JsonProperty("post", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("pos", NullValueHandling = NullValueHandling.Ignore)]
         public string Position { get; set; }
 
         /// <summary>
