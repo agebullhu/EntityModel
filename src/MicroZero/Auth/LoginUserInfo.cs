@@ -14,7 +14,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     全局用户数字标识
         /// </summary>
-        [JsonProperty("gid", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("gUserId", NullValueHandling = NullValueHandling.Ignore)]
         public long GlobalUserId { get; set; }
 
         /// <summary>

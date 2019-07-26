@@ -110,24 +110,23 @@ namespace Agebull.EntityModel.SqlServer
         }
 
         /// <summary>
-        ///     载入首行
+        ///     分页读取
         /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public TData FirstOrDefault(object id)
+        public TData First(LambdaItem<TData> lambda)
         {
-            return LoadByPrimaryKey(id);
+            var convert = Compile(lambda);
+            return LoadFirst(convert.ConditionSql, convert.Parameters);
         }
 
 
         /// <summary>
-        ///     载入首行
+        ///     分页读取
         /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public TData First(object id)
+        public TData FirstOrDefault(LambdaItem<TData> lambda)
         {
-            return LoadByPrimaryKey(id);
+            var convert = Compile(lambda);
+
+            return LoadFirst(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -308,6 +307,7 @@ namespace Agebull.EntityModel.SqlServer
         ///     读取数据
         /// </summary>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Select()
         {
             return LoadDataInner();
@@ -318,6 +318,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>数据</returns>
+        [Obsolete]
         public List<TData> Select(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -330,6 +331,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>数据</returns>
+        [Obsolete]
         public List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -429,6 +431,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Where(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -441,6 +444,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -520,7 +524,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public long Count(string condition, params DbParameter[] args)
         {
-            var obj = CollectInner("Count", "*", condition, args.Cast<DbParameter>().ToArray());
+            var obj = CollectInner("Count", "*", condition, args);
             return obj == DBNull.Value || obj == null ? 0L : Convert.ToInt64(obj);
         }
 
@@ -789,7 +793,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args)
         {
-            return PageData(page, limit, order, desc, condition, args.Cast<DbParameter>().ToArray());
+            return PageData(page, limit, order, desc, condition, args);
         }
 
         /// <summary>
@@ -1291,18 +1295,6 @@ namespace Agebull.EntityModel.SqlServer
             }
             return LoadDataInner(condition.Condition, args.ToArray());
         }
-
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public TData LoadData(object id)
-        {
-            return LoadByPrimaryKey(id);
-        }
-
 
         /// <summary>
         ///     全表读取

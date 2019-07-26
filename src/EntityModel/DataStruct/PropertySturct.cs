@@ -28,7 +28,12 @@ namespace Agebull.EntityModel.Common
         ///     属性名称
         /// </summary>
         public string PropertyName { get=>Name; set=>Name=value; }
-        
+
+        /// <summary>
+        ///     JSON属性名称
+        /// </summary>
+        public string JsonName { get; set; }
+
         /// <summary>
         ///     数据库字段名称
         /// </summary>

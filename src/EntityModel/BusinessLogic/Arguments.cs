@@ -15,6 +15,7 @@ namespace Agebull.MicroZero.ZeroApis
         [JsonProperty("id")]
         public string Id { get; set; }
     }
+
     /// <summary>
     /// 多个ID
     /// </summary>
@@ -36,6 +37,13 @@ namespace Agebull.MicroZero.ZeroApis
     [JsonObject(MemberSerialization.OptIn)]
     public class QueryArgument
     {
+        /// <summary>
+        /// 返回的字段,为空表示无字段过滤
+        /// </summary>
+        /// <example>nike</example>
+        [JsonProperty("_filter_")]
+        public string Filter { get; set; }
+
         /// <summary>
         /// 查询值
         /// </summary>

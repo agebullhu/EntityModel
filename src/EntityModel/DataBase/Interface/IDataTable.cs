@@ -270,18 +270,8 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     载入首行
         /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        TData FirstOrDefault(object id);
-
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        TData First(object id);
-
+        TData First(LambdaItem<TData> lambda);
+        
         /// <summary>
         ///     载入首行
         /// </summary>
@@ -296,6 +286,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
         TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        TData FirstOrDefault(LambdaItem<TData> lambda);
 
 
         /// <summary>
@@ -369,6 +364,7 @@ namespace Agebull.EntityModel.Common
         ///     读取数据
         /// </summary>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         List<TData> Select();
 
         /// <summary>
@@ -376,6 +372,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>数据</returns>
+        [Obsolete]
         List<TData> Select(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
@@ -384,6 +381,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>数据</returns>
+        [Obsolete]
         List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
@@ -436,6 +434,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         List<TData> Where(Expression<Func<TData, bool>> lambda);
 
         /// <summary>
@@ -444,6 +443,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
@@ -618,18 +618,6 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">条件</param>
         /// <returns>如果有载入首行,否则返回空</returns>
         List<TData> LoadData(MulitCondition condition);
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        TData LoadData(object id);
-
-        /// <summary>
-        ///     全表读取
-        /// </summary>
-        List<TData> LoadData();
 
         /// <summary>
         ///     主键读取

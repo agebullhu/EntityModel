@@ -258,7 +258,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
                 return false;
-            return ResetState(Access.First(id));
+            return ResetState(Access.LoadByPrimaryKey(id));
         }
 
 

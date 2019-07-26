@@ -29,7 +29,6 @@ namespace Agebull.EntityModel.Common
         ///     发出属性修改事件
         /// </summary>
         /// <param name="propertyIndex">属性</param>
-        [Conditional("EntityChanged")]
         protected void OnPropertyChanged(int propertyIndex)
         {
             RecordModifiedInner(propertyIndex);
@@ -60,7 +59,6 @@ namespace Agebull.EntityModel.Common
         ///     发出属性修改事件
         /// </summary>
         /// <param name="propertyName">属性</param>
-        [Conditional("EntityChanged")]
         public void OnPropertyChanged(string propertyName)
         {
             RecordModifiedInner(propertyName);

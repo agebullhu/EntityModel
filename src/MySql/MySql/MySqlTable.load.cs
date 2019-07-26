@@ -100,6 +100,27 @@ namespace Agebull.EntityModel.MySql
             return LoadFirst();
         }
 
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public TData First(LambdaItem<TData> lambda)
+        {
+            var convert = Compile(lambda);
+            return LoadFirst(convert.ConditionSql, convert.Parameters);
+        }
+
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public TData FirstOrDefault(LambdaItem<TData> lambda)
+        {
+            var convert = Compile(lambda);
+
+            return LoadFirst(convert.ConditionSql, convert.Parameters);
+        }
+
         /// <summary>
         ///     载入首行
         /// </summary>
@@ -107,27 +128,6 @@ namespace Agebull.EntityModel.MySql
         public TData FirstOrDefault()
         {
             return LoadFirst();
-        }
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public TData FirstOrDefault(object id)
-        {
-            return LoadByPrimaryKey(id);
-        }
-
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public TData First(object id)
-        {
-            return LoadByPrimaryKey(id);
         }
 
         /// <summary>
@@ -308,6 +308,7 @@ namespace Agebull.EntityModel.MySql
         ///     读取数据
         /// </summary>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Select()
         {
             return LoadDataInner();
@@ -318,6 +319,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>数据</returns>
+        [Obsolete]
         public List<TData> Select(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -330,6 +332,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>数据</returns>
+        [Obsolete]
         public List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);
@@ -360,6 +363,7 @@ namespace Agebull.EntityModel.MySql
         {
             return LoadDataInner(condition, args);
         }
+
         /// <summary>
         ///     分页读取
         /// </summary>
@@ -429,6 +433,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Where(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
@@ -441,6 +446,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>是否存在数据</returns>
+        [Obsolete]
         public List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b)
         {
             var convert1 = Compile(a);

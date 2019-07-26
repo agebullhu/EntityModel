@@ -172,7 +172,7 @@ namespace Agebull.EntityModel.SqlServer
                     first = false;
                 else
                     sql.Append(',');
-                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
+                sql.AppendLine($"       [{pro.Value.ColumnName}] = @{pro.Value.Name}");
             }
             if (first)
                 return null;
