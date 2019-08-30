@@ -739,6 +739,14 @@ namespace Agebull.EntityModel.Common
         int SetValue<TField>(Expression<Func<TData, TField>> field, TField value);
 
         /// <summary>
+        ///     条件更新实体中已记录更新部分
+        /// </summary>
+        /// <param name="data">实体</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        int SetValue(TData data, Expression<Func<TData, bool>> lambda);
+
+        /// <summary>
         ///     条件更新
         /// </summary>
         /// <param name="field">字段</param>

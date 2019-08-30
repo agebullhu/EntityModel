@@ -523,13 +523,17 @@ namespace Agebull.EntityModel.MySql
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
             var parameters = args as MySqlParameter[] ?? args.ToArray();
-            foreach (var par in parameters.Where(p => p != null))
+            foreach (var par in parameters)
             {
                 code.AppendLine($"declare ?{par.ParameterName} {par.MySqlDbType};");
             }
-            foreach (var par in parameters.Where(p => p != null))
+            foreach (var par in parameters.Where(p => p.Value != null && !p.IsNullable))
             {
                 code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
+            }
+            foreach (var par in parameters.Where(p => p.Value == null || p.IsNullable))
+            {
+                code.AppendLine($"SET ?{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
             LogRecorderX.RecordDataLog(code.ToString());

@@ -515,14 +515,18 @@ namespace Agebull.EntityModel.SqlServer
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine($"/******************************{DateTime.Now}*********************************/");
-            var sqlParameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
-            foreach (var par in sqlParameters.Where(p => p != null))
+            var parameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
+            foreach (var par in parameters)
             {
                 code.AppendLine($"declare @{par.ParameterName} {par.SqlDbType};");
             }
-            foreach (var par in sqlParameters.Where(p => p != null))
+            foreach (var par in parameters.Where(p => p.Value != null && !p.IsNullable))
             {
                 code.AppendLine($"SET @{par.ParameterName} = '{par.Value}';");
+            }
+            foreach (var par in parameters.Where(p => p.Value == null || p.IsNullable))
+            {
+                code.AppendLine($"SET @{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
             code.AppendLine("GO");
