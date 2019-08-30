@@ -7,8 +7,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -641,6 +643,7 @@ namespace Agebull.Common
         }
 
         #endregion
+
         #region WPF资源文件
 #if WPF
         /// <summary>
@@ -691,6 +694,126 @@ namespace Agebull.Common
             }
         }
 #endif
+        #endregion
+
+        #region 取目录大小信息
+
+        /// <summary>
+        /// Linux下取目录大小信息
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static  DiskInfo FolderDiskInfo(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return new DiskInfo();
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) )
+            {
+                return LinuxFolderDiskInfo(path);
+            }
+            else
+            {
+                return WindowsFolderDiskInfo(path);
+            }
+        }
+
+        /// <summary>
+        /// Linux下取目录大小信息
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static DiskInfo WindowsFolderDiskInfo(string path)
+        {
+            var info = new DiskInfo();
+
+            var str_HardDiskName = path[0] + ":\\";
+
+            var drive = System.IO.DriveInfo.GetDrives().FirstOrDefault(p=> path.IndexOf(p.Name,StringComparison.OrdinalIgnoreCase)==0);
+            if(drive != null)
+            {
+                info.TotalSize = drive.TotalSize / (1024 * 1024);
+                info.AvailableSize = drive.AvailableFreeSpace / (1024 * 1024);
+                info.UsedSize = info.TotalSize - info.AvailableSize;
+                info.Use = info.UsedSize / info.TotalSize;
+            }
+            return info;
+        }
+
+        /// <summary>
+        /// Linux下取目录大小信息
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static DiskInfo LinuxFolderDiskInfo(string path)
+        {
+            DiskInfo disk = new DiskInfo();
+            if (string.IsNullOrEmpty(path))
+            {
+                return disk;
+            }
+            if (!path.StartsWith("/"))
+            {
+                path = $"/{path}";
+            }
+
+            Process p = new Process();
+            p.StartInfo.FileName = "sh";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            p.StandardInput.WriteLine($"cd {path}");
+            p.StandardInput.WriteLine($"df -k {path} | awk '{{print $2,$3,$4,$5}}'");
+            p.StandardInput.WriteLine("exit");
+
+            string strResult = p.StandardOutput.ReadToEnd();
+
+            string[] arr = strResult.Split('\n');
+            if (arr.Length == 0)
+            {
+                return disk;
+            }
+            string[] resultArray = arr[1].TrimStart().TrimEnd().Split(' ');
+            if (resultArray == null || resultArray.Length == 0)
+            {
+                return disk;
+            }
+
+            disk.TotalSize = Convert.ToInt32(resultArray[0]) / (1024 * 1024);
+            disk.UsedSize = Convert.ToInt32(resultArray[1]) / (1024 * 1024);
+            disk.AvailableSize = Convert.ToInt32(resultArray[2]) / (1024 * 1024);
+            disk.Use = disk.UsedSize / disk.TotalSize;
+
+            return disk;
+        }
+        /// <summary>
+        /// 磁盘空间
+        /// </summary>
+        public class DiskInfo
+        {
+            /// <summary>
+            /// 总大小
+            /// </summary>
+            public long TotalSize { get; set; }
+            /// <summary>
+            /// 已使用
+            /// </summary>
+            public long UsedSize { get; set; }
+
+            /// <summary>
+            /// 剩余空间
+            /// </summary>
+            public long AvailableSize { get; set; }
+
+            /// <summary>
+            /// 使用率
+            /// </summary>
+            public decimal Use { get; set; }
+        }
         #endregion
     }
 }

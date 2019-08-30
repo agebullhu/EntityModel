@@ -122,7 +122,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static string GetUserName()
         {
-            return GetRequestIdFunc?.Invoke() ?? "Unknow";
+            return GetUserNameFunc?.Invoke() ?? "Unknow";
         }
         /// <summary>
         /// 取请求ID的方法
@@ -145,6 +145,14 @@ namespace Agebull.Common.Logging
         /// </summary>
         static LogRecorderX()
         {
+            var sec = ConfigurationManager.Get("LogRecorder");
+            if (sec != null)
+            {
+                TraceToConsole = sec.GetBool("console");
+                LogMonitor = sec.GetBool("monitor");
+                LogDataSql = sec.GetBool("sql");
+                Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
+            }
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();
             BaseRecorder.Initialize();

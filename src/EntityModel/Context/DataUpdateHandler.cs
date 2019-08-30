@@ -79,13 +79,13 @@ namespace Agebull.EntityModel.Events
             {
                 if (Triggers == null)
                     Triggers = new Dictionary<int, List<IDataUpdateTrigger>>();
-                if (Triggers.ContainsKey(entityId))
+                if (!Triggers.ContainsKey(entityId))
+                    Triggers.Add(entityId, new List<IDataUpdateTrigger> {handler});
+                else
                 {
                     if (Triggers[entityId].All(p => p.GetType() != handler.GetType()))
                         Triggers[entityId].Add(handler);
                 }
-                else
-                    Triggers.Add(entityId, new List<IDataUpdateTrigger> { handler });
             }
         }
 
@@ -96,7 +96,8 @@ namespace Agebull.EntityModel.Events
         {
             lock (Triggers)
             {
-                if (Triggers == null || !Triggers.ContainsKey(entityId)) return;
+                if (Triggers == null || !Triggers.ContainsKey(entityId))
+                    return;
                 Triggers[entityId].Remove(handler);
                 if (Triggers[entityId].Count == 0)
                     Triggers.Remove(entityId);
@@ -117,9 +118,10 @@ namespace Agebull.EntityModel.Events
                 flakeId.Id = SnowFlake.NewId;
             foreach (var trigger in _generalTriggers)
                 trigger.OnPrepareSave(data, operatorType);
-            if (Triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
-                foreach (var trigger in triggers)
-                    trigger.OnPrepareSave(data, operatorType);
+            if (Triggers == null || !Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+                return;
+            foreach (var trigger in triggers)
+                trigger.OnPrepareSave(data, operatorType);
         }
 
         /// <summary>
@@ -131,9 +133,10 @@ namespace Agebull.EntityModel.Events
         {
             foreach (var trigger in _generalTriggers)
                 trigger.OnDataSaved(data, operatorType);
-            if (Triggers != null && Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
-                foreach (var trigger in triggers)
-                    trigger.OnDataSaved(data, operatorType);
+            if (Triggers == null || !Triggers.TryGetValue(data.__Struct.EntityType, out var triggers))
+                return;
+            foreach (var trigger in triggers)
+                trigger.OnDataSaved(data, operatorType);
         }
 
         /// <summary>
@@ -148,10 +151,10 @@ namespace Agebull.EntityModel.Events
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
-            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
-                foreach (var trigger in triggers)
-                    trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
-
+            if (Triggers == null || !Triggers.TryGetValue(entityId, out var triggers))
+                return;
+            foreach (var trigger in triggers)
+                trigger.OnOperatorExecuting(entityId, condition, mySqlParameters, operatorType);
         }
 
         /// <summary>
@@ -166,9 +169,10 @@ namespace Agebull.EntityModel.Events
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             foreach (var trigger in _generalTriggers)
                 trigger.OnOperatorExecuted(entityId, condition, mySqlParameters, operatorType);
-            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
-                foreach (var trigger in triggers)
-                    trigger.OnOperatorExecuted(entityId, condition, mySqlParameters, operatorType);
+            if (Triggers == null || !Triggers.TryGetValue(entityId, out var triggers))
+                return;
+            foreach (var trigger in triggers)
+                trigger.OnOperatorExecuted(entityId, condition, mySqlParameters, operatorType);
         }
 
         /// <summary>
@@ -181,9 +185,10 @@ namespace Agebull.EntityModel.Events
         {
             foreach (var trigger in _generalTriggers)
                 trigger.ContitionSqlCode<T>(conditions);
-            if (Triggers != null && Triggers.TryGetValue(entityId, out var triggers))
-                foreach (var trigger in triggers)
-                    trigger.ContitionSqlCode<T>(conditions);
+            if (Triggers == null || !Triggers.TryGetValue(entityId, out var triggers))
+                return;
+            foreach (var trigger in triggers)
+                trigger.ContitionSqlCode<T>(conditions);
         }
 
         /// <summary>

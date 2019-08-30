@@ -32,6 +32,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public List<LambdaItem<TData>> Ors = new List<LambdaItem<TData>>();
 
+
         /// <summary>
         ///     主条件
         /// </summary>

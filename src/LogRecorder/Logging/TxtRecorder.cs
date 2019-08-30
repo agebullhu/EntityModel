@@ -20,17 +20,7 @@ namespace Agebull.Common.Logging
     /// </summary>
     internal sealed class TxtRecorder : TraceListener, ILogRecorder
     {
-        /// <summary>
-        ///     初始化
-        /// </summary>
-        public static TxtRecorder Recorder = new TxtRecorder();
-
-        /// <summary>
-        ///     阻止外部构造
-        /// </summary>
-        internal TxtRecorder()
-        {
-        }
+        #region 配置
 
         /// <summary>
         ///     文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
@@ -43,10 +33,29 @@ namespace Agebull.Common.Logging
         public static int SplitNumber { get; set; }
 
         /// <summary>
+        /// 最小可用空间(小于时只记录系统与错误日志)
+        /// </summary>
+        public static int MinFreeSize { get; set; }
+
+        /// <summary>
         /// 每日一个文件夹吗
         /// </summary>
         public static bool DayFolder { get; set; }
+        #endregion
 
+        #region 初始化与析构
+
+        /// <summary>
+        ///     初始化
+        /// </summary>
+        public static TxtRecorder Recorder = new TxtRecorder();
+
+        /// <summary>
+        ///     阻止外部构造
+        /// </summary>
+        internal TxtRecorder()
+        {
+        }
         /// <summary>
         /// 是否初始化成功
         /// </summary>
@@ -64,7 +73,7 @@ namespace Agebull.Common.Logging
             try
             {
                 var sec = ConfigurationManager.Get("LogRecorder");
-                if(sec != null)
+                if (sec != null)
                 {
                     var cfgpath = sec["txtPath"];
                     if (string.IsNullOrWhiteSpace(cfgpath))
@@ -75,11 +84,12 @@ namespace Agebull.Common.Logging
                     LogRecorderX.LogPath = cfgpath;
                     SplitNumber = sec.GetInt("split", 10) * 1024 * 1024;
                     DayFolder = sec.GetBool("dayFolder", true);
+                    MinFreeSize = sec.GetInt("minFreeSize", 1024);
                 }
             }
             catch (Exception ex)
             {
-                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.Initialize", ex);
+                Console.WriteLine(ex.ToString(), "TextRecorder.Initialize Config");
             }
 
             try
@@ -93,7 +103,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.Initialize LogPath", ex);
+                Console.WriteLine(ex.ToString(), "TextRecorder.Initialize LogPath");
             }
             Trace.Listeners.Add(this);
             IsInitialized = true;
@@ -110,16 +120,29 @@ namespace Agebull.Common.Logging
             _isDispose = true;
             DisposeWriters();
         }
+        #endregion
 
+        #region 记录日志
+        /// <summary>
+        /// 通过计数减少取磁盘大小的频率
+        /// </summary>
+        int cnt = 0;
         /// <summary>
         ///     记录日志
         /// </summary>
         /// <param name="infos"> 日志消息 </param>
         public void RecordLog(List<RecordInfo> infos)
         {
-
+            bool onlySystem = false;
+            if (++cnt >= 100)
+            {
+                cnt = 0;
+                var size = IOHelper.FolderDiskInfo(LogPath);
+                if (size.AvailableSize < MinFreeSize)
+                    onlySystem = true;
+            }
             foreach (var info in infos)
-                RecordLog(info);
+                Write(info, onlySystem);
         }
 
         /// <summary>
@@ -127,6 +150,26 @@ namespace Agebull.Common.Logging
         /// </summary>
         /// <param name="info"> 日志消息 </param>
         public void RecordLog(RecordInfo info)
+        {
+            bool onlySystem = false;
+            if (++cnt >= 100)
+            {
+                cnt = 0;
+                var size = IOHelper.FolderDiskInfo(LogPath);
+                if (size.AvailableSize < 1024)
+                    onlySystem = true;
+            }
+            Write(info, onlySystem);
+        }
+        #endregion
+        #region 写文件
+
+        /// <summary>
+        ///     记录日志
+        /// </summary>
+        /// <param name="info"> 日志消息 </param>
+        /// <param name="onlySystem">仅系统</param>
+        private void Write(RecordInfo info, bool onlySystem)
         {
             List<string> names = new List<string>();
             string log;
@@ -141,36 +184,39 @@ namespace Agebull.Common.Logging
                     log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     break;
                 case LogType.Warning:
-                    names.Add("warning");
-                    names.Add("system");
-                    log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
-                    break;
                 case LogType.Error:
                 case LogType.Exception:
-                    names.Add("error");
+                    if (!onlySystem)
+                        names.Add("error");
                     names.Add("system");
                     log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.ThreadID}-{info.RequestID}-{info.User} > 
 {info.Message}
 ";
                     break;
                 case LogType.DataBase:
+                    if (onlySystem)
+                        return;
                     names.Add("sql");
-                    names.Add("trace");
+                    //names.Add("trace");
                     log = $@"/*[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User}*/
 {info.Message}
 ";
                     break;
                 case LogType.Monitor:
+                    if (onlySystem)
+                        return;
                     names.Add("monitor");
-                    names.Add("trace");
+                    //names.Add("trace");
                     log = info.Message;
                     break;
-                case LogType.Debug:
-                    names.Add("debug");
-                    names.Add("trace");
-                    log = info.Message;
-                    break;
+                //case LogType.Debug:
+                //    names.Add("debug");
+                //    //names.Add("trace");
+                //    log = info.Message;
+                //    break;
                 default:
+                    if (onlySystem)
+                        return;
                     names.Add("trace");
                     log = $@"[{info.Time:u}] {info.Index:X8}-{info.Machine}-{info.RequestID}-{info.User} > {info.Message}";
                     break;
@@ -178,43 +224,9 @@ namespace Agebull.Common.Logging
 
             foreach (var name in names)
             {
-                try
-                {
-                    var writer = GetWriter(name);
-                    if (writer == null)
-                        return;
-                    writer.Size += log.Length;
-                    writer.Stream.WriteLine(log);
-                }
-                catch (Exception ex)
-                {
-                    LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.RecordLog4", name, ex);
-                }
+                WriteFile(log, name);
             }
         }
-
-        /// <summary>
-        ///     记录日志
-        /// </summary>
-        private void WriteFile(string log, string type)
-        {
-            var writer = GetWriter(type);
-            if (writer == null)
-                return;
-            try
-            {
-                writer.Size += log.Length;
-                writer.Stream.WriteLine(log);
-            }
-            catch (Exception ex)
-            {
-                LogRecorderX.SystemTrace(LogLevel.Error, "TextRecorder.WriteFile", type, ex);
-                writer.Stream.Dispose();
-                writer.Stream.Close();
-                ResetFile(type, writer);
-            }
-        }
-
         /// <summary>
         ///     写消息--Trace
         /// </summary>
@@ -233,6 +245,29 @@ namespace Agebull.Common.Logging
             WriteFile($"[{DateTime.Now.ToShortTimeString()}] {message}", "trace");
         }
 
+
+        /// <summary>
+        ///     记录日志
+        /// </summary>
+        private void WriteFile(string log, string type)
+        {
+            var writer = GetWriter(type);
+            if (writer == null)
+                return;
+            try
+            {
+                writer.Size += log.Length;
+                writer.Stream.WriteLine(log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString(), $"TextRecorder.WriteFile->{type}");
+                writer.Stream.Dispose();
+                writer.Stream.Close();
+                ResetFile(type, writer);
+            }
+        }
+        #endregion
         #region 文件列表
 
         /// <summary>
@@ -313,9 +348,9 @@ namespace Agebull.Common.Logging
             }
             _writers.Clear();
         }
-
         private void ResetFile(string sub, FileInfo info)
         {
+
             info.Size = 0;
             info.Index = 0;
             do

@@ -163,7 +163,6 @@ namespace Agebull.EntityModel.SqlServer
                 return null;
             StringBuilder sql = new StringBuilder();
             bool first = true;
-            sql.AppendLine($"UPDATE [{ContextWriteTable}] SET");
             foreach (var pro in data.__Struct.Properties)
             {
                 if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
@@ -174,10 +173,7 @@ namespace Agebull.EntityModel.SqlServer
                     sql.Append(',');
                 sql.AppendLine($"       [{pro.Value.ColumnName}] = @{pro.Value.Name}");
             }
-            if (first)
-                return null;
-            sql.AppendLine($"WHERE {PrimaryKeyConditionSQL};");
-            return sql.ToString();
+            return first ? null : sql.ToString();
         }
 
         /// <summary>
@@ -196,12 +192,8 @@ namespace Agebull.EntityModel.SqlServer
             using (var cmd = DataBase.CreateCommand())
             {
                 SetUpdateCommand(entity, cmd);
-                cmd.CommandText = $@"{BeforeUpdateSql(PrimaryKeyConditionSQL)}
-{sql}
-{AfterUpdateSql(PrimaryKeyConditionSQL)}";
-
+                cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
                 SqlServerDataBase.TraceSql(cmd);
-
                 result = cmd.ExecuteNonQuery();
             }
 
@@ -581,6 +573,33 @@ namespace Agebull.EntityModel.SqlServer
         public int SetValue(string field, object value, string condition, params DbParameter[] args)
         {
             return SetValueByCondition(field, value, condition, args);
+        }
+
+        /// <summary>
+        ///     条件更新实体中已记录更新部分
+        /// </summary>
+        /// <param name="entity">实体</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        public int SetValue(TData entity, Expression<Func<TData, bool>> lambda)
+        {
+            if (UpdateByMidified && !entity.__status.IsModified)
+                return -1;
+            var setValueSql = GetModifiedSqlCode(entity);
+            if (setValueSql == null)
+                return -1;
+            var convert = Compile(lambda);
+            var sql = CreateUpdateSql(setValueSql, convert.ConditionSql);
+            int result;
+
+            using (var cmd = DataBase.CreateCommand())
+            {
+                SetUpdateCommand(entity, cmd);
+                cmd.CommandText = CreateUpdateSql(sql, convert.ConditionSql);
+                SqlServerDataBase.TraceSql(cmd);
+                result = cmd.ExecuteNonQuery();
+            }
+            return result;
         }
 
         /// <summary>

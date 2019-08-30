@@ -272,7 +272,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     是否工作在管理模式下(数据全看模式)
         /// </summary>
-        public bool IsManageMode { get; set; }
+        public bool IsManageMode { get; internal set; }
 
         /// <summary>
         ///     是否工作在系统模式下

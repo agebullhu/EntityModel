@@ -41,6 +41,47 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public SqlTransaction Transaction { get; internal set; }
 
+        /// <inheritdoc />
+        /// <summary>
+        ///     事务对象
+        /// </summary>
+        DbTransaction IDataBase.Transaction => Transaction;
+
+
+        /// <summary>
+        /// 开始一个事务
+        /// </summary>
+        /// <returns></returns>
+        public bool BeginTransaction()
+        {
+            if (Transaction != null)
+                return false;
+            Transaction = Connection.BeginTransaction();
+            return true;
+        }
+        /// <summary>
+        /// 回滚事务
+        /// </summary>
+        void IDataBase.Rollback()
+        {
+            lock (this)
+            {
+                Transaction?.Rollback();
+                Transaction = null;
+            }
+        }
+
+        /// <summary>
+        /// 提交事务
+        /// </summary>
+        void IDataBase.Commit()
+        {
+            lock (this)
+            {
+                Transaction?.Commit();
+                Transaction = null;
+            }
+        }
         #endregion
 
         #region 引用范围
@@ -167,9 +208,12 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         public bool Open()
         {
+            if (_connection != null && _connection.State == ConnectionState.Open)
+            {
+                return false;
+            }
             lock (LockData)
             {
-                bool result = false;
                 if (_connection == null)
                 {
                     _connection = InitConnection();
@@ -178,13 +222,8 @@ namespace Agebull.EntityModel.SqlServer
                 }
                 if (string.IsNullOrEmpty(_connection.ConnectionString))
                 {
-                    result = true;
                     //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
                     _connection.ConnectionString = ConnectionString;
-                }
-                if (_connection.State == ConnectionState.Open)
-                {
-                    return result;
                 }
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
@@ -515,14 +554,18 @@ namespace Agebull.EntityModel.SqlServer
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine($"/******************************{DateTime.Now}*********************************/");
-            var sqlParameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
-            foreach (var par in sqlParameters.Where(p => p != null))
+            var parameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
+            foreach (var par in parameters)
             {
                 code.AppendLine($"declare @{par.ParameterName} {par.SqlDbType};");
             }
-            foreach (var par in sqlParameters.Where(p => p != null))
+            foreach (var par in parameters.Where(p => p.Value != null && !p.IsNullable))
             {
                 code.AppendLine($"SET @{par.ParameterName} = '{par.Value}';");
+            }
+            foreach (var par in parameters.Where(p => p.Value == null || p.IsNullable))
+            {
+                code.AppendLine($"SET @{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
             code.AppendLine("GO");
