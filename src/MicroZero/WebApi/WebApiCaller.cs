@@ -69,9 +69,9 @@ namespace Agebull.MicroZero.WebApi
 			{
 				return null;
 			}
-			bool first = true;
-			StringBuilder builder = new StringBuilder();
-			foreach (KeyValuePair<string, string> httpParam in httpParams)
+			var first = true;
+			var builder = new StringBuilder();
+			foreach (var httpParam in httpParams)
 			{
 				if (first)
 				{
@@ -145,14 +145,14 @@ namespace Agebull.MicroZero.WebApi
 		public ApiResult<TResult> Get<TResult>(string apiName, string arguments) 
 		{
 			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
+			var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
 			LogRecorderX.MonitorTrace(ctx);
 			LogRecorderX.MonitorTrace("Arguments:" + arguments);
 			if (!string.IsNullOrWhiteSpace(arguments))
 			{
 				apiName = $"{apiName}?{arguments}";
 			}
-			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
+			var req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "GET";
 			req.ContentType = "application/x-www-form-urlencoded";
 			req.Headers.Add(HttpRequestHeader.Authorization, ctx);
@@ -193,18 +193,18 @@ namespace Agebull.MicroZero.WebApi
 		public ApiResult<TResult> Post<TResult>(string apiName, string form) 
 		{
 			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
+			var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
 			LogRecorderX.MonitorTrace(ctx);
 			LogRecorderX.MonitorTrace("Arguments:" + form);
-			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
+			var req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "POST";
 			req.ContentType = "application/x-www-form-urlencoded";
 			req.Headers.Add(HttpRequestHeader.Authorization, ctx);
 			try
 			{
-				using (Stream rs = req.GetRequestStream())
+				using (var rs = req.GetRequestStream())
 				{
-					byte[] formData = Encoding.UTF8.GetBytes(form);
+					var formData = Encoding.UTF8.GetBytes(form);
 					rs.Write(formData, 0, formData.Length);
 				}
 			}
@@ -225,12 +225,12 @@ namespace Agebull.MicroZero.WebApi
 		/// <returns></returns>
 		public ApiResult<TResult> GetResult<TResult>(HttpWebRequest req) 
 		{
-			string jsonResult = default(string);
+			string jsonResult;
 			try
 			{
-				using (WebResponse webResponse = req.GetResponse())
+				using (var webResponse = req.GetResponse())
 				{
-					Stream receivedStream2 = webResponse.GetResponseStream();
+					var receivedStream2 = webResponse.GetResponseStream();
 					if (receivedStream2 == null)
 					{
 						LogRecorderX.EndStepMonitor();
@@ -288,9 +288,9 @@ namespace Agebull.MicroZero.WebApi
 						return ApiResult.Error<TResult>(ErrorCode.RemoteError, "发生未知类型的异常");
 					}
 				}
-				using (WebResponse response = e.Response)
+				using (var response = e.Response)
 				{
-					Stream receivedStream = response.GetResponseStream();
+					var receivedStream = response.GetResponseStream();
 					if (receivedStream == null)
 					{
 						LogRecorderX.EndStepMonitor();
@@ -310,11 +310,9 @@ namespace Agebull.MicroZero.WebApi
 			LogRecorderX.MonitorTrace(jsonResult);
 			try
 			{
-				if (!string.IsNullOrWhiteSpace(jsonResult))
-				{
-					return JsonConvert.DeserializeObject<ApiResult<TResult>>(jsonResult);
-				}
-				return ApiResult.Error<TResult>(-1);
+			    return string.IsNullOrWhiteSpace(jsonResult) 
+			        ? ApiResult.Error<TResult>(-1) 
+			        : JsonConvert.DeserializeObject<ApiResult<TResult>>(jsonResult);
 			}
 			catch (Exception ex2)
 			{
@@ -368,14 +366,14 @@ namespace Agebull.MicroZero.WebApi
 		public ApiValueResult Get(string apiName, string arguments)
 		{
 			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
+			var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
 			LogRecorderX.MonitorTrace(ctx);
 			LogRecorderX.MonitorTrace("Arguments:" + arguments);
 			if (!string.IsNullOrWhiteSpace(arguments))
 			{
 				apiName = $"{apiName}?{arguments}";
 			}
-			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
+			var req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "GET";
 			req.ContentType = "application/x-www-form-urlencoded";
 			req.Headers.Add(HttpRequestHeader.Authorization, ctx);
@@ -416,18 +414,18 @@ namespace Agebull.MicroZero.WebApi
 		public ApiValueResult Post(string apiName, string form)
 		{
 			LogRecorderX.BeginStepMonitor("内部API调用" + ToUrl(apiName));
-			string ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
+			var ctx = string.IsNullOrEmpty(Bearer) ? null : $"Bearer {Bearer}";
 			LogRecorderX.MonitorTrace(ctx);
 			LogRecorderX.MonitorTrace("Arguments:" + form);
-			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
+			var req = (HttpWebRequest)WebRequest.Create(ToUrl(apiName));
 			req.Method = "POST";
 			req.ContentType = "application/x-www-form-urlencoded";
 			req.Headers.Add(HttpRequestHeader.Authorization, ctx);
 			try
 			{
-				using (Stream rs = req.GetRequestStream())
+				using (var rs = req.GetRequestStream())
 				{
-					byte[] formData = Encoding.UTF8.GetBytes(form);
+					var formData = Encoding.UTF8.GetBytes(form);
 					rs.Write(formData, 0, formData.Length);
 				}
 			}
@@ -453,9 +451,9 @@ namespace Agebull.MicroZero.WebApi
 			string jsonResult;
 			try
 			{
-				using (WebResponse response = req.GetResponse())
+				using (var response = req.GetResponse())
 				{
-					Stream receivedStream2 = response.GetResponseStream();
+					var receivedStream2 = response.GetResponseStream();
 					if (receivedStream2 == null)
 					{
 						LogRecorderX.EndStepMonitor();
@@ -516,15 +514,15 @@ namespace Agebull.MicroZero.WebApi
                                 return ErrorResult(-3, "发生未知类型的异常");
                         }
                     }
-                    string[] codes = e3.Message.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+                    var codes = e3.Message.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (codes.Length == 3 && int.TryParse(codes[1], out var s) && s == 404)
                     {
                         return ErrorResult(-3, "服务器内部错误", "页面不存在");
                     }
-                    using (WebResponse webResponse = e3.Response)
+                    using (var webResponse = e3.Response)
                     {
-                        Stream receivedStream = webResponse.GetResponseStream();
+                        var receivedStream = webResponse.GetResponseStream();
                         if (receivedStream == null)
                         {
                             LogRecorderX.EndStepMonitor();
@@ -551,12 +549,10 @@ namespace Agebull.MicroZero.WebApi
 			LogRecorderX.MonitorTrace(jsonResult);
 			try
 			{
-				if (!string.IsNullOrWhiteSpace(jsonResult))
-				{
-					ApiResult baseResult = JsonConvert.DeserializeObject<ApiResult>(jsonResult);
-					return (!baseResult.Success) ? ErrorResult(baseResult.Status.ErrorCode, baseResult.Status.ClientMessage) : ApiValueResult.Succees(ReadResultData(jsonResult, "ResultData"));
-				}
-				return ErrorResult(-1);
+			    if (string.IsNullOrWhiteSpace(jsonResult))
+			        return ErrorResult(-1);
+			    var baseResult = JsonConvert.DeserializeObject<ApiResult>(jsonResult);
+			    return (!baseResult.Success) ? ErrorResult(baseResult.Status.ErrorCode, baseResult.Status.ClientMessage) : ApiValueResult.Succees(ReadResultData(jsonResult, "ResultData"));
 			}
 			catch (Exception e)
 			{
@@ -587,12 +583,12 @@ namespace Agebull.MicroZero.WebApi
 			{
 				return json;
 			}
-			StringBuilder code = new StringBuilder();
-			using (StringReader textReader = new StringReader(json))
+			var code = new StringBuilder();
+			using (var textReader = new StringReader(json))
 			{
-				JsonTextReader reader = new JsonTextReader(textReader);
-				bool isResultData = false;
-				int levle = 0;
+				var reader = new JsonTextReader(textReader);
+				var isResultData = false;
+				var levle = 0;
 				while (reader.Read())
 				{
 					if (!isResultData && (int)reader.TokenType == 4)
@@ -604,7 +600,7 @@ namespace Agebull.MicroZero.WebApi
 					}
 					else if (isResultData)
 					{
-						JsonToken tokenType = reader.TokenType;
+						var tokenType = reader.TokenType;
 						switch ((int)tokenType)
 						{
 						case 2:

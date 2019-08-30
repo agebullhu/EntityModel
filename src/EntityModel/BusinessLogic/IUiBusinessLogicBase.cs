@@ -19,6 +19,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     取得列表数据
         /// </summary>
+        [Obsolete]
         ApiPageData<TData> PageData(int page, int limit, string condition, params DbParameter[] args);
 
         /// <summary>
@@ -29,11 +30,13 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     分页读取
         /// </summary>
+        [Obsolete]
         ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda);
 
         /// <summary>
         ///     分页读取
         /// </summary>
+        [Obsolete]
         ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda);
         #endregion
 
@@ -45,7 +48,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        ApiFileResult Import(string sheetName, LambdaItem<TData> filter);
+        ApiFileResult Export(string sheetName, LambdaItem<TData> filter);
 
         #endregion
 

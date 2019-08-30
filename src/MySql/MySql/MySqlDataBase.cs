@@ -37,10 +37,51 @@ namespace Agebull.EntityModel.MySql
         //}
 
         /// <summary>
-        ///     事务
+        ///     事务对象
         /// </summary>
         public MySqlTransaction Transaction { get; internal set; }
 
+        /// <inheritdoc />
+        /// <summary>
+        ///     事务对象
+        /// </summary>
+        DbTransaction IDataBase.Transaction => Transaction;
+
+        /// <summary>
+        /// 开始一个事务
+        /// </summary>
+        /// <returns></returns>
+        public bool BeginTransaction()
+        {
+            if (Transaction != null)
+                return false;
+            Transaction = Connection.BeginTransaction();
+            return true;
+        }
+
+        /// <summary>
+        /// 回滚事务
+        /// </summary>
+        void IDataBase.Rollback()
+        {
+            lock (this)
+            {
+                Transaction?.Rollback();
+                Transaction = null;
+            }
+        }
+
+        /// <summary>
+        /// 提交事务
+        /// </summary>
+        void IDataBase.Commit()
+        {
+            lock (this)
+            {
+                Transaction?.Commit();
+                Transaction = null;
+            }
+        }
         #endregion
 
         #region 引用范围
@@ -169,13 +210,16 @@ namespace Agebull.EntityModel.MySql
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         public bool Open()
         {
+            if (_connection != null && _connection.State == ConnectionState.Open)
+            {
+                return false;
+            }
             lock (LockData)
             {
                 //if (_isClosed)
                 //{
                 //    //throw new Exception("已关闭的数据库对象不能再次使用");
                 //}
-                bool result = false;
                 if (_connection == null)
                 {
                     _connection = InitConnection();
@@ -184,13 +228,8 @@ namespace Agebull.EntityModel.MySql
                 }
                 if (string.IsNullOrEmpty(_connection.ConnectionString))
                 {
-                    result = true;
                     //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
                     _connection.ConnectionString = ConnectionString;
-                }
-                if (_connection.State == ConnectionState.Open)
-                {
-                    return result;
                 }
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened _connection", "MySqlDataBase");

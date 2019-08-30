@@ -8,8 +8,8 @@
 
 #region 引用
 
-using Agebull.EntityModel.Common;
 using System;
+using Agebull.Common.Logging;
 
 #endregion
 
@@ -25,50 +25,37 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         [ThreadStatic] private static TransactionScope _currentScope;
 
-        /*// <summary>
+        /// <summary>
         ///     数据库连接对象
         /// </summary>
-        //private readonly MySqlDataBase _dataBase;
-
-        /// <summary>
-        ///     在范围之前的连接对象
-        /// </summary>
-        private readonly SqlConnection _oldConnection;
-
-        /// <summary>
-        ///     在范围之前的事务对象
-        /// </summary>
-        private readonly SqlTransaction _oldTransaction;
-
+        private readonly IDataBase _dataBase;
+        
         /// <summary>
         ///     上一个范围
         /// </summary>
-        //private readonly TransactionScope _preScope;
+        private readonly TransactionScope _preScope;
 
         /// <summary>
-        ///     启用事务方式类型，0未起事务，1未建新连接起事务，2建新连接且起事务
+        ///    是否此处开始事务
         /// </summary>
-        //private int _beginType;
-
-        //private readonly DataBaseScope dbScope;*/
+        private readonly bool _isBegin;
+        
         /// <summary>
         ///     构造
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
         private TransactionScope(IDataBase dataBase)
         {
-            //dbScope = DataBaseScope.CreateScope(dataBase);
-            //_preScope = CurrentScope;
-            //CurrentScope = this;
+            _preScope = CurrentScope;
+            CurrentScope = this;
 
-            //_dataBase = dataBase;
-            //dataBase.Open();
-            //if (dataBase.Transaction != null)
-            //{
-            //    return;
-            //}
-            //_beginType = 1;
-            //dataBase.Transaction = dataBase.Connection.BeginTransaction();
+            _dataBase = dataBase;
+            if (dataBase.Transaction != null)
+            {
+                return;
+            }
+            _isBegin = true;
+            dataBase.BeginTransaction();
         }
 
         /// <summary>
@@ -90,8 +77,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         void IDisposable.Dispose()
         {
-            //DoDispose();
-            //dbScope.Dispose();
+            DoDispose();
         }
 
         /// <summary>
@@ -122,11 +108,11 @@ namespace Agebull.EntityModel.Common
         public bool SetState(bool succeed)
         {
             IsSucceed = succeed;
-            ////失败向上冒泡，成功由上层自行决定
-            //if (_beginType > 0 && !succeed)
-            //{
-            //    _preScope?.SetState(false);
-            //}
+            //失败向上冒泡，成功由上层自行决定
+            if (!succeed)
+            {
+                _preScope?.SetState(false);
+            }
             return IsSucceed;
         }
 
@@ -135,29 +121,24 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         private void DoDispose()
         {
-            //if (CurrentScope == this)
-            //{
-            //    CurrentScope = _preScope;
-            //}
-            //if (_beginType == 0)
-            //{
-            //    return;
-            //}
-            //if (!IsSucceed)
-            //{
-            //    _dataBase.Transaction.Rollback();
-            //    LogRecorder.MonitorTrace("事务回滚");
-            //}
-            //else
-            //{
-            //    _dataBase.Transaction.Commit();
-            //    LogRecorder.MonitorTrace("事务提交");
-            //}
-            //if (_beginType == 2)
-            //{
-            //    _dataBase.Connection.Close();
-            //}
-            //_beginType = 0;
+            if (CurrentScope == this)
+            {
+                CurrentScope = _preScope;
+            }
+            if (!_isBegin)
+            {
+                return;
+            }
+            if (!IsSucceed)
+            {
+                _dataBase.Rollback();
+                LogRecorderX.MonitorTrace("事务回滚");
+            }
+            else
+            {
+                _dataBase.Commit();
+                LogRecorderX.MonitorTrace("事务提交");
+            }
         }
     }
 }

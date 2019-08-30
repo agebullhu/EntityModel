@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using Agebull.Common.Context;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Excel;
@@ -45,6 +46,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     分页读取
         /// </summary>
+        [Obsolete]
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc,
             Expression<Func<TData, bool>> lambda)
         {
@@ -55,6 +57,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     分页读取
         /// </summary>
+        [Obsolete]
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> lambda)
         {
             var item = Access.Compile(lambda);
@@ -64,6 +67,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     取得列表数据
         /// </summary>
+        [Obsolete]
         public ApiPageData<TData> PageData(int page, int limit, string condition, params DbParameter[] args)
         {
             return PageData(page, limit, null, false, condition, args);
@@ -111,7 +115,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public ApiFileResult Import(string sheetName, LambdaItem<TData> filter)
+        public ApiFileResult Export(string sheetName, LambdaItem<TData> filter)
         {
             var exporter = new ExcelExporter<TData, TAccess>
             {
@@ -341,7 +345,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public bool Delete(long id)
         {
-            if (!DataExtendChecker.PrepareDelete<TData>(new[] {id}))
+            if (!DataExtendChecker.PrepareDelete<TData>(new[] { id }))
             {
                 return false;
             }
@@ -369,11 +373,14 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            if (!DoDelete(id))
-                return false;
-            OnDeleted(id);
-            LogRecorderX.MonitorTrace("Delete");
-            OnStateChanged(id, BusinessCommandType.Delete);
+            using (ManageModeScope.CreateScope())
+            {
+                if (!DoDelete(id))
+                    return false;
+                OnDeleted(id);
+                LogRecorderX.MonitorTrace("Delete");
+                OnStateChanged(id, BusinessCommandType.Delete);
+            }
             return true;
         }
 

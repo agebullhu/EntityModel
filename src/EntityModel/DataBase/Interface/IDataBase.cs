@@ -28,6 +28,9 @@ namespace Agebull.EntityModel.Common
         {
             get;
         }
+
+        #region 事务及连接范围
+
         /// <summary>
         /// 生成数据库使用范围
         /// </summary>
@@ -35,11 +38,32 @@ namespace Agebull.EntityModel.Common
         IDisposable CreateDataBaseScope();
 
         /// <summary>
+        ///     事务对象
+        /// </summary>
+        DbTransaction Transaction { get; }
+        /// <summary>
+        /// 开始一个事务
+        /// </summary>
+        /// <returns></returns>
+        bool BeginTransaction();
+
+        /// <summary>
         /// 生成事务范围
         /// </summary>
         /// <returns></returns>
         ITransactionScope CreateTransactionScope();
 
+        /// <summary>
+        /// 回滚事务
+        /// </summary>
+        void Rollback();
+
+        /// <summary>
+        /// 提交事务
+        /// </summary>
+        void Commit();
+
+        #endregion
 
         #region 连接
         /// <summary>
@@ -152,9 +176,9 @@ namespace Agebull.EntityModel.Common
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
         T ExecuteScalar<T>(string sql, params DbParameter[] args);
-        
+
         #endregion
-        
+
         #region 生成命令对象
 
         /// <summary>

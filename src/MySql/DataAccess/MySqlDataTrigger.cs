@@ -30,9 +30,9 @@ namespace Agebull.EntityModel.MySql
 
         void IDataUpdateTrigger.OnPrepareSave(EditDataObject entity, DataOperatorType operatorType)
         {
-            if (!GlobalContext.Current.IsSystemMode &&
-                GlobalContext.Current.User.UserId != LoginUserInfo.SystemUserId &&
-                entity is IOrganizationData organizationData)
+            if (GlobalContext.Current.IsSystemMode || GlobalContext.Current.User.UserId == LoginUserInfo.SystemUserId)
+                return;
+            if (entity is IOrganizationData organizationData)
             {
                 organizationData.OrganizationId = GlobalContext.Current.Organizational.OrgId;
             }

@@ -132,6 +132,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
+        [Obsolete]
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
         {
             return Access.FirstOrDefault(lambda);
