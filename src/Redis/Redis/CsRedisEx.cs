@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using Agebull.Common.Configuration;
 using System.Threading;
+using Agebull.EntityModel.Redis;
 using CSRedis;
-using Gboxt.Common.DataModel;
 using Newtonsoft.Json;
+using Agebull.EntityModel.Common;
 
 namespace Agebull.Common.DataModel.Redis
 {
@@ -18,7 +19,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 不关闭
         /// </summary>
-        bool IRedis.NoClose => false;
+        bool IRedis.NoClose => true;
 
         /// <summary>
         /// 静态构造
@@ -57,22 +58,15 @@ namespace Agebull.Common.DataModel.Redis
 
         #region 构造
 
-        private static ConnectionPool _connectionPool;
-        private RedisConnection2 _connection;
         /// <summary>
         /// 锁对象
         /// </summary>
         private static readonly object LockObj = new object();
 
         /// <summary>
-        /// 使用哪个数据库
-        /// </summary>
-        private long _db;
-
-        /// <summary>
         /// 当前数据库
         /// </summary>
-        public long CurrentDb => _db;
+        public long CurrentDb { get; }
 
         /// <summary>
         /// 构造
@@ -80,51 +74,45 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="db"></param>
         public CSRedisEx(long db = 0)
         {
-            _db = db;
+            CurrentDb = db;
         }
-
-        /// <summary>
-        /// 使用中的
-        /// </summary>
-        private readonly Dictionary<long, RedisConnection2> Used = new Dictionary<long, RedisConnection2>();
 
         /// <summary>
         /// 客户端类
         /// </summary>
-        internal RedisClient _client;
+        private CSRedisClient _client;
+
         /// <summary>
         /// 得到一个可用的Redis客户端
         /// </summary>
-        public RedisClient Client
+        public CSRedisClient Client
         {
             get
             {
                 if (_client != null)
                     return _client;
-                return _client = CreateClient(_db);
+                return _client = CreateClient(CurrentDb);
             }
         }
 
-        private string ConnectString(long db) =>
+        static string ConnectString(long db) =>
             string.IsNullOrEmpty(PassWord)
                 ? $"{Address}:{Port},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240"
                 : $"{Address}:{Port},password={PassWord},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240";
 
-        private RedisClient CreateClient(long db)
+
+        static readonly Dictionary<long, CSRedisClient> _clients = new Dictionary<long, CSRedisClient>();
+
+        static CSRedisClient CreateClient(long db)
         {
             Monitor.Enter(LockObj);
             try
             {
-                _db = db;
-                if (Used.TryGetValue(db, out _connection))
-                    return _connection.Client;
-                _connectionPool = new ConnectionPool
-                {
-                    ConnectionString = ConnectString(db)
-                };
-                _connection = _connectionPool.GetConnection();
-                Used.Add(db, _connection);
-                return _connection.Client;
+                if (_clients.TryGetValue(db, out var client))
+                    return client;
+                client = new CSRedisClient(ConnectString(db));
+                _clients.Add(db, client);
+                return client;
             }
             finally
             {
@@ -138,17 +126,15 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         public void Dispose()
         {
-            Monitor.Enter(LockObj);
-            try
-            {
-                foreach (var con in Used.Values)
-                    con.Dispose();
-                Used.Clear();
-            }
-            finally
-            {
-                Monitor.Exit(LockObj);
-            }
+            //Monitor.Enter(LockObj);
+            //try
+            //{
+            //    _client.Dispose();
+            //}
+            //finally
+            //{
+            //    Monitor.Exit(LockObj);
+            //}
         }
 
 
@@ -256,7 +242,7 @@ namespace Agebull.Common.DataModel.Redis
             where T : struct
         {
             var str = Client.Get(key);
-            return string.IsNullOrEmpty(str) ? default(T) : JsonConvert.DeserializeObject<T>(str);
+            return string.IsNullOrEmpty(str) ? default : JsonConvert.DeserializeObject<T>(str);
         }
         /// <summary>
         /// 写值
@@ -335,9 +321,7 @@ namespace Agebull.Common.DataModel.Redis
             where T : class
         {
             var str = Client.Get(key);
-            if (string.IsNullOrEmpty(str))
-                return default(T);
-            return JsonConvert.DeserializeObject<T>(str);
+            return string.IsNullOrEmpty(str) ? null : JsonConvert.DeserializeObject<T>(str);
         }
         /// <summary>
         /// 试图取值
@@ -350,7 +334,7 @@ namespace Agebull.Common.DataModel.Redis
         {
             var str = Client.Get(key);
             if (string.IsNullOrEmpty(str))
-                return default(T);
+                return null;
             try
             {
                 return JsonConvert.DeserializeObject<T>(str);
@@ -382,7 +366,7 @@ namespace Agebull.Common.DataModel.Redis
         public void Set<T>(string key, T value, DateTime last)
             where T : class
         {
-            Client.Set(key, JsonConvert.SerializeObject(value),DateTime.Now- last);
+            Client.Set(key, JsonConvert.SerializeObject(value),(int)(last-DateTime.Now).TotalSeconds);
         }
 
         /// <summary>
@@ -395,7 +379,7 @@ namespace Agebull.Common.DataModel.Redis
         public void Set<T>(string key, T value, TimeSpan span)
             where T : class
         {
-            Client.Set(key, JsonConvert.SerializeObject(value), span);
+            Client.Set(key, JsonConvert.SerializeObject(value), (int)span.TotalSeconds);
         }
 
         #endregion
@@ -486,12 +470,12 @@ namespace Agebull.Common.DataModel.Redis
 
         long IRedis.Incr(string key)
         {
-            return Client.Incr(key);
+            return Client.IncrBy(key);
         }
 
         long IRedis.Decr(string key)
         {
-            return Client.Decr(key);
+            throw new NotSupportedException("未实现");
         }
 
         #endregion

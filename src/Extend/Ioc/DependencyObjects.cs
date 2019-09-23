@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -22,10 +23,10 @@ namespace Agebull.EntityModel.Common
     /// <remarks>
     ///     依赖对象都为IgnoreDataMember属性,即不可网络序列化
     /// </remarks>
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public sealed class DependencyObjects
     {
-        [DataMember]
+        [JsonIgnore]
         private readonly Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
 
         /// <summary>
@@ -60,8 +61,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public T AutoDependency<T>() where T : class, new()
         {
-            object value1;
-            if (_dictionary.TryGetValue(typeof(T), out value1))
+            if (_dictionary.TryGetValue(typeof(T), out var value1))
             {
                 return value1 as T;
             }
@@ -69,14 +69,14 @@ namespace Agebull.EntityModel.Common
             _dictionary.Add(typeof(T), value);
             return value;
         }
+
         /// <summary>
         ///     取得一种类型的扩展属性(需要附加)
         /// </summary>
         /// <returns></returns>
         public T Dependency<T>() where T : class
         {
-            object value1;
-            return _dictionary.TryGetValue(typeof(T), out value1) ? value1 as T : null;
+            return _dictionary.TryGetValue(typeof(T), out var value1) ? value1 as T : null;
         }
     }
 }

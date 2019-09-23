@@ -1,33 +1,9 @@
 using System;
 using System.Threading;
-using Agebull.Common.Base;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Agebull.Common.Ioc
 {
-    /// <summary>
-    /// IOC范围对象,内部框架使用
-    /// </summary>
-    public class IocScope : ScopeBase
-    {
-        /// <summary>
-        /// 生成一个范围
-        /// </summary>
-        /// <returns></returns>
-        public static IDisposable CreateScope()
-        {
-            IocHelper.CreateScope();
-            return new IocScope();
-        }
-
-        /// <summary>
-        /// 清理资源
-        /// </summary>
-        protected override void OnDispose()
-        {
-            IocHelper.DisposeScope();
-        }
-    }
     /// <summary>
     ///     简单的依赖注入器(框架内部使用,请不要调用)
     /// </summary>
@@ -106,7 +82,10 @@ namespace Agebull.Common.Ioc
         public static IServiceProvider Update()
         {
             _rootProvider = null;
-            Local.Value = null;
+            lock (Local)
+            {
+                Local.Value = null;
+            }
             return RootProvider;
         }
 

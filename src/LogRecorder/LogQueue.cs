@@ -12,6 +12,11 @@ namespace Agebull.Common
     internal class LogQueue
     {
         /// <summary>
+        /// 是否不为空
+        /// </summary>
+        public bool IsEmpty => Line2.Count == 0 && Line1.Count == 0;
+        
+        /// <summary>
         /// 内部队列
         /// </summary>
         public List<RecordInfo> Line1 = new List<RecordInfo>();
@@ -40,10 +45,22 @@ namespace Agebull.Common
         /// </summary>
         public List<RecordInfo> Switch()
         {
-            _useOnce = !_useOnce;
-            return _useOnce ? Line2 : Line1;
+            List<RecordInfo> result;
+            lock (this)
+            {
+                _useOnce = !_useOnce;
+                if (_useOnce)
+                {
+                    result = Line2;
+                    Line2 = new List<RecordInfo>();
+                }
+                else
+                {
+                    result = Line1;
+                    Line1 = new List<RecordInfo>();
+                }
+            }
+            return result;
         }
-
-        public bool IsEmpty => Line2.Count == 0 && Line1.Count == 0;
     }
 }

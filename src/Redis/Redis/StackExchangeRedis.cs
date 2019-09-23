@@ -64,29 +64,39 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         public StackExchangeRedis()
         {
-            if (_connect == null)
-                _connect = ConnectionMultiplexer.Connect(ConnectString);
-            else
+            lock (LockObj)
             {
-                try
-                {
-                    _connect.GetDatabase().Ping();
-                }
-                catch (Exception e1)
-                {
-                    LogRecorderX.Exception(e1, "StackExchangeRedis.ctor");
-                    try
-                    {
-                        _connect.Close();
-                        _connect.Dispose();
-                    }
-                    catch (Exception e)
-                    {
-                        LogRecorderX.Exception(e, "StackExchangeRedis.ctor");
-                    }
-                    _connect = ConnectionMultiplexer.Connect(ConnectString);
-                }
+                CheckConnect();
             }
+        }
+
+        async void CheckConnect()
+        {
+            if (_connect == null)
+            {
+                Connect = _connect = await ConnectionMultiplexer.ConnectAsync(ConnectString);
+                return;
+            }
+
+            Connect = _connect;
+            //try
+            //{
+            //    await Client.PingAsync();
+            //}
+            //catch (Exception e1)
+            //{
+            //    LogRecorderX.Exception(e1, "StackExchangeRedis.CheckConnect");
+            //    try
+            //    {
+            //       await _connect.CloseAsync();
+            //        _connect.Dispose();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        LogRecorderX.Exception(e, "StackExchangeRedis.Dispose");
+            //    }
+            //    Connect = _connect = await ConnectionMultiplexer.ConnectAsync(ConnectString);
+            //}
         }
 
         /// <summary>
@@ -105,12 +115,14 @@ namespace Agebull.EntityModel.Redis
         /// 空闲的
         /// </summary>
         private static readonly Dictionary<int, List<RedisClient>> Idle = new Dictionary<int, List<RedisClient>>();*/
+
+
         private static ConnectionMultiplexer _connect;
 
         /// <summary>
         /// 得到一个可用的Redis客户端
         /// </summary>
-        public ConnectionMultiplexer Connect => _connect;
+        public ConnectionMultiplexer Connect { get; set; }
 
 
         /// <summary>
@@ -211,7 +223,7 @@ namespace Agebull.EntityModel.Redis
             long cursor = 0;
             do
             {
-                var res = server.Keys((int)CurrentDb, pattern, 10, cursor,0);
+                var res = server.Keys((int)CurrentDb, pattern, 10, cursor, 0);
                 foreach (var key in res)
                     keys.Add(key);
                 var scaninfo = (IScanningCursor)res;

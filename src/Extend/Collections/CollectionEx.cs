@@ -73,8 +73,7 @@ namespace System.Linq
                 return new List<T>();
             }
 
-            var entityList = source as List<T>;
-            if (entityList != null)
+            if (source is List<T> entityList)
             {
                 return entityList;
             }
@@ -1128,8 +1127,7 @@ namespace System.Linq
                 return new List<T>();
             }
 
-            var entityList = source as List<T>;
-            if (entityList != null)
+            if (source is List<T> entityList)
             {
                 return entityList;
             }
@@ -1154,8 +1152,7 @@ namespace System.Linq
                 return new ObservableCollection<T>();
             }
 
-            var entityList = source as ObservableCollection<T>;
-            if (entityList != null)
+            if (source is ObservableCollection<T> entityList)
             {
                 return entityList;
             }
@@ -1210,8 +1207,7 @@ namespace System.Linq
                 return new List<T>();
             }
 
-            var entityList = source as List<T>;
-            if (entityList != null)
+            if (source is List<T> entityList)
             {
                 return entityList;
             }
@@ -1238,8 +1234,7 @@ namespace System.Linq
                 return new List<T>();
             }
 
-            var entityList = source as List<T>;
-            if (entityList != null)
+            if (source is List<T> entityList)
             {
                 return entityList;
             }

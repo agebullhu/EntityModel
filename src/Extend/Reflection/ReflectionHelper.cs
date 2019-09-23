@@ -160,8 +160,7 @@ namespace Agebull.Common.Reflection
         /// <returns> 已装入的程序集 </returns>
         public static Assembly LoadAssembly(string path)
         {
-            Assembly assembly;
-            if (!loadedAssemblies.TryGetValue(Path.GetFileNameWithoutExtension(path), out assembly))
+            if (!loadedAssemblies.TryGetValue(Path.GetFileNameWithoutExtension(path), out var assembly))
             {
                 assembly = Assembly.LoadFrom(path);
                 loadedAssemblies.Add(assembly.FullName, assembly);

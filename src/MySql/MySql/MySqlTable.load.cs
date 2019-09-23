@@ -870,16 +870,24 @@ namespace Agebull.EntityModel.MySql
 
 
 
-        private List<TData> LoadPageData(int page, int limit, string order, bool desc, string condition,DbParameter[] args)
+        private List<TData> LoadPageData(int page, int limit, string order, bool desc, string condition, DbParameter[] args)
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = cmd.ExecuteReader())
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = (MySqlDataReader)task.Result)
                 {
-                    while (reader.Read())
+                    while (true)
+                    {
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                            break;
                         results.Add(LoadEntity(reader));
+                    }
                 }
             }
 
@@ -1062,20 +1070,25 @@ namespace Agebull.EntityModel.MySql
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
 
+            using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
             {
-                using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = (MySqlDataReader)task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                        {
-                            var vl = reader.GetValue(0);
-                            if (vl != DBNull.Value && vl != null)
-                                values.Add((TField)vl);
-                        }
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                            break;
+                        var vl = reader.GetValue(0);
+                        if (vl != DBNull.Value && vl != null)
+                            values.Add((TField)vl);
                     }
                 }
             }
+
             return values;
         }
 
@@ -1139,20 +1152,25 @@ namespace Agebull.EntityModel.MySql
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
 
+            using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var cmd = DataBase.CreateCommand(sql, args))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = (MySqlDataReader)task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                        {
-                            var vl = reader.GetValue(0);
-                            if (vl != DBNull.Value && vl != null)
-                                values.Add(vl);
-                        }
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                            break;
+                        var vl = reader.GetValue(0);
+                        if (vl != DBNull.Value && vl != null)
+                            values.Add(vl);
                     }
                 }
             }
+
             return values;
         }
 
@@ -1604,18 +1622,25 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
 
+            using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var cmd = DataBase.CreateCommand(sql, args))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = (MySqlDataReader)task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                            break;
+                        results.Add(LoadEntity(reader));
                     }
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 
@@ -1626,19 +1651,26 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
 
+            using (var cmd = DataBase.CreateCommand(procedure, args))
             {
-                using (var cmd = DataBase.CreateCommand(procedure, args))
+                cmd.CommandType = CommandType.StoredProcedure;
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = (MySqlDataReader)task.Result)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                            break;
+                        results.Add(LoadEntity(reader));
                     }
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 

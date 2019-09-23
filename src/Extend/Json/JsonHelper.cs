@@ -8,7 +8,7 @@ namespace Agebull.MicroZero
     /// </summary>
     public static class JsonHelper
     {
-        private static readonly byte[] EmptyBytes = { 0 };
+        private static readonly byte[] _emptyBytes = { 0 };
 
         /// <summary>
         /// 转为UTF8字节
@@ -17,7 +17,7 @@ namespace Agebull.MicroZero
         /// <returns>字节</returns>
         public static byte[] ToZeroBytes<T>(this T v) where T : class
         {
-            return v == null ? EmptyBytes : Encoding.UTF8.GetBytes(SerializeObject(v));
+            return v == null ? _emptyBytes : Encoding.UTF8.GetBytes(SerializeObject(v));
         }
 
         /// <summary>

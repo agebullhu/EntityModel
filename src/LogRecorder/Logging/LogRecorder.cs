@@ -145,6 +145,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         static LogRecorderX()
         {
+            IocHelper.AddScoped<MonitorItem, MonitorItem>();
             var sec = ConfigurationManager.Get("LogRecorder");
             if (sec != null)
             {
@@ -195,7 +196,7 @@ namespace Agebull.Common.Logging
         public static void Shutdown()
         {
             State = LogRecorderStatus.Shutdown;
-            syncSlim.Wait();
+            _syncSlim.Wait();
             if (RecordInfos.Line1.Count > 0)
                 BaseRecorder.RecordLog(RecordInfos.Line1);
             if (RecordInfos.Line2.Count > 0)
@@ -641,12 +642,15 @@ namespace Agebull.Common.Logging
 
         #region 内部真实记录
 
-        private static readonly SemaphoreSlim syncSlim = new SemaphoreSlim(1);
+        /// <summary>
+        /// 线程同步结束信息量
+        /// </summary>
+        private static readonly SemaphoreSlim _syncSlim = new SemaphoreSlim(1);
 
         /// <summary>
         /// 待写入的日志信息集合
         /// </summary>
-        private static readonly LogQueue RecordInfos = new LogQueue();
+        internal static readonly LogQueue RecordInfos = new LogQueue();
 
         /// <summary>
         /// 日志序号
@@ -685,16 +689,29 @@ namespace Agebull.Common.Logging
                     ThreadID = Thread.CurrentThread.ManagedThreadId,
                     TypeName = typeName ?? LogEnumHelper.TypeToString(type)
                 });
+            if (BackIsRuning == 0)
+            {
+                Task.Factory.StartNew(WriteRecordLoop);
+            }
         }
+
+        /// <summary>
+        /// 后台线程是否启动
+        /// </summary>
+        internal static int BackIsRuning;
 
         /// <summary>
         ///  日志记录独立线程
         /// </summary>
         private static void WriteRecordLoop()
         {
+            if (Interlocked.Add(ref BackIsRuning, 1) > 1)
+            {
+                return;
+            }
             SystemTrace(LogLevel.System, "日志开始");
             int cnt = 0;
-            while (State != LogRecorderStatus.Shutdown || !RecordInfos.IsEmpty)
+            while (!RecordInfos.IsEmpty || State != LogRecorderStatus.Shutdown)
             {
                 //Thread.Sleep(10);//让子弹飞一会
                 if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
@@ -702,27 +719,33 @@ namespace Agebull.Common.Logging
                     Thread.Sleep(50);
                     continue;
                 }
-                var items = RecordInfos.Switch();
-                if (items.Count == 0)
+                var array = RecordInfos.Switch();
+                if (array.Count == 0)
                 {
                     Thread.Sleep(50);
                     continue;
                 }
-                var array = items.ToList();
-                items.Clear();
                 foreach (var info in array)
                 {
-                    info.Index = ++_id;
-                    if (_id == ulong.MaxValue)
-                        _id = 1;
-                    if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
-                        BaseRecorder.RecordLog(info);
-                    if (Listener != null || TraceToConsole)
-                        DoTrace(info);
+                    try
+                    {
+                        info.Index = ++_id;
+                        if (_id == ulong.MaxValue)
+                            _id = 1;
+                        if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
+                            BaseRecorder.RecordLog(info);
+                        if (Listener != null || TraceToConsole)
+                            DoTrace(info);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
+                    }
                 }
                 try
                 {
-                    Recorder.RecordLog(array);
+                    Recorder.RecordLog(array.ToList());
                 }
                 catch (Exception ex)
                 {
@@ -735,8 +758,9 @@ namespace Agebull.Common.Logging
                 cnt = 0;
             }
 
+            BackIsRuning = 0;
             SystemTrace(LogLevel.System, "日志结束");
-            syncSlim.Release();
+            _syncSlim.Release();
         }
 
         private static void DoTrace(RecordInfo info)
@@ -763,30 +787,37 @@ namespace Agebull.Common.Logging
         /// <param name="arg"></param>
         internal static void SystemTrace(LogLevel level, string title, params object[] arg)
         {
-            lock (BaseRecorder)
+            try
             {
-                var color = Console.ForegroundColor;
-                switch (level)
+                lock (BaseRecorder)
                 {
-                    case LogLevel.Warning:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-                    case LogLevel.System:
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        break;
-                    case LogLevel.Error:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-                    case LogLevel.Debug:
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        break;
-                    case LogLevel.Trace:
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        break;
+                    var color = Console.ForegroundColor;
+                    switch (level)
+                    {
+                        case LogLevel.Warning:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            break;
+                        case LogLevel.System:
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            break;
+                        case LogLevel.Error:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            break;
+                        case LogLevel.Debug:
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
+                            break;
+                        case LogLevel.Trace:
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            break;
+                    }
+                    Console.Write($"{DateTime.Now:O} [{title}]");
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(arg.LinkToString(" | "));
                 }
-                Console.Write($"{DateTime.Now:O} [{title}]");
-                Console.ForegroundColor = color;
-                Console.WriteLine(arg.LinkToString(" | "));
+            }
+            catch
+            {
+                //BUG:555
             }
         }
 

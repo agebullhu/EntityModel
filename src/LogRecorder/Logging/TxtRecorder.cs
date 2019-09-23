@@ -156,7 +156,7 @@ namespace Agebull.Common.Logging
             {
                 cnt = 0;
                 var size = IOHelper.FolderDiskInfo(LogPath);
-                if (size.AvailableSize < 1024)
+                if (size.AvailableSize < MinFreeSize)
                     onlySystem = true;
             }
             Write(info, onlySystem);

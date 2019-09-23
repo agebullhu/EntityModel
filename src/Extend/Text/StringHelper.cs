@@ -65,6 +65,7 @@ namespace System
         }
 
         /// <summary>
+        /// 
         /// 按Ascii字节还原为文本
         /// </summary>
         /// <param name="bytes">字节</param>

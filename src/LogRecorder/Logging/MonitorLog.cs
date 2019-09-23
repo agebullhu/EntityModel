@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Agebull.Common.Ioc;
 
 namespace Agebull.Common.Logging
 {
@@ -11,15 +12,20 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 当前上下文数据
         /// </summary>
-        private static readonly AsyncLocal<MonitorItem> MonitorItemLocal = new AsyncLocal<MonitorItem>();
+        private static readonly AsyncLocal<MonitorItem> _monitorItemLocal = new AsyncLocal<MonitorItem>();
 
         [ThreadStatic]
-        private static MonitorItem _monitorItem;
+        internal static MonitorItem _monitorItem;
 
         /// <summary>
         /// 当前范围数据
         /// </summary>
-        internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = MonitorItemLocal.Value ?? (MonitorItemLocal.Value = new MonitorItem()));
+        internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = _monitorItemLocal.Value ?? (_monitorItemLocal.Value = new MonitorItem()));
+
+        ///// <summary>
+        ///// 当前范围数据
+        ///// </summary>
+        //internal static MonitorItem MonitorItem => IocHelper.Create<MonitorItem>();
 
         /// <summary>
         /// 开始检测资源
@@ -89,7 +95,7 @@ namespace Agebull.Common.Logging
             if (log != null)
                 RecordInner(LogLevel.Trace, "Monitor", log, LogType.Monitor);
             _monitorItem = null;
-            MonitorItemLocal.Value = null;
+            _monitorItemLocal.Value = null;
         }
     }
 }

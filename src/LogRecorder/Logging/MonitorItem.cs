@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using Agebull.Common.Base;
 
 namespace Agebull.Common.Logging
 {
@@ -49,7 +48,7 @@ namespace Agebull.Common.Logging
                     Title = title
                 });
                 Texter.AppendLine($@"
- Date:{DateTime.Now}    RequestId:{LogRecorderX.GetRequestId()}    Machine:{LogRecorderX.GetMachineName()}");
+ Date:{DateTime.Now}    RequestId:{LogRecorderX.GetRequestId()}    Machine:{LogRecorderX.GetMachineName()}  {LogRecorderX.BackIsRuning}=>{LogRecorderX.RecordInfos.Line1.Count}| {LogRecorderX.RecordInfos.Line2.Count}");
                 Texter.Append(' ', 24);
                 Texter.Append("标题");
                 Texter.Append(' ', 24);
@@ -192,50 +191,6 @@ namespace Agebull.Common.Logging
             Stack.Current.Coll(pre);
             Stack.Current.Flush();
         }
-
-    }
-
-    /// <summary>
-    /// 根据步骤范围
-    /// </summary>
-    public class MonitorScope : ScopeBase
-    {
-        private bool _isStep;
-        /// <summary>
-        /// 生成范围
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static MonitorScope CreateScope(string name)
-        {
-            var scope= new MonitorScope
-            {
-                _isStep = LogRecorderX.MonitorItem.InMonitor
-            };
-            if (LogRecorderX.MonitorItem.InMonitor)
-                LogRecorderX.BeginStepMonitor(name);
-            else
-                LogRecorderX.BeginMonitor(name);
-            return scope;
-        }
-
-        /// <summary>
-        /// 清理资源
-        /// </summary>
-        protected override void OnDispose()
-        {
-            if (_isStep)
-                LogRecorderX.EndStepMonitor();
-            else
-                LogRecorderX.EndMonitor();
-        }
-    }
-
-    /// <summary>
-    /// 根据步骤范围
-    /// </summary>
-    public class MonitorStepScope : MonitorScope
-    {
 
     }
 }

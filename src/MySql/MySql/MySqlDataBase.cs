@@ -470,15 +470,14 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         protected int ExecuteInner(string sql, params DbParameter[] args)
         {
-            lock (this)
+            int result;
+            using (var cmd = CreateCommand(sql, args))
             {
-                int result;
-                using (var cmd = CreateCommand(sql, args))
-                {
-                    result = cmd.ExecuteNonQuery();
-                }
-                return result;
+                var task = cmd.ExecuteNonQueryAsync();
+                task.Wait();
+                result = task.Result;
             }
+            return result;
         }
 
         /// <summary>
@@ -492,15 +491,14 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         protected object ExecuteScalarInner(string sql, params DbParameter[] args)
         {
-            lock (this)
+            object result;
+            using (var cmd = CreateCommand(sql, args))
             {
-                object result;
-                using (var cmd = CreateCommand(sql, args))
-                {
-                    result = cmd.ExecuteScalar();
-                }
-                return result == DBNull.Value ? null : result;
+                var task = cmd.ExecuteScalarAsync();
+                task.Wait();
+                result = task.Result;
             }
+            return result == DBNull.Value ? null : result;
         }
 
         /// <summary>

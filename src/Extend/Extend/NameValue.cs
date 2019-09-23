@@ -9,6 +9,7 @@
 #region 引用
 
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -19,26 +20,27 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     /// <typeparam name="TName"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    [DataContract(Name = "NameValue1", Namespace = "http://www.gboxt.com/2011")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class NameValue<TName, TValue>
     {
         /// <summary>
         ///     名称
         /// </summary>
         [DataMember(Name = "name")]
-        public TName name;
+        public TName Name;
 
         /// <summary>
         ///     值
         /// </summary>
         [DataMember(Name = "value")]
-        public TValue value;
+        public TValue Value;
     }
+
 
     /// <summary>
     ///     名称内容对象
     /// </summary>
-    [DataContract(Name = "NameValue2", Namespace = "http://www.gboxt.com/2011")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class NameValue<TValue> : NameValue<string, TValue>
     {
     }
@@ -46,7 +48,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     名称内容对象
     /// </summary>
-    [DataContract(Name = "NameValue", Namespace = "http://www.gboxt.com/2011")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class NameValue : NameValue<string, string>
     {
         /// <summary>
@@ -63,14 +65,15 @@ namespace Agebull.EntityModel.Common
         /// <param name="v"></param>
         public NameValue(string n, object v)
         {
-            name = n;
-            value = v == null ? null : v.ToString();
+            Name = n;
+            Value = v?.ToString();
         }
     }
+
     /// <summary>
     ///     名称内容对象
     /// </summary>
-    [DataContract(Name = "NameValue2", Namespace = "http://www.gboxt.com/2011")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class NameValue2 : NameValue<string, object>
     {
         /// <summary>
@@ -87,8 +90,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="v"></param>
         public NameValue2(string n, object v)
         {
-            name = n;
-            value = v;
+            Name = n;
+            Value = v;
         }
     }
 }

@@ -63,13 +63,13 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            var nv = value as decimal?;
-            if (nv != null)
+
+            if (value is decimal nv)
             {
-                return FormatDecimal(nv.Value, f);
+                return FormatDecimal(nv, f);
             }
-            decimal v;
-            return decimal.TryParse(value.ToString(), out v)
+
+            return decimal.TryParse(value.ToString(), out var v)
                            ? FormatDecimal(v, f)
                            : null;
         }
@@ -88,8 +88,7 @@ namespace Agebull.Common.Base
             }
             if (f < 0)
             {
-                long v;
-                return long.TryParse(value.ToString(), out v)
+                return long.TryParse(value.ToString(CultureInfo.InvariantCulture), out var v)
                                ? f.ToString(CultureInfo.InvariantCulture)
                                : null;
             }
@@ -136,36 +135,32 @@ namespace Agebull.Common.Base
         ///   文本到long
         /// </summary>
         /// <param name="value"> </param>
+        /// <param name="def"></param>
         /// <returns> </returns>
-        public static long StringToInt64(string value)
+        public static long StringToInt64(string value, long def = 0)
         {
-            if (!string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value)) return def;
+            if (Int64.TryParse(value, out var d))
             {
-                long d;
-                if (Int64.TryParse(value, out d))
-                {
-                    return d;
-                }
+                return d;
             }
-            return 0L;
+            return def;
         }
 
         /// <summary>
         ///   文本到int
         /// </summary>
         /// <param name="value"> </param>
+        /// <param name="def"></param>
         /// <returns> </returns>
-        public static int StringToInt32(string value)
+        public static int StringToInt32(string value, int def = 0)
         {
-            if (!string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value)) return def;
+            if (Int32.TryParse(value, out var d))
             {
-                int d;
-                if (Int32.TryParse(value, out d))
-                {
-                    return d;
-                }
+                return d;
             }
-            return 0;
+            return def;
         }
 
         /// <summary>
@@ -177,8 +172,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                short d;
-                if (Int16.TryParse(value, out d))
+                if (Int16.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -195,8 +189,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                byte d;
-                if (byte.TryParse(value, out d))
+                if (byte.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -213,8 +206,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                decimal d;
-                if (decimal.TryParse(value, out d))
+                if (decimal.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -231,8 +223,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Double d;
-                if (Double.TryParse(value, out d))
+                if (Double.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -249,8 +240,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                float d;
-                if (float.TryParse(value, out d))
+                if (float.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -267,8 +257,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                DateTime d;
-                if (DateTime.TryParse(value, out d))
+                if (DateTime.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -299,8 +288,6 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                bool d;
-                int i;
                 if (value == "on" || value == "yes")
                 {
                     return true;
@@ -309,11 +296,11 @@ namespace Agebull.Common.Base
                 {
                     return false;
                 }
-                if (int.TryParse(value, out i))
+                if (int.TryParse(value, out var i))
                 {
                     return i != 0;
                 }
-                if (bool.TryParse(value, out d))
+                if (bool.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -330,8 +317,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Guid g;
-                if (Guid.TryParse(value, out g))
+                if (Guid.TryParse(value, out var g))
                 {
                     return g;
                 }
@@ -372,8 +358,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Int64 d;
-                if (Int64.TryParse(value, out d))
+                if (Int64.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -390,8 +375,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Int32 d;
-                if (Int32.TryParse(value, out d))
+                if (Int32.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -408,8 +392,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Int16 d;
-                if (Int16.TryParse(value, out d))
+                if (Int16.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -426,8 +409,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                byte d;
-                if (byte.TryParse(value, out d))
+                if (byte.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -444,8 +426,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                decimal d;
-                if (decimal.TryParse(value, out d))
+                if (decimal.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -462,8 +443,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Double d;
-                if (Double.TryParse(value, out d))
+                if (Double.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -480,8 +460,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                float d;
-                if (float.TryParse(value, out d))
+                if (float.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -498,8 +477,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                DateTime d;
-                if (DateTime.TryParse(value, out d))
+                if (DateTime.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -530,8 +508,6 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                bool d;
-                int i;
                 if (value == "on" || value == "yes")
                 {
                     return true;
@@ -540,11 +516,11 @@ namespace Agebull.Common.Base
                 {
                     return false;
                 }
-                if (int.TryParse(value, out i))
+                if (int.TryParse(value, out var i))
                 {
                     return i != 0;
                 }
-                if (bool.TryParse(value, out d))
+                if (bool.TryParse(value, out var d))
                 {
                     return d;
                 }
@@ -561,8 +537,7 @@ namespace Agebull.Common.Base
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                Guid g;
-                if (Guid.TryParse(value, out g))
+                if (Guid.TryParse(value, out var g))
                 {
                     return g;
                 }
@@ -599,18 +574,18 @@ namespace Agebull.Common.Base
         /// <returns> 日期 </returns>
         public static float ValueToFloat(object value)
         {
-            if (value is float)
+            if (value is float f)
             {
-                return (float)value;
+                return f;
             }
             if (value == null || value == DBNull.Value)
             {
-                return default(float);
+                return 0F;
             }
-            float t;
-            return float.TryParse(value.ToString(), out t)
+
+            return float.TryParse(value.ToString(), out var t)
                            ? t
-                           : default(float);
+                           : 0F;
         }
 
         /// <summary>
@@ -620,16 +595,16 @@ namespace Agebull.Common.Base
         /// <returns> 日期 </returns>
         public static float? ValueToNullableFloat(object value)
         {
-            if (value is float)
+            if (value is float f)
             {
-                return (float)value;
+                return f;
             }
             if (value == null || value == DBNull.Value)
             {
                 return null;
             }
-            float t;
-            return float.TryParse(value.ToString(), out t)
+
+            return float.TryParse(value.ToString(), out var t)
                            ? (float?)t
                            : null;
         }
@@ -649,8 +624,8 @@ namespace Agebull.Common.Base
             {
                 return default(double);
             }
-            double t;
-            return double.TryParse(value.ToString(), out t)
+
+            return double.TryParse(value.ToString(), out var t)
                            ? t
                            : default(double);
         }
@@ -670,8 +645,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            double t;
-            return double.TryParse(value.ToString(), out t)
+
+            return double.TryParse(value.ToString(), out var t)
                            ? (double?)t
                            : null;
         }
@@ -691,8 +666,8 @@ namespace Agebull.Common.Base
             {
                 return default(DateTime);
             }
-            DateTime t;
-            return DateTime.TryParse(value.ToString(), out t)
+
+            return DateTime.TryParse(value.ToString(), out var t)
                            ? t
                            : default(DateTime);
         }
@@ -712,8 +687,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            DateTime t;
-            return DateTime.TryParse(value.ToString(), out t)
+
+            return DateTime.TryParse(value.ToString(), out var t)
                            ? (DateTime?)t
                            : null;
         }
@@ -733,8 +708,8 @@ namespace Agebull.Common.Base
             {
                 return 0M;
             }
-            decimal t;
-            return decimal.TryParse(value.ToString(), out t)
+
+            return decimal.TryParse(value.ToString(), out var t)
                            ? t
                            : 0M;
         }
@@ -754,8 +729,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            decimal t;
-            if (decimal.TryParse(value.ToString(), out t))
+
+            if (decimal.TryParse(value.ToString(), out var t))
             {
                 return t;
             }
@@ -777,8 +752,8 @@ namespace Agebull.Common.Base
             {
                 return 0L;
             }
-            long t;
-            return long.TryParse(value.ToString(), out t)
+
+            return long.TryParse(value.ToString(), out var t)
                            ? t
                            : 0L;
         }
@@ -798,8 +773,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            long t;
-            return long.TryParse(value.ToString(), out t)
+
+            return long.TryParse(value.ToString(), out var t)
                            ? (long?)t
                            : null;
         }
@@ -819,8 +794,8 @@ namespace Agebull.Common.Base
             {
                 return 0;
             }
-            int t;
-            return int.TryParse(value.ToString(), out t)
+
+            return int.TryParse(value.ToString(), out var t)
                            ? t
                            : 0;
         }
@@ -840,8 +815,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            int t;
-            if (int.TryParse(value.ToString(), out t))
+
+            if (int.TryParse(value.ToString(), out var t))
             {
                 return t;
             }
@@ -863,8 +838,8 @@ namespace Agebull.Common.Base
             {
                 return Guid.Empty;
             }
-            Guid t;
-            return Guid.TryParse(value.ToString(), out t)
+
+            return Guid.TryParse(value.ToString(), out var t)
                            ? t
                            : Guid.Empty;
         }
@@ -884,8 +859,8 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            Guid t;
-            return Guid.TryParse(value.ToString(), out t)
+
+            return Guid.TryParse(value.ToString(), out var t)
                            ? (Guid?)t
                            : null;
         }
@@ -905,12 +880,10 @@ namespace Agebull.Common.Base
             {
                 return false;
             }
-            var sv = value as string;
-            if (sv != null)
+
+            if (value is string sv)
             {
                 sv = sv.ToLower();
-                bool d;
-                int i;
                 switch (sv)
                 {
                     case "yes":
@@ -920,14 +893,14 @@ namespace Agebull.Common.Base
                     case "off":
                         return false;
                 }
-                if (int.TryParse(sv, out i))
+                if (int.TryParse(sv, out var i))
                 {
                     return i != 0;
                 }
-                return bool.TryParse(sv, out d) && d;
+                return bool.TryParse(sv, out var d) && d;
             }
-            bool t;
-            return bool.TryParse(value.ToString(), out t) && t;
+
+            return bool.TryParse(value.ToString(), out var t) && t;
         }
 
         /// <summary>
@@ -937,8 +910,7 @@ namespace Agebull.Common.Base
         /// <returns> 数字 </returns>
         public static bool? ValueToNullableBool(object value)
         {
-            var b = value as bool?;
-            if (b != null)
+            if (value is bool b)
             {
                 return b;
             }
@@ -946,12 +918,10 @@ namespace Agebull.Common.Base
             {
                 return null;
             }
-            var sv = value as string;
-            if (sv != null)
+
+            if (value is string sv)
             {
                 sv = sv.ToLower();
-                bool d;
-                int i;
                 if (sv == "on" || sv == "yes")
                 {
                     return true;
@@ -960,16 +930,16 @@ namespace Agebull.Common.Base
                 {
                     return false;
                 }
-                if (int.TryParse(sv, out i))
+                if (int.TryParse(sv, out var i))
                 {
                     return i != 0;
                 }
-                return bool.TryParse(sv, out d)
+                return bool.TryParse(sv, out var d)
                                ? (bool?)d
                                : null;
             }
-            bool t;
-            return bool.TryParse(value.ToString(), out t)
+
+            return bool.TryParse(value.ToString(), out var t)
                            ? (bool?)t
                            : null;
         }
@@ -1007,8 +977,7 @@ namespace Agebull.Common.Base
             });
             foreach (var si in i)
             {
-                long l;
-                if (long.TryParse(si.Trim(), out l))
+                if (long.TryParse(si.Trim(), out var l))
                 {
                     ids.Add(l);
                 }
@@ -1030,8 +999,7 @@ namespace Agebull.Common.Base
             });
             foreach (var si in i)
             {
-                int l;
-                if (int.TryParse(si.Trim(), out l))
+                if (int.TryParse(si.Trim(), out var l))
                 {
                     ids.Add(l);
                 }
@@ -1221,9 +1189,7 @@ namespace Agebull.Common.Base
         /// <returns> </returns>
         public static bool IsEquals(object a, object b)
         {
-            bool aNull,
-                 bNull;
-            return IsEquals(a, b, out aNull, out bNull);
+            return IsEquals(a, b, out var aNull, out var bNull);
         }
 
         #endregion
@@ -1244,8 +1210,8 @@ namespace Agebull.Common.Base
                 rv = DateTime.Today;
                 return true;
             }
-            DateTime day;
-            if (DateTime.TryParse(str, out day))
+
+            if (DateTime.TryParse(str, out var day))
             {
                 rv = day;
                 return true;
@@ -1255,8 +1221,7 @@ namespace Agebull.Common.Base
                     '年' , '月' , '日' , ':' , '_' , '-' , ' '
             });
             var v = string.Join("", ss);
-            int d;
-            if (int.TryParse(v, out d))
+            if (int.TryParse(v, out var d))
             {
                 try
                 {
@@ -1313,8 +1278,8 @@ namespace Agebull.Common.Base
                     return true;
                 }
             }
-            DateTime n;
-            if (DateTime.TryParse(str, out n))
+
+            if (DateTime.TryParse(str, out var n))
             {
                 rv = n;
                 return true;
@@ -1324,8 +1289,7 @@ namespace Agebull.Common.Base
                     '年' , '月' , '日' , ':' , '_' , '-' , ' '
             });
             var v = string.Join("", ss);
-            long d;
-            if (long.TryParse(v, out d))
+            if (long.TryParse(v, out var d))
             {
                 n = DateTime.Today;
                 if (d < 100)
@@ -1383,8 +1347,8 @@ namespace Agebull.Common.Base
                     return true;
                 }
             }
-            DateTime n;
-            if (DateTime.TryParse(str, out n))
+
+            if (DateTime.TryParse(str, out var n))
             {
                 rv = n;
                 return true;
@@ -1394,8 +1358,7 @@ namespace Agebull.Common.Base
                     '年' , '月' , '日' , ':' , '_' , '-' , ' '
             });
             var v = string.Join("", ss);
-            int d;
-            if (int.TryParse(v, out d))
+            if (int.TryParse(v, out var d))
             {
                 if (d < 100)
                 {
@@ -1796,8 +1759,7 @@ namespace Agebull.Common.Base
                     }
                     try
                     {
-                        Guid guid;
-                        dynamic re = Guid.TryParse(t.ToString(), out guid) ? guid : Guid.Empty;
+                        dynamic re = Guid.TryParse(t.ToString(), out var guid) ? guid : Guid.Empty;
                         return (T)re;
                     }
                     catch
