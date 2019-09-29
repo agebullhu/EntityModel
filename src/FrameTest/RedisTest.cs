@@ -7,7 +7,7 @@ namespace FrameTest
     {
         static void TestFind()
         {
-            IocHelper.AddScoped<IRedis, StackExchangeRedis>();
+            //IocHelper.AddScoped<IRedis, StackExchangeRedis>();
 
             //删除Redis缓存,让前台自动更新
             using (var proxy = new RedisProxy(0))

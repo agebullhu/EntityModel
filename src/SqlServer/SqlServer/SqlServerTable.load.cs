@@ -21,6 +21,7 @@ using Agebull.EntityModel.Events;
 
 using Agebull.EntityModel.Common;
 using Agebull.MicroZero.ZeroApis;
+using System.Text;
 
 #endregion
 
@@ -29,6 +30,57 @@ namespace Agebull.EntityModel.SqlServer
     partial class SqlServerTable<TData, TDataBase>
     {
         #region 遍历所有
+
+        /// <summary>
+        /// 分组
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="group"></param>
+        /// <param name="colls"></param>
+        /// <param name="lambda"></param>
+        /// <param name="readAction"></param>
+        /// <returns></returns>
+        public List<T> Group<T>(string group, Dictionary<string, string> colls, Expression<Func<TData, bool>> lambda, Action<SqlDataReader, T> readAction)
+            where T : class, new()
+        {
+            var groupF = FieldDictionary[group];
+            var code = new StringBuilder();
+            code.Append($"SELECT {groupF} as {group}");
+
+            foreach (var field in colls)
+            {
+                code.Append($",{field.Value}({FieldDictionary[field.Key]}) AS {field.Key}");
+            }
+            var convert = Compile(lambda);
+            code.AppendLine($" FROM {ContextReadTable} ");
+            code.AppendLine(ContitionSqlCode(convert.ConditionSql));
+            code.Append($" GROUP BY {groupF};");
+
+
+
+            var results = new List<T>();
+            using (var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters))
+            {
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = task.Result)
+                {
+                    while (true)
+                    {
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                        {
+                            break;
+                        }
+                        var t = new T();
+                        readAction(reader, t);
+                        results.Add(t);
+                    }
+                }
+            }
+            return results;
+        }
 
         /// <summary>
         ///     遍历所有
@@ -1016,7 +1068,7 @@ namespace Agebull.EntityModel.SqlServer
             var fn = GetPropertyName(field);
             var convert = Compile(lambda);
             var val = LoadValueInner(fn, convert.ConditionSql, convert.Parameters);
-            return val == null || val == DBNull.Value ? default(TField) : (TField)val;
+            return val == null || val == DBNull.Value ? default : (TField)val;
         }
 
         /// <summary>
@@ -1121,11 +1173,8 @@ namespace Agebull.EntityModel.SqlServer
         protected object LoadValueInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-
-
-            {
-                return DataBase.ExecuteScalar(sql, args);
-            }
+            
+            return DataBase.ExecuteScalar(sql, args);
         }
 
 
@@ -1137,20 +1186,27 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
 
+            using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var cmd = DataBase.CreateCommand(sql, args))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
                         {
-                            var vl = reader.GetValue(0);
-                            if (vl != DBNull.Value && vl != null)
-                                values.Add(vl);
+                            break;
                         }
+                        var vl = reader.GetValue(0);
+                        if (vl != DBNull.Value && vl != null)
+                            values.Add(vl);
                     }
                 }
             }
+
             return values;
         }
 
@@ -1574,18 +1630,28 @@ namespace Agebull.EntityModel.SqlServer
         {
             var results = new List<TData>();
 
+            using (var cmd = CreateLoadCommand(condition, orderBy, args))
             {
-                using (var cmd = CreateLoadCommand(condition, orderBy, args))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                        {
+                            break;
+                        }
+
+                        results.Add(LoadEntity(reader));
                     }
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 
@@ -1596,18 +1662,28 @@ namespace Agebull.EntityModel.SqlServer
         {
             var results = new List<TData>();
 
+            using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var cmd = DataBase.CreateCommand(sql, args))
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = task.Result)
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                        {
+                            break;
+                        }
+
+                        results.Add(LoadEntity(reader));
                     }
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 
@@ -1618,19 +1694,29 @@ namespace Agebull.EntityModel.SqlServer
         {
             var results = new List<TData>();
 
+            using (var cmd = DataBase.CreateCommand(procedure, args))
             {
-                using (var cmd = DataBase.CreateCommand(procedure, args))
+                cmd.CommandType = CommandType.StoredProcedure;
+                var task = cmd.ExecuteReaderAsync();
+                task.Wait();
+                using (var reader = task.Result)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    using (var reader = cmd.ExecuteReader())
+                    while (true)
                     {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
+                        var task2 = reader.ReadAsync();
+                        task2.Wait();
+                        if (!task2.Result)
+                        {
+                            break;
+                        }
+
+                        results.Add(LoadEntity(reader));
                     }
                 }
-                for (var index = 0; index < results.Count; index++)
-                    results[index] = EntityLoaded(results[index]);
             }
+
+            for (var index = 0; index < results.Count; index++)
+                results[index] = EntityLoaded(results[index]);
             return results;
         }
 

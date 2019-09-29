@@ -83,27 +83,26 @@ namespace Agebull.EntityModel.SqlServer
                 SqlServerDataBase.TraceSql(cmd);
                 if (isIdentitySql)
                 {
-                    var key = cmd.ExecuteScalar();
+                    var task = cmd.ExecuteScalarAsync();
+                    task.Wait();
+                    var key = task.Result;
                     if (key == DBNull.Value || key == null)
                         return false;
                     entity.SetValue(KeyField, key);
-
                 }
                 else
                 {
-                    if (cmd.ExecuteNonQuery() == 0)
+                    var task = cmd.ExecuteNonQueryAsync();
+                    task.Wait();
+                    if (task.Result == 0)
                         return false;
-
                 }
 
                 var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
                 if (!string.IsNullOrEmpty(sql))
-                    using (var cmd2 = DataBase.CreateCommand())
-                    {
-                        cmd2.CommandText = sql;
-                        cmd2.Parameters.Add(CreatePimaryKeyParameter(entity.GetValue(KeyField)));
-                        cmd2.ExecuteNonQuery();
-                    }
+                {
+                    DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                }
 
             }
             EndSaved(entity, DataOperatorType.Insert);
@@ -194,7 +193,9 @@ namespace Agebull.EntityModel.SqlServer
                 SetUpdateCommand(entity, cmd);
                 cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
                 SqlServerDataBase.TraceSql(cmd);
-                result = cmd.ExecuteNonQuery();
+                var task = cmd.ExecuteNonQueryAsync();
+                task.Wait();
+                result = task.Result;
             }
 
             if (result <= 0)

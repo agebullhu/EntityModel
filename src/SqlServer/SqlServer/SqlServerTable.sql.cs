@@ -42,8 +42,8 @@ namespace Agebull.EntityModel.SqlServer
                 parameters.Add(CreateFieldParameter(name, GetDbType(field), value));
                 return $"[{field}] = @{name}";
             }
-            if (value is bool)
-                value = (bool)value ? 1 : 0;
+            if (value is bool b)
+                value = b ? 1 : 0;
             else if (value is Enum)
                 value = Convert.ToInt32(value);
             return $"[{field}] = {value}";

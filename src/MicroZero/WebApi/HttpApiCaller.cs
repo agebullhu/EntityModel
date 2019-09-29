@@ -312,34 +312,6 @@ namespace Agebull.Common.Http
         /// <returns></returns>
         private static async Task<string> ReadResponse(WebResponse response)
         {
-#if NETCOREAPP
-            Memory<char> memory = new Memory<char>();
-            //int len;
-            using (response)
-            {
-                if (response.ContentLength == 0)
-                {
-                    return null;
-                }
-
-                var receivedStream = response.GetResponseStream();
-                if (receivedStream == null)
-                    return null;
-
-                using (receivedStream)
-                {
-                    using (var streamReader = new StreamReader(receivedStream))
-                    {
-                        /*len = */
-                        await streamReader.ReadAsync(memory);
-                        streamReader.Close();
-                    }
-                    receivedStream.Close();
-                }
-                response.Close();
-            }
-            return memory.ToNullString();
-#else
             string json;
             using (response)
             {
@@ -355,7 +327,7 @@ namespace Agebull.Common.Http
                 {
                     using (var streamReader = new StreamReader(receivedStream))
                     {
-                        json= await streamReader.ReadToEndAsync();
+                        json = await streamReader.ReadToEndAsync();
                         streamReader.Close();
                     }
                     receivedStream.Close();
@@ -363,7 +335,6 @@ namespace Agebull.Common.Http
                 response.Close();
             }
             return json;
-#endif
         }
 
         /// <summary>

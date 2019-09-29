@@ -495,7 +495,9 @@ namespace Agebull.EntityModel.SqlServer
                 int result;
                 using (var cmd = CreateCommand(sql, args))
                 {
-                    result = cmd.ExecuteNonQuery();
+                    var task = cmd.ExecuteNonQueryAsync();
+                    task.Wait();
+                    result = task.Result;
                 }
                 return result;
             }
@@ -517,7 +519,9 @@ namespace Agebull.EntityModel.SqlServer
                 object result;
                 using (var cmd = CreateCommand(sql, args))
                 {
-                    result = cmd.ExecuteScalar();
+                    var task = cmd.ExecuteNonQueryAsync();
+                    task.Wait();
+                    result = task.Result;
                 }
                 return result == DBNull.Value ? null : result;
             }
