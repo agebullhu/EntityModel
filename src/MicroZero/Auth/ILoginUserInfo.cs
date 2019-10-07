@@ -1,3 +1,5 @@
+using System;
+
 namespace Agebull.Common.OAuth
 {
     /// <summary>
@@ -5,6 +7,11 @@ namespace Agebull.Common.OAuth
     /// </summary>
     public interface ILoginUserInfo
     {
+        /// <summary>
+        /// 数据有效期
+        /// </summary>
+        DateTime Valid { get; set; }
+
         /// <summary>
         ///     全局用户数字标识
         /// </summary>

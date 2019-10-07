@@ -519,7 +519,7 @@ namespace Agebull.EntityModel.SqlServer
                 object result;
                 using (var cmd = CreateCommand(sql, args))
                 {
-                    var task = cmd.ExecuteNonQueryAsync();
+                    var task = cmd.ExecuteScalarAsync();
                     task.Wait();
                     result = task.Result;
                 }

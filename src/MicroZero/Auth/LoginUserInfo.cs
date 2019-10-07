@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -12,39 +13,45 @@ namespace Agebull.Common.OAuth
     public class LoginUserInfo : ILoginUserInfo
     {
         /// <summary>
+        /// 数据有效期
+        /// </summary>
+        [JsonProperty("v", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime Valid { get; set; }
+
+        /// <summary>
         ///     全局用户数字标识
         /// </summary>
-        [JsonProperty("gUserId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("gUserId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public long GlobalUserId { get; set; }
 
         /// <summary>
         ///     用户数字标识
         /// </summary>
-        [JsonProperty("userId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("userId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public long UserId { get; set; }
 
         /// <summary>
         ///     用户开放标识
         /// </summary>
-        [JsonProperty("openId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("openId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string OpenId { get; set; }
 
         /// <summary>
         ///     用户昵称
         /// </summary>
-        [JsonProperty("nickName", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("nickName",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string NickName { get; set; }
 
         /// <summary>
         ///     登录者的账号
         /// </summary>
-        [JsonProperty("account", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("account",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Account { get; set; }
 
         /// <summary>
         ///     状态
         /// </summary>
-        [JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("state",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public UserStateType State { get; set; }
 
         /// <summary>
@@ -53,38 +60,38 @@ namespace Agebull.Common.OAuth
         /// <remarks>
         ///     头像
         /// </remarks>
-        [JsonProperty("avatarUrl", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("avatarUrl",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string AvatarUrl { get; set; }
 
         /// <summary>
         ///     当前用户登录方式
         /// </summary>
-        [JsonProperty("loginType", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("loginType",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public int LoginType { get; set; }
 
         /// <summary>
         ///     登录者的手机号
         /// </summary>
-        [JsonProperty("phone", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("phone",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Phone { get; set; }
 
         /// <summary>
         ///     登录设备的标识
         /// </summary>
-        [JsonProperty("deviceId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("deviceId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string DeviceId { get; set; }
 
         /// <summary>
         ///     身份令牌
         /// </summary>
-        [JsonProperty("accessToken", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("accessToken",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string AccessToken { get; set; }
 
 
         /// <summary>
         ///     公司标识
         /// </summary>
-        [JsonProperty("orgId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("orgId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public long OrganizationId { get; set; }
 
         /// <summary>
@@ -93,7 +100,7 @@ namespace Agebull.Common.OAuth
         /// <remarks>
         ///     职位
         /// </remarks>
-        [JsonProperty("pos", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("pos",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Position { get; set; }
 
         /// <summary>
@@ -102,49 +109,49 @@ namespace Agebull.Common.OAuth
         /// <remarks>
         ///     机构
         /// </remarks>
-        [JsonProperty("org", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("org",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Organization { get; set; }
 
         /// <summary>
         ///     主要角色名称
         /// </summary>
-        [JsonProperty("role", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("role",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Role { get; set; }
 
         /// <summary>
         ///     主要角色标识
         /// </summary>
-        [JsonProperty("roleId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("roleId",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public long RoleId { get; set; }
         
         /// <summary>
         ///     用户角色标识
         /// </summary>
-        [JsonProperty("allRoleIds", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("allRoleIds",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public List<long> AllRoleIds { get; set; }
 
         /// <summary>
         ///     登录设备的操作系统
         /// </summary>
-        [JsonProperty("os", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("os",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string Os { get; set; }
 
         /// <summary>
         ///     当前用户登录到哪个系统（预先定义的系统标识）
         /// </summary>
-        [JsonProperty("app", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("app",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public string App { get; set; }
 
         /// <summary>
         ///     组织标识
         /// </summary>
-        [JsonProperty("gid", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("gid",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
         public long GroupId { get; set; }
 
         /// <summary>
         ///     扩展信息
         /// </summary>
-        [JsonProperty("ext", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("ext",DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,NullValueHandling = NullValueHandling.Ignore)]
         public string ExtendValue { get; set; }
 
         #region 预定义
