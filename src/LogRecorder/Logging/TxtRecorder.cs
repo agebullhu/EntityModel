@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Agebull.Common.Configuration;
 
 #endregion
@@ -141,7 +142,7 @@ namespace Agebull.Common.Logging
                 if (size.AvailableSize < MinFreeSize)
                     onlySystem = true;
             }
-            foreach (var info in infos)
+            foreach (var info in infos.Where(p => p != null))
                 Write(info, onlySystem);
         }
 
@@ -151,6 +152,8 @@ namespace Agebull.Common.Logging
         /// <param name="info"> 日志消息 </param>
         public void RecordLog(RecordInfo info)
         {
+            if (info == null)
+                return;
             bool onlySystem = false;
             if (++cnt >= 100)
             {

@@ -657,11 +657,8 @@ namespace Agebull.EntityModel.SqlServer
                     cmd.Parameters.AddRange(
                         sqlParameters.Where(p => p != null)
                             .Select(
-                                p =>
-                                    new SqlParameter(p.ParameterName, p.SqlDbType, p.Size, p.Direction, p.Precision, p.Scale,
-                                        p.SourceColumn, p.SourceVersion, p.SourceColumnNullMapping, p.Value,
-                                        p.XmlSchemaCollectionDatabase, p.XmlSchemaCollectionOwningSchema,
-                                        p.XmlSchemaCollectionName)).ToArray());
+                                p => new SqlParameter(p.ParameterName, p.SqlDbType, p.Size, p.Direction, p.IsNullable, p.Precision, p.Scale,
+                                        p.SourceColumn, p.SourceVersion, p.Value)).ToArray());
                 }
             }
             TraceSql(cmd);

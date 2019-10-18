@@ -6,19 +6,19 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>2.4.3.26</Version>
+    <Version>2.4.3.32</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
     <PackageId>Agebull.EntityModel.MySql</PackageId>
     <PackageTags>Agebull.EntityModel.MySql</PackageTags>
-    
-    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
-    <PackageLicenseExpression>MPL</PackageLicenseExpression>
+
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    
+    <PackageLicenseExpression>MPL</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>

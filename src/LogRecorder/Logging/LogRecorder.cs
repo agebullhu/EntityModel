@@ -727,6 +727,8 @@ namespace Agebull.Common.Logging
                 }
                 foreach (var info in array)
                 {
+                    if (info == null)
+                        continue;
                     try
                     {
                         info.Index = ++_id;

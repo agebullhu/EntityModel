@@ -526,7 +526,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public long Count(string condition, params DbParameter[] args)
         {
-            var obj = CollectInner("Count", "*", condition, args.ToArray());
+            var obj = CollectInner("Count", "*", condition, args);
             return obj == DBNull.Value || obj == null ? 0L : Convert.ToInt64(obj);
         }
 

@@ -8,7 +8,7 @@
     <PackageLicenseExpression>MPL</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    
+    <IncludeSymbols>false</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>

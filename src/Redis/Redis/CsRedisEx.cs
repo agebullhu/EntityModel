@@ -26,7 +26,8 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         static CSRedisEx()
         {
-            var c = ConfigurationManager.ConnectionStrings["Redis"].Split(',', ':');
+            var str = ConfigurationManager.ConnectionStrings["Redis"] ?? ConfigurationManager.ConnectionStrings["CSRedis"];
+            var c = str.Split(',', ':');
             Address = c[0];
             Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
             //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);
