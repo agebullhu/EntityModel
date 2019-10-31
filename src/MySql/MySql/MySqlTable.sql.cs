@@ -221,7 +221,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
                 : FieldDictionary[order];
 
             var sql = new StringBuilder();
-            sql.Append($@"SELECT DISTINCT {ContextLoadFields}
+            sql.Append($@"SELECT {ContextLoadFields}
 FROM {ContextReadTable}{ContitionSqlCode(condition)}
 ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 

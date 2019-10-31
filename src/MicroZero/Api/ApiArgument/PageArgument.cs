@@ -12,7 +12,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     页号
         /// </summary>
         [JsonProperty("page", NullValueHandling = NullValueHandling.Ignore)]
-        public int Page { get; set; }
+        public int PageIndex { get; set; }
 
         /// <summary>
         ///     每页行数
@@ -39,11 +39,11 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <param name="message">返回的消息</param>
         /// <returns>成功则返回真</returns>
-        public bool Validate(out string message)
+        public virtual bool Validate(out string message)
         {
             var msg = new StringBuilder();
             var success = true;
-            if (Page < 0)
+            if (PageIndex < 0)
             {
                 success = false;
                 msg.Append("页号必须大于或等于0");

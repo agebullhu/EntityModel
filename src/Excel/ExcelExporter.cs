@@ -209,7 +209,7 @@ namespace Agebull.EntityModel.Excel
         /// </summary>
         protected override void OnDispose()
         {
-            Book.Dispose();
+            //Book.Dispose();
         }
     }
 }

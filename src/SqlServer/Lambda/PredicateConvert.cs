@@ -458,7 +458,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             if (expression.Method.Name == "Contains")
             {
-                if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+                //if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
                 {
                     var vl = ConvertExpression(expression.Object);
                     if (!string.IsNullOrWhiteSpace(vl))

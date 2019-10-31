@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>MicroZero的基础定义</Description>
     <AssemblyTitle>Agebull.ZeroNet.Abstractions</AssemblyTitle>
-    <Version>2.4.3.26</Version>
+    <Version>2.4.10.1</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <DebugType>portable</DebugType>

@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>2.4.3.26</Version>
+    <Version>2.4.10.5</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <DebugType>portable</DebugType>

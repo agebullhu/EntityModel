@@ -278,11 +278,16 @@ namespace Agebull.EntityModel.MySql
             if (expression is NewArrayExpression array)
             {
                 var sb = new StringBuilder();
+                bool first = true;
                 foreach (var arg in array.Expressions)
                 {
-                    sb.AppendFormat(",{0}", ConvertExpression(arg));
+                    if (first)
+                        first = false;
+                    else
+                        sb.Append(',');
+                    sb.Append(ConvertExpression(arg));
                 }
-                return sb.ToString().Trim(',');
+                return sb.ToString();
             }
             if (expression.NodeType == ExpressionType.IsTrue)
             {
@@ -480,11 +485,11 @@ namespace Agebull.EntityModel.MySql
 
             if (expression.Method.Name == "Contains")
             {
-                if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+                //if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
                 {
                     var vl = ConvertExpression(expression.Object);
                     if (!string.IsNullOrWhiteSpace(vl))
-                        return $"{GetArguments(expression)} in ({vl})";
+                        return $"{GetArguments(expression)} IN ({vl})";
                 }
                 throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }

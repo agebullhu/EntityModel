@@ -211,7 +211,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// <param name="condition">数据条件</param>
         /// <param name="order">排序字段</param>
         /// <returns>载入的SQL语句</returns>
-        private StringBuilder CreateLoadSql(string condition, string order)
+        private string CreateLoadSql(string condition, string order)
         {
             var sql = new StringBuilder();
             sql.AppendLine(@"SELECT");
@@ -224,7 +224,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
                 sql.Append($"ORDER BY {order}");
             }
             sql.Append(";");
-            return sql;
+            return sql.ToString();
         }
 
         /// <summary>
@@ -238,6 +238,10 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// <returns></returns>
         private string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
+            if(pageSize <=0 || page > 0)
+            {
+                return CreateLoadSql(condition, $@" [{order}] {(desc ? "DESC" : "ASC")}");
+            }
             var orderField = string.IsNullOrWhiteSpace(order) || !FieldDictionary.ContainsKey(order)
                 ? KeyField
                 : FieldDictionary[order];

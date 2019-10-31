@@ -17,6 +17,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
+using MySql.Data.MySqlClient;
 
 #endregion
 
@@ -989,5 +990,136 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
+
+        #region 批量操作
+
+
+        /// <summary>
+        /// 设置插入数据的命令
+        /// </summary>
+        /// <param name="data">实体对象</param>
+        /// <param name="cmd">命令</param>
+        /// <returns>返回真说明要取主键</returns>
+        protected virtual void SetParameterValue(TData data, MySqlCommand cmd)
+        {
+            foreach (var pro in data.__Struct.Properties)
+            {
+                if (!FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
+                cmd.Parameters[pro.Value.PropertyName].Value = data.GetValue(pro.Value.PropertyName);
+            }
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public OperatorContext BeginInsert()
+        {
+            var ctx = new OperatorContext
+            {
+                Command= DataBase.CreateCommand()
+            };
+            var entity = new TData();
+            ctx.IsIdentitySql = SetInsertCommand(entity, ctx.Command);
+            ctx.Command.Prepare();
+            return ctx;
+        }
+
+        public bool Insert(OperatorContext context,TData entity)
+        {
+            PrepareSave(entity, DataOperatorType.Insert);
+            SetParameterValue(entity, context.Command);
+            if (context.IsIdentitySql)
+            {
+                var task = context.Command.ExecuteScalarAsync();
+                task.Wait();
+                var key = task.Result;
+                if (key == DBNull.Value || key == null)
+                    return false;
+                entity.SetValue(KeyField, key);
+            }
+            else
+            {
+                var task = context.Command.ExecuteNonQueryAsync();
+                task.Wait();
+                if (task.Result == 0)
+                    return false;
+            }
+
+            var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+            if (!string.IsNullOrEmpty(sql))
+            {
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+            }
+
+            EndSaved(entity, DataOperatorType.Insert);
+            return true;
+        }
+
+        public bool Insert(OperatorContext context, IEnumerable<TData> entities)
+        {
+            foreach (var entity in entities)
+            {
+                Insert(context, entity);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public OperatorContext BeginUpdate()
+        {
+            var ctx = new OperatorContext
+            {
+                Command = DataBase.CreateCommand()
+            };
+            var entity = new TData();
+            SetUpdateCommand(entity, ctx.Command);
+            ctx.Command.CommandText = UpdateSqlCode;
+            ctx.Command.Prepare();
+            return ctx;
+        }
+
+        public bool Update(OperatorContext context, TData entity)
+        {
+            PrepareSave(entity, DataOperatorType.Update);
+            SetParameterValue(entity, context.Command);
+            var task = context.Command.ExecuteNonQueryAsync();
+            task.Wait();
+            if (task.Result == 0)
+                return false;
+            var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+            if (!string.IsNullOrEmpty(sql))
+            {
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+            }
+
+            EndSaved(entity, DataOperatorType.Update);
+            return true;
+        }
+        public bool Update(OperatorContext context, IEnumerable<TData> entities)
+        {
+            foreach (var entity in entities)
+            {
+                Update(context, entity);
+            }
+            return true;
+        }
+
+        #endregion
+    }
+    public class OperatorContext : IDisposable
+    {
+        public MySqlCommand Command { get; set; }
+
+        public bool IsIdentitySql { get; set; }
+
+        public void Dispose()
+        {
+            Command.Dispose();
+        }
     }
 }

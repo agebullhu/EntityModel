@@ -142,7 +142,7 @@ namespace Agebull.EntityModel.SqlServer
         protected SqlCommand CreateLoadCommand(string condition, string order, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, order);
-            return DataBase.CreateCommand(sql.ToString(), args);
+            return DataBase.CreateCommand(sql, args);
         }
 
         /// <summary>
