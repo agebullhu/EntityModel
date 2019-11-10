@@ -41,6 +41,11 @@ namespace Agebull.Common
         }
 
         /// <summary>
+        /// 等待数量
+        /// </summary>
+        public long WaitCount => _useOnce ? Line1.Count : Line2.Count;
+
+        /// <summary>
         /// 开始处理队列内容
         /// </summary>
         public List<RecordInfo> Switch()

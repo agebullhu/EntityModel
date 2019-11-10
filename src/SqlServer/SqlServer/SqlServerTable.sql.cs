@@ -238,7 +238,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// <returns></returns>
         private string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
-            if(pageSize <=0 || page > 0)
+            if(pageSize <=0 || page < 0)
             {
                 return CreateLoadSql(condition, $@" [{order}] {(desc ? "DESC" : "ASC")}");
             }

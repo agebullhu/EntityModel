@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
 using Agebull.EntityModel.Common;
@@ -154,10 +153,13 @@ namespace Agebull.Common.Logging
                 LogDataSql = sec.GetBool("sql");
                 Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
             }
+
+            if (Level > LogLevel.Trace)
+                LogMonitor = false;
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();
             BaseRecorder.Initialize();
-            Task.Factory.StartNew(WriteRecordLoop);
+            NewRecorderThread();
         }
 
         /// <summary>
@@ -173,6 +175,8 @@ namespace Agebull.Common.Logging
                 LogDataSql = sec.GetBool("sql");
                 Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
             }
+            if (Level > LogLevel.Trace)
+                LogMonitor = false;
 #if !NETCOREAPP
             if (LogMonitor)
             {
@@ -667,31 +671,62 @@ namespace Agebull.Common.Logging
         /// <param name="typeName"> 类型名称 </param>
         internal static void RecordInner(LogLevel level, string name, string msg, LogType type, string typeName = null)
         {
-            if (level < Level)
-                return;
-            if (type == LogType.None)
+            try
             {
-                type = LogType.Message;
-            }
-            if (State == LogRecorderStatus.Shutdown || level < Level)
-                SystemTrace(level, name, msg);
-            else
-                RecordInfos.Push(new RecordInfo
+                if (level < Level)
+                    return;
+                if (type == LogType.None)
+                    type = LogType.Message;
+
+                if (State == LogRecorderStatus.Shutdown)
                 {
-                    Local = InRecording,
-                    RequestID = GetRequestId(),
-                    Machine = GetMachineName(),
-                    User = GetUserName(),
-                    Name = name,
-                    Type = type,
-                    Message = msg,
-                    Time = DateTime.Now,
-                    ThreadID = Thread.CurrentThread.ManagedThreadId,
-                    TypeName = typeName ?? LogEnumHelper.TypeToString(type)
-                });
-            if (BackIsRuning == 0)
+                    SystemTrace(level, name, msg);
+                }
+                //else if (level < Level)
+                //{
+                //    if (type != LogType.Monitor)
+                //        SystemTrace(level, name, msg);
+                //}
+                else if (RecordInfos.WaitCount > 1024)
+                {
+                    if ((DateTime.Now.Ticks % 10) == 1|| type != LogType.DataBase && type != LogType.Monitor && level >= LogLevel.Warning)
+                        RecordInfos.Push(new RecordInfo
+                        {
+                            Local = InRecording,
+                            RequestID = GetRequestId(),
+                            Machine = GetMachineName(),
+                            User = GetUserName(),
+                            Name = name,
+                            Type = type,
+                            Message = msg,
+                            Time = DateTime.Now,
+                            ThreadID = Thread.CurrentThread.ManagedThreadId,
+                            TypeName = typeName ?? LogEnumHelper.TypeToString(type)
+                        });
+                }
+                else
+                {
+                    RecordInfos.Push(new RecordInfo
+                    {
+                        Local = InRecording,
+                        RequestID = GetRequestId(),
+                        Machine = GetMachineName(),
+                        User = GetUserName(),
+                        Name = name,
+                        Type = type,
+                        Message = msg,
+                        Time = DateTime.Now,
+                        ThreadID = Thread.CurrentThread.ManagedThreadId,
+                        TypeName = typeName ?? LogEnumHelper.TypeToString(type)
+                    });
+                }
+
+                if (BackIsRuning == 0) 
+                    NewRecorderThread();
+            }
+            catch (Exception e)
             {
-                Task.Factory.StartNew(WriteRecordLoop);
+                Console.WriteLine(e);
             }
         }
 
@@ -705,64 +740,90 @@ namespace Agebull.Common.Logging
         /// </summary>
         private static void WriteRecordLoop()
         {
-            if (Interlocked.Add(ref BackIsRuning, 1) > 1)
+            try
             {
-                return;
-            }
-            SystemTrace(LogLevel.System, "日志开始");
-            int cnt = 0;
-            while (!RecordInfos.IsEmpty || State != LogRecorderStatus.Shutdown)
-            {
-                //Thread.Sleep(10);//让子弹飞一会
-                if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
+                if (Interlocked.Add(ref BackIsRuning, 1) > 1)
                 {
-                    Thread.Sleep(50);
-                    continue;
+                    return;
                 }
-                var array = RecordInfos.Switch();
-                if (array.Count == 0)
+
+                SystemTrace(LogLevel.System, "日志开始");
+                int cnt = 0;
+                while (!RecordInfos.IsEmpty || State != LogRecorderStatus.Shutdown)
                 {
-                    Thread.Sleep(50);
-                    continue;
-                }
-                foreach (var info in array)
-                {
-                    if (info == null)
+                    //Thread.Sleep(10);//让子弹飞一会
+                    if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
+                    {
+                        Thread.Sleep(50);
                         continue;
+                    }
+
+                    var array = RecordInfos.Switch();
+                    if (array.Count == 0)
+                    {
+                        Thread.Sleep(50);
+                        continue;
+                    }
+
+                    foreach (var info in array)
+                    {
+                        if (info == null)
+                            continue;
+                        try
+                        {
+                            info.Index = ++_id;
+                            if (_id == ulong.MaxValue)
+                                _id = 1;
+                            if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
+                                BaseRecorder.RecordLog(info);
+                            if (Listener != null || TraceToConsole)
+                                DoTrace(info);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
+                        }
+                    }
+
                     try
                     {
-                        info.Index = ++_id;
-                        if (_id == ulong.MaxValue)
-                            _id = 1;
-                        if (!_isTextRecorder && (info.Type >= LogType.System || info.Local))
-                            BaseRecorder.RecordLog(info);
-                        if (Listener != null || TraceToConsole)
-                            DoTrace(info);
-
+                        Recorder.RecordLog(array.ToList());
                     }
                     catch (Exception ex)
                     {
                         SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
                     }
-                }
-                try
-                {
-                    Recorder.RecordLog(array.ToList());
-                }
-                catch (Exception ex)
-                {
-                    SystemTrace(LogLevel.Error, "日志写入发生错误", ex);
+
+                    if (++cnt < 1024)
+                        continue;
+                    GC.Collect();
+                    cnt = 0;
                 }
 
-                if (++cnt < 24)
-                    continue;
-                GC.Collect();
-                cnt = 0;
+                BackIsRuning = 0;
+                SystemTrace(LogLevel.System, "日志结束");
+                _syncSlim.Release();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                NewRecorderThread();
+            }
+            finally
+            {
+                Console.WriteLine("日志结束");
+            }
+        }
 
-            BackIsRuning = 0;
-            SystemTrace(LogLevel.System, "日志结束");
-            _syncSlim.Release();
+        private static void NewRecorderThread()
+        {
+            var thread = new Thread(WriteRecordLoop)
+            {
+                Priority = ThreadPriority.BelowNormal,
+                IsBackground = true
+            };
+            thread.Start();
         }
 
         private static void DoTrace(RecordInfo info)

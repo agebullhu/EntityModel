@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>2.4.10.3-alpha</Version>
+    <Version>2.4.10.10</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -75,7 +75,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.17" />
+    <PackageReference Include="MySql.Data" Version="8.0.18" />
   </ItemGroup>
 
   <ItemGroup>

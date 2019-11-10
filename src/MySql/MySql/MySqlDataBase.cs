@@ -174,7 +174,12 @@ namespace Agebull.EntityModel.MySql
         {
             lock (LockData)
             {
-                var connection = new MySqlConnection(ConnectionString);
+                var b = new MySqlConnectionStringBuilder(ConnectionString);
+                if (b.ConnectionTimeout <= 0)
+                    b.ConnectionTimeout = 10;
+                if (b.DefaultCommandTimeout <= 0)
+                    b.ConnectionTimeout = 10;
+                var connection = new MySqlConnection(b.ConnectionString);
                 Connections.Add(connection);
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened _connection", "MySqlDataBase");

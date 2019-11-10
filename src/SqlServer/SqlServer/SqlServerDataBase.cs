@@ -194,7 +194,10 @@ namespace Agebull.EntityModel.SqlServer
         {
             lock (LockData)
             {
-                var connection = new SqlConnection(ConnectionString);
+                var b = new SqlConnectionStringBuilder(ConnectionString);
+                if (b.ConnectTimeout <= 0)
+                    b.ConnectTimeout = 10;
+                var connection = new SqlConnection(b.ConnectionString);
                 Connections.Add(connection);
                 //Trace.WriteLine(_count++, "Open");
                 //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
