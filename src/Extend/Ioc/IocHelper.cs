@@ -14,6 +14,7 @@ namespace Agebull.Common.Ioc
             public IServiceProvider Provider;
             public IServiceScope Scope;
         }
+
         /// <summary>
         /// 活动实例
         /// </summary>
@@ -32,7 +33,16 @@ namespace Agebull.Common.Ioc
         /// <summary>
         ///     依赖注入代理
         /// </summary>
-        public static IServiceProvider ServiceProvider => Local.Value?.Provider ?? RootProvider;
+        public static IServiceProvider ServiceProvider
+        {
+            get
+            {
+                lock (Local)
+                {
+                    return Local.Value?.Provider ?? RootProvider;
+                }
+            }
+        }
 
 
         /// <summary>
@@ -54,28 +64,6 @@ namespace Agebull.Common.Ioc
         }
 
         /// <summary>
-        ///    生成范围对象
-        /// </summary>
-        /// <returns></returns>
-        internal static IServiceProvider CreateScope()
-        {
-            lock (Local)
-            {
-                var provider = ServiceCollection.BuildServiceProvider(true);
-                var scope = provider.GetService<IServiceScopeFactory>().CreateScope();
-                Local.Value = new ScopeData
-                {
-                    Provider = scope.ServiceProvider,
-                    Scope = scope
-                };
-                return Local.Value.Provider;
-            }
-        }
-
-        #endregion
-        #region Scope
-
-        /// <summary>
         ///     更新(请不要在可能调用构造的地方引用)
         /// </summary>
         /// <returns></returns>
@@ -84,26 +72,48 @@ namespace Agebull.Common.Ioc
             _rootProvider = null;
             lock (Local)
             {
-                Local.Value = null;
+                if (Local.Value != null && Local.Value.Scope == null)
+                {
+                    Local.Value = null;
+                }
             }
             return RootProvider;
+        }
+
+        #endregion
+        #region Scope
+
+        /// <summary>
+        ///    生成范围对象
+        /// </summary>
+        /// <returns></returns>
+        internal static IServiceScope CreateScope()
+        {
+            var provider = ServiceCollection.BuildServiceProvider(true);
+            var scope = provider.GetService<IServiceScopeFactory>().CreateScope();
+            lock (Local)
+            {
+                Local.Value = new ScopeData
+                {
+                    Provider = scope.ServiceProvider,
+                    Scope = scope
+                };
+            }
+            return scope;
         }
 
         /// <summary>
         ///     析构此依赖范围(主动释放,否则要等到GC回收,资源使用率不可控)
         /// </summary>
-        public static void DisposeScope()
+        internal static void DisposeScope()
         {
             lock (Local)
             {
                 if (Local.Value == null)
                     return;
-                var scope = Local.Value.Scope;
                 Local.Value.Scope = null;
                 Local.Value.Provider = null;
-
                 Local.Value = null;
-                scope?.Dispose();
             }
         }
 

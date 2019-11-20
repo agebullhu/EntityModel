@@ -13,10 +13,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Agebull.Common.Configuration;
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 
@@ -105,46 +105,6 @@ namespace Agebull.EntityModel.SqlServer
 
         #endregion
 
-        #region 线程实例
-
-        /// <summary>
-        ///     锁对象
-        /// </summary>
-        protected static readonly object LockData = new object();
-
-        /// <summary>
-        ///     缺省强类型数据库
-        /// </summary>
-        [ThreadStatic]
-        private static SqlServerDataBase _default;
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public static SqlServerDataBase DefaultDataBase
-        {
-            get
-            {
-                if (_default != null)
-                {
-                    return _default;
-                }
-                //lock (LockData)
-                {
-                    //Trace.WriteLine("CreateDefaultFunc", "SqlServerDataBase");
-                    return _default = CreateDefaultFunc();
-                }
-            }
-            set => _default = value;
-        }
-
-        /// <summary>
-        ///     生成缺省数据库访问对象的方法
-        /// </summary>
-        public static Func<SqlServerDataBase> CreateDefaultFunc { get; set; }
-
-        #endregion
-
         #region 连接
         /// <summary>
         /// 数据库类型
@@ -159,8 +119,22 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     连接字符串
         /// </summary>
-        public string ConnectionString => _connectionString ?? (_connectionString = LoadConnectionStringSetting());
+        public string ConnectionString
+        {
+            get
+            {
+                if (_connectionString != null)
+                {
+                    return _connectionString;
+                }
 
+                var b = new SqlConnectionStringBuilder(LoadConnectionStringSetting());
+                if (b.ConnectTimeout <= 0 || b.ConnectTimeout > 10)
+                    b.ConnectTimeout = 10;
+
+                return _connectionString = b.ConnectionString;
+            }
+        }
         /// <summary>
         /// 读取连接字符串
         /// </summary>
@@ -192,18 +166,19 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns></returns>
         private SqlConnection InitConnection()
         {
-            lock (LockData)
+            var connection = new SqlConnection(ConnectionString);
+            IocScope.DisposeFunc.Add(() => Close(connection));
+            int cnt;
+            lock (Connections)
             {
-                var b = new SqlConnectionStringBuilder(ConnectionString);
-                if (b.ConnectTimeout <= 0)
-                    b.ConnectTimeout = 10;
-                var connection = new SqlConnection(b.ConnectionString);
                 Connections.Add(connection);
-                //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
-                connection.Open();
-                return connection;
+                cnt = Connections.Count;
             }
+            LogRecorderX.MonitorTrace($"打开连接数：{cnt}");
+            //Trace.WriteLine(_count++, "Open");
+            //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
+            connection.Open();
+            return connection;
         }
         /// <summary>
         ///     打开连接
@@ -215,23 +190,20 @@ namespace Agebull.EntityModel.SqlServer
             {
                 return false;
             }
-            lock (LockData)
+            if (_connection == null)
             {
-                if (_connection == null)
-                {
-                    _connection = InitConnection();
-                    return true;
-                    //Trace.WriteLine("Create _connection", "SqlServerDataBase");
-                }
-                if (string.IsNullOrEmpty(_connection.ConnectionString))
-                {
-                    //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
-                    _connection.ConnectionString = ConnectionString;
-                }
-                //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
-                _connection.Open();
+                _connection = InitConnection();
+                return true;
+                //Trace.WriteLine("Create _connection", "SqlServerDataBase");
             }
+            if (string.IsNullOrEmpty(_connection.ConnectionString))
+            {
+                //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
+                _connection.ConnectionString = ConnectionString;
+            }
+            //Trace.WriteLine(_count++, "Open");
+            //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
+            _connection.Open();
             return true;
         }
 
@@ -240,28 +212,42 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public void Close()
         {
-            if (_connection == null)
+            Close(_connection);
+            _connection = null;
+        }
+
+
+        /// <summary>
+        ///     关闭连接
+        /// </summary>
+        private void Close(SqlConnection connection)
+        {
+            if (connection == null)
             {
                 return;
             }
             try
             {
-                lock (LockData)
+                if (connection.State == ConnectionState.Open)
                 {
-                    if (_connection.State == ConnectionState.Open)
-                    {
-                        //Trace.WriteLine("Close Connection", "SqlServerDataBase");
-                        _connection.Close();
-                    }
-                    //Trace.WriteLine(_count--, "Close");
-                    _connection = null;
+                    connection.Close();
                 }
+                connection.Dispose();
             }
             catch (Exception exception)
             {
-                _connection?.Dispose();
-                Trace.WriteLine("Close Error", "SqlServerDataBase");
+                connection.Dispose();
                 LogRecorderX.Error(exception.ToString());
+            }
+            finally
+            {
+                int cnt;
+                lock (Connections)
+                {
+                    Connections.Remove(connection);
+                    cnt = Connections.Count;
+                }
+                LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
             }
         }
         /// <summary>
@@ -284,13 +270,36 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
+        protected virtual void DoDispose()
+        {
+        }
+
+        private bool _isDisposed;
+
+        /// <summary>
+        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
+        /// </summary>
         public void Dispose()
         {
-            //Trace.WriteLine("Dispose", "SqlServerDataBase");
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
+            DoDispose();
             Close();
             GC.ReRegisterForFinalize(this);
         }
 
+        /// <summary>
+        /// 析构
+        /// </summary>
+        ~SqlServerDataBase()
+        {
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
+            DoDispose();
+            Close();
+        }
         #endregion
 
         #region 数据库特殊操作
@@ -702,13 +711,12 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns></returns>
         public TData GetData<TData>(int table, int id) where TData : EditDataObject
         {
-            Dictionary<long, EditDataObject> tableDatas;
-            if (!_dataCache.TryGetValue(table, out tableDatas))
+            if (!_dataCache.TryGetValue(table, out var tableDatas))
             {
                 return null;
             }
-            EditDataObject data;
-            if (!tableDatas.TryGetValue(id, out data))
+
+            if (!tableDatas.TryGetValue(id, out var data))
             {
                 return null;
             }
@@ -725,8 +733,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns></returns>
         public TData TryAddToCache<TData>(int table, long id, TData data) where TData : EditDataObject
         {
-            Dictionary<long, EditDataObject> tableDatas;
-            if (!_dataCache.TryGetValue(table, out tableDatas))
+            if (!_dataCache.TryGetValue(table, out var tableDatas))
             {
                 _dataCache.Add(table, tableDatas = new Dictionary<long, EditDataObject>());
             }

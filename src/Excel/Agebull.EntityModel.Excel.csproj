@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
-    <Version>2.4.10.8</Version>
+    <Version>2.4.10.18</Version>
 
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
     <PackageLicenseExpression>MPL</PackageLicenseExpression>

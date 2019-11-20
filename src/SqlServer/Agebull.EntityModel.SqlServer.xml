@@ -266,26 +266,6 @@
                 引用数量
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.SqlServer.SqlServerDataBase.LockData">
-            <summary>
-                锁对象
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.SqlServer.SqlServerDataBase._default">
-            <summary>
-                缺省强类型数据库
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.DefaultDataBase">
-            <summary>
-                连接对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.CreateDefaultFunc">
-            <summary>
-                生成缺省数据库访问对象的方法
-            </summary>
-        </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.DataBaseType">
             <summary>
             数据库类型
@@ -339,6 +319,11 @@
                 关闭连接
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Close(System.Data.SqlClient.SqlConnection)">
+            <summary>
+                关闭连接
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.GetCurrentConnection">
             <summary>
                 连接对象
@@ -349,9 +334,19 @@
                 连接对象
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.DoDispose">
+            <summary>
+            执行与释放或重置非托管资源相关的应用程序定义的任务。
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Dispose">
             <summary>
             执行与释放或重置非托管资源相关的应用程序定义的任务。
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Finalize">
+            <summary>
+            析构
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Execute(System.String)">

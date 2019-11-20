@@ -36,6 +36,7 @@ namespace Agebull.EntityModel.MySql
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => DataBaseType.MySql;
+
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
@@ -168,7 +169,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(fields));
-            return fields.Select(field => (DbParameter)new MySqlParameter(field, GetDbType(field))).ToArray();
+            return fields.Select(field => (DbParameter) new MySqlParameter(field, GetDbType(field))).ToArray();
         }
 
         /// <summary>
@@ -217,7 +218,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entity">取值的实体</param>
         public MySqlParameter CreateFieldParameter(string field, TData entity)
         {
-            return CreateFieldParameter(field,GetDbType(field), entity.GetValue(field));
+            return CreateFieldParameter(field, GetDbType(field), entity.GetValue(field));
         }
 
         /// <summary>
@@ -352,6 +353,7 @@ namespace Agebull.EntityModel.MySql
         ///     读表名
         /// </summary>
         protected abstract string ReadTableName { get; }
+
         /// <summary>
         ///     写表名
         /// </summary>
@@ -414,12 +416,10 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public Dictionary<string, string> OverrideFieldMap { get; set; }
 
-
         #endregion
 
 
         #region 动态上下文扩展
-
 
         /// <summary>
         /// 当前上下文的读取器
@@ -436,6 +436,7 @@ namespace Agebull.EntityModel.MySql
         ///     动态读取的表
         /// </summary>
         protected string DynamicReadTable;
+
         /// <summary>
         ///     取得实际设置的ContextReadTable动态读取的表
         /// </summary>
@@ -502,6 +503,7 @@ namespace Agebull.EntityModel.MySql
         {
             LoadEntity(reader, entity);
         }
+
         #endregion
 
         #region 纯虚方法
@@ -537,7 +539,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetUpdateCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetUpdateCommand(entity, (MySqlCommand)cmd);
+            SetUpdateCommand(entity, (MySqlCommand) cmd);
         }
 
         /// <summary>
@@ -547,7 +549,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetInsertCommand(entity, (MySqlCommand)cmd);
+            SetInsertCommand(entity, (MySqlCommand) cmd);
         }
 
         /// <summary>
@@ -557,9 +559,10 @@ namespace Agebull.EntityModel.MySql
         TData IDataTable<TData>.Load(DbDataReader reader)
         {
             var entity = new TData();
-            LoadEntity((MySqlDataReader)reader, entity);
+            LoadEntity((MySqlDataReader) reader, entity);
             return entity;
         }
+
         #endregion
     }
 }

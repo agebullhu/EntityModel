@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Agebull.Common.Base;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Agebull.Common.Ioc
 {
@@ -9,14 +10,18 @@ namespace Agebull.Common.Ioc
     /// </summary>
     public class IocScope : ScopeBase
     {
+        private IServiceScope _scope;
+
         /// <summary>
         /// 生成一个范围
         /// </summary>
         /// <returns></returns>
         public static IDisposable CreateScope()
         {
-            IocHelper.CreateScope();
-            return new IocScope();
+            return new IocScope
+            {
+                _scope = IocHelper.CreateScope()
+            };
         }
 
         /// <summary>
@@ -24,14 +29,41 @@ namespace Agebull.Common.Ioc
         /// </summary>
         protected override void OnDispose()
         {
-            foreach (var func in DisposeFunc)
-                func();
-            IocHelper.DisposeScope();
+            if (DisposeFunc != null)
+            {
+                foreach (var func in DisposeFunc)
+                {
+                    try
+                    {
+                        func();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+                _disposeFunc = null;
+            }
+            try
+            {
+                IocHelper.DisposeScope();
+                _scope.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            GC.Collect();
         }
 
         /// <summary>
         /// 析构方法
         /// </summary>
-        public static List<Action> DisposeFunc = new List<Action>();
+        [ThreadStatic] private static List<Action> _disposeFunc;
+
+        /// <summary>
+        /// 析构方法
+        /// </summary>
+        public static List<Action> DisposeFunc => _disposeFunc ?? (_disposeFunc = new List<Action>());
     }
 }

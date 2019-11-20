@@ -3051,15 +3051,15 @@
             </summary>
             <param name="service"></param>
         </member>
-        <member name="M:Agebull.Common.Ioc.IocHelper.CreateScope">
-            <summary>
-               生成范围对象
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:Agebull.Common.Ioc.IocHelper.Update">
             <summary>
                 更新(请不要在可能调用构造的地方引用)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.Ioc.IocHelper.CreateScope">
+            <summary>
+               生成范围对象
             </summary>
             <returns></returns>
         </member>

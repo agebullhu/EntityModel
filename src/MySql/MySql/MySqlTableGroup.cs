@@ -10,13 +10,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 using MySql.Data.MySqlClient;
 
 #endregion

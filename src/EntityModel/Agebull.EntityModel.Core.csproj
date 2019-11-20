@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.4.10.8</Version>
+    <Version>2.4.10.18</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <DebugType>portable</DebugType>

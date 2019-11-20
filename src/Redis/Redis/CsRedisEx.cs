@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Agebull.Common.Configuration;
-using System.Threading;
 using Agebull.EntityModel.Redis;
 using CSRedis;
 using Newtonsoft.Json;
@@ -21,13 +21,19 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         bool IRedis.NoClose => true;
 
+        private static readonly bool IsFullConnectionStrings;
+
         /// <summary>
         /// 静态构造
         /// </summary>
         static CSRedisEx()
         {
-            var str = ConfigurationManager.ConnectionStrings["Redis"] ?? ConfigurationManager.ConnectionStrings["CSRedis"];
-            var c = str.Split(',', ':');
+            connectionStrings = ConfigurationManager.ConnectionStrings["CSRedis"];
+            IsFullConnectionStrings = !string.IsNullOrWhiteSpace(connectionStrings);
+            if (IsFullConnectionStrings) 
+                return;
+            connectionStrings = ConfigurationManager.ConnectionStrings["Redis"];
+            var c = connectionStrings.Split(',', ':');
             Address = c[0];
             Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
             //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);
@@ -40,16 +46,23 @@ namespace Agebull.Common.DataModel.Redis
         /// <summary>
         /// 地址
         /// </summary>
+        static readonly string connectionStrings;
+
+        /// <summary>
+        /// 地址
+        /// </summary>
         static readonly string Address;
 
         /// <summary>
         /// 密码
         /// </summary>
         static readonly string PassWord;
+
         /// <summary>
         /// 端口
         /// </summary>
         public static readonly int Port;
+
         /*// <summary>
         /// 空闲连接数
         /// </summary>
@@ -58,11 +71,6 @@ namespace Agebull.Common.DataModel.Redis
         #endregion
 
         #region 构造
-
-        /// <summary>
-        /// 锁对象
-        /// </summary>
-        private static readonly object LockObj = new object();
 
         /// <summary>
         /// 当前数据库
@@ -97,28 +105,23 @@ namespace Agebull.Common.DataModel.Redis
         }
 
         static string ConnectString(long db) =>
-            string.IsNullOrEmpty(PassWord)
-                ? $"{Address}:{Port},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240"
-                : $"{Address}:{Port},password={PassWord},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240";
+            IsFullConnectionStrings 
+                ? $"{connectionStrings},defaultDatabase={db}" 
+                : string.IsNullOrEmpty(PassWord)
+                    ? $"{Address}:{Port},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240"
+                    : $"{Address}:{Port},password={PassWord},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240";
 
 
-        static readonly Dictionary<long, CSRedisClient> _clients = new Dictionary<long, CSRedisClient>();
+        private static readonly ConcurrentDictionary<long, CSRedisClient> _clients = new ConcurrentDictionary<long, CSRedisClient>();
 
-        static CSRedisClient CreateClient(long db)
+        CSRedisClient CreateClient(long db)
         {
-            Monitor.Enter(LockObj);
-            try
-            {
-                if (_clients.TryGetValue(db, out var client))
-                    return client;
-                client = new CSRedisClient(ConnectString(db));
-                _clients.Add(db, client);
+            if (_clients.TryGetValue(db, out var client))
                 return client;
-            }
-            finally
-            {
-                Monitor.Exit(LockObj);
-            }
+
+            client = new CSRedisClient(ConnectString(db));
+            _clients.TryAdd(db, client);
+            return client;
         }
 
 
@@ -127,14 +130,9 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         public void Dispose()
         {
-            //Monitor.Enter(LockObj);
-            //try
+            //foreach (var client in _clients.Values)
             //{
-            //    _client.Dispose();
-            //}
-            //finally
-            //{
-            //    Monitor.Exit(LockObj);
+            //    client.Dispose();
             //}
         }
 
@@ -367,7 +365,7 @@ namespace Agebull.Common.DataModel.Redis
         public void Set<T>(string key, T value, DateTime last)
             where T : class
         {
-            Client.Set(key, JsonConvert.SerializeObject(value),(int)(last-DateTime.Now).TotalSeconds);
+            Client.Set(key, JsonConvert.SerializeObject(value), (int)(last - DateTime.Now).TotalSeconds);
         }
 
         /// <summary>

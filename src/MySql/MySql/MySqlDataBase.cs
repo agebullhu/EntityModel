@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using MySql.Data.MySqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Agebull.Common.Logging;
@@ -106,39 +105,6 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-        #region 线程实例
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        protected MySqlDataBase()
-        {
-            if (_default == null)
-                _default = this;
-        }
-
-        /// <summary>
-        ///     锁对象
-        /// </summary>
-        protected static readonly object LockData = new object();
-
-        /// <summary>
-        ///     缺省强类型数据库
-        /// </summary>
-        [ThreadStatic]
-        private static MySqlDataBase _default;
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public static MySqlDataBase DataBase
-        {
-            get => _default ?? (_default = IocHelper.Create<MySqlDataBase>());
-            set => _default = value;
-        }
-
-        #endregion
-
         #region 数据库连接对象
 
         /// <summary>
@@ -159,33 +125,24 @@ namespace Agebull.EntityModel.MySql
         public static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
 
         /// <summary>
-        ///     连接对象
-        /// </summary>
-        public MySqlConnection GetCurrentConnection()
-        {
-            return Connection;
-        }
-
-        /// <summary>
         /// 初始化连接对象
         /// </summary>
         /// <returns></returns>
         private MySqlConnection InitConnection()
         {
-            lock (LockData)
+            var connection = new MySqlConnection(ConnectionString);
+            IocScope.DisposeFunc.Add(() => Close(connection));
+            int cnt;
+            lock (Connections)
             {
-                var b = new MySqlConnectionStringBuilder(ConnectionString);
-                if (b.ConnectionTimeout <= 0)
-                    b.ConnectionTimeout = 10;
-                if (b.DefaultCommandTimeout <= 0)
-                    b.ConnectionTimeout = 10;
-                var connection = new MySqlConnection(b.ConnectionString);
                 Connections.Add(connection);
-                //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
-                connection.Open();
-                return connection;
+                cnt = Connections.Count;
             }
+            LogRecorderX.MonitorTrace($"打开连接数：{cnt}");
+            //Trace.WriteLine(_count++, "Open");
+            //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+            connection.Open();
+            return connection;
         }
 
         #endregion
@@ -201,7 +158,25 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     连接字符串
         /// </summary>
-        public string ConnectionString => _connectionString ?? (_connectionString = LoadConnectionStringSetting());
+        public string ConnectionString
+        {
+            get
+            {
+                if (_connectionString != null)
+                {
+                    return _connectionString;
+                }
+
+                var b = new MySqlConnectionStringBuilder(LoadConnectionStringSetting());
+                if (b.ConnectionTimeout <= 0 || b.ConnectionTimeout > 10)
+                    b.ConnectionTimeout = 10;
+
+                if (b.DefaultCommandTimeout <= 0 || b.DefaultCommandTimeout > 10)
+                    b.DefaultCommandTimeout = 10;
+
+                return _connectionString = b.ConnectionString;
+            }
+        }
 
         /// <summary>
         /// 读取连接字符串
@@ -219,27 +194,24 @@ namespace Agebull.EntityModel.MySql
             {
                 return false;
             }
-            lock (LockData)
+            //if (_isClosed)
+            //{
+            //    //throw new Exception("已关闭的数据库对象不能再次使用");
+            //}
+            if (_connection == null)
             {
-                //if (_isClosed)
-                //{
-                //    //throw new Exception("已关闭的数据库对象不能再次使用");
-                //}
-                if (_connection == null)
-                {
-                    _connection = InitConnection();
-                    return true;
-                    //Trace.WriteLine("Create _connection", "MySqlDataBase");
-                }
-                if (string.IsNullOrEmpty(_connection.ConnectionString))
-                {
-                    //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
-                    _connection.ConnectionString = ConnectionString;
-                }
-                //Trace.WriteLine(_count++, "Open");
-                //Trace.WriteLine("Opened _connection", "MySqlDataBase");
-                _connection.Open();
+                _connection = InitConnection();
+                return true;
+                //Trace.WriteLine("Create _connection", "MySqlDataBase");
             }
+            if (string.IsNullOrEmpty(_connection.ConnectionString))
+            {
+                //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
+                _connection.ConnectionString = ConnectionString;
+            }
+            //Trace.WriteLine(_count++, "Open");
+            //Trace.WriteLine("Opened _connection", "MySqlDataBase");
+            _connection.Open();
             return true;
         }
 
@@ -248,39 +220,40 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public void Close()
         {
-            if (_connection == null)
+            Close(_connection);
+            _connection = null;
+        }
+
+        /// <summary>
+        ///     关闭连接
+        /// </summary>
+        private void Close(MySqlConnection connection)
+        {
+            if (connection == null)
             {
                 return;
             }
-            lock (LockData)
+            try
             {
-                try
+                if (connection.State == ConnectionState.Open)
                 {
-                    if (_connection.State == ConnectionState.Open)
-                    {
-                        _connection.Close();
-                        //Trace.WriteLine("Close Connection", "MySqlDataBase");
-                    }
-                    LogRecorderX.MonitorTrace($"未关闭总数{Connections.Count}");
-                    _connection.Dispose();
-
+                    connection.Close();
                 }
-                catch (Exception exception)
-                {
-                    _connection?.Dispose();
-                    Debug.WriteLine("Close Error", "MySqlDataBase");
-                    LogRecorderX.Exception(exception);
-                }
-                finally
-                {
-                    if (_default == this)
-                        _default = null;
-                    Connections.Remove(_connection);
-                    _connection = null;
-                }
+                connection.Dispose();
             }
+            catch (Exception exception)
+            {
+                connection.Dispose();
+                LogRecorderX.Exception(exception);
+            }
+            int cnt;
+            lock (Connections)
+            {
+                Connections.Remove(connection);
+                cnt = Connections.Count;
+            }
+            LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
         }
-
 
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
@@ -289,17 +262,32 @@ namespace Agebull.EntityModel.MySql
         {
         }
 
+        private bool _isDisposed;
 
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
             DoDispose();
             Close();
             GC.ReRegisterForFinalize(this);
         }
 
+        /// <summary>
+        /// 析构
+        /// </summary>
+        ~MySqlDataBase()
+        {
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
+            DoDispose();
+            Close();
+        }
         #endregion
 
         #region 数据库特殊操作

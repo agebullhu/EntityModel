@@ -28,6 +28,7 @@ namespace Agebull.EntityModel.Events
         {
             get;
         }
+
         static DataUpdateHandler()
         {
             EventProxy = IocHelper.Create<IEntityEventProxy>();
