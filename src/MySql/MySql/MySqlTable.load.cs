@@ -1698,7 +1698,7 @@ namespace Agebull.EntityModel.MySql
                 MySqlDbType = GetDbType(fieldName),
                 Value = val
             });
-            return Exist(convert.ConditionSql, convert.Parameters);
+            return !Exist(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -1714,7 +1714,7 @@ namespace Agebull.EntityModel.MySql
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
-            return Exist($"(`{FieldDictionary[fieldName]}` = ?c_vl_ AND {PrimaryKeyConditionSQL}"
+            return !Exist($"(`{FieldDictionary[fieldName]}` = ?c_vl_ AND {FieldConditionSQL(PrimaryKey, "<>")}"
                 , new MySqlParameter
                 {
                     ParameterName = "c_vl_",
@@ -1736,7 +1736,7 @@ namespace Agebull.EntityModel.MySql
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
-            return Exist($"(`{FieldDictionary[fieldName]}` = ?c_vl_)"
+            return !Exist($"(`{FieldDictionary[fieldName]}` = ?c_vl_)"
                 , new MySqlParameter
                 {
                     ParameterName = "c_vl_",

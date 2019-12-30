@@ -198,7 +198,7 @@ namespace Agebull.Common.OAuth
         /// <summary>
         ///     系统用户(慎用)
         /// </summary>
-        internal static LoginUserInfo System => new LoginUserInfo
+        public static LoginUserInfo System => new LoginUserInfo
         {
             UserId = SystemUserId,
             Account = "system",

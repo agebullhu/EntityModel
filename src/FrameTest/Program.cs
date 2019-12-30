@@ -4,6 +4,7 @@ using Agebull.EntityModel.Redis;
 using System;
 using System.Collections.Generic;
 using Agebull.Common.Configuration;
+using Agebull.Common.DataModel.Redis;
 using Agebull.Common.Http;
 using Agebull.MicroZero.ZeroApis;
 using Newtonsoft.Json;
@@ -14,24 +15,33 @@ namespace FrameTest
     {
         static void Main(string[] args)
         {
+            //LogRecorderX.Initialize();
+            //LogRecorderX.SystemLog("test");
+            //LogRecorderX.Shutdown();
+            IocHelper.AddScoped<IRedis, CSRedisEx>();
+            RedisTest.TestFind();
 
-            var call = new HttpCaller()
-            {
-                Host = "http://zero.hpcang.com",
-                Authorization = "*",
-                ApiName = "/gateway/file",
-                Query = new Dictionary<string, string>
-                {
-                    {"action" ,"text"},
-                    { "url","/Anuexs/V1QLSGPJK1.bin"}
-                },
-                Method = "POST"
-            };
-            call.CreateRequest();
-            var task = call.Call();
-            task.Wait();
-            var result = JsonConvert.DeserializeObject<ApiResult<string>>(task.Result);
-            Console.ReadKey();
         }
+        //static void Main(string[] args)
+        //{
+
+        //    var call = new HttpCaller()
+        //    {
+        //        Host = "http://zero.hpcang.com",
+        //        Authorization = "*",
+        //        ApiName = "/gateway/file",
+        //        Query = new Dictionary<string, string>
+        //        {
+        //            {"action" ,"text"},
+        //            { "url","/Anuexs/V1QLSGPJK1.bin"}
+        //        },
+        //        Method = "POST"
+        //    };
+        //    call.CreateRequest();
+        //    var task = call.Call();
+        //    task.Wait();
+        //    var result = JsonConvert.DeserializeObject<ApiResult<string>>(task.Result);
+        //    Console.ReadKey();
+        //}
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Agebull.Common.Base;
 using Agebull.EntityModel.Common;
 using NPOI.SS.UserModel;
@@ -78,6 +79,24 @@ namespace Agebull.EntityModel.Excel
             }
         }
 
+        /// <summary>
+        ///     导出Excel
+        /// </summary>
+        /// <param name="lambda">查询条件</param>
+        /// <param name="name"></param>
+        /// <param name="path"></param>
+        /// <returns>数据</returns>
+        public Task<byte[]> ExportExcelAsync(LambdaItem<TData> lambda, string name, string path)
+        {
+            Book = new XSSFWorkbook();
+            var sheet = Book.CreateSheet(name);
+            ExportExcel(sheet, lambda);
+            using (var mem = new MemoryStream())
+            {
+                Book.Write(mem);
+                return Task.FromResult(mem.ToArray());
+            }
+        }
 
         /// <summary>
         ///     导出Excel

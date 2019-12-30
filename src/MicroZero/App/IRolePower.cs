@@ -6,6 +6,9 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
+using System;
+using System.Collections.Generic;
+
 namespace Agebull.Common.OAuth
 {
     /// <summary>
@@ -79,5 +82,69 @@ namespace Agebull.Common.OAuth
         /// </remarks>
         public RolePowerType Power { get; set; }
 
+    }
+
+    /// <summary>
+    /// 岗位职责
+    /// </summary>
+    public interface IDuty
+    {
+        /// <summary>
+        /// 岗位职责标识
+        /// </summary>
+        long DutyId { get; set; }
+
+        /// <summary>
+        /// 对应的权限角色设置
+        /// </summary>
+        long RoleId { get; set; }
+
+        /// <summary>
+        ///     组织标识
+        /// </summary>
+        long GroupId { get; set; }
+
+
+        /// <summary>
+        ///     组织标识
+        /// </summary>
+        long OrganizationId { get; set; }
+
+        /// <summary>
+        ///     机构
+        /// </summary>
+        /// <remarks>
+        ///     机构
+        /// </remarks>
+        string Organization { get; set; }
+
+        /// <summary>
+        ///     职位
+        /// </summary>
+        /// <remarks>
+        ///     职位
+        /// </remarks>
+        string Position { get; set; }
+
+        /// <summary>
+        ///     角色
+        /// </summary>
+        string Role { get; set; }
+
+
+        /// <summary>
+        /// 职责所在组织
+        /// </summary>
+        List<long> OrgIds { get; set; }
+
+        /// <summary>
+        /// 开始时间（对应到人）
+        /// </summary>
+        DateTime Start { get; set; }
+
+        /// <summary>
+        /// 结束时间（对应到人）
+        /// </summary>
+        DateTime End { get; set; }
     }
 }

@@ -199,6 +199,7 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void Shutdown()
         {
+            SystemTrace(LogLevel.System, "日志中止");
             State = LogRecorderStatus.Shutdown;
             _syncSlim.Wait();
             if (RecordInfos.Line1.Count > 0)
@@ -208,7 +209,8 @@ namespace Agebull.Common.Logging
 
             if (!_isTextRecorder)
                 BaseRecorder.Shutdown();
-            Recorder.Shutdown();
+            if (BaseRecorder != Recorder)
+                Recorder.Shutdown();
 
         }
         #endregion
@@ -649,7 +651,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         /// 线程同步结束信息量
         /// </summary>
-        private static readonly SemaphoreSlim _syncSlim = new SemaphoreSlim(1);
+        private static readonly SemaphoreSlim _syncSlim = new SemaphoreSlim(0);
 
         /// <summary>
         /// 待写入的日志信息集合
@@ -689,7 +691,7 @@ namespace Agebull.Common.Logging
                 //}
                 else if (RecordInfos.WaitCount > 1024)
                 {
-                    if ((DateTime.Now.Ticks % 10) == 1|| type != LogType.DataBase && type != LogType.Monitor && level >= LogLevel.Warning)
+                    if ((DateTime.Now.Ticks % 10) == 1 || type != LogType.DataBase && type != LogType.Monitor && level >= LogLevel.Warning)
                         RecordInfos.Push(new RecordInfo
                         {
                             Local = InRecording,
@@ -721,7 +723,7 @@ namespace Agebull.Common.Logging
                     });
                 }
 
-                if (BackIsRuning == 0) 
+                if (BackIsRuning == 0)
                     NewRecorderThread();
             }
             catch (Exception e)
@@ -740,16 +742,17 @@ namespace Agebull.Common.Logging
         /// </summary>
         private static void WriteRecordLoop()
         {
+            bool success = true;
             try
             {
-                if (Interlocked.Add(ref BackIsRuning, 1) > 1)
+                if (Interlocked.Increment(ref BackIsRuning) > 1)
                 {
                     return;
                 }
 
                 SystemTrace(LogLevel.System, "日志开始");
                 int cnt = 0;
-                while (!RecordInfos.IsEmpty || State != LogRecorderStatus.Shutdown)
+                while (State != LogRecorderStatus.Shutdown)
                 {
                     //Thread.Sleep(10);//让子弹飞一会
                     if (State < LogRecorderStatus.Initialized || !BaseRecorder.IsInitialized || !Recorder.IsInitialized)
@@ -800,24 +803,27 @@ namespace Agebull.Common.Logging
                     GC.Collect();
                     cnt = 0;
                 }
-
-                BackIsRuning = 0;
-                SystemTrace(LogLevel.System, "日志结束");
                 _syncSlim.Release();
             }
             catch (Exception e)
             {
+                success = false;
                 Console.WriteLine(e);
-                NewRecorderThread();
             }
             finally
             {
-                Console.WriteLine("日志结束");
+                Interlocked.Decrement(ref BackIsRuning);
+                SystemTrace(LogLevel.System, "日志结束");
             }
+            if (!success)
+                NewRecorderThread();
         }
 
         private static void NewRecorderThread()
         {
+            if (State == LogRecorderStatus.Shutdown)
+                return;
+            Thread.Sleep(200);
             var thread = new Thread(WriteRecordLoop)
             {
                 Priority = ThreadPriority.BelowNormal,

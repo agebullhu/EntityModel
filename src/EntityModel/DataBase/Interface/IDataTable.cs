@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Agebull.MicroZero.ZeroApis;
 
 #endregion
@@ -240,6 +241,7 @@ namespace Agebull.EntityModel.Common
         ConditionItem Compile(LambdaItem<TData> lambda);
 
         #endregion
+
         #region 读
 
         #region 遍历所有
@@ -271,7 +273,7 @@ namespace Agebull.EntityModel.Common
         ///     载入首行
         /// </summary>
         TData First(LambdaItem<TData> lambda);
-        
+
         /// <summary>
         ///     载入首行
         /// </summary>
@@ -560,6 +562,10 @@ namespace Agebull.EntityModel.Common
         ///     分页读取
         /// </summary>
         ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        Task<ApiPageData<TData>> PageAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         #endregion
 
@@ -627,6 +633,11 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     主键读取
         /// </summary>
+        Task<TData> LoadByPrimaryKeyAsync(object key);
+
+        /// <summary>
+        ///     主键读取
+        /// </summary>
         List<TData> LoadByPrimaryKeies(IEnumerable keies);
 
 
@@ -676,9 +687,18 @@ namespace Agebull.EntityModel.Common
         bool Update(TData entity);
 
         /// <summary>
+        ///     更新数据
+        /// </summary>
+        Task<bool> UpdateAsync(TData entity);
+
+        /// <summary>
         ///     插入新数据
         /// </summary>
         bool Insert(TData entity);
+        /// <summary>
+        ///     插入新数据
+        /// </summary>
+        Task<bool> InsertAsync(TData entity);
 
         /// <summary>
         ///     删除数据
@@ -690,6 +710,12 @@ namespace Agebull.EntityModel.Common
         ///     删除数据
         /// </summary>
         bool DeletePrimaryKey(object key);
+
+
+        /// <summary>
+        ///     删除数据
+        /// </summary>
+        Task<bool> DeletePrimaryKeyAsync(object key);
 
         /// <summary>
         ///     条件删除

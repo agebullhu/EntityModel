@@ -6,9 +6,9 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>2.4.10.18</Version>
+    <Version>3.1.0.2-bate</Version>
     <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.Core</AssemblyName>
     <PackageId>Agebull.EntityModel.Core</PackageId>
@@ -37,21 +37,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Remove="DataBase\**" />
     <Compile Remove="DEncrypt\**" />
@@ -80,6 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="DataBase\Interface\OperatorContext.cs" />
     <Compile Include="DataBase\Lambda\ConditionItem.cs" />
     <Compile Include="DataBase\Interface\DataBaseType.cs" />
     <Compile Include="DataBase\Interface\IDataBase.cs" />

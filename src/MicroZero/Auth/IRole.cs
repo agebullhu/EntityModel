@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Agebull.Common.OAuth
 {
@@ -61,26 +60,6 @@ namespace Agebull.Common.OAuth
         /// </summary>
         Page
     }
-    /// <summary>
-    /// 角色节点
-    /// </summary>
-    public interface IApp
-    {
-        /// <summary>
-        ///     用户角色标识
-        /// </summary>
-        string AppId { get; set; }
-
-        /// <summary>
-        ///     登录设备的应用
-        /// </summary>
-        string AppName { get; set; }
-
-        /// <summary>
-        ///     登录设备的应用
-        /// </summary>
-        string AppKey { get; set; }
-    }
 
     /// <summary>
     /// 角色节点
@@ -110,37 +89,8 @@ namespace Agebull.Common.OAuth
         /// <summary>
         /// 行级权限
         /// </summary>
-        OrganizationDataScopeType DataScope { get; }
+        DataScopeType DataScope { get; }
 
         
     }
-
-
-    /// <summary>
-    /// 组织行级权限范围枚举类型
-    /// </summary>
-    /// <remark>
-    /// 基于组织树形关系的范围关系
-    /// </remark>
-    [Flags]
-    public enum OrganizationDataScopeType
-    {
-        /// <summary>
-        /// 没有任何权限制
-        /// </summary>
-        None = 0x0,
-        /// <summary>
-        /// 本人的数据
-        /// </summary>
-        Person = 0x1,
-        /// <summary>
-        /// 本级数据
-        /// </summary>
-        Home = 0x2,
-        /// <summary>
-        /// 下级数据
-        /// </summary>
-        Sub = 0x4,
-    }
-
 }

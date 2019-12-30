@@ -32,6 +32,16 @@ namespace Agebull.Common.Context
         #region 用户信息
 
         /// <summary>
+        ///     当前业务上下文
+        /// </summary>
+        [JsonProperty("boc", NullValueHandling = NullValueHandling.Ignore)] internal BusinessOperationalContext _business;
+
+        /// <summary>
+        ///     当前业务上下文
+        /// </summary>
+        public BusinessOperationalContext Business => _business;
+        
+        /// <summary>
         ///     当前登录的用户ID
         /// </summary>
         public long LoginUserId => _user == null ? -1 : User.UserId;
@@ -89,7 +99,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前调用上下文
         /// </summary>
-        public RequestInfo Request => _requestInfo ?? (_requestInfo = new RequestInfo());
+        public RequestInfo Request => _requestInfo ??= new RequestInfo();
 
         #endregion
 
@@ -106,7 +116,7 @@ namespace Agebull.Common.Context
         /// <summary>
         ///     当前线程的调用上下文
         /// </summary>
-        public static AsyncLocal<GlobalContext> Local => _local ?? (_local = new AsyncLocal<GlobalContext>());
+        public static AsyncLocal<GlobalContext> Local => _local ??= new AsyncLocal<GlobalContext>();
 
         /// <summary>
         ///     当前线程的调用上下文
@@ -180,6 +190,7 @@ namespace Agebull.Common.Context
             _user = helper.CreateUserObject(0);
             _organizational = helper.CreateOrganizationalObject();
         }
+
         /// <summary>
         ///     设置当前上下文（框架内调用，外部误用后果未知）
         /// </summary>

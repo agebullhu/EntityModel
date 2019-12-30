@@ -1,4 +1,5 @@
 using Agebull.Common.Base;
+using Agebull.Common.Ioc;
 
 namespace Agebull.Common.Logging
 {
@@ -15,11 +16,12 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         public static MonitorScope CreateScope(string name)
         {
+            var item = IocHelper.Create<MonitorItem>();
             var scope= new MonitorScope
             {
-                _isStep = LogRecorderX.MonitorItem.InMonitor
+                _isStep = item.InMonitor
             };
-            if (LogRecorderX.MonitorItem.InMonitor)
+            if (item.InMonitor)
                 LogRecorderX.BeginStepMonitor(name);
             else
                 LogRecorderX.BeginMonitor(name);

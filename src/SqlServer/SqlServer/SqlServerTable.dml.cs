@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -18,6 +19,7 @@ using Newtonsoft.Json;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
 using DataUpdateHandler = Agebull.EntityModel.Events.DataUpdateHandler;
+using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Data.SqlClient.SqlCommand>;
 
 #endregion
 
@@ -989,5 +991,145 @@ namespace Agebull.EntityModel.SqlServer
 
         #endregion
 
+        #region 批量操作
+
+
+        /// <summary>
+        /// 设置插入数据的命令
+        /// </summary>
+        /// <param name="data">实体对象</param>
+        /// <param name="cmd">命令</param>
+        /// <returns>返回真说明要取主键</returns>
+        protected virtual void SetParameterValue(TData data, SqlCommand cmd)
+        {
+            foreach (var pro in data.__Struct.Properties)
+            {
+                if (!FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
+                cmd.Parameters[pro.Value.PropertyName].Value = data.GetValue(pro.Value.PropertyName);
+            }
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public DbOperatorContext BeginInsert()
+        {
+            var ctx = new DbOperatorContext
+            {
+                Command = DataBase.CreateCommand()
+            };
+            var entity = new TData();
+            ctx.IsIdentitySql = SetInsertCommand(entity, ctx.Command);
+            ctx.Command.Prepare();
+            return ctx;
+        }
+        /// <summary>
+        /// 批量插入
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool Insert(DbOperatorContext context, TData entity)
+        {
+            PrepareSave(entity, DataOperatorType.Insert);
+            SetParameterValue(entity, context.Command);
+            if (context.IsIdentitySql)
+            {
+                var task = context.Command.ExecuteScalarAsync();
+                task.Wait();
+                var key = task.Result;
+                if (key == DBNull.Value || key == null)
+                    return false;
+                entity.SetValue(KeyField, key);
+            }
+            else
+            {
+                var task = context.Command.ExecuteNonQueryAsync();
+                task.Wait();
+                if (task.Result == 0)
+                    return false;
+            }
+
+            var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+            if (!string.IsNullOrEmpty(sql))
+            {
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+            }
+
+            EndSaved(entity, DataOperatorType.Insert);
+            return true;
+        }
+        /// <summary>
+        /// 批量插入
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        public bool Insert(DbOperatorContext context, IEnumerable<TData> entities)
+        {
+            foreach (var entity in entities)
+            {
+                Insert(context, entity);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public DbOperatorContext BeginUpdate()
+        {
+            var ctx = new DbOperatorContext
+            {
+                Command = DataBase.CreateCommand()
+            };
+            var entity = new TData();
+            SetUpdateCommand(entity, ctx.Command);
+            ctx.Command.CommandText = UpdateSqlCode;
+            ctx.Command.Prepare();
+            return ctx;
+        }
+        /// <summary>
+        /// 批量更新
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool Update(DbOperatorContext context, TData entity)
+        {
+            PrepareSave(entity, DataOperatorType.Update);
+            SetParameterValue(entity, context.Command);
+            var task = context.Command.ExecuteNonQueryAsync();
+            task.Wait();
+            if (task.Result == 0)
+                return false;
+            var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+            if (!string.IsNullOrEmpty(sql))
+            {
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+            }
+
+            EndSaved(entity, DataOperatorType.Update);
+            return true;
+        }
+        /// <summary>
+        /// 批量更新
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        public bool Update(DbOperatorContext context, IEnumerable<TData> entities)
+        {
+            foreach (var entity in entities)
+            {
+                Update(context, entity);
+            }
+            return true;
+        }
+
+        #endregion
     }
 }

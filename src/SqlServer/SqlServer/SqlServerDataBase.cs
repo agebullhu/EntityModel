@@ -27,7 +27,7 @@ namespace Agebull.EntityModel.SqlServer
     /// <summary>
     ///     表示SQL SERVER数据库对象
     /// </summary>
-    public class SqlServerDataBase : SqlServerDataBase_, IDataBase
+    public partial class SqlServerDataBase : SqlServerDataBase_, IDataBase
     {
         #region 事务
 

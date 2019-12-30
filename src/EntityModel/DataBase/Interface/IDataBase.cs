@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -41,11 +42,18 @@ namespace Agebull.EntityModel.Common
         ///     事务对象
         /// </summary>
         DbTransaction Transaction { get; }
+
         /// <summary>
         /// 开始一个事务
         /// </summary>
         /// <returns></returns>
         bool BeginTransaction();
+
+        /// <summary>
+        /// 开始一个事务
+        /// </summary>
+        /// <returns></returns>
+        Task<bool> BeginTransactionAsync();
 
         /// <summary>
         /// 生成事务范围
@@ -83,9 +91,16 @@ namespace Agebull.EntityModel.Common
         bool Open();
 
         /// <summary>
+        ///     打开连接
+        /// </summary>
+        /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
+        Task<bool> OpenAsync();
+
+        /// <summary>
         ///     关闭连接
         /// </summary>
         void Close();
+
         #endregion
 
         #region 数据库特殊操作

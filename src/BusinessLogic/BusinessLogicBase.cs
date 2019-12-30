@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Agebull.EntityModel.Common;
 
 #endregion
@@ -146,6 +147,20 @@ namespace Agebull.EntityModel.BusinessLogic
             if (id == 0)
                 return null;
             var data= Access.LoadByPrimaryKey(id);
+            if (data == null)
+                return null;
+            OnDetailsLoaded(data, false);
+            return data;
+        }
+
+        /// <summary>
+        ///     载入当前操作的数据
+        /// </summary>
+        public virtual async Task<TData> DetailAsync(long id)
+        {
+            if (id == 0)
+                return null;
+            var data = await Access.LoadByPrimaryKeyAsync(id);
             if (data == null)
                 return null;
             OnDetailsLoaded(data, false);

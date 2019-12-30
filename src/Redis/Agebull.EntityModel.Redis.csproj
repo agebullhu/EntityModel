@@ -4,9 +4,8 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>2.4.10.18</Version>
-    <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <Version>3.1.0.2-bate</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -36,28 +35,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="NServiceKit.Text" Version="1.0.10" />
-    <PackageReference Include="NServiceKit.Redis" Version="1.0.20" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Redis\NServiceKitRedis.cs" />
     <Compile Remove="Redis\RedisDbScope.cs" />
@@ -66,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSRedisCore" Version="3.1.14" />
+    <PackageReference Include="CSRedisCore" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>

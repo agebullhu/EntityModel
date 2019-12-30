@@ -21,11 +21,6 @@ namespace Agebull.EntityModel.Common
     public class TransactionScope : ITransactionScope
     {
         /// <summary>
-        ///     当前范围
-        /// </summary>
-        [ThreadStatic] private static TransactionScope _currentScope;
-
-        /// <summary>
         ///     数据库连接对象
         /// </summary>
         private readonly IDataBase _dataBase;
@@ -61,11 +56,8 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     当前范围
         /// </summary>
-        public static TransactionScope CurrentScope
-        {
-            get => _currentScope;
-            private set => _currentScope = value;
-        }
+        [field: ThreadStatic]
+        public static TransactionScope CurrentScope { get; private set; }
 
         /// <summary>
         ///     是否已成功

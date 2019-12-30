@@ -61,16 +61,6 @@ namespace Agebull.Common.OAuth
         UserStateType State { get; set; }
 
         /// <summary>
-        ///     用户角色标识
-        /// </summary>
-        long RoleId { get; set; }
-
-        /// <summary>
-        ///     角色
-        /// </summary>
-        string Role { get; set; }
-
-        /// <summary>
         ///     登录设备的标识
         /// </summary>
         string DeviceId { get; set; }
@@ -116,6 +106,16 @@ namespace Agebull.Common.OAuth
         ///     职位
         /// </remarks>
         string Position { get; set; }
+
+        /// <summary>
+        ///     用户角色标识
+        /// </summary>
+        long RoleId { get; set; }
+
+        /// <summary>
+        ///     角色
+        /// </summary>
+        string Role { get; set; }
 
         /// <summary>
         ///     扩展信息

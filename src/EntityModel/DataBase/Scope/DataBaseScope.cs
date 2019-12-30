@@ -8,6 +8,7 @@
 
 #region 引用
 
+using System.Threading.Tasks;
 using Agebull.Common.Base;
 
 #endregion
@@ -22,7 +23,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     是否此处打开数据库
         /// </summary>
-        private readonly bool _isHereOpen;
+        private bool _isHereOpen;
         
         /// <summary>
         ///     构造
@@ -31,12 +32,6 @@ namespace Agebull.EntityModel.Common
         protected DataBaseScope(IDataBase dataBase)
         {
             DataBase = dataBase;
-
-            if (dataBase.Open())
-            {
-                _isHereOpen = true;
-            }
-            dataBase.QuoteCount += 1;
         }
 
         /// <summary>
@@ -47,21 +42,54 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     生成一个范围
         /// </summary>
+        /// <returns>范围</returns>
+        private async Task CreateScope()
+        {
+            _isHereOpen = await DataBase.OpenAsync();
+            DataBase.QuoteCount += 1;
+        }
+
+        /// <summary>
+        ///     生成一个范围
+        /// </summary>
         /// <param name="dataBase">数据库对象</param>
         /// <returns>范围</returns>
         public static DataBaseScope CreateScope(IDataBase dataBase)
         {
-            return new DataBaseScope(dataBase);
+            var scope = new DataBaseScope(dataBase);
+            scope._isHereOpen = scope.DataBase.Open();
+            scope.DataBase.QuoteCount += 1;
+            return scope;
+        }
+
+        /// <summary>
+        ///     生成一个范围
+        /// </summary>
+        /// <param name="dataBase">数据库对象</param>
+        /// <returns>范围</returns>
+        public static async Task<DataBaseScope> CreateScopeAsync(IDataBase dataBase)
+        {
+            var scope = new DataBaseScope(dataBase);
+            await scope.CreateScope();
+            return scope;
         }
 
         /// <summary>
         ///     生成一个范围
         /// </summary>
         /// <returns>范围</returns>
-        public static DataBaseScope CreateScope<TDataBase>()
-            where TDataBase : IDataBase, new()
+        public static DataBaseScope CreateScope<TDataBase>() where TDataBase : IDataBase, new()
         {
             return new DataBaseScope(new TDataBase());
+        }
+
+        /// <summary>
+        ///     生成一个范围
+        /// </summary>
+        /// <returns>范围</returns>
+        public static async Task<DataBaseScope> CreateScopeAsync<TDataBase>() where TDataBase : IDataBase, new()
+        {
+            return await CreateScopeAsync(new TDataBase());
         }
 
         /// <summary>

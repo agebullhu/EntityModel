@@ -1,4 +1,6 @@
 
+using Agebull.Common.AppManage;
+
 namespace Agebull.Common.OAuth
 {
     /// <summary>
@@ -61,10 +63,61 @@ namespace Agebull.Common.OAuth
         Deny
     }
     /// <summary>
+    ///     数据状态
+    /// </summary>
+    public enum UserStateType
+    {
+        /// <summary>
+        ///     草稿
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        ///     启用
+        /// </summary>
+        Enable = 1,
+
+        /// <summary>
+        ///     禁用
+        /// </summary>
+        Disable = 2,
+
+        /// <summary>
+        ///     废弃
+        /// </summary>
+        Discard = 0x10,
+
+        /// <summary>
+        ///     删除
+        /// </summary>
+        Delete = 0xFF
+    }
+    /// <summary>
     /// 枚举扩展
     /// </summary>
     public static class AuthEnumHelper
     {
+        /// <summary>
+        ///     节点类型枚举类型名称转换
+        /// </summary>
+        public static string ToCaption(this PageItemType value)
+        {
+            switch (value)
+            {
+                case PageItemType.Root:
+                    return "顶级";
+                case PageItemType.Folder:
+                    return "文件夹";
+                case PageItemType.Page:
+                    return "页面";
+                case PageItemType.Button:
+                    return "按钮";
+                case PageItemType.Action:
+                    return "动作";
+                default:
+                    return "节点类型枚举类型(未知)";
+            }
+        }
         /// <summary>
         ///     权限范围枚举类型名称转换
         /// </summary>

@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using Agebull.Common.Ioc;
 
 namespace Agebull.Common.Logging
@@ -9,7 +7,7 @@ namespace Agebull.Common.Logging
     /// </summary>
     partial class LogRecorderX
     {
-        /// <summary>
+        /*// <summary>
         /// 当前上下文数据
         /// </summary>
         private static readonly AsyncLocal<MonitorItem> _monitorItemLocal = new AsyncLocal<MonitorItem>();
@@ -17,15 +15,15 @@ namespace Agebull.Common.Logging
         [ThreadStatic]
         internal static MonitorItem _monitorItem;
 
-        /// <summary>
-        /// 当前范围数据
-        /// </summary>
-        internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = _monitorItemLocal.Value ?? (_monitorItemLocal.Value = new MonitorItem()));
-
         ///// <summary>
         ///// 当前范围数据
         ///// </summary>
-        //internal static MonitorItem MonitorItem => IocHelper.Create<MonitorItem>();
+        //internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = _monitorItemLocal.Value ?? (_monitorItemLocal.Value = new MonitorItem()));
+
+        /// <summary>
+        /// 当前范围数据
+        /// </summary>
+        internal static MonitorItem MonitorItem => IocHelper.Create<MonitorItem>();*/
 
         /// <summary>
         /// 开始检测资源
@@ -34,7 +32,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            MonitorItem.BeginMonitor(title);
+            IocHelper.Create<MonitorItem>().BeginMonitor(title);
         }
 
         /// <summary>
@@ -44,7 +42,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            MonitorItem.BeginStep(title);
+            IocHelper.Create<MonitorItem>().BeginStep(title);
         }
 
         /// <summary>
@@ -52,9 +50,12 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void EndStepMonitor()
         {
-            if (!LogMonitor || !MonitorItem.InMonitor)
+            if (!LogMonitor)
                 return;
-            MonitorItem.EndStepMonitor();
+            var item = IocHelper.Create<MonitorItem>();
+            if (!item.InMonitor)
+                return;
+            item.EndStepMonitor();
         }
 
         /// <summary>
@@ -62,40 +63,52 @@ namespace Agebull.Common.Logging
         /// </summary>
         public static void MonitorTrace(string message)
         {
-            if (!LogMonitor || !MonitorItem.InMonitor)
+            if (!LogMonitor)
                 return;
-            MonitorItem.Write(message, MonitorItem.ItemType.Item, false);
+            var item = IocHelper.Create<MonitorItem>();
+            if (!item.InMonitor)
+                return;
+            item.Write(message, MonitorItem.ItemType.Item, false);
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void FlushMonitor(string title, bool number = false)
         {
-            if (!LogMonitor || !MonitorItem.InMonitor)
+            if (!LogMonitor)
                 return;
-            MonitorItem.Flush(title, number);
+            var item = IocHelper.Create<MonitorItem>();
+            if (!item.InMonitor)
+                return;
+            item.Flush(title, number);
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void FlushMonitor(string fmt, params object[] args)
         {
-            if (!LogMonitor || !MonitorItem.InMonitor)
+            if (!LogMonitor)
                 return;
-            MonitorItem.Flush(string.Format(fmt, args));
+            var item = IocHelper.Create<MonitorItem>();
+            if (!item.InMonitor)
+                return;
+            item.Flush(string.Format(fmt, args));
         }
         /// <summary>
         /// 刷新资源检测
         /// </summary>
         public static void EndMonitor()
         {
-            if (!LogMonitor || !MonitorItem.InMonitor)
+            if (!LogMonitor)
                 return;
-            var log = MonitorItem.End();
+            var item = IocHelper.Create<MonitorItem>();
+            if (!item.InMonitor)
+                return;
+            var log = item.End();
             if (log != null)
                 RecordInner(LogLevel.Trace, "Monitor", log, LogType.Monitor);
-            _monitorItem = null;
-            _monitorItemLocal.Value = null;
+            //_monitorItem = null;
+            //_monitorItemLocal.Value = null;
         }
     }
 }

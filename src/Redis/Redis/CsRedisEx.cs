@@ -191,7 +191,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public void Set(string key, string value, DateTime last)
         {
-            Set(key, value, DateTime.Now - last);
+            Client.Set(key, value, (int)(last - DateTime.Now).TotalSeconds);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public void SetTime(string key, DateTime last)
         {
-            Client.Expire(key, DateTime.Now - last);
+            Client.Expire(key, last - DateTime.Now);
         }
 
         /// <summary>
@@ -231,6 +231,7 @@ namespace Agebull.Common.DataModel.Redis
         {
             Client.Expire(key, span);
         }
+
         /// <summary>
         /// ȡֵ
         /// </summary>
@@ -431,8 +432,6 @@ namespace Agebull.Common.DataModel.Redis
         {
             if (keyFunc == null)
                 keyFunc = DataKeyBuilder.DataKey;
-            var key = keyFunc(new TData());
-            Client.Set(key, DateTime.Now);
             foreach (var data in datas)
             {
                 Set(keyFunc(data), data);

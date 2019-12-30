@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Agebull.Common.Context;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
@@ -107,6 +108,52 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #endregion
 
+        #region 读数据
+
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public async Task<ApiPageData<TData>> PageDataAsync(int page, int limit, Expression<Func<TData, bool>> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return await PageDataAsync(page, limit, null, false, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public async Task<ApiPageData<TData>> PageDataAsync(int page, int limit, LambdaItem<TData> lambda)
+        {
+            var item = Access.Compile(lambda);
+            return await PageDataAsync(page, limit, null, false, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     取得列表数据
+        /// </summary>
+        public async Task<ApiPageData<TData>> PageDataAsync(int page, int limit, string sort, bool desc, string condition,
+            params DbParameter[] args)
+        {
+            if (!string.IsNullOrEmpty(BaseQueryCondition))
+            {
+                if (string.IsNullOrEmpty(condition))
+                    condition = BaseQueryCondition;
+                else if (condition != BaseQueryCondition && !condition.Contains(BaseQueryCondition))
+                    condition = $"({BaseQueryCondition}) AND ({condition})";
+            }
+
+            if (!DataExtendChecker.PrepareQuery<TData>(Access, ref condition, ref args))
+            {
+                return null;
+            }
+
+            var datas = await Access.PageAsync(page, limit, sort, desc, condition, args);
+            OnListLoaded(datas.Rows);
+            return datas;
+        }
+
+        #endregion
         #region 导入导出
 
         /// <summary>
@@ -131,6 +178,27 @@ namespace Agebull.EntityModel.BusinessLogic
             };
         }
 
+        /// <summary>
+        /// 导出到Excel
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ApiFileResult> ExportAsync(string sheetName, LambdaItem<TData> filter)
+        {
+            var exporter = new ExcelExporter<TData, TAccess>
+            {
+                OnDataLoad = OnListLoaded
+            };
+            var data = new TData();
+            var bytes = await exporter.ExportExcelAsync(filter, sheetName ?? data.__Struct.ImportName, null);
+            return new ApiFileResult
+            {
+                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+                Data = bytes
+            };
+        }
         #endregion
 
         #region 写数据
@@ -313,6 +381,92 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #endregion
 
+        #region 写数据
+
+        /// <summary>
+        ///     新增
+        /// </summary>
+        public virtual async Task<bool> SaveAsync(TData data)
+        {
+            return data.Id == 0 ? await AddNewAsync(data) : await UpdateAsync(data);
+        }
+
+        /// <summary>
+        ///     新增
+        /// </summary>
+        public virtual async Task<bool> AddNewAsync(TData data)
+        {
+            if (!DataExtendChecker.PrepareAddnew(data))
+            {
+                return false;
+            }
+
+            using (var scope = Access.DataBase.CreateTransactionScope())
+            {
+                if (!CanSave(data, true))
+                {
+                    return false;
+                }
+
+                if (!PrepareSave(data, true))
+                {
+                    return false;
+                }
+
+                if (data.__status.IsExist)
+                {
+                    if (!await Access.UpdateAsync(data))
+                        return false;
+                }
+                else if (!await Access.InsertAsync(data))
+                    return false;
+
+                if (!Saved(data, BusinessCommandType.AddNew))
+                    return false;
+                scope.SetState(true);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     更新对象
+        /// </summary>
+        public virtual async Task<bool> UpdateAsync(TData data)
+        {
+            if (data.Id <= 0)
+            {
+                return await AddNewAsync(data);
+            }
+
+            if (!DataExtendChecker.PrepareUpdate(data))
+            {
+                return false;
+            }
+
+            using (var scope = Access.DataBase.CreateTransactionScope())
+            {
+                if (!CanSave(data, false))
+                {
+                    return false;
+                }
+
+                if (!PrepareSave(data, false))
+                {
+                    return false;
+                }
+
+                if (!await Access.UpdateAsync(data))
+                    return false;
+                if (!Saved(data, BusinessCommandType.Update))
+                    return false;
+                scope.SetState(true);
+            }
+
+            return true;
+        }
+
+        #endregion
         #region 删除
 
         /// <summary>
@@ -410,6 +564,80 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #endregion
 
+        #region 删除
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        public async Task<bool> DeleteAsync(IEnumerable<long> ids)
+        {
+            var list = ids.ToArray();
+            if (!DataExtendChecker.PrepareDelete<TData>(list))
+            {
+                return false;
+            }
+
+            using (var scope = Access.DataBase.CreateTransactionScope())
+            {
+                foreach (var id in list)
+                {
+                    if (!await DeleteAsyncInner(id))
+                        return false;
+                }
+
+                scope.SetState(true);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        public async Task<bool> DeleteAsync(long id)
+        {
+            if (!DataExtendChecker.PrepareDelete<TData>(new[] { id }))
+            {
+                return false;
+            }
+            using (var scope = Access.DataBase.CreateTransactionScope())
+            {
+                var res= await DeleteAsyncInner(id);
+                scope.SetState(true);
+                return res;
+            }
+        }
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        private async Task<bool> DeleteAsyncInner(long id)
+        {
+            if (!PrepareDelete(id))
+            {
+                return false;
+            }
+
+                using (ManageModeScope.CreateScope())
+                {
+                    if (!await DoDeleteAsync(id))
+                        return false;
+                    OnDeleted(id);
+                    LogRecorderX.MonitorTrace("Delete");
+                    OnStateChanged(id, BusinessCommandType.Delete);
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///     删除对象操作
+        /// </summary>
+        protected virtual async Task<bool> DoDeleteAsync(long id)
+        {
+            return await Access.DeletePrimaryKeyAsync(id);
+        }
+
+        #endregion
         #region 状态处理
 
 

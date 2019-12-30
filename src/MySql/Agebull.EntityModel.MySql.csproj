@@ -6,9 +6,8 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>2.4.10.18</Version>
-    <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <Version>3.1.0.2-bate</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
     <PackageId>Agebull.EntityModel.MySql</PackageId>
@@ -31,23 +30,7 @@
     <Product>Agebull.EntityModel</Product>
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="MySql.Data" Version="6.9.10" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <PackageReference Include="MySql.Data" Version="6.10.5" />
   </ItemGroup>
   <ItemGroup>
@@ -80,7 +63,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
-    <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

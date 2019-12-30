@@ -3,9 +3,8 @@
   <PropertyGroup>
     <Description>数据实体SqlServer版本</Description>
     <AssemblyTitle>Agebull.EntityModel.SqlServer</AssemblyTitle>
-    <Version>2.4.10.18</Version>
-    <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <Version>3.1.0.2-bate</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.SqlServer</AssemblyName>
     <PackageId>Agebull.EntityModel.SqlServer</PackageId>
@@ -29,29 +28,13 @@
     <PackageReleaseNotes>Agebull.EntityModel.SqlServer</PackageReleaseNotes>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.2|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
     <DocumentationFile>Agebull.EntityModel.SqlServer.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.2|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
     <DocumentationFile>Agebull.EntityModel.SqlServer.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
     <Compile Remove="Excel\**" />
@@ -65,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>
