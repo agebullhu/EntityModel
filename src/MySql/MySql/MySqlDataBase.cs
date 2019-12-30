@@ -113,10 +113,11 @@ namespace Agebull.EntityModel.MySql
         public DataBaseType DataBaseType => DataBaseType.MySql;
 
         private MySqlConnection _connection;
+
         /// <summary>
         ///     连接对象
         /// </summary>
-        public MySqlConnection Connection => _connection ?? (_connection = InitConnection());
+        public MySqlConnection Connection => _connection ??= InitConnection();
 
 
         /// <summary>
@@ -167,16 +168,22 @@ namespace Agebull.EntityModel.MySql
                     return _connectionString;
                 }
 
-                var b = new MySqlConnectionStringBuilder(LoadConnectionStringSetting());
+                var str = LoadConnectionStringSetting();
+                var b = new MySqlConnectionStringBuilder(str);
                 if (b.ConnectionTimeout <= 0 || b.ConnectionTimeout > 10)
                     b.ConnectionTimeout = 10;
 
                 if (b.DefaultCommandTimeout <= 0 || b.DefaultCommandTimeout > 10)
                     b.DefaultCommandTimeout = 10;
-
+                DataBaseName = b.Database;
                 return _connectionString = b.ConnectionString;
             }
         }
+
+        /// <summary>
+        /// 数据库名称
+        /// </summary>
+        public string DataBaseName { get; private set; }
 
         /// <summary>
         /// 读取连接字符串
@@ -632,7 +639,7 @@ namespace Agebull.EntityModel.MySql
         ///     表的常用SQL
         /// </summary>
         /// <remarks>请设置为键大小写不敏感字典,因为Sql没有强制表名的大小写区别</remarks>
-        public Dictionary<string, TableSql> TableSql => _tableSql ?? (_tableSql = new Dictionary<string, TableSql>(StringComparer.OrdinalIgnoreCase));
+        public Dictionary<string, TableSql> TableSql => _tableSql ??= new Dictionary<string, TableSql>(StringComparer.OrdinalIgnoreCase);
 
         #endregion
 

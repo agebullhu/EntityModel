@@ -47,7 +47,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public SqlServerDataBase DataBase
         {
-            get => _dataBase ?? (_dataBase = IocHelper.Create<TDataBase>());
+            get => _dataBase ??= IocHelper.Create<TDataBase>();
             set => _dataBase = value;
         }
 

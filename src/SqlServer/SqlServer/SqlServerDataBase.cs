@@ -152,7 +152,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     连接对象
         /// </summary>
-        public SqlConnection Connection => _connection ?? (_connection = InitConnection());
+        public SqlConnection Connection => _connection ??= InitConnection();
 
 
         /// <summary>

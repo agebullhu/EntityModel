@@ -397,6 +397,12 @@ namespace Agebull.EntityModel.Common
         List<TData> All();
 
         /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync();
+
+        /// <summary>
         ///     分页读取
         /// </summary>
         List<TData> All(LambdaItem<TData> lambda);

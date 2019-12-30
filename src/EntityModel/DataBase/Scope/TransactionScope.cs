@@ -50,7 +50,7 @@ namespace Agebull.EntityModel.Common
                 return;
             }
             _isBegin = true;
-            dataBase.BeginTransaction();
+            //dataBase.BeginTransaction();
         }
 
         /// <summary>
@@ -121,16 +121,16 @@ namespace Agebull.EntityModel.Common
             {
                 return;
             }
-            if (!IsSucceed)
-            {
-                _dataBase.Rollback();
-                LogRecorderX.MonitorTrace("事务回滚");
-            }
-            else
-            {
-                _dataBase.Commit();
-                LogRecorderX.MonitorTrace("事务提交");
-            }
+            //if (!IsSucceed)
+            //{
+            //    _dataBase.Rollback();
+            //    LogRecorderX.MonitorTrace("事务回滚");
+            //}
+            //else
+            //{
+            //    _dataBase.Commit();
+            //    LogRecorderX.MonitorTrace("事务提交");
+            //}
         }
     }
 }

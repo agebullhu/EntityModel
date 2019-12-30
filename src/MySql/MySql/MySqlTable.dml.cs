@@ -83,18 +83,14 @@ namespace Agebull.EntityModel.MySql
                 MySqlDataBase.TraceSql(cmd);
                 if (isIdentitySql)
                 {
-                    var task = cmd.ExecuteScalarAsync();
-                    task.Wait();
-                    var key = task.Result;
+                    var key = cmd.ExecuteScalar(); ;
                     if (key == DBNull.Value || key == null)
                         return false;
                     entity.SetValue(KeyField, key);
                 }
                 else
                 {
-                    var task = cmd.ExecuteNonQueryAsync();
-                    task.Wait();
-                    if (task.Result == 0)
+                    if (cmd.ExecuteNonQuery() == 0)
                         return false;
                 }
 
@@ -1025,6 +1021,7 @@ namespace Agebull.EntityModel.MySql
             ctx.Command.Prepare();
             return ctx;
         }
+
         /// <summary>
         /// ≈˙¡ø≤Â»Î
         /// </summary>
@@ -1037,18 +1034,14 @@ namespace Agebull.EntityModel.MySql
             SetParameterValue(entity, context.Command);
             if (context.IsIdentitySql)
             {
-                var task = context.Command.ExecuteScalarAsync();
-                task.Wait();
-                var key = task.Result;
+                var key = context.Command.ExecuteScalar(); ;
                 if (key == DBNull.Value || key == null)
                     return false;
                 entity.SetValue(KeyField, key);
             }
             else
             {
-                var task = context.Command.ExecuteNonQueryAsync();
-                task.Wait();
-                if (task.Result == 0)
+                if (context.Command.ExecuteNonQuery() == 0)
                     return false;
             }
 

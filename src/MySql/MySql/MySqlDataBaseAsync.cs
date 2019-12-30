@@ -87,7 +87,7 @@ namespace Agebull.EntityModel.MySql
             //}
             if (_connection == null)
             {
-                _connection = InitConnection();
+                _connection =await InitConnectionAsync();
                 return true;
                 //Trace.WriteLine("Create _connection", "MySqlDataBase");
             }

@@ -4,7 +4,7 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>3.1.0.2-bate</Version>
+    <Version>3.1.0.4-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -35,9 +35,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Redis\NServiceKitRedis.cs" />
     <Compile Remove="Redis\RedisDbScope.cs" />
@@ -47,6 +44,7 @@
 
   <ItemGroup>
     <PackageReference Include="CSRedisCore" Version="3.3.0" />
+    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

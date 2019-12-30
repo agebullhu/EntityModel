@@ -33,12 +33,12 @@ namespace Agebull.EntityModel.SqlServer
         /// 开始一个事务
         /// </summary>
         /// <returns></returns>
-        async Task<bool> IDataBase.BeginTransactionAsync()
+        Task<bool> IDataBase.BeginTransactionAsync()
         {
             if (Transaction != null)
-                return false;
+                return Task.FromResult(false);
             Transaction = Connection.BeginTransaction();
-            return true;
+            return Task.FromResult(true);
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace Agebull.EntityModel.SqlServer
             //}
             if (_connection == null)
             {
-                _connection = InitConnection();
+                _connection =await InitConnectionAsync();
                 return true;
                 //Trace.WriteLine("Create _connection", "SqlServerDataBase");
             }

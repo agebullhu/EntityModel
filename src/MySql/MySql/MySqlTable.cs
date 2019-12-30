@@ -47,7 +47,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public MySqlDataBase DataBase
         {
-            get => _dataBase ?? (_dataBase = IocHelper.Create<TMySqlDataBase>());
+            get => _dataBase ??= IocHelper.Create<TMySqlDataBase>();
             set => _dataBase = value;
         }
 
@@ -158,8 +158,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     主键的条件部分SQL
         /// </summary>
-        public string PrimaryKeyConditionSQL => _primaryConditionSQL ??
-                                                (_primaryConditionSQL = FieldConditionSQL(PrimaryKey));
+        public string PrimaryKeyConditionSQL => _primaryConditionSQL ??= FieldConditionSQL(PrimaryKey);
 
         /// <summary>
         ///     生成多个字段的参数
@@ -401,10 +400,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     字段字典(设计时)
         /// </summary>
-        public virtual Dictionary<string, string> FieldMap
-        {
-            get { return _fieldMap ?? (_fieldMap = Fields.ToDictionary(p => p, p => p)); }
-        }
+        public virtual Dictionary<string, string> FieldMap => _fieldMap ??= Fields.ToDictionary(p => p, p => p);
 
         /// <summary>
         ///     所有字段(设计时)

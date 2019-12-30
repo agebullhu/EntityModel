@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>数据实体SqlServer版本</Description>
     <AssemblyTitle>Agebull.EntityModel.SqlServer</AssemblyTitle>
-    <Version>3.1.0.2-bate</Version>
+    <Version>3.1.0.3-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.SqlServer</AssemblyName>
