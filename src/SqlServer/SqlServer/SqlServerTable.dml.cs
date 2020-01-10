@@ -39,7 +39,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Insert(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!InsertInner(entity))
                     return false;
@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -85,18 +85,14 @@ namespace Agebull.EntityModel.SqlServer
                 SqlServerDataBase.TraceSql(cmd);
                 if (isIdentitySql)
                 {
-                    var task = cmd.ExecuteScalarAsync();
-                    task.Wait();
-                    var key = task.Result;
+                    var key = cmd.ExecuteScalar();
                     if (key == DBNull.Value || key == null)
                         return false;
                     entity.SetValue(KeyField, key);
                 }
                 else
                 {
-                    var task = cmd.ExecuteNonQueryAsync();
-                    task.Wait();
-                    if (task.Result == 0)
+                    if (cmd.ExecuteNonQuery()== 0)
                         return false;
                 }
 
@@ -117,7 +113,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Update(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!UpdateInner(entity))
                     return false;
@@ -134,7 +130,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -195,9 +191,8 @@ namespace Agebull.EntityModel.SqlServer
                 SetUpdateCommand(entity, cmd);
                 cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
                 SqlServerDataBase.TraceSql(cmd);
-                var task = cmd.ExecuteNonQueryAsync();
-                task.Wait();
-                result = task.Result;
+
+                result = cmd.ExecuteNonQuery();
             }
 
             if (result <= 0)
@@ -215,7 +210,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -235,7 +230,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Delete(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!DeleteInner(entity))
                     return false;
@@ -268,7 +263,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -290,7 +285,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Save(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!SaveInner(entity))
                     return false;
@@ -402,7 +397,7 @@ namespace Agebull.EntityModel.SqlServer
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(key);
             var paras = new[] { para };
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
                 var result = DataBase.Execute($@"DELETE FROM [{ContextWriteTable}] WHERE {condition};", para);
@@ -424,7 +419,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var convert = Compile(lambda);
             int cnt;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
                 cnt = DataBase.Execute($@"DELETE FROM [{ContextWriteTable}] WHERE {convert.ConditionSql};", convert.Parameters);
@@ -455,7 +450,7 @@ namespace Agebull.EntityModel.SqlServer
         private int DeleteByCondition(string condition, DbParameter[] args)
         {
             int cnt;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Delete);
                 cnt = DeleteInner(condition, args);
@@ -530,7 +525,7 @@ namespace Agebull.EntityModel.SqlServer
                 CreateFieldParameter(KeyField,GetDbType(KeyField), key)
             };
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2);
@@ -716,7 +711,7 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreateUpdateSql(field, value, condition, arg2);
 
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2.ToArray());
@@ -770,7 +765,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var sql = CreateUpdateSql(expression, condition);
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
 
@@ -1037,18 +1032,14 @@ namespace Agebull.EntityModel.SqlServer
             SetParameterValue(entity, context.Command);
             if (context.IsIdentitySql)
             {
-                var task = context.Command.ExecuteScalarAsync();
-                task.Wait();
-                var key = task.Result;
+                var key = context.Command.ExecuteScalar();
                 if (key == DBNull.Value || key == null)
                     return false;
                 entity.SetValue(KeyField, key);
             }
             else
             {
-                var task = context.Command.ExecuteNonQueryAsync();
-                task.Wait();
-                if (task.Result == 0)
+                if (context.Command.ExecuteNonQuery() == 0)
                     return false;
             }
 
@@ -1102,9 +1093,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             PrepareSave(entity, DataOperatorType.Update);
             SetParameterValue(entity, context.Command);
-            var task = context.Command.ExecuteNonQueryAsync();
-            task.Wait();
-            if (task.Result == 0)
+            if (context.Command.ExecuteNonQuery() == 0)
                 return false;
             var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
             if (!string.IsNullOrEmpty(sql))

@@ -4,7 +4,7 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>3.1.0.4-bate</Version>
+    <Version>3.1.0.24-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -29,10 +29,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Redis.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Redis.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

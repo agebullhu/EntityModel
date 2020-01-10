@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>3.1.0.2-bate</Version>
+    <Version>3.1.0.24-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
@@ -19,6 +19,14 @@
     <Company>Agebull</Company>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Description>数据实体Excel操作组件</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.Excel.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.Excel.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
   </ItemGroup>

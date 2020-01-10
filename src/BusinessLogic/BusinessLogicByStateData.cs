@@ -169,7 +169,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data == null)
                 return false;
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 //if (!DoResetState(data))
                 //    return false;
@@ -235,7 +235,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
                 return false;
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 Access.SetValue(p => p.IsFreeze, true, id);
                 Access.SetValue(p => p.DataState, DataStateType.Disable,
@@ -255,7 +255,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             if (filter == null && !Access.ExistPrimaryKey(id))
                 return false;
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 Access.SetValue(p => p.DataState, state, id);
                 if (setFreeze != null)

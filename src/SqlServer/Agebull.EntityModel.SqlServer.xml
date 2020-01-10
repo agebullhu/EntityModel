@@ -258,12 +258,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.CreateTransactionScope">
-            <summary>
-            生成事务范围
-            </summary>
-            <returns></returns>
-        </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.QuoteCount">
             <summary>
                 引用数量
@@ -272,6 +266,11 @@
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.DataBaseType">
             <summary>
             数据库类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.DataBaseName">
+            <summary>
+            数据库名称
             </summary>
         </member>
         <member name="F:Agebull.EntityModel.SqlServer.SqlServerDataBase._connectionString">
@@ -316,6 +315,11 @@
                 打开连接
             </summary>
             <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Agebull#EntityModel#Common#IDataBase#Free">
+            <summary>
+                关闭连接
+            </summary>
         </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Close">
             <summary>
@@ -3002,6 +3006,11 @@
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerTable`2.DataBase">
             <summary>
                 自动数据连接对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.SqlServer.SqlServerTable`2.OriDataBase">
+            <summary>
+                无懒构造数据库对象
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerTable`2.Agebull#EntityModel#Common#IDataTable#DataBase">

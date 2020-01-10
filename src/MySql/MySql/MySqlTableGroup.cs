@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using Agebull.EntityModel.Common;
 using MySql.Data.MySqlClient;
 
 #endregion
@@ -48,24 +49,18 @@ namespace Agebull.EntityModel.MySql
 
 
             var results = new List<T>();
-            using (var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters))
+            using (DataTableScope.CreateScope(this))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        var t = new T();
-                        readAction(reader,t);
-                        results.Add(t);
-                    }
+                    var t = new T();
+                    readAction(reader,t);
+                    results.Add(t);
                 }
             }
+
             return results;
         }
 

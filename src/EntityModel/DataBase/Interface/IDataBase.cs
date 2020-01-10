@@ -56,12 +56,6 @@ namespace Agebull.EntityModel.Common
         Task<bool> BeginTransactionAsync();
 
         /// <summary>
-        /// 生成事务范围
-        /// </summary>
-        /// <returns></returns>
-        ITransactionScope CreateTransactionScope();
-
-        /// <summary>
         /// 回滚事务
         /// </summary>
         void Rollback();
@@ -89,6 +83,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         bool Open();
+
+        /// <summary>
+        ///     关闭连接
+        /// </summary>
+        void Free();
 
         /// <summary>
         ///     打开连接

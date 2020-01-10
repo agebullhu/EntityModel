@@ -5,7 +5,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示访问条件和参数
     /// </summary>
-    public interface ITransactionScope : IDisposable
+    public interface ITransactionScope : IAsyncDisposable
     {
         /// <summary>
         ///     设置操作状态

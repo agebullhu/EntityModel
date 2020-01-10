@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 using MySql.Data.MySqlClient;
@@ -52,9 +53,18 @@ namespace Agebull.EntityModel.MySql
         }
 
         /// <summary>
+        ///     无懒构造数据库对象
+        /// </summary>
+        public IDataBase OriDataBase => _dataBase;
+
+        /// <summary>
         ///     自动数据连接对象
         /// </summary>
-        IDataBase IDataTable.DataBase => DataBase;
+        IDataBase IDataTable.DataBase
+        {
+            get => DataBase;
+            set => DataBase = (MySqlDataBase)value;
+        }
 
         #endregion
 
@@ -107,6 +117,23 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
+        protected Task<MySqlCommand> CreateLoadCommandAsync(string condition, params DbParameter[] args)
+        {
+            var sql = CreateLoadSql(condition, null);
+            return DataBase.CreateCommandAsync(sql.ToString(), args);
+        }
+        /// <summary>
+        ///     生成命令
+        /// </summary>
+        protected Task<MySqlCommand> CreateLoadCommandAsync(string condition, string order, params DbParameter[] args)
+        {
+            var sql = CreateLoadSql(condition, order);
+            return DataBase.CreateCommandAsync(sql.ToString(), args);
+        }
+
+        /// <summary>
+        ///     生成命令
+        /// </summary>
         protected MySqlCommand CreateLoadCommand(string condition, params DbParameter[] args)
         {
             return CreateLoadCommand(condition, null, args);
@@ -138,6 +165,22 @@ namespace Agebull.EntityModel.MySql
             return CreateLoadCommand(condition, orderSql, args);
         }
 
+        /// <summary>
+        ///     生成载入命令
+        /// </summary>
+        /// <param name="order">排序字段</param>
+        /// <param name="desc">是否倒序</param>
+        /// <param name="condition">数据条件</param>
+        /// <param name="args">条件中的参数</param>
+        /// <returns>载入命令</returns>
+        protected Task<MySqlCommand> CreateLoadCommandAsync(string order, bool desc, string condition,
+            params DbParameter[] args)
+        {
+            var field = !string.IsNullOrEmpty(order) ? order : KeyField;
+            Debug.Assert(FieldDictionary.ContainsKey(field));
+            var orderSql = $"`{FieldDictionary[field]}` {(desc ? "DESC" : "")}";
+            return CreateLoadCommandAsync(condition, orderSql, args);
+        }
         #endregion
 
         #region 字段的参数帮助

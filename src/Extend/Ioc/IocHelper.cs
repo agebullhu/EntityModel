@@ -15,11 +15,6 @@ namespace Agebull.Common.Ioc
             public IServiceScope Scope;
         }
 
-        /// <summary>
-        /// 活动实例
-        /// </summary>
-        internal static readonly AsyncLocal<ScopeData> Local = new AsyncLocal<ScopeData>();
-
         #region ServiceCollection
 
         private static IServiceCollection _serviceCollection;
@@ -28,27 +23,22 @@ namespace Agebull.Common.Ioc
         /// <summary>
         ///     依赖注入代理
         /// </summary>
-        public static IServiceProvider RootProvider => _rootProvider ?? (_rootProvider = ServiceCollection.BuildServiceProvider());
+        public static IServiceProvider RootProvider => _rootProvider ??= ServiceCollection.BuildServiceProvider();
+
+        /// <summary>
+        /// 活动实例
+        /// </summary>
+        internal static readonly AsyncLocal<ScopeData> Local = new AsyncLocal<ScopeData>();
 
         /// <summary>
         ///     依赖注入代理
         /// </summary>
-        public static IServiceProvider ServiceProvider
-        {
-            get
-            {
-                lock (Local)
-                {
-                    return Local.Value?.Provider ?? RootProvider;
-                }
-            }
-        }
-
-
+        public static IServiceProvider ServiceProvider => Local.Value?.Provider ?? RootProvider;
+        
         /// <summary>
         ///     全局依赖
         /// </summary>
-        public static IServiceCollection ServiceCollection => _serviceCollection ?? (_serviceCollection = new ServiceCollection());
+        public static IServiceCollection ServiceCollection => _serviceCollection ??= new ServiceCollection();
 
         /// <summary>
         ///     显示式设置配置对象(依赖)
@@ -70,7 +60,7 @@ namespace Agebull.Common.Ioc
         public static IServiceProvider Update()
         {
             _rootProvider = null;
-            lock (Local)
+            //lock (Local)
             {
                 if (Local.Value != null && Local.Value.Scope == null)
                 {
@@ -91,14 +81,11 @@ namespace Agebull.Common.Ioc
         {
             var provider = ServiceCollection.BuildServiceProvider(true);
             var scope = provider.GetService<IServiceScopeFactory>().CreateScope();
-            lock (Local)
+            Local.Value = new ScopeData
             {
-                Local.Value = new ScopeData
-                {
-                    Provider = scope.ServiceProvider,
-                    Scope = scope
-                };
-            }
+                Provider = scope.ServiceProvider,
+                Scope = scope
+            };
             return scope;
         }
 
@@ -107,14 +94,11 @@ namespace Agebull.Common.Ioc
         /// </summary>
         internal static void DisposeScope()
         {
-            lock (Local)
-            {
-                if (Local.Value == null)
-                    return;
-                Local.Value.Scope = null;
-                Local.Value.Provider = null;
-                Local.Value = null;
-            }
+            if (Local.Value == null)
+                return;
+            Local.Value.Scope = null;
+            Local.Value.Provider = null;
+            Local.Value = null;
         }
 
         #endregion

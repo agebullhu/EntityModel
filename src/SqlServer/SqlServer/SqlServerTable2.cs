@@ -52,9 +52,18 @@ namespace Agebull.EntityModel.SqlServer
         }
 
         /// <summary>
+        ///     无懒构造数据库对象
+        /// </summary>
+        public IDataBase OriDataBase => _dataBase;
+
+        /// <summary>
         ///     自动数据连接对象
         /// </summary>
-        IDataBase IDataTable.DataBase => DataBase;
+        IDataBase IDataTable.DataBase
+        {
+            get => DataBase;
+            set => DataBase = (SqlServerDataBase)value;
+        }
 
         #endregion
 

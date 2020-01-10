@@ -15,8 +15,9 @@ namespace Agebull.Common.Logging
         /// </summary>
         internal LogStack<MonitorData> Stack = new LogStack<MonitorData>();
 
-        public readonly StringBuilder Texter = new StringBuilder();
+        internal readonly StringBuilder Texter = new StringBuilder();
 
+        internal DateTime Id = DateTime.Now;
 
         /// <summary>
         ///     Õì²â¿ª¹Ø

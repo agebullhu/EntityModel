@@ -3025,14 +3025,14 @@
                 简单的依赖注入器(框架内部使用,请不要调用)
             </summary>
         </member>
-        <member name="F:Agebull.Common.Ioc.IocHelper.Local">
-            <summary>
-            活动实例
-            </summary>
-        </member>
         <member name="P:Agebull.Common.Ioc.IocHelper.RootProvider">
             <summary>
                 依赖注入代理
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.Ioc.IocHelper.Local">
+            <summary>
+            活动实例
             </summary>
         </member>
         <member name="P:Agebull.Common.Ioc.IocHelper.ServiceProvider">
@@ -3345,9 +3345,9 @@
             清理资源
             </summary>
         </member>
-        <member name="F:Agebull.Common.Ioc.IocScope._disposeFunc">
+        <member name="F:Agebull.Common.Ioc.IocScope.Local">
             <summary>
-            析构方法
+            活动实例
             </summary>
         </member>
         <member name="P:Agebull.Common.Ioc.IocScope.DisposeFunc">

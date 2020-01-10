@@ -61,18 +61,10 @@ namespace Agebull.EntityModel.SqlServer
             var results = new List<T>();
             using (var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = task.Result)
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (true)
+                    while (reader.Read())
                     {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                        {
-                            break;
-                        }
                         var t = new T();
                         readAction(reader, t);
                         results.Add(t);
@@ -1188,18 +1180,10 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = task.Result)
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (true)
+                    while (reader.Read())
                     {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                        {
-                            break;
-                        }
                         var vl = reader.GetValue(0);
                         if (vl != DBNull.Value && vl != null)
                             values.Add(vl);
@@ -1632,19 +1616,10 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = CreateLoadCommand(condition, orderBy, args))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = task.Result)
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (true)
+                    while (reader.Read())
                     {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                        {
-                            break;
-                        }
-
                         results.Add(LoadEntity(reader));
                     }
                 }
@@ -1664,19 +1639,10 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = task.Result)
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (true)
+                    while (reader.Read())
                     {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                        {
-                            break;
-                        }
-
                         results.Add(LoadEntity(reader));
                     }
                 }
@@ -1697,19 +1663,10 @@ namespace Agebull.EntityModel.SqlServer
             using (var cmd = DataBase.CreateCommand(procedure, args))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = task.Result)
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (true)
+                    while (reader.Read())
                     {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                        {
-                            break;
-                        }
-
                         results.Add(LoadEntity(reader));
                     }
                 }

@@ -64,11 +64,9 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         void IDataBase.Rollback()
         {
-            lock (this)
-            {
-                Transaction?.Rollback();
-                Transaction = null;
-            }
+            Transaction?.Rollback();
+            Transaction?.Dispose();
+            Transaction = null;
         }
 
         /// <summary>
@@ -76,11 +74,9 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         void IDataBase.Commit()
         {
-            lock (this)
-            {
-                Transaction?.Commit();
-                Transaction = null;
-            }
+            Transaction?.Commit();
+            Transaction?.Dispose();
+            Transaction = null;
         }
         #endregion
 
@@ -91,12 +87,6 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <returns></returns>
         public IDisposable CreateDataBaseScope() => DataBaseScope.CreateScope(this);
-
-        /// <summary>
-        /// 生成事务范围
-        /// </summary>
-        /// <returns></returns>
-        public ITransactionScope CreateTransactionScope() => TransactionScope.CreateScope(this);
 
         /// <summary>
         ///     引用数量
@@ -110,6 +100,11 @@ namespace Agebull.EntityModel.SqlServer
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => DataBaseType.SqlServer;
+
+        /// <summary>
+        /// 数据库名称
+        /// </summary>
+        public string DataBaseName { get; private set; }
 
         /// <summary>
         ///     连接字符串
@@ -128,13 +123,19 @@ namespace Agebull.EntityModel.SqlServer
                     return _connectionString;
                 }
 
-                var b = new SqlConnectionStringBuilder(LoadConnectionStringSetting());
-                if (b.ConnectTimeout <= 0 || b.ConnectTimeout > 10)
-                    b.ConnectTimeout = 10;
+                var str = LoadConnectionStringSetting();
+                var b = new SqlConnectionStringBuilder(str);
+                //if (b.ConnectionTimeout <= 0 || b.ConnectionTimeout > 10)
+                //    b.ConnectionTimeout = 10;
 
+                //if (b.DefaultCommandTimeout <= 0 || b.DefaultCommandTimeout > 10)
+                //    b.DefaultCommandTimeout = 10;
+
+                DataBaseName = b.DataSource;
                 return _connectionString = b.ConnectionString;
             }
         }
+
         /// <summary>
         /// 读取连接字符串
         /// </summary>
@@ -210,6 +211,23 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     关闭连接
         /// </summary>
+        void IDataBase.Free()
+        {
+            if (_connection == null)
+                return;
+            //if (_connection.State == ConnectionState.Open)
+            //    lock (IdleConnections)
+            //    {
+            //        IdleConnections.Enqueue(_connection);
+            //    }
+            //else
+            Close(_connection);
+            _connection = null;
+        }
+
+        /// <summary>
+        ///     关闭连接
+        /// </summary>
         public void Close()
         {
             Close(_connection);
@@ -222,32 +240,36 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         private void Close(SqlConnection connection)
         {
+            //int cnt;
+            lock (Connections)
+            {
+                if (!Connections.Remove(connection))
+                    return;
+                //cnt = Connections.Count;
+            }
             if (connection == null)
             {
                 return;
             }
-            try
+            if (connection.State == ConnectionState.Open)
             {
-                if (connection.State == ConnectionState.Open)
+                try
                 {
                     connection.Close();
                 }
+                catch (Exception exception)
+                {
+                    LogRecorderX.Exception(exception);
+                }
+            }
+
+            try
+            {
                 connection.Dispose();
             }
             catch (Exception exception)
             {
-                connection.Dispose();
-                LogRecorderX.Error(exception.ToString());
-            }
-            finally
-            {
-                int cnt;
-                lock (Connections)
-                {
-                    Connections.Remove(connection);
-                    cnt = Connections.Count;
-                }
-                LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
+                LogRecorderX.Exception(exception);
             }
         }
         /// <summary>
@@ -502,16 +524,9 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         protected int ExecuteInner(string sql, params DbParameter[] args)
         {
-            lock (this)
+            using (var cmd = CreateCommand(sql, args))
             {
-                int result;
-                using (var cmd = CreateCommand(sql, args))
-                {
-                    var task = cmd.ExecuteNonQueryAsync();
-                    task.Wait();
-                    result = task.Result;
-                }
-                return result;
+                return cmd.ExecuteNonQuery();
             }
         }
 
@@ -526,17 +541,12 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         protected object ExecuteScalarInner(string sql, params DbParameter[] args)
         {
-            lock (this)
+            object result;
+            using (var cmd = CreateCommand(sql, args))
             {
-                object result;
-                using (var cmd = CreateCommand(sql, args))
-                {
-                    var task = cmd.ExecuteScalarAsync();
-                    task.Wait();
-                    result = task.Result;
-                }
-                return result == DBNull.Value ? null : result;
+                result = cmd.ExecuteScalar();
             }
+            return result == DBNull.Value ? null : result;
         }
 
         /// <summary>

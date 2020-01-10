@@ -40,7 +40,13 @@ namespace Agebull.EntityModel.Common
         IDataBase DataBase
         {
             get;
+            set;
         }
+
+        /// <summary>
+        ///     无懒构造数据库对象
+        /// </summary>
+        IDataBase OriDataBase { get; }
 
         #endregion
 

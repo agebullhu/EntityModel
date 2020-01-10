@@ -747,7 +747,7 @@ namespace Agebull.EntityModel.MySql
         protected object CollectInner(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-
+            using (DataTableScope.CreateScope(this))
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -874,20 +874,13 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            using (DataTableScope.CreateScope(this))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var cmd = DataBase.CreateCommand(sql, args);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1069,23 +1062,15 @@ namespace Agebull.EntityModel.MySql
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
-
-            using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
+            using (DataTableScope.CreateScope(this))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var cmd = DataBase.CreateCommand(sql, convert.Parameters);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add((TField)vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add((TField)vl);
                 }
             }
 
@@ -1136,8 +1121,7 @@ namespace Agebull.EntityModel.MySql
         protected object LoadValueInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-
-
+            using (DataTableScope.CreateScope(this))
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -1151,23 +1135,15 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
-
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            using (DataTableScope.CreateScope(this))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var cmd = DataBase.CreateCommand(sql, args);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add(vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add(vl);
                 }
             }
 
@@ -1497,21 +1473,21 @@ namespace Agebull.EntityModel.MySql
         private void ReLoadInner(TData entity)
         {
             entity.__status.RejectChanged();
-            using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
+            using (DataTableScope.CreateScope(this))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
+                using var reader = cmd.ExecuteReader();
+                if (!reader.Read())
+                    return;
+                using (new EntityLoadScope(entity))
                 {
-                    if (!reader.Read())
-                        return;
-                    using (new EntityLoadScope(entity))
-                    {
-                        if (DynamicLoadAction != null)
-                            DynamicLoadAction(reader, entity);
-                        else
-                            LoadEntity(reader, entity);
-                    }
+                    if (DynamicLoadAction != null)
+                        DynamicLoadAction(reader, entity);
+                    else
+                        LoadEntity(reader, entity);
                 }
             }
+
             var entity2 = EntityLoaded(entity);
             if (entity != entity2)
                 entity.CopyValue(entity2);
@@ -1532,17 +1508,16 @@ namespace Agebull.EntityModel.MySql
         protected TData LoadFirstInner(string condition, DbParameter[] args)
         {
             TData entity = null;
-            using (var cmd = CreateLoadCommand(condition, args))
+            using (DataTableScope.CreateScope(this))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                        entity = LoadEntity(reader);
-                }
-            }
+                using var cmd = CreateLoadCommand(condition, args);
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                    entity = LoadEntity(reader);
 
-            if (entity != null)
-                entity = EntityLoaded(entity);
+                if (entity != null)
+                    entity = EntityLoaded(entity);
+            }
             return entity;
         }
 
@@ -1561,15 +1536,13 @@ namespace Agebull.EntityModel.MySql
         protected TData LoadLastInner(string condition, DbParameter[] args)
         {
             TData entity = null;
-
+            using (DataTableScope.CreateScope(this))
             {
                 using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            entity = LoadEntity(reader);
-                    }
+                    using var reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                        entity = LoadEntity(reader);
                 }
                 if (entity != null)
                     entity = EntityLoaded(entity);
@@ -1599,15 +1572,13 @@ namespace Agebull.EntityModel.MySql
         protected List<TData> LoadDataInner(string condition, DbParameter[] args, string orderBy)
         {
             var results = new List<TData>();
-
+            using (DataTableScope.CreateScope(this))
             {
                 using (var cmd = CreateLoadCommand(condition, orderBy, args))
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            results.Add(LoadEntity(reader));
-                    }
+                    using var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                        results.Add(LoadEntity(reader));
                 }
                 for (var index = 0; index < results.Count; index++)
                     results[index] = EntityLoaded(results[index]);
@@ -1621,21 +1592,13 @@ namespace Agebull.EntityModel.MySql
         protected List<TData> LoadDataBySql(string sql, DbParameter[] args)
         {
             var results = new List<TData>();
-
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            using (DataTableScope.CreateScope(this))
             {
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var cmd = DataBase.CreateCommand(sql, args);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1651,21 +1614,14 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
 
-            using (var cmd = DataBase.CreateCommand(procedure, args))
+            using (DataTableScope.CreateScope(this))
             {
+                using var cmd = DataBase.CreateCommand(procedure, args);
                 cmd.CommandType = CommandType.StoredProcedure;
-                var task = cmd.ExecuteReaderAsync();
-                task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (true)
-                    {
-                        var task2 = reader.ReadAsync();
-                        task2.Wait();
-                        if (!task2.Result)
-                            break;
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 

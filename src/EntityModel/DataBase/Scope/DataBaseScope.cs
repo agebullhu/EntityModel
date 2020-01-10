@@ -24,7 +24,7 @@ namespace Agebull.EntityModel.Common
         ///     是否此处打开数据库
         /// </summary>
         private bool _isHereOpen;
-        
+
         /// <summary>
         ///     构造
         /// </summary>
@@ -43,10 +43,11 @@ namespace Agebull.EntityModel.Common
         ///     生成一个范围
         /// </summary>
         /// <returns>范围</returns>
-        private async Task CreateScope()
+        private async Task<DataBaseScope> CreateScope()
         {
             _isHereOpen = await DataBase.OpenAsync();
             DataBase.QuoteCount += 1;
+            return this;
         }
 
         /// <summary>
@@ -67,11 +68,10 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
         /// <returns>范围</returns>
-        public static async Task<DataBaseScope> CreateScopeAsync(IDataBase dataBase)
+        public static Task<DataBaseScope> CreateScopeAsync(IDataBase dataBase)
         {
             var scope = new DataBaseScope(dataBase);
-            await scope.CreateScope();
-            return scope;
+            return scope.CreateScope();
         }
 
         /// <summary>

@@ -62,30 +62,29 @@ namespace Agebull.EntityModel.MySql
         /// <returns>参数</returns>
         public static MySqlParameter CreateParameter(string parameterName, object value, MySqlDbType type)
         {
+            object val;
             switch (value)
             {
                 case null:
-                    return new MySqlParameter(parameterName, MySqlDbType.VarChar)
-                    {
-                        Value = DBNull.Value
-                    };
+                case DBNull _:
+                    val = DBNull.Value;
+                    break;
+                case Enum _:
+                    val = Convert.ToInt32(value);
+                    break;
+                case bool b:
+                    val = b ? (byte)1 : (byte)0;
+                    break;
+                default:
+                    val = value;
+                    break;
                 case string s:
                     return CreateParameter(parameterName, s);
-                case Enum _:
-                    return new MySqlParameter(parameterName, MySqlDbType.Int32)
-                    {
-                        Value = Convert.ToInt32(value)
-                    };
-                case bool _:
-                    return new MySqlParameter(parameterName, MySqlDbType.Byte)
-                    {
-                        Value = (bool)value ? (byte)1 : (byte)0
-                    };
             }
 
             return new MySqlParameter(parameterName, type)
             {
-                Value = value
+                Value = val
             };
         }
 

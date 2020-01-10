@@ -303,7 +303,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 if (!CanSave(data, true))
                 {
@@ -346,7 +346,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 if (!CanSave(data, false))
                 {
@@ -401,7 +401,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 if (!CanSave(data, true))
                 {
@@ -444,7 +444,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 if (!CanSave(data, false))
                 {
@@ -480,7 +480,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 foreach (var id in list)
                 {
@@ -504,7 +504,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 if (!DeleteInner(id))
                 {
@@ -577,7 +577,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 foreach (var id in list)
                 {
@@ -600,7 +600,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 var res= await DeleteAsyncInner(id);
                 scope.SetState(true);

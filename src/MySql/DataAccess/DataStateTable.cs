@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public virtual bool ResetState(long id)
         {
-            //using (DataBaseScope.CreateScope(DataBase))
+            using (DataTableScope.CreateScope(this))
             {
                 var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode} 
@@ -70,7 +70,7 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
-            //using (DataBaseScope.CreateScope(DataBase))
+            using (DataTableScope.CreateScope(this))
             {
                 var convert = Compile(lambda);
                 var sql = $@"UPDATE `{ContextWriteTable}` 

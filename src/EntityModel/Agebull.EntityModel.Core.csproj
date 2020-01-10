@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>3.1.0.2-bate</Version>
+    <Version>3.1.0.24-bate</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -32,10 +32,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Core.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="DataBase\**" />
@@ -73,6 +75,7 @@
     <Compile Include="DataBase\Interface\ITransactionScope.cs" />
     <Compile Include="DataBase\Lambda\LambdaItem.cs" />
     <Compile Include="DataBase\Interface\TableSql.cs" />
+    <Compile Include="DataBase\Scope\DataTableScope.cs" />
     <Compile Include="DataBase\Scope\DbReaderScope.cs" />
     <Compile Include="DataBase\Scope\ReadTableScope.cs" />
     <Compile Include="DataBase\Scope\DataBaseScope.cs" />
@@ -89,8 +92,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MicroZero\Agebull.MicroZero.Abstractions.csproj" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy   $(OutDir)$(TargetFileName) C:\Projects\Agebull\hotfix\ /y&#xD;&#xA;xcopy   $(OutDir)$(TargetName).pdb C:\Projects\Agebull\hotfix\ /y" />
-  </Target>
-
 </Project>

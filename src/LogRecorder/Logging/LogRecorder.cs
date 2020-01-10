@@ -145,20 +145,10 @@ namespace Agebull.Common.Logging
         static LogRecorderX()
         {
             IocHelper.AddScoped<MonitorItem, MonitorItem>();
-            var sec = ConfigurationManager.Get("LogRecorder");
-            if (sec != null)
-            {
-                TraceToConsole = sec.GetBool("console");
-                LogMonitor = sec.GetBool("monitor");
-                LogDataSql = sec.GetBool("sql");
-                Level = Enum.TryParse<LogLevel>(sec["level"], out var level) ? level : LogLevel.Warning;
-            }
-
-            if (Level > LogLevel.Trace)
-                LogMonitor = false;
+            IocHelper.Update();
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();
-            BaseRecorder.Initialize();
+            Initialize();
             NewRecorderThread();
         }
 
@@ -827,7 +817,7 @@ namespace Agebull.Common.Logging
             var thread = new Thread(WriteRecordLoop)
             {
                 Priority = ThreadPriority.BelowNormal,
-                IsBackground = true
+                IsBackground = true,
             };
             thread.Start();
         }

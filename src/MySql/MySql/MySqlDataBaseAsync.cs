@@ -99,6 +99,8 @@ namespace Agebull.EntityModel.MySql
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "MySqlDataBase");
             await _connection.OpenAsync();
+            lock (Connections)
+                LogRecorderX.Trace($"打开连接数：{Connections.Count}");
             return true;
         }
 
@@ -139,7 +141,7 @@ namespace Agebull.EntityModel.MySql
                 Connections.Remove(connection);
                 cnt = Connections.Count;
             }
-            LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
+            //LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
         }
 
         #endregion
@@ -182,10 +184,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            using (var cmd = CreateCommand(sql, args))
-            {
-                return await cmd.ExecuteNonQueryAsync();
-            }
+            await using var cmd = await CreateCommandAsync(sql, args);
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -199,10 +199,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args)
         {
-            using (var cmd = CreateCommand(sql, args))
-            {
-                return await cmd.ExecuteNonQueryAsync();
-            }
+            await using var cmd = await CreateCommandAsync(sql, args);
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -217,7 +215,7 @@ namespace Agebull.EntityModel.MySql
         public async Task<object> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
             object result;
-            using (var cmd = CreateCommand(sql, args))
+            await using (var cmd = await CreateCommandAsync(sql, args))
             {
                 result = await cmd.ExecuteScalarAsync();
             }

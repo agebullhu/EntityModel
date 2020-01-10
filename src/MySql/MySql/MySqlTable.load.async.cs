@@ -616,7 +616,10 @@ namespace Agebull.EntityModel.MySql
         protected async Task<object> CollectInnerAsync(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-            return await DataBase.ExecuteScalarAsync(sql, args);
+            await using (DataTableScope.CreateScope(this))
+            {
+                return await DataBase.ExecuteScalarAsync(sql, args);
+            }
         }
 
         #endregion
@@ -741,14 +744,13 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            await using (TransactionScope.CreateScope(this))
             {
-                using (var reader = (MySqlDataReader)(await cmd.ExecuteReaderAsync()))
+                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
+                await using var reader = (MySqlDataReader)(await cmd.ExecuteReaderAsync());
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -930,17 +932,15 @@ namespace Agebull.EntityModel.MySql
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
-
-            using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
+            await using (DataTableScope.CreateScope(this))
             {
-                using (var reader = await cmd.ExecuteReaderAsync())
+                await using var cmd = await DataBase.CreateCommandAsync(sql, convert.Parameters);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add((TField)vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add((TField)vl);
                 }
             }
 
@@ -980,9 +980,9 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public async Task<object> LoadValueAsync(string field, string condition, params DbParameter[] args)
+        public Task<object> LoadValueAsync(string field, string condition, params DbParameter[] args)
         {
-            return await LoadValueInnerAsync(field, condition, args);
+            return LoadValueInnerAsync(field, condition, args);
         }
 
         /// <summary>
@@ -991,7 +991,8 @@ namespace Agebull.EntityModel.MySql
         protected async Task<object> LoadValueInnerAsync(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-            return await DataBase.ExecuteScalarAsync(sql, args);
+            await using (DataTableScope.CreateScope(this))
+                return await DataBase.ExecuteScalarAsync(sql, args);
         }
 
 
@@ -1002,17 +1003,15 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
-
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            await using (DataTableScope.CreateScope(this))
             {
-                using (var reader = await cmd.ExecuteReaderAsync())
+                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add(vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add(vl);
                 }
             }
 
@@ -1028,12 +1027,12 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public async Task<List<TData>> LoadDataAsync(MulitCondition condition)
+        public Task<List<TData>> LoadDataAsync(MulitCondition condition)
         {
             if (condition == null || string.IsNullOrEmpty(condition.Condition))
-                return new List<TData>();
+                return Task.FromResult(new List<TData>());
             if (condition.Parameters == null)
-                return LoadDataInner(condition.Condition);
+                return LoadDataInnerAsync(condition.Condition);
             List<DbParameter> args = new List<DbParameter>();
             foreach (var item in condition.Parameters)
             {
@@ -1158,7 +1157,7 @@ namespace Agebull.EntityModel.MySql
                     }
                 args.Add(pa);
             }
-            return await LoadDataInnerAsync(condition.Condition, args.ToArray());
+            return LoadDataInnerAsync(condition.Condition, args.ToArray());
         }
 
 
@@ -1167,35 +1166,35 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public async Task<TData> LoadDataAsync(object id)
+        public Task<TData> LoadDataAsync(object id)
         {
-            return await LoadByPrimaryKeyAsync(id);
+            return LoadByPrimaryKeyAsync(id);
         }
 
 
         /// <summary>
         ///     全表读取
         /// </summary>
-        public async Task<List<TData>> LoadDataAsync()
+        public Task<List<TData>> LoadDataAsync()
         {
-            return await LoadDataInnerAsync();
+            return LoadDataInnerAsync();
         }
 
 
         /// <summary>
         ///     条件读取
         /// </summary>
-        public async Task<List<TData>> LoadDataAsync(string condition, params DbParameter[] args)
+        public Task<List<TData>> LoadDataAsync(string condition, params DbParameter[] args)
         {
-            return await LoadDataInnerAsync(condition, args);
+            return LoadDataInnerAsync(condition, args);
         }
 
         /// <summary>
         ///     主键读取
         /// </summary>
-        public virtual async Task<TData> LoadByPrimaryKeyAsync(object key)
+        public virtual Task<TData> LoadByPrimaryKeyAsync(object key)
         {
-            return await LoadFirstInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
+            return LoadFirstInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
         }
 
         /// <summary>
@@ -1218,66 +1217,69 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public async Task<TData> LoadFirstAsync(string condition = null)
+        public Task<TData> LoadFirstAsync(string condition = null)
         {
-            return await LoadFirstInnerAsync(condition);
+            return LoadFirstInnerAsync(condition);
         }
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public async Task<TData> LoadFirstAsync(string condition, params DbParameter[] args)
+        public Task<TData> LoadFirstAsync(string condition, params DbParameter[] args)
         {
-            return await LoadFirstInnerAsync(condition, args);
+            return LoadFirstInnerAsync(condition, args);
         }
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public async Task<TData> LoadFirstAsync(string foreignKey, object key)
+        public Task<TData> LoadFirstAsync(string foreignKey, object key)
         {
-            return await LoadFirstInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
+            return LoadFirstInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        public async Task<TData> LoadLastAsync(string condition = null)
+        public Task<TData> LoadLastAsync(string condition = null)
         {
-            return await LoadLastInnerAsync(condition);
+            return LoadLastInnerAsync(condition);
         }
 
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        public async Task<TData> LoadLastAsync(string condition, params DbParameter[] args)
+        public Task<TData> LoadLastAsync(string condition, params DbParameter[] args)
         {
-            return await LoadLastInnerAsync(condition, args);
+            return LoadLastInnerAsync(condition, args);
         }
 
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        public async Task<TData> LoadLastAsync(string foreignKey, object key)
+        public Task<TData> LoadLastAsync(string foreignKey, object key)
         {
-            return await LoadLastInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
+            return LoadLastInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        public async Task<List<TData>> LoadByForeignKeyAsync(string foreignKey, object key)
+        public Task<List<TData>> LoadByForeignKeyAsync(string foreignKey, object key)
         {
-            return await LoadDataInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
+            return LoadDataInnerAsync(FieldConditionSQL(foreignKey), CreateFieldParameter(foreignKey, GetDbType(foreignKey), key));
         }
 
         /// <summary>
         ///     重新读取
         /// </summary>
-        public async Task ReLoadAsync(TData entity)
+        public async Task<bool> ReLoadAsync(TData entity)
         {
-            await ReLoadInnerAsync(entity);
+            bool res;
+            await using (DataTableScope.CreateScope(this))
+                res = await ReLoadInnerAsync(entity);
             entity.OnStatusChanged(NotificationStatusType.Refresh);
+            return res;
         }
 
         #endregion
@@ -1288,9 +1290,9 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取首行
         /// </summary>
-        protected async Task<TData> LoadFirstInnerAsync(string condition = null, DbParameter args = null)
+        protected Task<TData> LoadFirstInnerAsync(string condition = null, DbParameter args = null)
         {
-            return await LoadFirstInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
+            return LoadFirstInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
         }
 
         /// <summary>
@@ -1299,17 +1301,16 @@ namespace Agebull.EntityModel.MySql
         protected async Task<TData> LoadFirstInnerAsync(string condition, DbParameter[] args)
         {
             TData entity = null;
-            using (var cmd = CreateLoadCommand(condition, args))
+            await using (DataTableScope.CreateScope(this))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (await reader.ReadAsync())
-                        entity = LoadEntity(reader);
-                }
+                await using var cmd = await CreateLoadCommandAsync(condition, args);
+                await using var reader = cmd.ExecuteReader();
+                if (await reader.ReadAsync())
+                    entity = LoadEntity(reader);
+                if (entity != null)
+                    entity = EntityLoaded(entity);
             }
 
-            if (entity != null)
-                entity = EntityLoaded(entity);
             return entity;
         }
 
@@ -1317,9 +1318,9 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     读取尾行
         /// </summary>
-        protected async Task<TData> LoadLastInnerAsync(string condition = null, DbParameter args = null)
+        protected Task<TData> LoadLastInnerAsync(string condition = null, DbParameter args = null)
         {
-            return await LoadLastInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
+            return LoadLastInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
         }
 
         /// <summary>
@@ -1328,35 +1329,33 @@ namespace Agebull.EntityModel.MySql
         protected async Task<TData> LoadLastInnerAsync(string condition, DbParameter[] args)
         {
             TData entity = null;
-
-            using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
+            await using (DataTableScope.CreateScope(this))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (await reader.ReadAsync())
-                        entity = LoadEntity(reader);
-                }
-            }
+                await using var cmd = await CreateLoadCommandAsync(KeyField, true, condition, args);
+                await using var reader = cmd.ExecuteReader();
+                while (await reader.ReadAsync())
+                    entity = LoadEntity(reader);
 
-            if (entity != null)
-                entity = EntityLoaded(entity);
+                if (entity != null)
+                    entity = EntityLoaded(entity);
+            }
             return entity;
         }
 
         /// <summary>
         ///     读取全部
         /// </summary>
-        protected async Task<List<TData>> LoadDataInnerAsync(string condition = null, DbParameter args = null)
+        protected Task<List<TData>> LoadDataInnerAsync(string condition = null, DbParameter args = null)
         {
-            return await LoadDataInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args }, null);
+            return LoadDataInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args }, null);
         }
 
         /// <summary>
         ///     读取全部
         /// </summary>
-        protected async Task<List<TData>> LoadDataInnerAsync(string condition, DbParameter[] args)
+        protected Task<List<TData>> LoadDataInnerAsync(string condition, DbParameter[] args)
         {
-            return await LoadDataInnerAsync(condition, args, null);
+            return LoadDataInnerAsync(condition, args, null);
         }
 
         /// <summary>
@@ -1365,15 +1364,13 @@ namespace Agebull.EntityModel.MySql
         protected async Task<List<TData>> LoadDataInnerAsync(string condition, DbParameter[] args, string orderBy)
         {
             var results = new List<TData>();
-
+            await using (DataTableScope.CreateScope(this))
             {
-                using (var cmd = CreateLoadCommand(condition, orderBy, args))
+                await using (var cmd = await CreateLoadCommandAsync(condition, orderBy, args))
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (await reader.ReadAsync())
-                            results.Add(LoadEntity(reader));
-                    }
+                    await using var reader = cmd.ExecuteReader();
+                    while (await reader.ReadAsync())
+                        results.Add(LoadEntity(reader));
                 }
                 for (var index = 0; index < results.Count; index++)
                     results[index] = EntityLoaded(results[index]);
@@ -1387,17 +1384,15 @@ namespace Agebull.EntityModel.MySql
         protected async Task<List<TData>> LoadDataBySqlAsync(string sql, DbParameter[] args)
         {
             var results = new List<TData>();
-
-            using (var cmd = DataBase.CreateCommand(sql, args))
+            await using (TransactionScope.CreateScope(this))
             {
+                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
                 var task = cmd.ExecuteReaderAsync();
                 task.Wait();
-                using (var reader = (MySqlDataReader)task.Result)
+                await using var reader = (MySqlDataReader)task.Result;
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1412,17 +1407,15 @@ namespace Agebull.EntityModel.MySql
         public async Task<List<TData>> LoadDataByProcedureAsync(string procedure, DbParameter[] args)
         {
             var results = new List<TData>();
-
-            using (var cmd = DataBase.CreateCommand(procedure, args))
+            await using (TransactionScope.CreateScope(this))
             {
+                await using var cmd = await DataBase.CreateCommandAsync(procedure, args);
                 cmd.CommandType = CommandType.StoredProcedure;
                 var res = await cmd.ExecuteReaderAsync();
-                using (var reader = (MySqlDataReader)res)
+                await using var reader = (MySqlDataReader)res;
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 

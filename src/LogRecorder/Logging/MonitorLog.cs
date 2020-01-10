@@ -1,4 +1,4 @@
-using Agebull.Common.Ioc;
+using System.Threading;
 
 namespace Agebull.Common.Logging
 {
@@ -7,23 +7,15 @@ namespace Agebull.Common.Logging
     /// </summary>
     partial class LogRecorderX
     {
-        /*// <summary>
+        /// <summary>
         /// 当前上下文数据
         /// </summary>
         private static readonly AsyncLocal<MonitorItem> _monitorItemLocal = new AsyncLocal<MonitorItem>();
 
-        [ThreadStatic]
-        internal static MonitorItem _monitorItem;
-
-        ///// <summary>
-        ///// 当前范围数据
-        ///// </summary>
-        //internal static MonitorItem MonitorItem => _monitorItem ?? (_monitorItem = _monitorItemLocal.Value ?? (_monitorItemLocal.Value = new MonitorItem()));
-
         /// <summary>
         /// 当前范围数据
         /// </summary>
-        internal static MonitorItem MonitorItem => IocHelper.Create<MonitorItem>();*/
+        internal static MonitorItem MonitorItem => _monitorItemLocal.Value ?? (_monitorItemLocal.Value = new MonitorItem());
 
         /// <summary>
         /// 开始检测资源
@@ -32,7 +24,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            IocHelper.Create<MonitorItem>().BeginMonitor(title);
+            MonitorItem.BeginMonitor(title);
         }
 
         /// <summary>
@@ -42,7 +34,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            IocHelper.Create<MonitorItem>().BeginStep(title);
+            MonitorItem.BeginStep(title);
         }
 
         /// <summary>
@@ -52,7 +44,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            var item = IocHelper.Create<MonitorItem>();
+            var item = MonitorItem;
             if (!item.InMonitor)
                 return;
             item.EndStepMonitor();
@@ -65,7 +57,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            var item = IocHelper.Create<MonitorItem>();
+            var item = MonitorItem;
             if (!item.InMonitor)
                 return;
             item.Write(message, MonitorItem.ItemType.Item, false);
@@ -77,7 +69,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            var item = IocHelper.Create<MonitorItem>();
+            var item = MonitorItem;
             if (!item.InMonitor)
                 return;
             item.Flush(title, number);
@@ -89,7 +81,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            var item = IocHelper.Create<MonitorItem>();
+            var item = MonitorItem;
             if (!item.InMonitor)
                 return;
             item.Flush(string.Format(fmt, args));
@@ -101,7 +93,7 @@ namespace Agebull.Common.Logging
         {
             if (!LogMonitor)
                 return;
-            var item = IocHelper.Create<MonitorItem>();
+            var item = MonitorItem;
             if (!item.InMonitor)
                 return;
             var log = item.End();

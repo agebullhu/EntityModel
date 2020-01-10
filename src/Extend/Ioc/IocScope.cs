@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Agebull.Common.Base;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,13 +12,13 @@ namespace Agebull.Common.Ioc
     public class IocScope : ScopeBase
     {
         private IServiceScope _scope;
-
         /// <summary>
         /// 生成一个范围
         /// </summary>
         /// <returns></returns>
         public static IDisposable CreateScope()
         {
+            Local.Value = new List<Action>();
             return new IocScope
             {
                 _scope = IocHelper.CreateScope()
@@ -42,7 +43,7 @@ namespace Agebull.Common.Ioc
                         Console.WriteLine(e);
                     }
                 }
-                _disposeFunc = null;
+                Local.Value = null;
             }
             try
             {
@@ -57,13 +58,13 @@ namespace Agebull.Common.Ioc
         }
 
         /// <summary>
-        /// 析构方法
+        /// 活动实例
         /// </summary>
-        [ThreadStatic] private static List<Action> _disposeFunc;
+        internal static readonly AsyncLocal<List<Action>> Local = new AsyncLocal<List<Action>>();
 
         /// <summary>
         /// 析构方法
         /// </summary>
-        public static List<Action> DisposeFunc => _disposeFunc ?? (_disposeFunc = new List<Action>());
+        public static List<Action> DisposeFunc => Local.Value ?? (Local.Value = new List<Action>());
     }
 }

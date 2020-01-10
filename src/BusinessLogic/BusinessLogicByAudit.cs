@@ -135,7 +135,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns></returns>
         public virtual bool Validate(long id)
         {
-            using (var scope = Access.DataBase.CreateTransactionScope())
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(DoValidateInner(Details(id)));
             }
@@ -149,7 +149,7 @@ namespace Agebull.EntityModel.BusinessLogic
             var data = Details(id);
             if (data == null)
                 return false;
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(AuditPassInner(data));
             }
@@ -164,7 +164,7 @@ namespace Agebull.EntityModel.BusinessLogic
             if (data == null)
                 return false;
 
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(AuditDenyInner(data));
             }
@@ -180,7 +180,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(UnAuditInner(data));
             }
@@ -198,7 +198,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(SubmitInner(data));
             }
@@ -216,7 +216,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
+            using (var scope = TransactionScope.CreateScope(Access))
             {
                 return scope.SetState(BackInner(data));
             }

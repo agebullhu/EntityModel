@@ -7,13 +7,13 @@
     <SccLocalPath>SAK</SccLocalPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Agebull.Common.LogRecorder.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <Description>扩展日志记录器(日志装饰器),默认实现一个简单的文本记录器</Description>
     <AssemblyTitle>Agebull.Common.LogRecorder</AssemblyTitle>
-    <Version>3.1.0.2-bate</Version>
+    <Version>3.1.0.24-bate</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -41,6 +41,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.Common.LogRecorder.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">

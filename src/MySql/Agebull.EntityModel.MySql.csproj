@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.MySql.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>3.1.0.3-bate</Version>
+    <Version>3.1.0.24-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
@@ -30,9 +30,9 @@
     <Product>Agebull.EntityModel</Product>
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="MySql.Data" Version="6.10.5" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.MySql.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
     <Compile Remove="Excel\**" />
@@ -58,10 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.18" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 
@@ -69,8 +65,8 @@
     <Folder Include="MySql\Scope\" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy   $(OutDir)$(TargetFileName) C:\Projects\Agebull\hotfix\ /y&#xD;&#xA;xcopy   $(OutDir)$(TargetName).pdb C:\Projects\Agebull\hotfix\ /y" />
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.18" />
+  </ItemGroup>
 
 </Project>

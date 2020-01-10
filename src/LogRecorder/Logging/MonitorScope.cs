@@ -16,12 +16,11 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         public static MonitorScope CreateScope(string name)
         {
-            var item = IocHelper.Create<MonitorItem>();
             var scope= new MonitorScope
             {
-                _isStep = item.InMonitor
+                _isStep = LogRecorderX.MonitorItem.InMonitor
             };
-            if (item.InMonitor)
+            if (LogRecorderX.MonitorItem.InMonitor)
                 LogRecorderX.BeginStepMonitor(name);
             else
                 LogRecorderX.BeginMonitor(name);

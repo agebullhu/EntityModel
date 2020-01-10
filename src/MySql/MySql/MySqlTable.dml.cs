@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
 using MySql.Data.MySqlClient;
-using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext < MySql.Data.MySqlClient.MySqlCommand >;
+using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<MySql.Data.MySqlClient.MySqlCommand>;
 #endregion
 
 namespace Agebull.EntityModel.MySql
@@ -37,7 +37,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public bool Insert(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!InsertInner(entity))
                     return false;
@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -77,8 +77,9 @@ namespace Agebull.EntityModel.MySql
         protected bool InsertInner(TData entity)
         {
             PrepareSave(entity, DataOperatorType.Insert);
-            using (var cmd = DataBase.CreateCommand())
+            using (TransactionScope.CreateScope(this))
             {
+                using var cmd = DataBase.CreateCommand();
                 var isIdentitySql = SetInsertCommand(entity, cmd);
                 MySqlDataBase.TraceSql(cmd);
                 if (isIdentitySql)
@@ -99,8 +100,8 @@ namespace Agebull.EntityModel.MySql
                 {
                     DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
                 }
-
             }
+
             EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
@@ -111,7 +112,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public bool Update(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!UpdateInner(entity))
                     return false;
@@ -128,7 +129,7 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -150,7 +151,7 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -170,7 +171,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public bool Delete(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!DeleteInner(entity))
                     return false;
@@ -187,11 +188,14 @@ namespace Agebull.EntityModel.MySql
             if (entity == null)
                 return false;
             entity.__status.IsDelete = true;
-            PrepareSave(entity, DataOperatorType.Delete);
-            var result = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
-            if (result == 0)
-                return false;
-            EndSaved(entity, DataOperatorType.Delete);
+            using (TransactionScope.CreateScope(this))
+            {
+                PrepareSave(entity, DataOperatorType.Delete);
+                var result = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
+                if (result == 0)
+                    return false;
+                EndSaved(entity, DataOperatorType.Delete);
+            }
             return true;
         }
 
@@ -203,7 +207,7 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 foreach (var entity in datas)
                 {
@@ -225,7 +229,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public bool Save(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 if (!SaveInner(entity))
                     return false;
@@ -286,17 +290,15 @@ namespace Agebull.EntityModel.MySql
             string sql = GetModifiedSqlCode(entity);
             if (sql == null)
                 return false;
-            
-            using (var cmd = DataBase.CreateCommand())
+            using (TransactionScope.CreateScope(this))
             {
+                using var cmd = DataBase.CreateCommand();
                 SetUpdateCommand(entity, cmd);
                 cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
 
                 MySqlDataBase.TraceSql(cmd);
 
-                var task = cmd.ExecuteNonQueryAsync();
-                task.Wait();
-                result = task.Result;
+                result = cmd.ExecuteNonQuery();
             }
 
             if (result <= 0)
@@ -369,10 +371,13 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public bool DeletePrimaryKey(object key)
         {
-            var cnt = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
-            if (cnt == 0)
-                return false;
-            OnKeyEvent(DataOperatorType.Delete, key);
+            using (TransactionScope.CreateScope(this))
+            {
+                var cnt = DeleteInner(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
+                if (cnt == 0)
+                    return false;
+                OnKeyEvent(DataOperatorType.Delete, key);
+            }
             return true;
         }
 
@@ -397,7 +402,7 @@ namespace Agebull.EntityModel.MySql
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(key);
             var paras = new[] { para };
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
                 var result = DataBase.Execute($@"DELETE FROM `{ContextWriteTable}` WHERE {condition};", para);
@@ -419,7 +424,7 @@ namespace Agebull.EntityModel.MySql
         {
             var convert = Compile(lambda);
             int cnt;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
                 cnt = DataBase.Execute($@"DELETE FROM `{ContextWriteTable}` WHERE {convert.ConditionSql};", convert.Parameters);
@@ -450,7 +455,7 @@ namespace Agebull.EntityModel.MySql
         private int DeleteByCondition(string condition, DbParameter[] args)
         {
             int cnt;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Delete);
                 cnt = DeleteInner(condition, args);
@@ -525,7 +530,7 @@ namespace Agebull.EntityModel.MySql
                 CreateFieldParameter(KeyField,GetDbType(KeyField), key)
             };
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2);
@@ -630,14 +635,16 @@ namespace Agebull.EntityModel.MySql
             var convert = Compile(lambda);
             var sql = CreateUpdateSql(setValueSql, convert.ConditionSql);
             int result;
+            using (TransactionScope.CreateScope(this))
 
-            using (var cmd = DataBase.CreateCommand())
             {
+                using var cmd = DataBase.CreateCommand();
                 SetUpdateCommand(entity, cmd);
                 cmd.CommandText = CreateUpdateSql(sql, convert.ConditionSql);
                 MySqlDataBase.TraceSql(cmd);
                 result = cmd.ExecuteNonQuery();
             }
+
             return result;
         }
 
@@ -711,7 +718,7 @@ namespace Agebull.EntityModel.MySql
             var sql = CreateUpdateSql(field, value, condition, arg2);
 
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2.ToArray());
@@ -765,7 +772,7 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateUpdateSql(expression, condition);
             int result;
-            using (var scope = TransactionScope.CreateScope(DataBase))
+            using (var scope = TransactionScope.CreateScope(this))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
 
@@ -1014,7 +1021,7 @@ namespace Agebull.EntityModel.MySql
         {
             var ctx = new DbOperatorContext
             {
-                Command= DataBase.CreateCommand()
+                Command = DataBase.CreateCommand()
             };
             var entity = new TData();
             ctx.IsIdentitySql = SetInsertCommand(entity, ctx.Command);
@@ -1028,7 +1035,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="context"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool Insert(DbOperatorContext context,TData entity)
+        public bool Insert(DbOperatorContext context, TData entity)
         {
             PrepareSave(entity, DataOperatorType.Insert);
             SetParameterValue(entity, context.Command);
@@ -1048,8 +1055,10 @@ namespace Agebull.EntityModel.MySql
             var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
             if (!string.IsNullOrEmpty(sql))
             {
-                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                using (TransactionScope.CreateScope(this))
+                    DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
+            ReLoadInner(entity);
 
             EndSaved(entity, DataOperatorType.Insert);
             return true;
@@ -1095,16 +1104,16 @@ namespace Agebull.EntityModel.MySql
         {
             PrepareSave(entity, DataOperatorType.Update);
             SetParameterValue(entity, context.Command);
-            var task = context.Command.ExecuteNonQueryAsync();
-            task.Wait();
-            if (task.Result == 0)
+            if (context.Command.ExecuteNonQuery() == 0)
                 return false;
             var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
             if (!string.IsNullOrEmpty(sql))
             {
-                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                using (TransactionScope.CreateScope(this))
+                    DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
+            ReLoadInner(entity);
             EndSaved(entity, DataOperatorType.Update);
             return true;
         }

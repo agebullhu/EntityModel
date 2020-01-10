@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
@@ -111,12 +110,11 @@ namespace Agebull.Common.Context
         /// </summary>
         private static IGlobalContextHelper Helper => _helper ?? (_helper = IocHelper.Create<IGlobalContextHelper>()) ?? new DefaultGlobalContextHelper();
 
-        [ThreadStatic] private static AsyncLocal<GlobalContext> _local;
 
         /// <summary>
         ///     当前线程的调用上下文
         /// </summary>
-        public static AsyncLocal<GlobalContext> Local => _local ??= new AsyncLocal<GlobalContext>();
+        public static AsyncLocal<GlobalContext> Local { get; } = new AsyncLocal<GlobalContext>();
 
         /// <summary>
         ///     当前线程的调用上下文
@@ -125,40 +123,36 @@ namespace Agebull.Common.Context
         {
             get
             {
-                if (_local == null)
-                    _local = new AsyncLocal<GlobalContext>();
-                else if (_local.Value != null && !_local.Value.IsDisposed)
-                    return _local.Value;
-                _local.Value = IocHelper.Create<GlobalContext>();
-                if (_local.Value != null)
-                    return _local.Value;
+                if (Local.Value != null && !Local.Value.IsDisposed)
+                    return Local.Value;
+                Local.Value = IocHelper.Create<GlobalContext>();
+                if (Local.Value != null)
+                    return Local.Value;
                 IocHelper.AddScoped<GlobalContext, GlobalContext>();
-                _local.Value = IocHelper.Create<GlobalContext>();
+                Local.Value = IocHelper.Create<GlobalContext>();
 
-                return _local.Value;
+                return Local.Value;
             }
         }
 
         /// <summary>
         ///     当前线程的调用上下文(无懒构造)
         /// </summary>
-        public static GlobalContext CurrentNoLazy => _local?.Value;
+        public static GlobalContext CurrentNoLazy => Local?.Value;
 
         /// <summary>
         ///     内部构造
         /// </summary>
         public static GlobalContext Reset()
         {
-            if (_local == null)
-                _local = new AsyncLocal<GlobalContext>();
-            else if (_local.Value != null && !_local.Value.IsDisposed)
-                _local.Value.Dispose();
-            _local.Value = IocHelper.Create<GlobalContext>();
-            if (_local.Value != null)
-                return _local.Value;
+            if (Local.Value != null && !Local.Value.IsDisposed)
+                Local.Value.Dispose();
+            Local.Value = IocHelper.Create<GlobalContext>();
+            if (Local.Value != null)
+                return Local.Value;
             IocHelper.AddScoped<GlobalContext, GlobalContext>();
-            _local.Value = IocHelper.Create<GlobalContext>();
-            return _local.Value;
+            Local.Value = IocHelper.Create<GlobalContext>();
+            return Local.Value;
         }
 
         /// <summary>
@@ -166,9 +160,8 @@ namespace Agebull.Common.Context
         /// </summary>
         public static void SetEmpty()
         {
-            _local.Value?.Dispose();
-            _local.Value = null;
-            _local = null;
+            Local.Value?.Dispose();
+            Local.Value = null;
         }
         
         /// <summary>
@@ -199,17 +192,11 @@ namespace Agebull.Common.Context
         {
             if (null == context || context.IsDisposed)
             {
-                _local.Value?.Dispose();
-                _local.Value = null;
-                _local = null;
+                Local.Value?.Dispose();
+                Local.Value = null;
             }
-            else if (_local == null)
-                _local = new AsyncLocal<GlobalContext>
-                {
-                    Value = context
-                };
-            else if (_local.Value != context)
-                _local.Value = context;
+            else if (Local.Value != context)
+                Local.Value = context;
         }
 
         /// <summary>
@@ -259,10 +246,7 @@ namespace Agebull.Common.Context
         /// <inheritdoc />
         protected override void OnDispose()
         {
-            if (_local == null)
-                return;
-            _local.Value = null;
-            _local = null;
+            Local.Value = null;
         }
 
         /// <summary>
