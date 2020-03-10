@@ -126,12 +126,12 @@ namespace Agebull.EntityModel.Common
                 //if (!IsSucceed)
                 //{
                 //    _dataBase.Rollback();
-                //    LogRecorderX.MonitorTrace("事务回滚");
+                //    LogRecorder.MonitorTrace("事务回滚");
                 //}
                 //else
                 //{
                 //    _dataBase.Commit();
-                //    LogRecorderX.MonitorTrace("事务提交");
+                //    LogRecorder.MonitorTrace("事务提交");
                 //}
             }
             return _tableScope.DisposeAsync();
@@ -152,12 +152,12 @@ namespace Agebull.EntityModel.Common
                 //if (!IsSucceed)
                 //{
                 //    _dataBase.Rollback();
-                //    LogRecorderX.MonitorTrace("事务回滚");
+                //    LogRecorder.MonitorTrace("事务回滚");
                 //}
                 //else
                 //{
                 //    _dataBase.Commit();
-                //    LogRecorderX.MonitorTrace("事务提交");
+                //    LogRecorder.MonitorTrace("事务提交");
                 //}
             }
             _tableScope.Dispose();

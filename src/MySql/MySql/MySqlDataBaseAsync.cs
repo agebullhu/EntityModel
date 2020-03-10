@@ -24,7 +24,7 @@ using Agebull.Common.Ioc;
 namespace Agebull.EntityModel.MySql
 {
     /// <summary>
-    ///     表示SQL SERVER数据库对象
+    ///     表示MySql数据库对象
     /// </summary>
     partial class MySqlDataBase
     {
@@ -60,7 +60,7 @@ namespace Agebull.EntityModel.MySql
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorderX.MonitorTrace($"打开连接数：{cnt}");
+            LogRecorder.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "MySqlDataBase");
             await connection.OpenAsync();
@@ -100,7 +100,7 @@ namespace Agebull.EntityModel.MySql
             //Trace.WriteLine("Opened _connection", "MySqlDataBase");
             await _connection.OpenAsync();
             lock (Connections)
-                LogRecorderX.Trace($"打开连接数：{Connections.Count}");
+                LogRecorder.Debug("打开连接数：{0}", Connections.Count);
             return true;
         }
 
@@ -133,7 +133,7 @@ namespace Agebull.EntityModel.MySql
             catch (Exception exception)
             {
                 connection.Dispose();
-                LogRecorderX.Exception(exception);
+                LogRecorder.Exception(exception);
             }
             int cnt;
             lock (Connections)
@@ -141,7 +141,7 @@ namespace Agebull.EntityModel.MySql
                 Connections.Remove(connection);
                 cnt = Connections.Count;
             }
-            //LogRecorderX.MonitorTrace($"未关闭总数{cnt}");
+            //LogRecorder.MonitorTrace($"未关闭总数{cnt}");
         }
 
         #endregion

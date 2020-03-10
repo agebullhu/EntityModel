@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Agebull.EntityModel.Common;
 using Agebull.MicroZero.ZeroApis;
 
@@ -62,12 +63,27 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     新增
         /// </summary>
+        Task<bool> SaveAsync(TData data);
+
+        /// <summary>
+        ///     新增
+        /// </summary>
         bool AddNew(TData data);
+
+        /// <summary>
+        ///     新增
+        /// </summary>
+        Task<bool> AddNewAsync(TData data);
 
         /// <summary>
         ///     更新对象
         /// </summary>
         bool Update(TData data);
+
+        /// <summary>
+        ///     更新对象
+        /// </summary>
+        Task<bool> UpdateAsync(TData data);
 
         #endregion
 
@@ -82,6 +98,17 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     删除对象
         /// </summary>
         bool Delete(long id);
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        Task<bool> DeleteAsync(long id);
+
+
+        /// <summary>
+        ///     删除对象
+        /// </summary>
+        Task<bool> DeleteAsync(IEnumerable<long> lid);
 
         #endregion
     }

@@ -13,6 +13,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     当前页号（从1开始）
         /// </summary>
         /// <example>1</example>
+        public int Page => PageIndex;
+
+        /// <summary>
+        ///     当前页号（从1开始）
+        /// </summary>
+        /// <example>1</example>
         [JsonProperty("page")]
         public int PageIndex { get; set; }
 

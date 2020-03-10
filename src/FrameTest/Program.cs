@@ -1,26 +1,12 @@
-﻿using Agebull.Common.Ioc;
-using Agebull.Common.Logging;
-using Agebull.EntityModel.Redis;
-using System;
-using System.Collections.Generic;
-using Agebull.Common.Configuration;
-using Agebull.Common.DataModel.Redis;
-using Agebull.Common.Http;
-using Agebull.MicroZero.ZeroApis;
-using Newtonsoft.Json;
-
+﻿
 namespace FrameTest
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            //LogRecorderX.Initialize();
-            //LogRecorderX.SystemLog("test");
-            //LogRecorderX.Shutdown();
-            IocHelper.AddScoped<IRedis, CSRedisEx>();
-            RedisTest.TestFind();
-
+            LogRecorderTest.TestChange();
+            //RedisTest.TestFind();
         }
         //static void Main(string[] args)
         //{

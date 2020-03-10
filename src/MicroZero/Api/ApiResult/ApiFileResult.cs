@@ -18,6 +18,16 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     文件名
         /// </summary>
+        public string File => FileName;
+
+        /// <summary>
+        ///     文件类型
+        /// </summary>
+        public string Type => FileType;
+
+        /// <summary>
+        ///     文件名
+        /// </summary>
         [JsonProperty("file")]
         public string FileName { get; set; }
 

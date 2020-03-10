@@ -78,5 +78,18 @@ namespace Agebull.EntityModel.Common
         {
             return _dictionary.TryGetValue(typeof(T), out var value1) ? value1 as T : null;
         }
+
+        /// <summary>
+        ///     取得一种类型的扩展属性(需要附加)
+        /// </summary>
+        /// <returns></returns>
+        public T Dependency<T>(Func<T> def) where T : class
+        {
+            if (!_dictionary.TryGetValue(typeof(T), out var value1))
+            {
+                _dictionary.Add(typeof(T), value1 = def());
+            }
+            return value1 as T;
+        }
     }
 }

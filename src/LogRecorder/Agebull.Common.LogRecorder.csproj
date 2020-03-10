@@ -13,7 +13,7 @@
   <PropertyGroup>
     <Description>扩展日志记录器(日志装饰器),默认实现一个简单的文本记录器</Description>
     <AssemblyTitle>Agebull.Common.LogRecorder</AssemblyTitle>
-    <Version>3.1.0.24-bate</Version>
+    <Version>3.1.40.9-bate</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -26,7 +26,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
     <IncludeSymbols>false</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
+    <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     
@@ -58,8 +58,24 @@
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <None Remove="Properties\PublishProfiles\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Logging\IRecorder.cs" />
+    <Compile Remove="Logging\LogLevel.cs" />
+    <Compile Remove="Logging\LogRecorder.cs" />
+    <Compile Remove="Logging\MonitorLog.cs" />
+    <Compile Remove="Logging\RecordInfo.cs" />
+    <Compile Remove="Logging\TxtRecorder.cs" />
+    <Compile Remove="LogQueue.cs" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extend\Agebull.Common.Extend.Core.csproj" />

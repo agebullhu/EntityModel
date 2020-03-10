@@ -136,7 +136,11 @@ namespace Agebull.EntityModel.BusinessLogic
         [Obsolete]
         public TData FirstOrDefault(Expression<Func<TData, bool>> lambda)
         {
-            return Access.FirstOrDefault(lambda);
+            var data = Access.FirstOrDefault(lambda);
+            if (data == null)
+                return null;
+            OnDetailsLoaded(data, false);
+            return data;
         }
 
         /// <summary>

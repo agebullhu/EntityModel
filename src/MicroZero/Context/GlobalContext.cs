@@ -30,15 +30,15 @@ namespace Agebull.Common.Context
 
         #region 用户信息
 
-        /// <summary>
-        ///     当前业务上下文
-        /// </summary>
-        [JsonProperty("boc", NullValueHandling = NullValueHandling.Ignore)] internal BusinessOperationalContext _business;
+        ///// <summary>
+        /////     当前业务上下文
+        ///// </summary>
+        //[JsonProperty("boc", NullValueHandling = NullValueHandling.Ignore)] internal BusinessOperationalContext _business;
 
-        /// <summary>
-        ///     当前业务上下文
-        /// </summary>
-        public BusinessOperationalContext Business => _business;
+        ///// <summary>
+        /////     当前业务上下文
+        ///// </summary>
+        //public BusinessOperationalContext Business => _business;
         
         /// <summary>
         ///     当前登录的用户ID

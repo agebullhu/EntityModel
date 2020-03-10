@@ -35,7 +35,7 @@ namespace Agebull.Common.Logging
         /// <summary>
         ///     总处理器时间
         /// </summary>
-        internal double TotalTime;
+        internal double TotalTime=> (DateTime.UtcNow - StartTime).TotalMilliseconds;
 
 
 #if !NETCOREAPP
@@ -64,20 +64,19 @@ namespace Agebull.Common.Logging
         {
             Space = "";
 
-            TotalTime = 0F;
+            //TotalTime = 0F;
 #if !NETCOREAPP
             TotalProcessorTime = 0F;
             TotalSurvivedMemorySize = 0;
             TotalAllocatedMemorySize = 0;
 
 
-            Message =
-                $"|开始| {DateTime.Now:HH:mm:ss} |       -       |     -    |     -    |{(AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize / 1048576F).ToFixLenString(10, 3)}|    -     |{(AppDomain.CurrentDomain.MonitoringSurvivedMemorySize / 1048576F).ToFixLenString(10, 3)}|";
+            Message = $"|开始| {DateTime.UtcNow:HH:mm:ss} |       -       |     -    |     -    |{(AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize / 1048576F).ToFixLenString(10, 3)}|    -     |{(AppDomain.CurrentDomain.MonitoringSurvivedMemorySize / 1048576F).ToFixLenString(10, 3)}|";
 #else
-            Message = $"|开始| {DateTime.Now:HH:mm:ss} |";
+            Message = $"|开始| {DateTime.UtcNow:HH:mm:ss.ffff} |";
 #endif
 
-            PreTime = StartTime = DateTime.Now;
+            PreTime = StartTime = DateTime.UtcNow;
 
             Flush();
         }
@@ -88,7 +87,7 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         internal void FlushMessage()
         {
-            var a = DateTime.Now - PreTime;
+            var a = DateTime.UtcNow - PreTime;
 #if !NETCOREAPP
             var b = AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime;
             var c = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize - MonitoringTotalAllocatedMemorySize;
@@ -113,7 +112,7 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         internal void Coll()
         {
-            TotalTime += (DateTime.Now - PreTime).TotalMilliseconds;
+            //TotalTime += (DateTime.UtcNow - PreTime).TotalMilliseconds;
 #if !NETCOREAPP
             TotalProcessorTime +=
  (AppDomain.CurrentDomain.MonitoringTotalProcessorTime - MonitoringTotalProcessorTime).TotalMilliseconds;
@@ -135,7 +134,7 @@ namespace Agebull.Common.Logging
                 Coll();
                 return;
             }
-            TotalTime += item.TotalTime;
+            //TotalTime += item.TotalTime;
 #if !NETCOREAPP
             TotalProcessorTime += item.TotalProcessorTime;
             TotalSurvivedMemorySize += item.TotalSurvivedMemorySize;
@@ -154,7 +153,6 @@ namespace Agebull.Common.Logging
             MonitoringSurvivedMemorySize = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
             MonitoringTotalProcessorTime = AppDomain.CurrentDomain.MonitoringTotalProcessorTime;
 #endif
-            PreTime = DateTime.Now;
         }
 
         /// <summary>
@@ -162,12 +160,12 @@ namespace Agebull.Common.Logging
         /// </summary>
         internal void EndMessage()
         {
-            var a = DateTime.Now - StartTime;
+            var a = DateTime.UtcNow - StartTime;
 #if !NETCOREAPP
             var d = AppDomain.CurrentDomain.MonitoringTotalAllocatedMemorySize;
             var f = AppDomain.CurrentDomain.MonitoringSurvivedMemorySize;
             Message = string.Format("|完成| {0:HH:mm:ss} |{1}/{7}|{2}|{3}|{4}|{5}|{6}|"
-                , DateTime.Now
+                , DateTime.UtcNow
                 , TotalTime.ToFixLenString(7, 1)
                 , TotalProcessorTime.ToFixLenString(10, 2)
                 , (TotalAllocatedMemorySize / 1024F).ToFixLenString(10, 3)
@@ -177,7 +175,7 @@ namespace Agebull.Common.Logging
                 , a.TotalMilliseconds.ToFixLenString(7, 1));
 #else
             Message =
-                $"|完成| {DateTime.Now:HH:mm:ss} |{TotalTime.ToFixLenString(7, 1)}/{a.TotalMilliseconds.ToFixLenString(7, 1)}|";
+                $"|完成| {DateTime.UtcNow:HH:mm:ss.ffff} |{TotalTime.ToFixLenString(7, 1)}/{a.TotalMilliseconds.ToFixLenString(7, 1)}|";
 #endif
         }
     }

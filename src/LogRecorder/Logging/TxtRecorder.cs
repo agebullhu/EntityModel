@@ -165,6 +165,7 @@ namespace Agebull.Common.Logging
             Write(info, onlySystem);
         }
         #endregion
+
         #region 写文件
 
         /// <summary>
@@ -271,6 +272,7 @@ namespace Agebull.Common.Logging
             }
         }
         #endregion
+
         #region 文件列表
 
         /// <summary>

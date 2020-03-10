@@ -137,7 +137,7 @@ namespace Agebull.EntityModel.Events
         /// 如果使用主键内容为#:[key](如:#:123)样式,
         /// 如果为批量操作,内容为QueryCondition的JSON序列化
         /// </remarks>
-        void IEntityEventProxy.OnStatusChanged(string database, string entity, DataOperatorType oType , EntityEventValueType valueType, string value)
+        void IEntityEventProxy.OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
         {
             var arg = JsonConvert.SerializeObject(new EntityEventArgument
             {
@@ -146,8 +146,9 @@ namespace Agebull.EntityModel.Events
                 Value = value
             });
             bool re = MicroZero.MessageQueue.Publish("EntityEvent", database, entity, arg);
-            LogRecorderX.Debug($@"EntityEvent : {database}, {entity},{re}
-{arg}");
+
+            LogRecorder.Debug(@"EntityEvent : {0}, {1},{2}
+{3}", database, entity, re, arg);
         }
     }
 

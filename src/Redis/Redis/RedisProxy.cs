@@ -9,146 +9,17 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
-    public class RedisProxy : IDisposable
+    public class RedisProxy : RedisProxy<IRedis>
     {
-        #region 配置
-
-        /// <summary>
-        /// 系统数据
-        /// </summary>
-        public const int DbSystem = 15;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbWebCache = 14;
-
-        /// <summary>
-        /// 权限数据
-        /// </summary>
-        public const int DbAuthority = 13;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbComboCache = 12;
-        
-        #endregion
-
-        #region 测试支持
-        /// <summary>
-        /// 测试支持
-        /// </summary>
-        public static bool IsTest { get; set; }
-
-        #endregion
-
         #region 构造
-
-
-        /// <summary>
-        /// 使用哪个数据库
-        /// </summary>
-        private int _db;
-
-        /// <summary>
-        /// 当前数据库
-        /// </summary>
-        public long CurrentDb => Redis.CurrentDb;
 
         /// <summary>
         /// 构造
         /// </summary>
         /// <param name="db"></param>
-        public RedisProxy(int db = 0)
+        public RedisProxy(int db = 0):base(db)
         {
-            _db = db;
-            ChangeDb();
         }
-
-        /*// <summary>
-        /// 使用中的
-        /// </summary>
-        private static readonly Dictionary<int, List<IRedis>> Used = new Dictionary<int, List<IRedis>>();
-        /// <summary>
-        /// 空闲的
-        /// </summary>
-        private static readonly Dictionary<int, List<IRedis>> Idle = new Dictionary<int, List<IRedis>>();*/
-        /// <summary>
-        /// 客户端类
-        /// </summary>
-        internal IRedis _redis;
-        /// <summary>
-        /// 得到一个可用的Redis客户端
-        /// </summary>
-        public IRedis Redis
-        {
-            get
-            {
-                if (_redis != null)
-                    return _redis;
-                return _redis = CreateClient();
-            }
-        }
-        
-        /// <summary>
-        /// 更改
-        /// </summary>
-        internal IRedis ChangeDb(int db)
-        {
-            _db = db;
-            return ChangeDb();
-        }
-
-        /// <summary>
-        /// 更改
-        /// </summary>
-        private IRedis ChangeDb()
-        {
-            if (_redis == null)
-            {
-                var old = _redis;
-                _redis = CreateClient();
-                return old;
-            }
-            if (_db == _redis.CurrentDb)
-            {
-                return _redis;
-            }
-            _redis.ChangeDb(_db);
-            return _redis;
-        }
-
-        /// <summary>
-        /// 更改
-        /// </summary>
-        internal void ResetClient(IRedis client)
-        {
-            _redis = client;
-        }
-
-        private IRedis CreateClient()
-        {
-            _redis= IocHelper.Create<IRedis>();
-            if (_redis == null)
-                throw new Exception("未正确注册Redis对象");
-            ChangeDb();
-            return _redis;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            if (_redis == null || _redis.NoClose )
-                return;
-            _redis.Dispose();
-            _redis = null;
-        }
-
-
         #endregion
 
         #region 文本读写
@@ -178,7 +49,7 @@ namespace Agebull.EntityModel.Redis
         /// <returns></returns>
         public string Get(string key)
         {
-            return Redis.Get<string>(key);
+            return Redis.Get(key);
         }
 
 

@@ -48,15 +48,12 @@ namespace Agebull.Common.Logging
                 {
                     Title = title
                 });
-                Texter.AppendLine($@"
- Date:{DateTime.Now}    RequestId:{LogRecorderX.GetRequestId()}    Machine:{LogRecorderX.GetMachineName()}  {LogRecorderX.BackIsRuning}=>{LogRecorderX.RecordInfos.Line1.Count}| {LogRecorderX.RecordInfos.Line2.Count}");
-                Texter.Append(' ', 24);
-                Texter.Append("标题");
-                Texter.Append(' ', 24);
-                Texter.Append("|状态|   时间   |   用 时(ms)   |");
-#if !NETCOREAPP
-                Texter.Append("|  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");
-#endif
+                //Texter.Append("标题");
+                //Texter.Append(' ', 24);
+                //Texter.Append("|状态|   时间   |   用 时(ms)   |");
+//#if !NETCOREAPP
+//                Texter.Append("|  CPU(ms) |内存分配Kb| 总分配Mb |内存驻留Kb| 总驻留Mb |");
+//#endif
                 Write(title, ItemType.First);
             }
         }
@@ -108,7 +105,7 @@ namespace Agebull.Common.Logging
             }
             catch (Exception ex)
             {
-                LogRecorderX.SystemTrace(LogLevel.Error, "EndMonitor", ex);
+                LogRecorder.Error("EndMonitor{0}", ex);
                 return null;
             }
             finally
@@ -167,7 +164,10 @@ namespace Agebull.Common.Logging
             if (string.IsNullOrWhiteSpace(title))
                 title = "*";
             Texter.Append(title);
-            if (!showMonitorValue) return;
+            if (!showMonitorValue)
+            {
+                return;
+            }
             var l = cnt * 2 + title.GetLen();
             if (l < 50)
                 Texter.Append(' ', 50 - l);

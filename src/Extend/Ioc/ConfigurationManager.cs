@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 
 namespace Agebull.Common.Configuration
 {
@@ -21,7 +22,6 @@ namespace Agebull.Common.Configuration
         /// </summary>
         public ConfigurationManager Child(string section)
         {
-
             return new ConfigurationManager
             {
                 Configuration = Configuration.GetSection(section)
@@ -31,7 +31,7 @@ namespace Agebull.Common.Configuration
         /// <summary>
         /// 转为强类型配置
         /// </summary>
-        public TConfig ToConfig<TConfig>(string section)
+        public TConfig ToConfig<TConfig>()
         {
             return Configuration.Get<TConfig>();
         }
@@ -43,7 +43,7 @@ namespace Agebull.Common.Configuration
         {
             var sec = Configuration.GetSection(section);
 
-            return sec.Exists() ? sec.Get<TConfiguration>() : default(TConfiguration);
+            return sec.Exists() ? sec.Get<TConfiguration>() : default;
         }
 
         /// <summary>
@@ -258,6 +258,7 @@ namespace Agebull.Common.Configuration
         /// 全局配置
         /// </summary>
         public static IConfiguration Root => _root ?? (_root = Builder.Build());
+
         /// <summary>
         /// 基本目录
         /// </summary>
@@ -337,33 +338,25 @@ namespace Agebull.Common.Configuration
                     return _builder;
                 _builder = new ConfigurationBuilder();
                 _builder.SetBasePath(BasePath ?? Directory.GetCurrentDirectory());
-                var file = Path.Combine(Environment.CurrentDirectory, "appsettings.json");
-                if (File.Exists(file))
-                    _builder.AddJsonFile("appsettings.json");
-                else
-                {
-                    file = Path.Combine(Environment.CurrentDirectory, "appSettings.json");
-                    if (File.Exists(file))
-                        _builder.AddJsonFile("appSettings.json");
-                    else
-                    {
-                        file = Path.Combine(Environment.CurrentDirectory, "AppSettings.json");
-                        if (File.Exists(file))
-                            _builder.AddJsonFile("AppSettings.json");
-                        else
-                        {
-                            file = Path.Combine(Environment.CurrentDirectory, "Appsettings.json");
-                            if (File.Exists(file))
-                                _builder.AddJsonFile("Appsettings.json");
-                        }
-                    }
-                }
-                _root = null;
-                _appSettings = null;
-                _connectionStrings = null;
+                UpdateAppsettings();
                 return _builder;
             }
             set => _builder = value;
+        }
+
+        /// <summary>
+        /// 刷新AppSettings文件,使之配置优先级最高
+        /// </summary>
+        public static void UpdateAppsettings()
+        {
+            var files =new string[] { "appsettings.json", "appSettings.json", "AppSettings.json", "Appsettings.json" };
+            foreach (var fileName in files)
+            {
+                var file = Path.Combine(Environment.CurrentDirectory, fileName);
+                if (File.Exists(file))
+                    _builder.AddJsonFile(file, true, true);
+            }
+            Flush();
         }
 
         /// <summary>
@@ -390,10 +383,25 @@ namespace Agebull.Common.Configuration
         /// <summary>
         /// 载入配置文件
         /// </summary>
-        public static void Load(string jsonFile)
+        public static void Load(string jsonFile, bool isNewtonsoft = false)
         {
-            Builder.AddJsonFile(jsonFile);
+            if (isNewtonsoft)
+                Builder.AddNewtonsoftJsonFile(jsonFile, true, true);
+            else
+                Builder.AddJsonFile(jsonFile, true, true);
             Flush();
+        }
+
+        /// <summary>
+        /// 注册更新处理器
+        /// </summary>
+        /// <param name="action">更新处理方法</param>
+        /// <param name="runNow">是否现在执行一次</param>
+        public static void RegistOnChange(Action action, bool runNow = true)
+        {
+            ChangeToken.OnChange(() => Root.GetReloadToken(), action);
+            if (runNow)
+                action();
         }
 
         #endregion

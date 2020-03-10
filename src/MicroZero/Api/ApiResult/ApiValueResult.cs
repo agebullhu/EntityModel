@@ -12,6 +12,11 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     返回值
         /// </summary>
+        public string Data => ResultData;
+
+        /// <summary>
+        ///     返回值
+        /// </summary>
         [JsonProperty("data")]
         public string ResultData { get; set; }
 

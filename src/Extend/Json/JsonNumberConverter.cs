@@ -8,7 +8,7 @@ namespace Agebull.MicroZero
     /// <summary>
     ///     大数字序列化器
     /// </summary>
-    internal class JsonNumberConverter : JsonConverter
+    public class JsonNumberConverter : JsonConverter
     {
         /// <inheritdoc />
         public override bool CanRead => false;

@@ -154,6 +154,7 @@ namespace Agebull.EntityModel.BusinessLogic
         }
 
         #endregion
+
         #region 导入导出
 
         /// <summary>
@@ -467,6 +468,7 @@ namespace Agebull.EntityModel.BusinessLogic
         }
 
         #endregion
+
         #region 删除
 
         /// <summary>
@@ -532,7 +534,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 if (!DoDelete(id))
                     return false;
                 OnDeleted(id);
-                LogRecorderX.MonitorTrace("Delete");
+                LogRecorder.MonitorTrace("Delete");
                 OnStateChanged(id, BusinessCommandType.Delete);
             }
             return true;
@@ -623,7 +625,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     if (!await DoDeleteAsync(id))
                         return false;
                     OnDeleted(id);
-                    LogRecorderX.MonitorTrace("Delete");
+                    LogRecorder.MonitorTrace("Delete");
                     OnStateChanged(id, BusinessCommandType.Delete);
             }
             return true;
@@ -638,6 +640,7 @@ namespace Agebull.EntityModel.BusinessLogic
         }
 
         #endregion
+
         #region 状态处理
 
 

@@ -12,9 +12,13 @@ namespace Agebull.MicroZero.ZeroApis
     [JsonObject(MemberSerialization.OptIn)]
     public class ApiArrayResult<TData> : ApiResult, IApiResult<List<TData>>
     {
-        /// <inheritdoc />
         /// <summary>
-        ///     返回值
+        ///     返回列表
+        /// </summary>
+        public List<TData> Data => ResultData;
+
+        /// <summary>
+        ///     返回列表
         /// </summary>
         [JsonProperty("data")]
         public List<TData> ResultData { get; set; }

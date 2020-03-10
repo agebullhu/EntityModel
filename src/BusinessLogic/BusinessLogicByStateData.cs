@@ -129,7 +129,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!unityStateChanged)
                 return;
-            LogRecorderX.MonitorTrace("OnStateChanged");
+            LogRecorder.MonitorTrace("OnStateChanged");
             OnInnerCommand(data, cmd);
             DoStateChanged(data);
         }

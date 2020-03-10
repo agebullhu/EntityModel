@@ -2251,12 +2251,6 @@
             </summary>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault">
-            <summary>
-                载入首行
-            </summary>
-            <returns>如果有载入首行,否则返回空</returns>
-        </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.First(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 载入首行
@@ -2277,6 +2271,12 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 载入首行
@@ -2290,6 +2290,32 @@
             <returns>如果有载入首行,否则返回空</returns>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                载入首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
@@ -2366,25 +2392,19 @@
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync">
-            <summary>
-                读取数据
-            </summary>
-            <returns>数据</returns>
-        </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.All(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
-                分页读取
+                读取数据
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.All``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
             <summary>
-                分页读取
+                读取数据
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
-                载入首行
+                读取数据
             </summary>
             <param name="a">查询表达式</param>
             <param name="b"></param>
@@ -2399,6 +2419,45 @@
             <returns>数据</returns>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取数据
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <param name="orderBys">排序</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
@@ -3298,12 +3357,27 @@
                 新增
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.SaveAsync(`0)">
+            <summary>
+                新增
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.AddNew(`0)">
             <summary>
                 新增
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.AddNewAsync(`0)">
+            <summary>
+                新增
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Update(`0)">
+            <summary>
+                更新对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.UpdateAsync(`0)">
             <summary>
                 更新对象
             </summary>
@@ -3314,6 +3388,16 @@
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Delete(System.Int64)">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.DeleteAsync(System.Int64)">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.DeleteAsync(System.Collections.Generic.IEnumerable{System.Int64})">
             <summary>
                 删除对象
             </summary>

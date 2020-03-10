@@ -82,7 +82,7 @@ namespace Agebull.EntityModel.MySql
             }
             catch (Exception e)
             {
-                LogRecorderX.Exception(e, expression.ToString());
+                LogRecorder.Exception(e, expression.ToString());
                 return null;
             }
         }
@@ -540,6 +540,10 @@ namespace Agebull.EntityModel.MySql
             if (vl == null)
             {
                 return $"?{_condition.AddParameter((object)null)}";
+            }
+            if (vl is bool b)
+            {
+                return b ? "1" : "0";
             }
             if (vl is string)
             {

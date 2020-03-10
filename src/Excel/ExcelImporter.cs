@@ -485,7 +485,7 @@ namespace Agebull.EntityModel.Excel
             }
             catch (Exception e)
             {
-                LogRecorderX.Exception(e);
+                LogRecorder.Exception(e);
             }
         }
 

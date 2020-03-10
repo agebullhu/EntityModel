@@ -165,7 +165,7 @@ namespace Agebull.Common.Http
             }
             catch (WebException e)
             {
-                LogRecorderX.Exception(e);
+                LogRecorder.Exception(e);
                 jsonResult = e.Status == WebExceptionStatus.ProtocolError
                     ? await ProtocolError(e)
                     : ResponseError(e);
@@ -174,7 +174,7 @@ namespace Agebull.Common.Http
             {
                 UserState = HttpOperatorStateType.LocalException;
                 //ZeroState = ZeroOperatorStateType.LocalException;
-                LogRecorderX.Exception(e);
+                LogRecorder.Exception(e);
                 jsonResult = ToErrorString(ErrorCode.LocalException, "未知错误", e.Message);
             }
             return jsonResult;
@@ -205,14 +205,14 @@ namespace Agebull.Common.Http
                         }
 
                 var msg = await ReadResponse(exception.Response);
-                LogRecorderX.Error($"Call {Host}/{ApiName} Error:{msg}");
+                LogRecorder.Error("Call {0}/{1} Error:{2}", Host, ApiName, msg);
                 return msg; //ToErrorString(ErrorCode.NetworkError, "未知错误", );
             }
             catch (Exception e)
             {
                 UserState = HttpOperatorStateType.LocalException;
                 //ZeroState = ZeroOperatorStateType.LocalException;
-                LogRecorderX.Exception(e);
+                LogRecorder.Exception(e);
                 return ToErrorString(ErrorCode.NetworkError, "未知错误", e.Message);
             }
             finally
@@ -348,7 +348,7 @@ namespace Agebull.Common.Http
         {
             Error = code;
             Message = $"调用异常：{message}.{message2}";
-            LogRecorderX.MonitorTrace(Message);
+            LogRecorder.MonitorTrace(Message);
             return Message;
         }
         #endregion

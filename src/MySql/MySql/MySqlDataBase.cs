@@ -25,7 +25,7 @@ using Agebull.EntityModel.Common;
 namespace Agebull.EntityModel.MySql
 {
     /// <summary>
-    ///     表示SQL SERVER数据库对象
+    ///     表示MySql数据库对象
     /// </summary>
     public abstract partial class MySqlDataBase : MySqlDataBase_, IDataBase
     {
@@ -151,7 +151,7 @@ namespace Agebull.EntityModel.MySql
             }
             connection.Open();
             lock (Connections)
-                LogRecorderX.Trace($"打开连接数：{Connections.Count}");
+                LogRecorder.Debug("打开连接数：{0}",Connections.Count);
             return connection;
         }
 
@@ -263,7 +263,7 @@ namespace Agebull.EntityModel.MySql
                 }
                 catch (Exception exception)
                 {
-                    LogRecorderX.Exception(exception);
+                    LogRecorder.Exception(exception);
                 }
             }
 
@@ -273,10 +273,10 @@ namespace Agebull.EntityModel.MySql
             }
             catch (Exception exception)
             {
-                LogRecorderX.Exception(exception);
+                LogRecorder.Exception(exception);
             }
             //lock (Connections)
-            //    LogRecorderX.Trace($"未关闭总数：{Connections.Count}");
+            //    LogRecorder.Trace($"未关闭总数：{Connections.Count}");
         }
 
         /// <summary>
@@ -548,7 +548,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(MySqlCommand cmd)
         {
-            if (!LogRecorderX.LogDataSql)
+            if (!LogRecorder.LogDataSql)
                 return;
             TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
@@ -564,7 +564,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
         {
-            if (!LogRecorderX.LogDataSql)
+            if (!LogRecorder.LogDataSql)
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
@@ -582,7 +582,7 @@ namespace Agebull.EntityModel.MySql
                 code.AppendLine($"SET ?{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
-            LogRecorderX.RecordDataLog(code.ToString());
+            LogRecorder.RecordDataLog(code.ToString());
         }
 
 

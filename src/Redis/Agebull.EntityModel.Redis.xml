@@ -9,62 +9,6 @@
             REDIS代理类
             </summary>
         </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisAsync.Agebull#EntityModel#Redis#IRedisAsync#NoClose">
-            <summary>
-            不关闭
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisAsync.#cctor">
-            <summary>
-            静态构造
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisAsync.connectionStrings">
-            <summary>
-            地址
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisAsync.Address">
-            <summary>
-            地址
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisAsync.PassWord">
-            <summary>
-            密码
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisAsync.Port">
-            <summary>
-            端口
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisAsync.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisAsync.#ctor(System.Int64)">
-            <summary>
-            构造
-            </summary>
-            <param name="db"></param>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisAsync._client">
-            <summary>
-            客户端类
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisAsync.Client">
-            <summary>
-            得到一个可用的Redis客户端
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisAsync.Dispose">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:Agebull.Common.DataModel.Redis.CSRedisAsync.RemoveKey(System.String)">
             <summary>
             删除KEY
@@ -252,70 +196,75 @@
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisAsync.Original``1">
+        <member name="T:Agebull.Common.DataModel.Redis.CSRedisBase">
+            <summary>
+            REDIS代理类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.Redis.CSRedisBase.Option">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.Redis.CSRedisBase.CurrentDb">
+            <summary>
+            当前数据库
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.OnOptionChange(Agebull.EntityModel.Common.RedisOption)">
+            <summary>
+            配置变更
+            </summary>
+            <param name="option"></param>
+        </member>
+        <member name="P:Agebull.Common.DataModel.Redis.CSRedisBase.NoClose">
+            <summary>
+            不关闭
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.ConnectString(System.Int64)">
+            <summary>
+            连接字符串
+            </summary>
+            <param name="db"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.Common.DataModel.Redis.CSRedisBase._client">
+            <summary>
+            客户端类
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.DataModel.Redis.CSRedisBase.Client">
+            <summary>
+            得到一个可用的Redis客户端
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.CreateClient(System.Int64)">
+            <summary>
+            生成一个客户端
+            </summary>
+            <param name="db"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.Original``1">
             <summary>
             原始对象,在不够用时扩展
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.ChangeDb(System.Int32)">
+            <summary>
+            修改Db
+            </summary>
+            <param name="db"></param>
+        </member>
+        <member name="M:Agebull.Common.DataModel.Redis.CSRedisBase.Dispose">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:Agebull.Common.DataModel.Redis.CSRedisEx">
             <summary>
             REDIS代理类
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisEx.Agebull#EntityModel#Redis#IRedis#NoClose">
-            <summary>
-            不关闭
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisEx.#cctor">
-            <summary>
-            静态构造
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisEx.connectionStrings">
-            <summary>
-            地址
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisEx.Address">
-            <summary>
-            地址
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisEx.PassWord">
-            <summary>
-            密码
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisEx.Port">
-            <summary>
-            端口
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisEx.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisEx.#ctor(System.Int64)">
-            <summary>
-            构造
-            </summary>
-            <param name="db"></param>
-        </member>
-        <member name="F:Agebull.Common.DataModel.Redis.CSRedisEx._client">
-            <summary>
-            客户端类
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.Redis.CSRedisEx.Client">
-            <summary>
-            得到一个可用的Redis客户端
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisEx.Dispose">
-            <summary>
-            
             </summary>
         </member>
         <member name="M:Agebull.Common.DataModel.Redis.CSRedisEx.RemoveKey(System.String)">
@@ -505,29 +454,9 @@
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.Common.DataModel.Redis.CSRedisEx.Original``1">
-            <summary>
-            原始对象,在不够用时扩展
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.Redis.IRedisAsync">
             <summary>
             Redis操作接口
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.IRedisAsync.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.IRedisAsync.NoClose">
-            <summary>
-            不关闭
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedisAsync.Original``1">
-            <summary>
-            原始对象,在不够用时扩展
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.Redis.IRedisAsync.SetTime(System.String,System.DateTime)">
@@ -545,14 +474,6 @@
             <param name="key"></param>
             <param name="span"></param>
             <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedisAsync.ChangeDb(System.Int32)">
-            <summary>
-            更改Db
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedisAsync.Dispose">
-            <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         </member>
         <member name="M:Agebull.EntityModel.Redis.IRedisAsync.RemoveKey(System.String)">
             <summary>
@@ -745,56 +666,11 @@
             REDIS代理类
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxyAsync.IsTest">
-            <summary>
-            测试支持
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxyAsync._db">
-            <summary>
-            使用哪个数据库
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxyAsync.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.#ctor(System.Int32)">
             <summary>
             构造
             </summary>
             <param name="db"></param>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxyAsync._redis">
-            <summary>
-            客户端类
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxyAsync.Redis">
-            <summary>
-            得到一个可用的Redis客户端
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.ChangeDb(System.Int32)">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.ChangeDb">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.ResetClient(Agebull.EntityModel.Redis.IRedisAsync)">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.Dispose">
-            <summary>
-            
-            </summary>
         </member>
         <member name="M:Agebull.EntityModel.Redis.RedisProxyAsync.RemoveKey(System.String)">
             <summary>
@@ -996,6 +872,123 @@
             </summary>
             <returns>数据</returns>
         </member>
+        <member name="T:Agebull.EntityModel.Redis.IRedisBase">
+            <summary>
+            Redis操作接口
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.IRedisBase.Option">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.IRedisBase.OnOptionChange(Agebull.EntityModel.Common.RedisOption)">
+            <summary>
+            配置变更
+            </summary>
+            <param name="option"></param>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.IRedisBase.CurrentDb">
+            <summary>
+            当前数据库
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.IRedisBase.NoClose">
+            <summary>
+            不关闭
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.IRedisBase.Original``1">
+            <summary>
+            原始对象,在不够用时扩展
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.IRedisBase.ChangeDb(System.Int32)">
+            <summary>
+            更改Db
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Redis.RedisProxy`1">
+            <summary>
+            REDIS代理类
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.RedisProxy`1.IsTest">
+            <summary>
+            测试支持
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Redis.RedisProxy`1.Instances">
+            <summary>
+            所有实例
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.RedisProxy`1.Option">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.#cctor">
+            <summary>
+                初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.OnOptionChange">
+            <summary>
+            配置变更
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.RedisProxy`1.NoClose">
+            <summary>
+            不关闭
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Redis.RedisProxy`1._db">
+            <summary>
+            使用哪个数据库
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.RedisProxy`1.CurrentDb">
+            <summary>
+            当前数据库
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.#ctor(System.Int32)">
+            <summary>
+            构造
+            </summary>
+            <param name="db"></param>
+        </member>
+        <member name="F:Agebull.EntityModel.Redis.RedisProxy`1._redis">
+            <summary>
+            客户端类
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Redis.RedisProxy`1.Redis">
+            <summary>
+            得到一个可用的Redis客户端
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.ChangeDb(System.Int32)">
+            <summary>
+            更改
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.ChangeDb">
+            <summary>
+            更改
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.ResetClient(`0)">
+            <summary>
+            更改
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Redis.RedisProxy`1.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Redis.RedisDataTrigger">
             <summary>
             版本数据更新触发器
@@ -1118,21 +1111,6 @@
             Redis操作接口
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Redis.IRedis.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.IRedis.NoClose">
-            <summary>
-            不关闭
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedis.Original``1">
-            <summary>
-            原始对象,在不够用时扩展
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.Redis.IRedis.SetTime(System.String,System.DateTime)">
             <summary>
             写值
@@ -1148,14 +1126,6 @@
             <param name="key"></param>
             <param name="span"></param>
             <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedis.ChangeDb(System.Int32)">
-            <summary>
-            更改Db
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.IRedis.Dispose">
-            <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         </member>
         <member name="M:Agebull.EntityModel.Redis.IRedis.RemoveKey(System.String)">
             <summary>
@@ -1418,76 +1388,11 @@
             REDIS代理类
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy.DbSystem">
-            <summary>
-            系统数据
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy.DbWebCache">
-            <summary>
-            WEB端的缓存
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy.DbAuthority">
-            <summary>
-            权限数据
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy.DbComboCache">
-            <summary>
-            WEB端的缓存
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxy.IsTest">
-            <summary>
-            测试支持
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy._db">
-            <summary>
-            使用哪个数据库
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxy.CurrentDb">
-            <summary>
-            当前数据库
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.Redis.RedisProxy.#ctor(System.Int32)">
             <summary>
             构造
             </summary>
             <param name="db"></param>
-        </member>
-        <member name="F:Agebull.EntityModel.Redis.RedisProxy._redis">
-            <summary>
-            客户端类
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Redis.RedisProxy.Redis">
-            <summary>
-            得到一个可用的Redis客户端
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxy.ChangeDb(System.Int32)">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxy.ChangeDb">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxy.ResetClient(Agebull.EntityModel.Redis.IRedis)">
-            <summary>
-            更改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Redis.RedisProxy.Dispose">
-            <summary>
-            
-            </summary>
         </member>
         <member name="M:Agebull.EntityModel.Redis.RedisProxy.RemoveKey(System.String)">
             <summary>
@@ -1705,6 +1610,44 @@
                 缓存这些对象
             </summary>
             <returns>数据</returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.RedisOption">
+            <summary>
+            数字与BYTE的转换辅助对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.ConnectionString">
+            <summary>
+            连接字符串
+            </summary>
+            <example>
+            $"{Address}:{Port},password={PassWord},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240";
+            </example>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.DbSystem">
+            <summary>
+            系统数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.DbWebCache">
+            <summary>
+            WEB端的缓存
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.DbAuthority">
+            <summary>
+            权限数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.DbComboCache">
+            <summary>
+            WEB端的缓存
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.RedisOption.ConnectionName">
+            <summary>
+            连接字符串名称
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ByteCommond">
             <summary>

@@ -15,133 +15,8 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
-    public class CSRedisAsync : IDisposable, IRedisAsync
+    public class CSRedisAsync : CSRedisBase, IDisposable, IRedisAsync
     {
-        #region 配置
-
-        /// <summary>
-        /// 不关闭
-        /// </summary>
-        bool IRedisAsync.NoClose => true;
-
-        private static readonly bool IsFullConnectionStrings;
-
-        /// <summary>
-        /// 静态构造
-        /// </summary>
-        static CSRedisAsync()
-        {
-            connectionStrings = ConfigurationManager.ConnectionStrings["CSRedis"];
-            IsFullConnectionStrings = !string.IsNullOrWhiteSpace(connectionStrings);
-            if (IsFullConnectionStrings)
-                return;
-            connectionStrings = ConfigurationManager.ConnectionStrings["Redis"];
-            var c = connectionStrings.Split(',', ':');
-            Address = c[0];
-            Port = c.Length > 1 ? int.Parse(c[1]) : 6379;
-            //PoolSize = Convert.ToInt32(ConfigurationManager.AppSettings["RedisPoolSize"]);
-            //if (PoolSize < 100)
-            //    PoolSize = 100;
-            if (c.Length > 2)
-                PassWord = c[2];
-        }
-
-        /// <summary>
-        /// 地址
-        /// </summary>
-        static readonly string connectionStrings;
-
-        /// <summary>
-        /// 地址
-        /// </summary>
-        static readonly string Address;
-
-        /// <summary>
-        /// 密码
-        /// </summary>
-        static readonly string PassWord;
-
-        /// <summary>
-        /// 端口
-        /// </summary>
-        public static readonly int Port;
-
-        /*// <summary>
-        /// 空闲连接数
-        /// </summary>
-        private static readonly int PoolSize;*/
-
-        #endregion
-
-        #region 构造
-
-        /// <summary>
-        /// 当前数据库
-        /// </summary>
-        public long CurrentDb { get; }
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        /// <param name="db"></param>
-        public CSRedisAsync(long db = 0)
-        {
-            CurrentDb = db;
-        }
-
-        /// <summary>
-        /// 客户端类
-        /// </summary>
-        private CSRedisClient _client;
-
-        /// <summary>
-        /// 得到一个可用的Redis客户端
-        /// </summary>
-        public CSRedisClient Client
-        {
-            get
-            {
-                if (_client != null)
-                    return _client;
-                return _client = CreateClient(CurrentDb);
-            }
-        }
-
-        static string ConnectString(long db) =>
-            IsFullConnectionStrings
-                ? $"{connectionStrings},defaultDatabase={db}"
-                : string.IsNullOrEmpty(PassWord)
-                    ? $"{Address}:{Port},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240"
-                    : $"{Address}:{Port},password={PassWord},defaultDatabase={db},poolsize=50,ssl=false,writeBuffer=10240";
-
-
-        private static readonly ConcurrentDictionary<long, CSRedisClient> _clients =
-            new ConcurrentDictionary<long, CSRedisClient>();
-
-        CSRedisClient CreateClient(long db)
-        {
-            if (_clients.TryGetValue(db, out var client))
-                return client;
-
-            client = new CSRedisClient(ConnectString(db));
-            _clients.TryAdd(db, client);
-            return client;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            //foreach (var client in _clients.Values)
-            //{
-            //    client.Dispose();
-            //}
-        }
-
-        #endregion
-
         #region 文本读写
 
         /// <summary>
@@ -202,7 +77,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public Task Set(string key, string value, DateTime last)
         {
-            return Client.SetAsync(key, value, (int) (last - DateTime.Now).TotalSeconds);
+            return Client.SetAsync(key, value, (int)(last - DateTime.Now).TotalSeconds);
         }
 
         /// <summary>
@@ -214,7 +89,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public Task Set(string key, string value, TimeSpan span)
         {
-            return Client.SetAsync(key, value, (int) span.TotalSeconds);
+            return Client.SetAsync(key, value, (int)span.TotalSeconds);
         }
 
         #endregion
@@ -291,7 +166,7 @@ namespace Agebull.Common.DataModel.Redis
         public Task SetValue<T>(string key, T value, TimeSpan span)
             where T : struct
         {
-            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int) span.TotalSeconds);
+            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int)span.TotalSeconds);
         }
 
         #endregion
@@ -380,7 +255,7 @@ namespace Agebull.Common.DataModel.Redis
         public Task Set<T>(string key, T value, DateTime last)
             where T : class
         {
-            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int) (last - DateTime.Now).TotalSeconds);
+            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int)(last - DateTime.Now).TotalSeconds);
         }
 
         /// <summary>
@@ -393,7 +268,7 @@ namespace Agebull.Common.DataModel.Redis
         public Task Set<T>(string key, T value, TimeSpan span)
             where T : class
         {
-            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int) span.TotalSeconds);
+            return Client.SetAsync(key, JsonConvert.SerializeObject(value), (int)span.TotalSeconds);
         }
 
         #endregion
@@ -462,19 +337,6 @@ namespace Agebull.Common.DataModel.Redis
         public Task RemoveCache<TData>(long id)
         {
             return id > 0 ? Client.DelAsync(DataKeyBuilder.DataKey<TData>(id)) : Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// 原始对象,在不够用时扩展
-        /// </summary>
-        public T Original<T>() where T : class
-        {
-            return Client as T;
-        }
-
-        void IRedisAsync.ChangeDb(int db)
-        {
-            _client = CreateClient(db);
         }
 
         Task<bool> IRedisAsync.SetNx(string key, byte[] value)

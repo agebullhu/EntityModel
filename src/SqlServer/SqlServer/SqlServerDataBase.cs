@@ -175,7 +175,7 @@ namespace Agebull.EntityModel.SqlServer
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorderX.MonitorTrace($"打开连接数：{cnt}");
+            LogRecorder.Debug("打开连接数：{0}",cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             connection.Open();
@@ -259,7 +259,7 @@ namespace Agebull.EntityModel.SqlServer
                 }
                 catch (Exception exception)
                 {
-                    LogRecorderX.Exception(exception);
+                    LogRecorder.Exception(exception);
                 }
             }
 
@@ -269,7 +269,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             catch (Exception exception)
             {
-                LogRecorderX.Exception(exception);
+                LogRecorder.Exception(exception);
             }
         }
         /// <summary>
@@ -558,7 +558,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public static void TraceSql(SqlCommand cmd)
         {
-            if (!LogRecorderX.LogDataSql)
+            if (!LogRecorder.LogDataSql)
                 return;
             TraceSql(cmd.CommandText, cmd.Parameters.OfType<DbParameter>());
         }
@@ -574,7 +574,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<DbParameter> args)
         {
-            if (!LogRecorderX.LogDataSql)
+            if (!LogRecorder.LogDataSql)
                 return;
             if (string.IsNullOrWhiteSpace(sql))
                 return;
@@ -595,7 +595,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             code.AppendLine(sql);
             code.AppendLine("GO");
-            LogRecorderX.RecordDataLog(code.ToString());
+            LogRecorder.RecordDataLog(code.ToString());
         }
 
         /// <summary>

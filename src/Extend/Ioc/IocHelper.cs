@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading;
+using Agebull.Common.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Agebull.Common.Ioc
@@ -34,11 +36,27 @@ namespace Agebull.Common.Ioc
         ///     依赖注入代理
         /// </summary>
         public static IServiceProvider ServiceProvider => Local.Value?.Provider ?? RootProvider;
-        
+
         /// <summary>
         ///     全局依赖
         /// </summary>
-        public static IServiceCollection ServiceCollection => _serviceCollection ??= new ServiceCollection();
+        public static IServiceCollection ServiceCollection
+        {
+            get
+            {
+                if (_serviceCollection != null)
+                    return _serviceCollection;
+                _serviceCollection = new ServiceCollection();
+                _serviceCollection.AddSingleton(p => ConfigurationManager.Builder);
+                return _serviceCollection;
+            }
+            set
+            {
+                _serviceCollection = value;
+                _serviceCollection.AddSingleton(p => ConfigurationManager.Builder);
+                Update();
+            }
+        }
 
         /// <summary>
         ///     显示式设置配置对象(依赖)
@@ -46,10 +64,13 @@ namespace Agebull.Common.Ioc
         /// <param name="service"></param>
         public static void SetServiceCollection(IServiceCollection service)
         {
-            if (_serviceCollection != null)
-                foreach (var dod in _serviceCollection)
-                    service.Add(dod);
+            var old = _serviceCollection;
             _serviceCollection = service;
+            if (old != null)
+                foreach (var dod in old.ToArray())
+                    service.Add(dod);
+            else
+                _serviceCollection.AddSingleton(p => ConfigurationManager.Builder);
             Update();
         }
 
@@ -71,6 +92,7 @@ namespace Agebull.Common.Ioc
         }
 
         #endregion
+
         #region Scope
 
         /// <summary>
@@ -111,7 +133,7 @@ namespace Agebull.Common.Ioc
         /// <typeparam name="TInterface"></typeparam>
         /// <returns></returns>
         public static TInterface Create<TInterface>()
-            where TInterface : class
+            //where TInterface : class
         {
             return ServiceProvider.GetService<TInterface>();
         }
@@ -123,7 +145,7 @@ namespace Agebull.Common.Ioc
         /// <typeparam name="TDefault"></typeparam>
         /// <returns></returns>
         public static TInterface CreateBut<TInterface, TDefault>()
-            where TInterface : class
+            //where TInterface : class
             where TDefault : class, TInterface, new()
         {
             return ServiceProvider.GetService<TInterface>() ?? new TDefault();

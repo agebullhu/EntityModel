@@ -1,14 +1,30 @@
 using Agebull.Common.Base;
 using Agebull.Common.Ioc;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace Agebull.Common.Logging
 {
     /// <summary>
     /// 根据步骤范围
     /// </summary>
+    public class EmptyScope : ScopeBase
+    {
+        /// <summary>
+        /// 清理资源
+        /// </summary>
+        protected override void OnDispose()
+        {
+        }
+    }
+
+    /// <summary>
+    /// 根据步骤范围
+    /// </summary>
     public class MonitorScope : ScopeBase
     {
         private bool _isStep;
+        private bool _isScope;
         /// <summary>
         /// 生成范围
         /// </summary>
@@ -16,14 +32,20 @@ namespace Agebull.Common.Logging
         /// <returns></returns>
         public static MonitorScope CreateScope(string name)
         {
-            var scope= new MonitorScope
+            if (!LogRecorder.LogMonitor)
+                return new MonitorScope();
+            var scope = new MonitorScope
             {
-                _isStep = LogRecorderX.MonitorItem.InMonitor
+                _isScope = true,
+                _isStep = LogRecorder.MonitorItem.InMonitor
             };
-            if (LogRecorderX.MonitorItem.InMonitor)
-                LogRecorderX.BeginStepMonitor(name);
+            if (LogRecorder.MonitorItem.InMonitor)
+                LogRecorder.BeginStepMonitor(name);
             else
-                LogRecorderX.BeginMonitor(name);
+            {
+                IocScope.Logger = IocHelper.Create<ILoggerFactory>().CreateLogger(name);
+                LogRecorder.BeginMonitor(name);
+            }
             return scope;
         }
 
@@ -32,16 +54,19 @@ namespace Agebull.Common.Logging
         /// </summary>
         protected override void OnDispose()
         {
+            if (!_isScope)
+                return;
             if (_isStep)
-                LogRecorderX.EndStepMonitor();
+                LogRecorder.EndStepMonitor();
             else
-                LogRecorderX.EndMonitor();
+                LogRecorder.EndMonitor();
         }
     }
 
     /// <summary>
     /// 根据步骤范围
     /// </summary>
+    [Obsolete]
     public class MonitorStepScope : MonitorScope
     {
 

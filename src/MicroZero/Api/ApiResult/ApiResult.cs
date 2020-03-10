@@ -548,6 +548,11 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     返回值
         /// </summary>
+        public TData Data => ResultData;
+
+        /// <summary>
+        ///     返回值
+        /// </summary>
         [JsonProperty("data")]
         public TData ResultData { get; set; }
 

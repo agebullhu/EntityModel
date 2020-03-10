@@ -4,7 +4,7 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>3.1.0.24-bate</Version>
+    <Version>3.1.40.9-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
     <IncludeSymbols>false</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
+    <IncludeSource>false</IncludeSource>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
     <Description>数据实体Redis版本</Description>
@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Compile Remove="Redis\NServiceKitRedis.cs" />
+    <Compile Remove="Redis\RedisClientEx.cs" />
     <Compile Remove="Redis\RedisDbScope.cs" />
     <Compile Remove="Redis\RedisProxy.Core.cs" />
     <Compile Remove="Redis\StackExchangeRedis.cs" />

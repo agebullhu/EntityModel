@@ -12,6 +12,7 @@ using System.Threading;
 using Agebull.Common.Ioc;
 using Agebull.Common.Configuration;
 using Agebull.EntityModel.Common;
+using Microsoft.Extensions.Primitives;
 
 #endregion
 
@@ -20,6 +21,7 @@ namespace Agebull.Common.Logging
     /// <summary>
     ///   日志记录器
     /// </summary>
+    [Obsolete]
     public static partial class LogRecorderX
     {
         #region 对象
@@ -144,10 +146,10 @@ namespace Agebull.Common.Logging
         /// </summary>
         static LogRecorderX()
         {
-            IocHelper.AddScoped<MonitorItem, MonitorItem>();
-            IocHelper.Update();
+            ConfigurationManager.RegistOnChange(ReadConfig, false);
             _isTextRecorder = true;
             Recorder = BaseRecorder = new TxtRecorder();
+            BaseRecorder.Initialize();
             Initialize();
             NewRecorderThread();
         }
@@ -156,6 +158,22 @@ namespace Agebull.Common.Logging
         ///   初始化
         /// </summary>
         public static void Initialize()
+        {
+            ReadConfig();
+            State = LogRecorderStatus.Initialized;
+            var recorder = IocHelper.Create<ILogRecorder>();
+            if (recorder != null && recorder != BaseRecorder)
+            {
+                _isTextRecorder = false;
+                Recorder = recorder;
+                Recorder.Initialize();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void ReadConfig()
         {
             var sec = ConfigurationManager.Get("LogRecorder");
             if (sec != null)
@@ -173,15 +191,6 @@ namespace Agebull.Common.Logging
                 AppDomain.MonitoringIsEnabled = true;
             }
 #endif
-            State = LogRecorderStatus.Initialized;
-            var recorder = IocHelper.Create<ILogRecorder>();
-            if (recorder != null && recorder != BaseRecorder)
-            {
-                _isTextRecorder = false;
-                Recorder = recorder;
-                Recorder.Initialize();
-            }
-            BaseRecorder.Initialize();
         }
 
         /// <summary>

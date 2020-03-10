@@ -59,7 +59,7 @@ namespace Agebull.EntityModel.SqlServer
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorderX.MonitorTrace($"打开连接数：{cnt}");
+            LogRecorder.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             await connection.OpenAsync();
@@ -104,7 +104,9 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     关闭连接
         /// </summary>
+#pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
         public async Task CloseAsync()
+#pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
         {
            Close(_connection);
             _connection = null;

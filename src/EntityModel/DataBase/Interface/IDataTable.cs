@@ -267,7 +267,32 @@ namespace Agebull.EntityModel.Common
         ///     载入首行
         /// </summary>
         /// <returns>如果有载入首行,否则返回空</returns>
+        [Obsolete]
         TData First();
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        [Obsolete]
+        TData First(LambdaItem<TData> lambda);
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        [Obsolete]
+        TData First(Expression<Func<TData, bool>> lambda);
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        [Obsolete]
+        TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+
 
         /// <summary>
         ///     载入首行
@@ -278,28 +303,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     载入首行
         /// </summary>
-        TData First(LambdaItem<TData> lambda);
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        TData First(Expression<Func<TData, bool>> lambda);
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
-        /// <param name="a">查询表达式</param>
-        /// <param name="b"></param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
-
-        /// <summary>
-        ///     载入首行
-        /// </summary>
         TData FirstOrDefault(LambdaItem<TData> lambda);
-
 
         /// <summary>
         ///     载入首行
@@ -308,7 +312,6 @@ namespace Agebull.EntityModel.Common
         /// <returns>如果有载入首行,否则返回空</returns>
         TData FirstOrDefault(Expression<Func<TData, bool>> lambda);
 
-
         /// <summary>
         ///     载入首行
         /// </summary>
@@ -316,6 +319,35 @@ namespace Agebull.EntityModel.Common
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
         TData FirstOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        Task<TData> FirstOrDefaultAsync();
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        Task<TData> FirstOrDefaultAsync(LambdaItem<TData> lambda);
+
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        Task<TData> FirstOrDefaultAsync(Expression<Func<TData, bool>> lambda);
+
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        Task<TData> FirstOrDefaultAsync(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
 
         #endregion
 
@@ -402,24 +434,19 @@ namespace Agebull.EntityModel.Common
         /// <returns>数据</returns>
         List<TData> All();
 
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <returns>数据</returns>
-        Task<List<TData>> AllAsync();
 
         /// <summary>
-        ///     分页读取
+        ///     读取数据
         /// </summary>
         List<TData> All(LambdaItem<TData> lambda);
 
         /// <summary>
-        ///     分页读取
+        ///     读取数据
         /// </summary>
         List<TData> All<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy, bool desc);
 
         /// <summary>
-        ///     载入首行
+        ///     读取数据
         /// </summary>
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
@@ -438,6 +465,45 @@ namespace Agebull.EntityModel.Common
         ///     分页读取
         /// </summary>
         List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync();
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync(LambdaItem<TData> lambda);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy, bool desc);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="orderBys">排序</param>
+        /// <returns>数据</returns>
+        Task<List<TData>> AllAsync(Expression<Func<TData, bool>> lambda, params string[] orderBys);
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        Task<List<TData>> LoadDataAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         #endregion
 
@@ -574,6 +640,7 @@ namespace Agebull.EntityModel.Common
         ///     分页读取
         /// </summary>
         ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        
         /// <summary>
         ///     分页读取
         /// </summary>

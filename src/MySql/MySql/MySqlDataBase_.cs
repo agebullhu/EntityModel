@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 namespace Agebull.EntityModel.MySql
 {
     /// <summary>
-    ///     表示SQL SERVER数据库对象
+    ///     表示MySql数据库对象
     /// </summary>
     public class MySqlDataBase_ : SimpleConfig, IParameterCreater
     {

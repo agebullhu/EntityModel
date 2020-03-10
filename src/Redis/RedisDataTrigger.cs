@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.Redis
                 return;
 
             long ver;
-            using (RedisProxy proxy = new RedisProxy(RedisProxy.DbSystem))
+            using (RedisProxy proxy = new RedisProxy(RedisProxy.Option.DbSystem))
             {
                 ver = proxy.Redis.Incr($"ent:ver:{table.Name}");
             }

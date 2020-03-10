@@ -34,8 +34,44 @@ namespace Agebull.EntityModel.Common
         /// 内部使用:指示下一步应如何处理的代码
         /// </remarks>
         /// <example>retry</example>
+        public string Guide => GuideCode;
+
+        /// <summary>
+        ///     提示信息
+        /// </summary>
+        /// <remarks>
+        ///  说明错误的原因
+        /// </remarks>
+        /// <example>你的数据不正确</example>
+        public string Msg => ClientMessage;
+
+        /// <summary>
+        ///     HTTP错误码
+        /// </summary>
+        /// <remarks>
+        ///  内部使用:不清楚请不要使用
+        /// </remarks>
+        /// <example>200</example>
+        public string Http => HttpCode;
+
+        /// <summary>
+        ///     指导码
+        /// </summary>
+        /// <remarks>
+        /// 内部使用:指示下一步应如何处理的代码
+        /// </remarks>
+        /// <example>retry</example>
         [JsonProperty("guide")]
         public string GuideCode { get; set; }
+
+        /// <summary>
+        ///     错误码
+        /// </summary>
+        /// <remarks>
+        ///     参见 ErrorCode 说明
+        /// </remarks>
+        /// <example>-1</example>
+        public int Code => ErrorCode;
 
         /// <summary>
         ///     错误说明

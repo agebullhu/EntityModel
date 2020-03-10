@@ -11,14 +11,14 @@
         None,
 
         /// <summary>
-        ///   调试信息
-        /// </summary>
-        Debug,
-
-        /// <summary>
         ///   跟踪信息
         /// </summary>
         Trace,
+
+        /// <summary>
+        ///   调试信息
+        /// </summary>
+        Debug,
 
         /// <summary>
         ///   警告

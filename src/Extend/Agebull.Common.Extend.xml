@@ -2804,7 +2804,7 @@
             显示式设置配置对象(依赖)
             </summary>
         </member>
-        <member name="M:Agebull.Common.Configuration.ConfigurationManager.ToConfig``1(System.String)">
+        <member name="M:Agebull.Common.Configuration.ConfigurationManager.ToConfig``1">
             <summary>
             转为强类型配置
             </summary>
@@ -2941,6 +2941,11 @@
             全局配置
             </summary>
         </member>
+        <member name="M:Agebull.Common.Configuration.ConfigurationManager.UpdateAppsettings">
+            <summary>
+            刷新AppSettings文件,使之配置优先级最高
+            </summary>
+        </member>
         <member name="M:Agebull.Common.Configuration.ConfigurationManager.Flush">
             <summary>
             刷新
@@ -2952,10 +2957,17 @@
             </summary>
             <param name="configuration"></param>
         </member>
-        <member name="M:Agebull.Common.Configuration.ConfigurationManager.Load(System.String)">
+        <member name="M:Agebull.Common.Configuration.ConfigurationManager.Load(System.String,System.Boolean)">
             <summary>
             载入配置文件
             </summary>
+        </member>
+        <member name="M:Agebull.Common.Configuration.ConfigurationManager.RegistOnChange(System.Action,System.Boolean)">
+            <summary>
+            注册更新处理器
+            </summary>
+            <param name="action">更新处理方法</param>
+            <param name="runNow">是否现在执行一次</param>
         </member>
         <member name="M:Agebull.Common.Configuration.ConfigurationManager.GetAppSetting(System.String,System.String)">
             <summary>
@@ -3334,7 +3346,7 @@
             IOC范围对象,内部框架使用
             </summary>
         </member>
-        <member name="M:Agebull.Common.Ioc.IocScope.CreateScope">
+        <member name="M:Agebull.Common.Ioc.IocScope.CreateScope(System.String)">
             <summary>
             生成一个范围
             </summary>
@@ -3350,9 +3362,29 @@
             活动实例
             </summary>
         </member>
+        <member name="P:Agebull.Common.Ioc.IocScope.LocalValue">
+            <summary>
+            析构方法
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Ioc.IocScope.Name">
+            <summary>
+            范围名称
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Ioc.IocScope.Logger">
+            <summary>
+            日志记录器
+            </summary>
+        </member>
         <member name="P:Agebull.Common.Ioc.IocScope.DisposeFunc">
             <summary>
             析构方法
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Ioc.IocScope.Dependency">
+            <summary>
+            附件内容
             </summary>
         </member>
         <member name="T:Agebull.Common.Help.CSVConvert">
@@ -5085,6 +5117,12 @@
             <returns></returns>
         </member>
         <member name="M:Agebull.EntityModel.Common.DependencyObjects.Dependency``1">
+            <summary>
+                取得一种类型的扩展属性(需要附加)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DependencyObjects.Dependency``1(System.Func{``0})">
             <summary>
                 取得一种类型的扩展属性(需要附加)
             </summary>

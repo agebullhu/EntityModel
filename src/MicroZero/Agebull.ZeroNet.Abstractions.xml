@@ -87,10 +87,14 @@
                 API返回数组泛型类
             </summary>
         </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.ApiArrayResult`1.ResultData">
-            <inheritdoc />
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiArrayResult`1.Data">
             <summary>
-                返回值
+                返回列表
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiArrayResult`1.ResultData">
+            <summary>
+                返回列表
             </summary>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiArrayResult`1.Error(System.Int32)">
@@ -162,6 +166,16 @@
                 文件内容二进制数据
             </summary>
         </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiFileResult.File">
+            <summary>
+                文件名
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiFileResult.Type">
+            <summary>
+                文件类型
+            </summary>
+        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ApiFileResult.FileName">
             <summary>
                 文件名
@@ -189,6 +203,12 @@
             <summary>
                 API返回分页信息
             </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiPage.Page">
+            <summary>
+                当前页号（从1开始）
+            </summary>
+            <example>1</example>
         </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ApiPage.PageIndex">
             <summary>
@@ -574,6 +594,11 @@
                 API返回数据泛型类
             </summary>
         </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiResult`1.Data">
+            <summary>
+                返回值
+            </summary>
+        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ApiResult`1.ResultData">
             <summary>
                 返回值
@@ -618,6 +643,11 @@
         <member name="T:Agebull.MicroZero.ZeroApis.ApiValueResult">
             <summary>
                 API返回数据泛型类
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiValueResult.Data">
+            <summary>
+                返回值
             </summary>
         </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ApiValueResult.ResultData">
@@ -1419,6 +1449,33 @@
                 默认构造
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Common.OperatorStatus.Guide">
+            <summary>
+                指导码
+            </summary>
+            <remarks>
+            内部使用:指示下一步应如何处理的代码
+            </remarks>
+            <example>retry</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.OperatorStatus.Msg">
+            <summary>
+                提示信息
+            </summary>
+            <remarks>
+             说明错误的原因
+            </remarks>
+            <example>你的数据不正确</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.OperatorStatus.Http">
+            <summary>
+                HTTP错误码
+            </summary>
+            <remarks>
+             内部使用:不清楚请不要使用
+            </remarks>
+            <example>200</example>
+        </member>
         <member name="P:Agebull.EntityModel.Common.OperatorStatus.GuideCode">
             <summary>
                 指导码
@@ -1427,6 +1484,15 @@
             内部使用:指示下一步应如何处理的代码
             </remarks>
             <example>retry</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.OperatorStatus.Code">
+            <summary>
+                错误码
+            </summary>
+            <remarks>
+                参见 ErrorCode 说明
+            </remarks>
+            <example>-1</example>
         </member>
         <member name="P:Agebull.EntityModel.Common.OperatorStatus.Describe">
             <summary>
@@ -2873,16 +2939,6 @@
         <member name="P:Agebull.Common.Context.GlobalContext.DependencyObjects">
             <summary>
                 依赖对象字典
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Context.GlobalContext._business">
-            <summary>
-                当前业务上下文
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Context.GlobalContext.Business">
-            <summary>
-                当前业务上下文
             </summary>
         </member>
         <member name="P:Agebull.Common.Context.GlobalContext.LoginUserId">

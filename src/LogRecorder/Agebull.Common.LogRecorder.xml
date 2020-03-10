@@ -4,120 +4,136 @@
         <name>Agebull.Common.LogRecorder</name>
     </assembly>
     <members>
-        <member name="T:Agebull.Common.Logging.ILogRecorder">
+        <member name="T:Agebull.Common.Logging.LoggerExtend">
             <summary>
-              记录器
+              日志记录器
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.ILogRecorder.IsInitialized">
-            <summary>
-            是否初始化成功
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.ILogRecorder.Initialize">
-            <summary>
-              初始化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.ILogRecorder.Shutdown">
-            <summary>
-              停止
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.ILogRecorder.RecordLog(Agebull.Common.Logging.RecordInfo)">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Record(Microsoft.Extensions.Logging.ILogger,Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
             <summary>
               记录日志
             </summary>
-            <param name="info"> 日志消息 </param>
+            <param name="logger">日志记录器</param>
+            <param name="type"> 消息类型 </param>
+            <param name="name"> 消息名称 </param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.ILogRecorder.RecordLog(System.Collections.Generic.List{Agebull.Common.Logging.RecordInfo})">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Message(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              记录日志
+              记录消息
             </summary>
-            <param name="infos"> 日志消息 </param>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="T:Agebull.Common.Logging.ILogListener">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.SystemLog(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              表示日志的监听器
+              记录系统日志
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.ILogListener.Trace(Agebull.Common.Logging.RecordInfo)">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.RecordMessage(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              显示日志消息
+              写入一般日志
             </summary>
-            <param name="info"> 日志消息 </param>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="T:Agebull.Common.Logging.LogRecordingScope">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Warning(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-            正在记录日志的范围
+              记录警告消息
             </summary>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecordingScope.CreateScope">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Error(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-            生成日志记录的范围
+              记录错误消息
             </summary>
-            <returns></returns>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecordingScope.OnDispose">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Exception(Microsoft.Extensions.Logging.ILogger,System.Exception,System.String)">
             <summary>
-            清理资源
+              记录异常日志
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="exception"> 异常 </param>
+            <param name="message"> 日志详细信息 </param>
         </member>
-        <member name="T:Agebull.Common.Logging.LogLevel">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Exception(Microsoft.Extensions.Logging.ILogger,System.Exception,System.String,System.Object[])">
             <summary>
-              日志类型
+              记录异常日志
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="ex"> 异常 </param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.None">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.RecordStackTrace(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
+             <summary>
+               记录堆栈跟踪
+             </summary>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
+        </member>
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Trace(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              无
+              写入调试日志
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.Debug">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Trace(Microsoft.Extensions.Logging.ILogger,System.String,System.String,System.Object[])">
             <summary>
-              调试信息
+              记录一般日志
             </summary>
+             <param name="logger">日志记录器</param>
+            <param name="name"> </param>
+            <param name="message"> 消息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.Trace">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.DebugByStackTrace(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              跟踪信息
+              写入调试日志同时记录堆栈信息
             </summary>
+             <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.Warning">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Debug(Microsoft.Extensions.Logging.ILogger,System.String,System.Object[])">
             <summary>
-              警告
+              写入调试日志.
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.System">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Debug(Microsoft.Extensions.Logging.ILogger,System.Object)">
             <summary>
-              系统
+              写入调试日志
             </summary>
+            <param name="logger">日志记录器</param>
+            <param name="obj"> 记录对象 </param>
         </member>
-        <member name="F:Agebull.Common.Logging.LogLevel.Error">
+        <member name="M:Agebull.Common.Logging.LoggerExtend.Debug(Microsoft.Extensions.Logging.ILogger,System.String,System.String,System.Object[])">
             <summary>
-              错误
+              记录一般日志
             </summary>
+             <param name="logger">日志记录器</param>
+            <param name="name"> </param>
+            <param name="message"> 消息 </param>
+            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="T:Agebull.Common.Logging.LogEnumHelper">
-            <summary>
-            日志枚举辅助
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogEnumHelper.Level(Agebull.Common.Logging.LogType)">
-            <summary>
-            日志类型到级别
-            </summary>
-            <param name="type"></param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogEnumHelper.TypeToString(Agebull.Common.Logging.LogType,System.String)">
-            <summary>
-              日志类型到文本
-            </summary>
-            <param name="type"> </param>
-            <param name="def"> </param>
-            <returns> </returns>
-        </member>
-        <member name="T:Agebull.Common.Logging.LogRecorderX">
+        <member name="T:Agebull.Common.Logging.LogRecorder">
             <summary>
               日志记录器
             </summary>
@@ -125,254 +141,190 @@
               文本记录器
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.LogPath">
+        <member name="F:Agebull.Common.Logging.LogRecorder.lastId">
+            <summary>
+            日志序号
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.LogRecorder.LogPath">
             <summary>
                 文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.TraceToConsole">
+        <member name="P:Agebull.Common.Logging.LogRecorder.UseBaseLogger">
             <summary>
-            是否将日志输出到控制台
+            是否使用基础文本日志记录器
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.LogMonitor">
+        <member name="P:Agebull.Common.Logging.LogRecorder.UseConsoleLogger">
+            <summary>
+            是否使用基础文本日志记录器
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.LogRecorder.NoRegist">
+            <summary>
+            不注册日志器
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.LogRecorder.LogMonitor">
             <summary>
             是否开启跟踪日志
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.LogDataSql">
+        <member name="P:Agebull.Common.Logging.LogRecorder.LogDataSql">
             <summary>
             是否开启SQL日志
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.Level">
-            <summary>
-            日志等级
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.Listener">
-            <summary>
-              消息跟踪器
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.Recorder">
-            <summary>
-              记录器
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.BaseRecorder">
-            <summary>
-             基础记录器
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX._isTextRecorder">
-            <summary>
-            是否仅使用文本记录器
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.InRecording">
-            <summary>
-            正在记录日志（用于防止重入）
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.Logging.LogRecorderX.LogRecorderStatus">
-            <summary>
-            日志记录状态
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.LogRecorderStatus.None">
-            <summary>
-            无
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.LogRecorderStatus.Initialized">
-            <summary>
-            完成初始化
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.LogRecorderStatus.Shutdown">
-            <summary>
-            已关闭
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.State">
-            <summary>
-            日志状态
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.GetRequestIdFunc">
+        <member name="F:Agebull.Common.Logging.LogRecorder.GetRequestIdFunc">
             <summary>
             取请求ID的方法
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.GetRequestId">
-            <summary>
-            取请求ID
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.GetUserNameFunc">
+        <member name="F:Agebull.Common.Logging.LogRecorder.GetUserNameFunc">
             <summary>
             取得当前用户方法
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.GetUserName">
-            <summary>
-            取得当前用户
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.GetMachineNameFunc">
+        <member name="F:Agebull.Common.Logging.LogRecorder.GetMachineNameFunc">
             <summary>
             取请求ID的方法
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.GetMachineName">
-            <summary>
-            取得当前机器
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.#cctor">
+        <member name="M:Agebull.Common.Logging.LogRecorder.#cctor">
             <summary>
               静态构造
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Initialize">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Initialize">
             <summary>
-              初始化
+                初始化
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Shutdown">
+        <member name="M:Agebull.Common.Logging.LogRecorder.ReadConfig">
             <summary>
-              中止
+            读取配置
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.FormatMessage(System.String,System.Object[])">
+        <member name="P:Agebull.Common.Logging.LogRecorder.Logger">
             <summary>
-            格式化消息
+            日志记录器
             </summary>
-            <param name="message"></param>
-            <param name="formatArgs"></param>
-            <returns></returns>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.StackTraceInfomation(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.GetRequestId">
             <summary>
-              堆栈信息
+            取请求ID
             </summary>
-            <param name="title"> 标题 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Record(Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.GetUserName">
             <summary>
-              记录一般日志
+            取得当前用户
             </summary>
-            <param name="type"> 日志类型(SG) </param>
-            <param name="name"> </param>
-            <param name="message"> 消息 </param>
-            <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Record(System.String,Agebull.Common.Logging.LogType)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.GetMachineName">
             <summary>
-              记录一般日志
+            取得当前机器
             </summary>
-            <param name="msg"> 消息 </param>
-            <param name="type"> 日志类型(SG) </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Record(System.String,System.String,System.Object[])">
-            <summary>
-              记录一般日志
-            </summary>
-            <param name="type"> 日志类型(SG) </param>
+        <member name="M:Agebull.Common.Logging.LogRecorder.StackTraceInfomation(System.String,System.Object[])">
+             <summary>
+               堆栈信息
+             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordDataLog(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Record(Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
+            <summary>
+              记录日志
+            </summary>
+            <param name="type"> 消息类型 </param>
+            <param name="name"> 消息名称 </param>
+            <param name="message"> 日志详细信息 </param>
+            <param name="formatArgs">格式化参数</param>
+        </member>
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordDataLog(System.String,System.Object[])">
             <summary>
               记录数据日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordLoginLog(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordLoginLog(System.String,System.Object[])">
             <summary>
               记录登录日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordRequestLog(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordRequestLog(System.String,System.Object[])">
             <summary>
               记录网络请求日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordNetLog(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordNetLog(System.String,System.Object[])">
             <summary>
               记录WCF消息日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Message(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Message(System.String,System.Object[])">
             <summary>
               记录消息
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.SystemLog(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.SystemLog(System.String)">
             <summary>
               记录系统日志
             </summary>
-            <param name="msg"> 消息 </param>
+            <param name="message"> 消息 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.SystemLog(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.SystemLog(System.String,System.Object[])">
             <summary>
               记录系统日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.PlanLog(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.PlanLog(System.String)">
             <summary>
               记录系统日志
             </summary>
-            <param name="msg"> 消息 </param>
+            <param name="message"> 消息 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordMessage(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordMessage(System.String,System.Object[])">
             <summary>
               写入一般日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Warning(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Warning(System.String,System.Object[])">
             <summary>
               记录警告消息
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Error(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Error(System.String,System.Object[])">
             <summary>
               记录错误消息
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordException(System.Exception,System.String@)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Exception(System.Exception,System.String)">
             <summary>
               记录异常日志
             </summary>
             <param name="exception"> 异常 </param>
             <param name="message"> 日志详细信息 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Exception(System.Exception,System.String)">
-            <summary>
-              记录异常日志
-            </summary>
-            <param name="ex"> 异常 </param>
-            <param name="message"> 日志详细信息 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Exception(System.Exception,System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Exception(System.Exception,System.String,System.Object[])">
             <summary>
               记录异常日志
             </summary>
@@ -380,193 +332,244 @@
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordStackTrace(System.String)">
-            <summary>
-              记录堆栈跟踪
-            </summary>
-            <param name="title"> 标题 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Trace(System.Boolean,System.String,System.Object[])">
-            <summary>
-              写入调试日志
-            </summary>
-            <param name="recordStackTrace"> 记录堆栈信息吗 </param>
+        <member name="M:Agebull.Common.Logging.LogRecorder.RecordStackTrace(System.String,System.Object[])">
+             <summary>
+               记录堆栈跟踪
+             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Trace(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Trace(System.String,System.Object[])">
             <summary>
               写入调试日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Trace(System.Object)">
-            <summary>
-              写入调试日志
-            </summary>
-            <param name="obj"> 记录对象 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Trace(Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Trace(System.String,System.String,System.Object[])">
             <summary>
               记录一般日志
             </summary>
-            <param name="type"> 日志类型(SG) </param>
             <param name="name"> </param>
             <param name="message"> 消息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Debug(System.Boolean,System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.DebugByStackTrace(System.String,System.Object[])">
             <summary>
-              写入调试日志
+              写入调试日志同时记录堆栈信息
             </summary>
-            <param name="recordStackDebug"> 记录堆栈信息吗 </param>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs"> 格式化的参数 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Debug(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Debug(System.String,System.Object[])">
             <summary>
               写入调试日志
             </summary>
             <param name="message"> 日志详细信息 </param>
             <param name="formatArgs">格式化参数</param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Debug(System.Object)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.Debug(System.Object)">
             <summary>
               写入调试日志
             </summary>
             <param name="obj"> 记录对象 </param>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Debug(Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
-            <summary>
-              记录一般日志
-            </summary>
-            <param name="type"> 日志类型(SG) </param>
-            <param name="name"> </param>
-            <param name="message"> 消息 </param>
-            <param name="formatArgs"> 格式化的参数 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.ExceptionMessage(System.Exception)">
-            <summary>
-              记录异常的外部信息
-            </summary>
-            <param name="ex"> 异常 </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.ExceptionInfomation(System.Exception,System.String)">
-            <summary>
-              记录异常的详细信息
-            </summary>
-            <param name="ex"> </param>
-            <param name="message"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Record(System.String,Agebull.Common.Logging.LogType,System.String,System.String,System.Object[])">
-            <summary>
-              记录日志
-            </summary>
-            <param name="name"> 原始的消息 </param>
-            <param name="msg"> 处理后的消息 </param>
-            <param name="type"> 日志类型 </param>
-            <param name="typeName"> 类型名称 </param>
-            <param name="formatArgs">文本格式化参数</param>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.Record(System.String,System.String,Agebull.Common.Logging.LogType,System.String)">
-            <summary>
-              记录日志
-            </summary>
-            <param name="name"> 原始的消息 </param>
-            <param name="msg"> 处理后的消息 </param>
-            <param name="type"> 日志类型 </param>
-            <param name="typeName"> 类型名称 </param>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX._syncSlim">
-            <summary>
-            线程同步结束信息量
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.RecordInfos">
-            <summary>
-            待写入的日志信息集合
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX._id">
-            <summary>
-            日志序号
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.RecordInner(Agebull.Common.Logging.LogLevel,System.String,System.String,Agebull.Common.Logging.LogType,System.String)">
-            <summary>
-              记录日志
-            </summary>
-            <param name="level"> 所在等级 </param>
-            <param name="name"> 原始的消息 </param>
-            <param name="msg"> 处理后的消息 </param>
-            <param name="type"> 日志类型 </param>
-            <param name="typeName"> 类型名称 </param>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX.BackIsRuning">
-            <summary>
-            后台线程是否启动
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.WriteRecordLoop">
-            <summary>
-             日志记录独立线程
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.SystemTrace(Agebull.Common.Logging.LogLevel,System.String,System.Object[])">
-            <summary>
-            写入系统跟踪
-            </summary>
-            <param name="level"></param>
-            <param name="title"></param>
-            <param name="arg"></param>
-        </member>
-        <member name="F:Agebull.Common.Logging.LogRecorderX._monitorItemLocal">
+        <member name="F:Agebull.Common.Logging.LogRecorder._monitorItemLocal">
             <summary>
             当前上下文数据
             </summary>
         </member>
-        <member name="P:Agebull.Common.Logging.LogRecorderX.MonitorItem">
+        <member name="P:Agebull.Common.Logging.LogRecorder.MonitorItem">
             <summary>
             当前范围数据
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.BeginMonitor(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.BeginMonitor(System.String)">
             <summary>
             开始检测资源
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.BeginStepMonitor(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.BeginStepMonitor(System.String)">
             <summary>
             刷新资源检测
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.EndStepMonitor">
+        <member name="M:Agebull.Common.Logging.LogRecorder.EndStepMonitor">
             <summary>
             刷新资源检测
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.MonitorTrace(System.String)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.MonitorTrace(System.String)">
             <summary>
             显示监视跟踪
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.FlushMonitor(System.String,System.Boolean)">
+        <member name="M:Agebull.Common.Logging.LogRecorder.MonitorTrace(System.String,System.Object[])">
+            <summary>
+            显示监视跟踪
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.LogRecorder.MonitorTrace(System.Func{System.String})">
+            <summary>
+            显示监视跟踪
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.LogRecorder.FlushMonitor(System.String,System.Boolean)">
             <summary>
             刷新资源检测
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.FlushMonitor(System.String,System.Object[])">
+        <member name="M:Agebull.Common.Logging.LogRecorder.FlushMonitor(System.String,System.Object[])">
             <summary>
             刷新资源检测
             </summary>
         </member>
-        <member name="M:Agebull.Common.Logging.LogRecorderX.EndMonitor">
+        <member name="M:Agebull.Common.Logging.LogRecorder.EndMonitor">
             <summary>
             刷新资源检测
             </summary>
+        </member>
+        <member name="T:Agebull.Common.Logging.TextLogger">
+            <summary>
+                文本记录器
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLogger.Option">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLogger.ScopeProvider">
+            <summary>
+            范围
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.#ctor(Agebull.Common.Logging.TextLoggerOption)">
+            <summary>
+                构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.OnDispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.WriteFile(System.String,System.String)">
+            <summary>
+                记录日志
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.Logging.TextLogger._recordTimePoint">
+            <summary>
+                当前记录的时间点
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.ResetFile">
+            <summary>
+                需要立即重置
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.CheckTimePoint">
+            <summary>
+                当前记录的时间点
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.Logging.TextLogger._writers">
+            <summary>
+                所有写入的文件句柄
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLogger.DisposeWriters">
+            <summary>
+                任务结束,环境销毁
+            </summary>
+        </member>
+        <member name="F:Agebull.Common.Logging.TextLogger.cnt">
+            <summary>
+            通过计数减少取磁盘大小的频率
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Logging.TextLoggerOption">
+            <summary>
+            文本日志配置
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.path">
+            <summary>
+                文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.LogLevel">
+            <summary>
+            日志等级
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.split">
+            <summary>
+            拆分日志的数量
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.maxFile">
+            <summary>
+            最大文件数量
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.minFreeSize">
+            <summary>
+            最小可用空间(小于时只记录系统与错误日志)
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.dayFolder">
+            <summary>
+            每日一个文件夹吗
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.disable">
+            <summary>
+            是否禁用
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.LogPath">
+            <summary>
+                文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.SplitNumber">
+            <summary>
+            拆分日志的数量
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.MinFreeSize">
+            <summary>
+            最小可用空间(小于时只记录系统与错误日志)
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.Logging.TextLoggerOption.DayFolder">
+            <summary>
+            每日一个文件夹吗
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLoggerOption.Initialize">
+            <summary>
+                初始化
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.Logging.TextLoggerProvider">
+            <summary>
+            A provider of <see cref="T:Microsoft.Extensions.Logging.Console.TextLogger" /> instances.
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLoggerProvider.#ctor(Microsoft.Extensions.Options.IOptionsMonitor{Agebull.Common.Logging.TextLoggerOption})">
+            <summary>
+            Creates an instance of <see cref="T:Microsoft.Extensions.Logging.Console.TextLoggerProvider" />.
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLoggerProvider.SetScopeProvider(Microsoft.Extensions.Logging.IExternalScopeProvider)">
+            <inheritdoc />
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLoggerProvider.CreateLogger(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Agebull.Common.Logging.TextLoggerProvider.Dispose">
+            <inheritdoc />
         </member>
         <member name="T:Agebull.Common.Logging.LogType">
             <summary>
@@ -673,7 +676,7 @@
             标题
             </summary>
         </member>
-        <member name="F:Agebull.Common.Logging.MonitorData.TotalTime">
+        <member name="P:Agebull.Common.Logging.MonitorData.TotalTime">
             <summary>
                 总处理器时间
             </summary>
@@ -752,6 +755,16 @@
                 刷新资源检测
             </summary>
         </member>
+        <member name="T:Agebull.Common.Logging.EmptyScope">
+            <summary>
+            根据步骤范围
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.Logging.EmptyScope.OnDispose">
+            <summary>
+            清理资源
+            </summary>
+        </member>
         <member name="T:Agebull.Common.Logging.MonitorScope">
             <summary>
             根据步骤范围
@@ -772,226 +785,6 @@
         <member name="T:Agebull.Common.Logging.MonitorStepScope">
             <summary>
             根据步骤范围
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.Logging.RecordInfo">
-            <summary>
-              记录信息
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Local">
-            <summary>
-            本地日志
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Time">
-            <summary>
-            时间
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Index">
-            <summary>
-              日志记录序号
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.ThreadID">
-            <summary>
-              线程ID
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.RequestID">
-            <summary>
-              日志ID
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Machine">
-            <summary>
-              机器
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Name">
-            <summary>
-              名称
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Message">
-            <summary>
-              格式化消息
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.Type">
-            <summary>
-              日志类型
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.RecordInfo.Level">
-            <summary>
-            日志等级
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.TypeName">
-            <summary>
-              日志扩展名称,类型为None
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.RecordInfo.User">
-            <summary>
-              当前用户
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.Logging.TxtRecorder">
-            <summary>
-                文本记录器
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.TxtRecorder.LogPath">
-            <summary>
-                文本日志的路径,如果不配置,就为:[应用程序的路径]\log\
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.TxtRecorder.SplitNumber">
-            <summary>
-            拆分日志的数量
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.TxtRecorder.MinFreeSize">
-            <summary>
-            最小可用空间(小于时只记录系统与错误日志)
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.TxtRecorder.DayFolder">
-            <summary>
-            每日一个文件夹吗
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.TxtRecorder.Recorder">
-            <summary>
-                初始化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.#ctor">
-            <summary>
-                阻止外部构造
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.Logging.TxtRecorder.IsInitialized">
-            <summary>
-            是否初始化成功
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.TxtRecorder.pathIsCheck">
-            <summary>
-            是否初始化成功
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.Initialize">
-            <summary>
-                初始化
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.Shutdown">
-            <summary>
-                停止
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.TxtRecorder.cnt">
-            <summary>
-            通过计数减少取磁盘大小的频率
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.RecordLog(System.Collections.Generic.List{Agebull.Common.Logging.RecordInfo})">
-            <summary>
-                记录日志
-            </summary>
-            <param name="infos"> 日志消息 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.RecordLog(Agebull.Common.Logging.RecordInfo)">
-            <summary>
-                记录日志
-            </summary>
-            <param name="info"> 日志消息 </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.Write(Agebull.Common.Logging.RecordInfo,System.Boolean)">
-            <summary>
-                记录日志
-            </summary>
-            <param name="info"> 日志消息 </param>
-            <param name="onlySystem">仅系统</param>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.Write(System.String)">
-            <summary>
-                写消息--Trace
-            </summary>
-            <param name="message"> </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.WriteLine(System.String)">
-            <summary>
-                写一行消息--Trace
-            </summary>
-            <param name="message"> </param>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.WriteFile(System.String,System.String)">
-            <summary>
-                记录日志
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.TxtRecorder._recordTimePoint">
-            <summary>
-                当前记录的时间点
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.CheckTimePoint">
-            <summary>
-                当前记录的时间点
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.Logging.TxtRecorder._writers">
-            <summary>
-                所有写入的文件句柄
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.Logging.TxtRecorder.DisposeWriters">
-            <summary>
-                任务结束,环境销毁
-            </summary>
-        </member>
-        <member name="T:Agebull.Common.LogQueue">
-            <summary>
-            多生产者单消费者的同步列表（线程安全）
-            </summary>
-            <remarks>
-            1 使用双队列，便于快速切换
-            </remarks>
-        </member>
-        <member name="P:Agebull.Common.LogQueue.IsEmpty">
-            <summary>
-            是否不为空
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.LogQueue.Line1">
-            <summary>
-            内部队列
-            </summary>
-        </member>
-        <member name="F:Agebull.Common.LogQueue.Line2">
-            <summary>
-            内部队列
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.LogQueue.Push(Agebull.Common.Logging.RecordInfo)">
-            <summary>
-            加入队列
-            </summary>
-            <param name="t"></param>
-        </member>
-        <member name="P:Agebull.Common.LogQueue.WaitCount">
-            <summary>
-            等待数量
-            </summary>
-        </member>
-        <member name="M:Agebull.Common.LogQueue.Switch">
-            <summary>
-            开始处理队列内容
             </summary>
         </member>
         <member name="T:System.Linq.LogStack`1">

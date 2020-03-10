@@ -8,23 +8,8 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// Redis操作接口
     /// </summary>
-    public interface IRedisAsync
+    public interface IRedisAsync: IRedisBase
     {
-        /// <summary>
-        /// 当前数据库
-        /// </summary>
-        long CurrentDb { get; }
-
-        /// <summary>
-        /// 不关闭
-        /// </summary>
-        bool NoClose { get; }
-
-        /// <summary>
-        /// 原始对象,在不够用时扩展
-        /// </summary>
-        T Original<T>() where T : class;
-
         /// <summary>
         /// 写值
         /// </summary>
@@ -40,14 +25,6 @@ namespace Agebull.EntityModel.Redis
         /// <param name="span"></param>
         /// <returns></returns>
         Task SetTime(string key, TimeSpan span);
-
-        /// <summary>
-        /// 更改Db
-        /// </summary>
-        void ChangeDb(int db);
-
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        void Dispose();
 
         /// <summary>
         /// 删除KEY
