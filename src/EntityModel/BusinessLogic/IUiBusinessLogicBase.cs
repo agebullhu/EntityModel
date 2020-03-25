@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Agebull.EntityModel.Common;
 using Agebull.MicroZero.ZeroApis;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 namespace Agebull.EntityModel.BusinessLogic
 {

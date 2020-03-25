@@ -1,9 +1,4 @@
-﻿using Agebull.Common.Configuration;
-using System;
-using System.IO;
-using System.Text;
-
-namespace Agebull.EntityModel.Common
+﻿namespace Agebull.EntityModel.Common
 {
     /// <summary>
     /// 数字与BYTE的转换辅助对象

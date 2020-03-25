@@ -26,6 +26,7 @@
     <Product>Agebull.EntityModel</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <PackageReleaseNotes>Agebull.EntityModel.SqlServer</PackageReleaseNotes>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">

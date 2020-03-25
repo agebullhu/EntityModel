@@ -3588,6 +3588,16 @@
             参数类型
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Events.EntityEventArgument.DataBase">
+            <summary>
+            数据库
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Events.EntityEventArgument.EntityName">
+            <summary>
+            实体名称
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Events.EntityEventArgument.Value">
             <summary>
             内容
@@ -3714,6 +3724,231 @@
             <typeparam name="T"></typeparam>
             <param name="data"></param>
             <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.IdEncoder">
+            <summary>
+            ID编码器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.IdEncoder.Encoding(System.Int64)">
+            <summary>
+            将一个52位整型数专为36进制编码的字符串
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.IdEncoder.Decoding(System.String)">
+            <summary>
+            将上述方法得到的36进制编码专为对应的52位整型数
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.IIdGenerator">
+            <summary>
+            随机ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.IIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.NewID">
+            <summary>
+            生成ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.IIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            获取一批Id
+            </summary>
+            <typeparam name="T">实体类型</typeparam>
+            <param name="count">Id数量</param>
+            <returns>ID集合</returns>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.SmallFlakeIdGenerator">
+            <summary>
+            ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakeIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.NewID">
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakeIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            生成一批ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.SmallFlakes`1">
+            <summary>
+            模仿Twitter的SnowFlakes算法，根据开源代码更改的适用于本框架的生成一个根据时间递增，带有机器号和一个本地计数器的生成52位整型数的分布式Id生成器
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:Agebull.Common.SmallFlakes`1._counter">
+            <summary>
+            总共52位，额外一位用来标记紧急客户端生成的顺序Id
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.MachineName">
+            <summary>
+            机器名称
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.WorkerId">
+            <summary>
+            工作ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.Identifier">
+            <summary>
+            机器识别号，处于生成的Id中端位置，一个不长于10位的整型数
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakes`1.Oxidize">
+            <summary>
+            获取一个新Id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.SnowFlake">
+            <summary>  
+            动态生产有规律的ID  
+            </summary>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.Instance">
+            <summary>
+            单例
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlake.NewId">
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor(System.Int64)">
+            <summary>
+            构造
+            </summary>
+            <param name="machineId"></param>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor(System.Int64,System.Int64)">
+            <summary>
+            构造
+            </summary>
+            <param name="machineId"></param>
+            <param name="dataCenterId"></param>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetTimestamp">
+            <summary>  
+            生成当前时间戳  
+            </summary>  
+            <returns>毫秒</returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetNextTimestamp(System.Int64)">
+            <summary>  
+            获取下一微秒时间戳  
+            </summary>  
+            <param name="lastTimestamp"></param>  
+            <returns></returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetSerialId">
+            <summary>  
+            获取长整形的ID  
+            </summary>  
+            <returns></returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetSerialString(System.Int64)">
+            <summary>
+            解读时间戳部分
+            </summary>
+            <param name="serialId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetTime(System.Int64)">
+            <summary>
+            UNIX时间戳到日期
+            </summary>
+            <param name="timeStamp"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.SnowFlakeIdGenerator">
+            <summary>
+            ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlakeIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.NewID">
+            <inheritdoc />
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlakeIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            生成一批ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
         </member>
         <member name="T:Agebull.Common.Tson.TsonObjectScope">
             <summary>

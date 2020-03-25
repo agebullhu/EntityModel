@@ -27,7 +27,7 @@
     <Company>Agebull</Company>
     <Product>Agebull.EntityModel.Core</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -88,8 +88,6 @@
 
   <ItemGroup>
     <PackageReference Include="NPOI" Version="2.4.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MicroZero\Agebull.MicroZero.Abstractions.csproj" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.5-bate" />
   </ItemGroup>
 </Project>

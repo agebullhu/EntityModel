@@ -1,7 +1,9 @@
 using System.Data;
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
+using ZeroTeam.MessageMVC.Messages;
 
 namespace Agebull.EntityModel.Events
 {
@@ -88,6 +90,15 @@ namespace Agebull.EntityModel.Events
         /// </summary>
         public EntityEventValueType ValueType { get; set; }
 
+        /// <summary>
+        /// 数据库
+        /// </summary>
+        public string DataBase { get; set; }
+
+        /// <summary>
+        /// 实体名称
+        /// </summary>
+        public string EntityName { get; set; }
 
         /// <summary>
         /// 内容
@@ -143,9 +154,11 @@ namespace Agebull.EntityModel.Events
             {
                 OperatorType = oType,
                 ValueType = valueType,
+                DataBase = database,
+                EntityName = entity,
                 Value = value
             });
-            bool re = MicroZero.MessageQueue.Publish("EntityEvent", database, entity, arg);
+            var re = MessageProducer.Producer("EntityEvent", database, arg);
 
             LogRecorder.Debug(@"EntityEvent : {0}, {1},{2}
 {3}", database, entity, re, arg);

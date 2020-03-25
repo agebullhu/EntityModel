@@ -19,6 +19,7 @@
     <Company>Agebull</Company>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Description>数据实体Excel操作组件</Description>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

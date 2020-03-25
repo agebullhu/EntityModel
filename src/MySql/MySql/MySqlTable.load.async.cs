@@ -22,6 +22,7 @@ using Agebull.EntityModel.Events;
 
 using Agebull.EntityModel.Common;
 using Agebull.MicroZero.ZeroApis;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 

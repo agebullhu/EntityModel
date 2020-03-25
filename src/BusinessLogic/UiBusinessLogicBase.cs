@@ -4,11 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.Common.Context;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Excel;
-using Agebull.MicroZero.ZeroApis;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 namespace Agebull.EntityModel.BusinessLogic
 {
@@ -175,7 +174,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
-                Data = bytes
+                Bytes = bytes
             };
         }
 
@@ -197,7 +196,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
-                Data = bytes
+                Bytes = bytes
             };
         }
         #endregion
@@ -529,7 +528,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (ManageModeScope.CreateScope())
+            //BUG: using (ManageModeScope.CreateScope())
             {
                 if (!DoDelete(id))
                     return false;
@@ -604,7 +603,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             using (var scope = TransactionScope.CreateScope(Access))
             {
-                var res= await DeleteAsyncInner(id);
+                var res = await DeleteAsyncInner(id);
                 scope.SetState(true);
                 return res;
             }
@@ -620,13 +619,13 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-                using (ManageModeScope.CreateScope())
-                {
-                    if (!await DoDeleteAsync(id))
-                        return false;
-                    OnDeleted(id);
-                    LogRecorder.MonitorTrace("Delete");
-                    OnStateChanged(id, BusinessCommandType.Delete);
+            //BUG:using (ManageModeScope.CreateScope())
+            {
+                if (!await DoDeleteAsync(id))
+                    return false;
+                OnDeleted(id);
+                LogRecorder.MonitorTrace("Delete");
+                OnStateChanged(id, BusinessCommandType.Delete);
             }
             return true;
         }

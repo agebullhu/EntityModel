@@ -29,6 +29,7 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Product>Agebull.EntityModel</Product>
     <PackageReleaseNotes>Agebull.EntityModel.MySql</PackageReleaseNotes>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>Agebull.EntityModel.MySql.xml</DocumentationFile>
