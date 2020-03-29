@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>3.1.40.9-bate</Version>
+    <Version>3.1.40.11</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -15,7 +15,7 @@
     <PackageTags>Agebull.EntityModel.Core</PackageTags>
     
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
-    <PackageLicenseExpression>MPL</PackageLicenseExpression>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
     <IncludeSymbols>false</IncludeSymbols>
@@ -87,7 +87,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.4.1" />
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.5-bate" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.6-bate" />
   </ItemGroup>
 </Project>
