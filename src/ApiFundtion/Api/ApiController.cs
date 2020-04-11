@@ -8,7 +8,7 @@ using Agebull.EntityModel.Common;
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.MicroZero.WebApi;
 using ZeroTeam.MessageMVC.ZeroApis;
-using ZeroTeam.MessageMVC;
+using ApiFileResult = ZeroTeam.MessageMVC.ZeroApis.IApiResult<(string name, string mime, byte[] bytes)>;
 
 namespace Agebull.MicroZero.ZeroApis
 {
@@ -29,8 +29,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field"></param>
         protected virtual void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            var no = GetArg("No");
-            if (string.IsNullOrEmpty(no))
+            if (!TryGetValue("No",out var no))
             {
                 SetFailed(name + "为空");
                 return;
@@ -43,7 +42,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (result)
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
+                GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -71,9 +70,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         [Route("edit/eid")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult<EntityInfo> EntityType()
+        public IApiResult<EntityInfo> EntityType()
         {
-            return ApiResult.Succees(new EntityInfo
+            return ApiResultHelper.Succees(new EntityInfo
             {
                 EntityType = Business.EntityType,
                 //PageId = PageItem?.Id ?? 0
@@ -93,12 +92,12 @@ namespace Agebull.MicroZero.ZeroApis
         public ApiFileResult Export2(QueryArgument args)
         {
             var data = new TData();
-            GlobalContext.Current.Feature = 1;
+            GlobalContext.Current.Status.Feature = 1;
             var filter = new LambdaItem<TData>();
             GetQueryFilter(filter);
             var res = Business.Export(data.__Struct.Caption, filter);
-            GlobalContext.Current.Feature = 0;
-            return res;
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
         }
 
         /// <summary>
@@ -110,15 +109,15 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         [Route("export/xlsx")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiFileResult Export(QueryArgument args)
+        public IApiResult<(string name, string mime, byte[] bytes)> Export(QueryArgument args)
         {
             var data = new TData();
-            GlobalContext.Current.Feature = 1;
+            GlobalContext.Current.Status.Feature = 1;
             var filter = new LambdaItem<TData>();
             GetQueryFilter(filter);
             var res = Business.Export(data.__Struct.Caption, filter);
-            GlobalContext.Current.Feature = 0;
-            return res;
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
         }
         /// <summary>
         ///     读取查询条件
@@ -164,7 +163,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         [Route("edit/list")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiPageResult<TData> List(QueryArgument args)
+        public IApiResult<ApiPageData<TData>> List(QueryArgument args)
         {
             IDisposable scope = null;
             try
@@ -172,23 +171,15 @@ namespace Agebull.MicroZero.ZeroApis
 
                 scope = GetFieldFilter();
 
-                GlobalContext.Current.Feature = 1;
+                GlobalContext.Current.Status.Feature = 1;
 
                 var filter = new LambdaItem<TData>();
                 GetQueryFilter(filter);
                 var data = GetListData(filter);
-                GlobalContext.Current.Feature = 0;
+                GlobalContext.Current.Status.Feature = 0;
                 return IsFailed
-                    ? new ApiPageResult<TData>
-                    {
-                        Success = false,
-                        Status = GlobalContext.Current.LastStatus
-                    }
-                    : new ApiPageResult<TData>
-                    {
-                        Success = true,
-                        ResultData = data
-                    };
+                    ? ApiResultHelper.Error<ApiPageData<TData>>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
             }
             finally
             {
@@ -202,32 +193,24 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("edit/first")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult<TData> QueryFirst(TData arguent)
+        public IApiResult<TData> QueryFirst(TData arguent)
         {
             IDisposable scope = null;
             try
             {
                 scope = GetFieldFilter();
-                GlobalContext.Current.Feature = 1;
+                GlobalContext.Current.Status.Feature = 1;
                 var filter = new LambdaItem<TData>();
                 GetQueryFilter(filter);
-                var data = Business.Access.First(filter);
+                var data = Business.Access.FirstOrDefault(filter);
                 if (data != null)
                 {
                     OnDetailsLoaded(data, false);
                 }
-                GlobalContext.Current.Feature = 0;
+                GlobalContext.Current.Status.Feature = 0;
                 return IsFailed
-                    ? new ApiResult<TData>
-                    {
-                        Success = false,
-                        Status = GlobalContext.Current.LastStatus,
-                    }
-                    : new ApiResult<TData>
-                    {
-                        Success = true,
-                        ResultData = data
-                    };
+                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
             }
             finally
             {
@@ -240,18 +223,14 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("edit/details")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult<TData> Details(IdArguent arguent)
+        public IApiResult<TData> Details(IdArguent arguent)
         {
             if (!TryGet("id", out long id))
-                return ApiResult.Error<TData>(ErrorCode.ArgumentError, "参数[id]不是有效的数字");
+                return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoDetails(id);
             return IsFailed
-                ? new ApiResult<TData>
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Succees(data);
+                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
@@ -259,16 +238,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("edit/addnew")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult<TData> AddNew(TData arg)
+        public IApiResult<TData> AddNew(TData arg)
         {
             var data = DoAddNew();
             return IsFailed
-                ? new ApiResult<TData>
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Succees(data);
+                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
@@ -276,18 +251,14 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("edit/update")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult<TData> Update(TData arg)
+        public IApiResult<TData> Update(TData arg)
         {
             if (!TryGet("id", out long id))
-                return ApiResult.Error<TData>(ErrorCode.ArgumentError, "参数[id]不是有效的数字");
+                return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoUpdate(id);
             return IsFailed
-                ? new ApiResult<TData>
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Succees(data);
+                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
@@ -295,16 +266,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("edit/delete")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Delete(IdsArguent arg)
+        public IApiResult Delete(IdsArguent arg)
         {
             DoDelete();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         #endregion
@@ -434,13 +401,13 @@ namespace Agebull.MicroZero.ZeroApis
             ReadFormData(data, convert);
             if (convert.Failed)
             {
-                GlobalContext.Current.LastState = ErrorCode.ArgumentError;
-                GlobalContext.Current.LastMessage = convert.Message;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = convert.Message;
                 return null;
             }
             if (!Business.AddNew(data))
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
                 return null;
             }
             return data;
@@ -454,8 +421,8 @@ namespace Agebull.MicroZero.ZeroApis
             var data = Business.Details(id);
             if (data == null)
             {
-                GlobalContext.Current.LastState = ErrorCode.ArgumentError;
-                GlobalContext.Current.LastMessage = "参数错误";
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = "参数错误";
                 return null;
             }
             data.__status.IsExist = true;
@@ -468,13 +435,13 @@ namespace Agebull.MicroZero.ZeroApis
             ReadFormData(data, convert);
             if (convert.Failed)
             {
-                GlobalContext.Current.LastState = ErrorCode.ArgumentError;
-                GlobalContext.Current.LastMessage = convert.Message;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = convert.Message;
                 return null;
             }
             if (!Business.Update(data))
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
                 return null;
             }
             return data;
@@ -491,7 +458,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
             if (!Business.Delete(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         #endregion

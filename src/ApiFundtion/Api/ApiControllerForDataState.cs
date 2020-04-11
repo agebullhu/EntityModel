@@ -38,8 +38,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field"></param>
         protected override void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            var no = GetArg("No");
-            if (string.IsNullOrEmpty(no))
+            if (!TryGetValue(name, out var no))
             {
                 SetFailed(name + "为空");
                 return;
@@ -54,7 +53,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (Business.Access.IsUnique(field, no, condition))
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
+                GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -66,16 +65,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/reset")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Reset(IdsArguent arg)
+        public IApiResult Reset(IdsArguent arg)
         {
             OnReset();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -83,16 +78,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/lock")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Lock(IdsArguent arg)
+        public IApiResult Lock(IdsArguent arg)
         {
             OnLock();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -100,16 +91,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/discard")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Discard(IdsArguent arg)
+        public IApiResult Discard(IdsArguent arg)
         {
             OnDiscard();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -117,16 +104,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/disable")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Disable(IdsArguent arg)
+        public IApiResult Disable(IdsArguent arg)
         {
             OnDisable();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -134,16 +117,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/enable")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Enable(IdsArguent arg)
+        public IApiResult Enable(IdsArguent arg)
         {
             OnEnable();
             return IsFailed
-                ? new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                }
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         #endregion
@@ -162,7 +141,7 @@ namespace Agebull.MicroZero.ZeroApis
             }
 
             if (!Business.LoopIds(ids, Business.Lock))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -177,7 +156,7 @@ namespace Agebull.MicroZero.ZeroApis
             }
 
             if (!Business.LoopIds(ids, Business.Reset))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -192,7 +171,7 @@ namespace Agebull.MicroZero.ZeroApis
             }
 
             if (!Business.LoopIds(ids, Business.Discard))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -207,7 +186,7 @@ namespace Agebull.MicroZero.ZeroApis
             }
 
             if (!Business.LoopIds(ids, Business.Enable))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -222,7 +201,7 @@ namespace Agebull.MicroZero.ZeroApis
             }
 
             if (!Business.LoopIds(ids, Business.Disable))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         #endregion

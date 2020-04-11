@@ -26,7 +26,7 @@ namespace FrameTest
         //    call.CreateRequest();
         //    var task = call.Call();
         //    task.Wait();
-        //    var result = JsonConvert.DeserializeObject<ApiResult<string>>(task.Result);
+        //    var result = JsonConvert.DeserializeObject<IApiResult<string>>(task.Result);
         //    Console.ReadKey();
         //}
     }

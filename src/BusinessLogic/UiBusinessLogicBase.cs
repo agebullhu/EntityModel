@@ -162,7 +162,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public ApiFileResult Export(string sheetName, LambdaItem<TData> filter)
+        public (string name,string mime,byte[] bytes) Export(string sheetName, LambdaItem<TData> filter)
         {
             var exporter = new ExcelExporter<TData, TAccess>
             {
@@ -170,12 +170,9 @@ namespace Agebull.EntityModel.BusinessLogic
             };
             var data = new TData();
             var bytes = exporter.ExportExcel(filter, sheetName ?? data.__Struct.ImportName, null);
-            return new ApiFileResult
-            {
-                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
-                Bytes = bytes
-            };
+            return ($"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                bytes);
         }
 
         /// <summary>
@@ -184,7 +181,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ApiFileResult> ExportAsync(string sheetName, LambdaItem<TData> filter)
+        public async Task<(string name, string mime, byte[] bytes)> ExportAsync(string sheetName, LambdaItem<TData> filter)
         {
             var exporter = new ExcelExporter<TData, TAccess>
             {
@@ -192,12 +189,9 @@ namespace Agebull.EntityModel.BusinessLogic
             };
             var data = new TData();
             var bytes = await exporter.ExportExcelAsync(filter, sheetName ?? data.__Struct.ImportName, null);
-            return new ApiFileResult
-            {
-                Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                FileName = $"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
-                Bytes = bytes
-            };
+            return ($"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                bytes);
         }
         #endregion
 

@@ -36,3 +36,8 @@ Debug
 /src/BusinessLogic/docs/MySqlParameterCollection.xml
 /src/BusinessLogic/docs/MySqlTransaction.xml
 /src/BusinessLogic/packages.config
+/old
+/designer
+/src/Extend
+/src/LogRecorder
+/src/MicroZero

@@ -45,7 +45,7 @@ namespace Agebull.EntityModel.MySql
             var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
             code.Append($@"
 UPDATE `{table.ContextWriteTable}` 
-SET `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = {GlobalContext.Current.LoginUserId},
+SET `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = {GlobalContext.Current.User.UserId},
     `{table.FieldDictionary[nameof(IHistoryData.LastReviser)]}` = '{name}',
     `{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}` = Now()");
             if (!string.IsNullOrEmpty(condition))

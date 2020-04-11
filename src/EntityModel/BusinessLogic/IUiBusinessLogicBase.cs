@@ -50,7 +50,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        ApiFileResult Export(string sheetName, LambdaItem<TData> filter);
+        (string name, string mime, byte[] bytes) Export(string sheetName, LambdaItem<TData> filter);
 
         #endregion
 

@@ -16,12 +16,12 @@ namespace FrameTest
             {
                 using (IocScope.CreateScope(DateTime.Now.ToString()))
                 {
-                    LogRecorder.SystemLog("System:{0}", RandomOperate.Generate(6));
+                    LogRecorder.SystemLog("System:{0}", RandomCode.Generate(6));
                     using (MonitorScope.CreateScope("test"))
                     {
-                        LogRecorder.Trace("Trace:{0}", RandomOperate.Generate(6));
-                        LogRecorder.Debug("Debug:{0}", RandomOperate.Generate(6));
-                        LogRecorder.Warning("Warning:{0}", RandomOperate.Generate(6));
+                        LogRecorder.Trace("Trace:{0}", RandomCode.Generate(6));
+                        LogRecorder.Debug("Debug:{0}", RandomCode.Generate(6));
+                        LogRecorder.Warning("Warning:{0}", RandomCode.Generate(6));
                     }
                 }
                 key = Console.ReadKey();

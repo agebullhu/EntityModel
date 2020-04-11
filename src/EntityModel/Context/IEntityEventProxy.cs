@@ -3,6 +3,7 @@ using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
+using ZeroTeam.MessageMVC;
 using ZeroTeam.MessageMVC.Messages;
 
 namespace Agebull.EntityModel.Events
@@ -150,7 +151,7 @@ namespace Agebull.EntityModel.Events
         /// </remarks>
         void IEntityEventProxy.OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
         {
-            var arg = JsonConvert.SerializeObject(new EntityEventArgument
+            MessagePoster.Publish("EntityEvent", database, new EntityEventArgument
             {
                 OperatorType = oType,
                 ValueType = valueType,
@@ -158,10 +159,6 @@ namespace Agebull.EntityModel.Events
                 EntityName = entity,
                 Value = value
             });
-            var re = MessageProducer.Producer("EntityEvent", database, arg);
-
-            LogRecorder.Debug(@"EntityEvent : {0}, {1},{2}
-{3}", database, entity, re, arg);
         }
     }
 

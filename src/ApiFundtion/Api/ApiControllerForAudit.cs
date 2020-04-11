@@ -37,17 +37,13 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/deny")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult AuditDeny(IdsArguent arg)
+        public IApiResult AuditDeny(IdsArguent arg)
         {
 
             OnAuditDeny();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -56,17 +52,13 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/pullback")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Pullback(IdsArguent arg)
+        public IApiResult Pullback(IdsArguent arg)
         {
 
             OnPullback();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -75,17 +67,13 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/submit")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult SubmitAudit(IdsArguent arg)
+        public IApiResult SubmitAudit(IdsArguent arg)
         {
 
             OnSubmitAudit();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -94,21 +82,17 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/validate")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult Validate(IdsArguent arg)
+        public IApiResult Validate(IdsArguent arg)
         {
             if (!TryGet("selects", out long[] ids))
             {
-                return ApiResult.ArgumentError;
+                return ApiResultHelper.Helper.ArgumentError;
             }
 
             DoValidate(ids);
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
 
@@ -118,17 +102,13 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/pass")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult AuditPass(IdsArguent arg)
+        public IApiResult AuditPass(IdsArguent arg)
         {
 
             OnAuditPass();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -137,16 +117,12 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/redo")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult UnAudit(IdsArguent arg)
+        public IApiResult UnAudit(IdsArguent arg)
         {
             OnUnAudit();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         /// <summary>
@@ -155,17 +131,13 @@ namespace Agebull.MicroZero.ZeroApis
 
         [Route("audit/back")]
         [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public ApiResult BackAudit(IdsArguent arg)
+        public IApiResult BackAudit(IdsArguent arg)
         {
 
             OnBackAudit();
             return IsFailed
-                ? (new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : ApiResult.Ok;
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
         #endregion
@@ -185,7 +157,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (!DoValidate(ids))
                 return;
             if (!Business.Submit(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
 
         }
 
@@ -200,7 +172,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
             if (!Business.Back(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -214,7 +186,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
             if (!Business.UnAudit(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -229,12 +201,12 @@ namespace Agebull.MicroZero.ZeroApis
             }
             if (!DoValidate(ids))
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
                 return;
             }
             var result = Business.AuditPass(ids);
             if (!result)
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         private bool DoValidate(IEnumerable<long> ids)
@@ -244,7 +216,7 @@ namespace Agebull.MicroZero.ZeroApis
 
             if (message.Result.Count > 0)
             {
-                GlobalContext.Current.LastMessage = message.ToString();
+                GlobalContext.Current.Status.LastMessage = message.ToString();
             }
             return succeed;
         }
@@ -260,7 +232,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
             if (!Business.Pullback(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
 
         /// <summary>
@@ -274,7 +246,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
             if (!Business.AuditDeny(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
         }
         #endregion
 

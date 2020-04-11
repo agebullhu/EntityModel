@@ -116,13 +116,13 @@ namespace Agebull.EntityModel.Common
                 {
                     authorData.AddDate = DateTime.Now;
                     authorData.Author = GlobalContext.Current.User.NickName;
-                    authorData.AuthorId = GlobalContext.Current.LoginUserId;
+                    authorData.AuthorId = GlobalContext.Current.User.UserId;
                 }
                 if (entity is IHistoryData historyData)
                 {
                     historyData.LastModifyDate = DateTime.Now;
                     historyData.LastReviser = GlobalContext.Current.User.NickName;
-                    historyData.LastReviserId = GlobalContext.Current.LoginUserId;
+                    historyData.LastReviserId = GlobalContext.Current.User.UserId;
                 }
             }
         }
@@ -145,13 +145,13 @@ namespace Agebull.EntityModel.Common
                 {
                     authorData.AddDate = DateTime.Now;
                     authorData.Author = GlobalContext.Current.User.NickName;
-                    authorData.AuthorId = GlobalContext.Current.LoginUserId;
+                    authorData.AuthorId = GlobalContext.Current.User.UserId;
                 }
                 if (entity is IHistoryData historyData)
                 {
                     historyData.LastModifyDate = DateTime.Now;
                     historyData.LastReviser = GlobalContext.Current.User.NickName;
-                    historyData.LastReviserId = GlobalContext.Current.LoginUserId;
+                    historyData.LastReviserId = GlobalContext.Current.User.UserId;
                 }
             }
         }

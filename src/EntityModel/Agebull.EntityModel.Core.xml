@@ -5921,6 +5921,89 @@
             <param name="type"></param>
             <param name="write"></param>
         </member>
+        <member name="T:ZeroTeam.MessageMVC.ZeroApis.PageArgument">
+            <summary>
+                分页请求的参数
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.PageArgument.PageIndex">
+            <summary>
+                页号
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.PageArgument.PageSize">
+            <summary>
+                每页行数
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.PageArgument.Order">
+            <summary>
+                每页行数
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.PageArgument.Desc">
+            <summary>
+                反序
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ZeroApis.PageArgument.Validate(System.String@)">
+            <summary>
+                数据校验
+            </summary>
+            <param name="message">返回的消息</param>
+            <returns>成功则返回真</returns>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ZeroApis.ApiPage">
+            <summary>
+                API返回分页信息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.Page">
+            <summary>
+                当前页号（从1开始）
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.PageIndex">
+            <summary>
+                当前页号（从1开始）
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.PageSize">
+            <summary>
+                一页行数
+            </summary>
+            <example>16</example>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.PageCount">
+            <summary>
+                总页数
+            </summary>
+            <example>999</example>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.RowCount">
+            <summary>
+                总行数
+            </summary>
+            <example>9999</example>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPage.Total">
+            <summary>
+                总行数
+            </summary>
+            <example>9999</example>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ZeroApis.ApiPageData`1">
+            <summary>
+                API返回分布页数据
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ZeroApis.ApiPageData`1.Rows">
+            <summary>
+                返回值
+            </summary>
+        </member>
         <member name="T:HY.GameApi.Model.PropertyChangingEventArgsEx">
             <summary>
                 System.ComponentModel.INotifyPropertyChanging.PropertyChanged 事件提供数据。

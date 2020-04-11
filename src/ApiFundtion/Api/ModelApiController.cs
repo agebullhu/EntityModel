@@ -13,39 +13,27 @@ namespace Agebull.MicroZero.ZeroApis
     /// </summary>
     public class ModelApiController : IApiControler
     {
+        #region 基本属性
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        public IUser UserInfo => GlobalContext.Customer;
+        public IUser UserInfo { get; set; }
 
-        /// <summary>
-        /// 调用者（机器名）
-        /// </summary>
-        public string Caller => GlobalContext.ServiceName;
-
-        /// <summary>
-        /// 调用标识
-        /// </summary>
-        public string RequestId => GlobalContext.RequestInfo.RequestId;
-
-        /// <summary>
-        /// HTTP调用时的UserAgent
-        /// </summary>
-        public string UserAgent => GlobalContext.RequestInfo.UserAgent;
-
-        IMessageItem _message;
+        IInlineMessage _message;
 
         /// <summary>
         /// 原始调用帧消息
         /// </summary>
-        public IMessageItem Message => _message ?? (_message = GlobalContext.Current.DependencyObjects.Dependency<IMessageItem>());
+        public IInlineMessage Message => _message ??= GlobalContext.Current.Message;
+
+        #endregion
 
         #region 状态
 
         /// <summary>
         ///     是否操作失败
         /// </summary>
-        protected internal bool IsFailed => GlobalContext.Current.LastState != ErrorCode.Success;
+        protected internal bool IsFailed => GlobalContext.Current.Status.LastState != DefaultErrorCode.Success;
 
         /// <summary>
         ///     设置当前操作失败
@@ -53,8 +41,8 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="message"></param>
         protected internal void SetFailed(string message)
         {
-            GlobalContext.Current.LastState = ErrorCode.LogicalError;
-            GlobalContext.Current.LastMessage = message;
+            GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+            GlobalContext.Current.Status.LastMessage = message;
         }
 
         #endregion
@@ -79,7 +67,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     当前用户是否已登录成功
         /// </summary>
-        protected internal bool UserIsLogin => GlobalContext.Current.LoginUserId > 0;
+        protected internal bool UserIsLogin => UserInfo.UserId > 0;
 
         #endregion
 
@@ -88,59 +76,8 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数
         /// </summary>
-        private Dictionary<string, string> _arguments;
+        protected internal Dictionary<string, object> Arguments => Message.Extend;
 
-        /// <summary>
-        ///     参数
-        /// </summary>
-        protected internal Dictionary<string, string> Arguments => _arguments ?? (_arguments = InitArguments());
-
-        /// <summary>
-        ///     初始化参数字典
-        /// </summary>
-        public Dictionary<string, string> InitArguments()
-        {
-            if (_arguments != null)
-                return _arguments;
-
-            _arguments = new Dictionary<string, string>();//StringComparer.OrdinalIgnoreCase
-            ReadArgument(Message.Content);
-
-            //var context = GlobalContext.Current.DependencyObjects.Dependency<Dictionary<string, string>>();
-            //if (context == null)
-            //    return _arguments;
-            //foreach (var kv in context)
-            //{
-            //    var key = kv.Key.Trim();
-            //    if (!_arguments.ContainsKey(key))
-            //        _arguments.Add(key, kv.Value?.Trim());
-            //}
-
-            GlobalContext.Current.DependencyObjects.Annex(_arguments);
-            GlobalContext.Current.DependencyObjects.Annex(this);
-            return _arguments;
-        }
-
-        private void ReadArgument(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return;
-            }
-            try
-            {
-                var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(value);
-                foreach (var kv in dic)
-                {
-                    var key = kv.Key.Trim();
-                    if (!_arguments.ContainsKey(key))
-                        _arguments.Add(key, kv.Value?.Trim());
-                }
-            }
-            catch
-            {
-            }
-        }
 
         /// <summary>
         /// 获取或新增(修改)参数
@@ -150,7 +87,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>参数值</returns>
         protected internal string this[string arg]
         {
-            get => arg == null ? null : Arguments.TryGetValue(arg, out var vl) ? vl : null;
+            get
+            {
+                if (arg == null || !Message.Extend.TryGetValue(arg, out var val))
+                    return null;
+                return val?.ToString();
+            }
             set
             {
                 if (Arguments.ContainsKey(arg))
@@ -211,28 +153,52 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         /// <summary>
-        ///     转换面参数
+        ///     获取参数(文本)
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <param name="action">转换方法</param>
-        protected internal void ConvertQueryString(string name, Action<string> action)
+        /// <param name="val"></param>
+        /// <returns>文本</returns>
+        protected internal bool TryGetValue(string name, out string val)
         {
-            if (Arguments.TryGetValue(name, out var val))
-                action(val);
+            if (!Arguments.TryGetValue(name, out var value) || value == null)
+            {
+                val = null;
+                return false;
+            }
+            if(!(value is string vl) ||  string.IsNullOrEmpty(vl))
+            {
+                val = null;
+                return false;
+            }
+            val = vl;
+            return true;
         }
-
 
         /// <summary>
         ///     获取参数(文本)
         /// </summary>
         /// <param name="name">参数名称</param>
         /// <returns>文本</returns>
-        protected internal string GetArg(string name)
+        protected internal string GetString(string name)
         {
-            if (!Arguments.TryGetValue(name, out var value))
+            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
                 return null;
-            var vl = value?.Trim();
-            return string.IsNullOrWhiteSpace(vl) ? null : vl;
+            return str;
+        }
+
+        /// <summary>
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert">转换方法</param>
+        /// <param name="def">默认值</param>
+        /// <returns>值</returns>
+        protected internal T? GetNullArg<T>(string name, Func<string, T> convert, T? def = null)
+            where T : struct
+        {
+            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
+                return def;
+            return convert(str);
         }
 
         /// <summary>
@@ -244,8 +210,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal T GetArg<T>(string name, Func<string, T> convert, T def)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? def : convert(value);
+            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
+                return def;
+            return convert(str);
         }
 
 
@@ -257,83 +224,67 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>参数为空或不存在,返回不成功,其它情况视convert返回值自行控制</returns>
         protected internal bool GetArg(string name, Func<string, bool> convert)
         {
-            var value = GetArgValue(name);
-            return !string.IsNullOrEmpty(value) && convert(value);
-        }
-        /// <summary>
-        ///     读参数(文本),如果参数为空或不存在,用默认值填充
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">默认值</param>
-        /// <returns>文本</returns>
-        protected internal string GetArg(string name, string def)
-        {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? def : value;
+            return GetArg<bool>(name, bool.Parse, false);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal int GetIntArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? -1 : int.Parse(value);
+            return GetArg<int>(name, int.Parse, 0);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal double GetDoubleArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? double.NaN : double.Parse(value);
+            return GetArg<double>(name, double.Parse, 0.0);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal float GetSingleArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? float.NaN : float.Parse(value);
+            return GetArg<float>(name, float.Parse, 0.0F);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal Guid GetGuidArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? Guid.Empty : Guid.Parse(value);
+            return GetArg<Guid>(name, Guid.Parse, Guid.Empty);
         }
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal byte GetByteArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? (byte)0 : byte.Parse(value);
+            return GetArg<byte>(name, byte.Parse, (byte)0);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal int[] GetIntArrayArg(string name)
         {
-            var value = GetArgValue(name);
+            if (!TryGetValue(name, out var value))
+                return new int[0];
 
             return string.IsNullOrEmpty(value)
                 ? (new int[0])
@@ -348,8 +299,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,如果存在且不能转为int类型将出现异常</returns>
         protected internal int GetIntArg(string name, int def)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) || value == "NaN" ? def : int.Parse(value);
+            return GetArg<int>(name, int.Parse, def);
         }
 
         /// <summary>
@@ -369,8 +319,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime? GetDateArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? null : (DateTime?)DateTime.Parse(value);
+            return GetNullArg<DateTime>(name, DateTime.Parse);
         }
 
         /// <summary>
@@ -380,8 +329,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为DateTime.MinValue,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime GetDateArg2(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? DateTime.MinValue : DateTime.Parse(value);
+            return GetArg<DateTime>(name, DateTime.Parse, DateTime.MinValue);
         }
 
         /// <summary>
@@ -392,8 +340,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime GetDateArg(string name, DateTime def)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? def : DateTime.Parse(value);
+            return GetArg<DateTime>(name, DateTime.Parse, def);
         }
 
 
@@ -401,11 +348,10 @@ namespace Agebull.MicroZero.ZeroApis
         ///     获取参数bool类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal bool GetBoolArg(string name)
         {
-            var value = GetArgValue(name);
-            return !string.IsNullOrEmpty(value) && (value != "0" && (value == "1" || value == "yes" || bool.Parse(value)));
+            return GetArg<bool>(name, bool.Parse, false);
         }
 
 
@@ -416,8 +362,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>decimal型数据,如果未读取值则为-1,如果存在且不能转为decimal类型将出现异常</returns>
         protected internal decimal GetDecimalArg(string name)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? -1 : decimal.Parse(value);
+            return GetArg<decimal>(name, decimal.Parse, 0M);
         }
 
         /// <summary>
@@ -428,8 +373,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>decimal型数据,如果存在且不能转为decimal类型将出现异常</returns>
         protected internal decimal GetDecimalArg(string name, decimal def)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? def : decimal.Parse(value);
+            return GetArg<decimal>(name, decimal.Parse, def);
         }
 
         /// <summary>
@@ -440,18 +384,18 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>long型数据,如果存在且不能转为long类型将出现异常</returns>
         protected internal long GetLongArg(string name, long def = -1)
         {
-            var value = GetArgValue(name);
-            return string.IsNullOrEmpty(value) ? def : long.Parse(value);
+            return GetArg<long>(name, long.Parse, def);
         }
 
         /// <summary>
         ///     获取参数int类型
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+        /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal long[] GetLongArrayArg(string name)
         {
-            var value = GetArgValue(name);
+            if (!TryGetValue(name, out var value))
+                return null;
 
             return string.IsNullOrEmpty(value)
                 ? (new long[0])
@@ -479,7 +423,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGe<T>(string name, Func<string, T> convert, out T value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = default;
                 return false;
@@ -506,12 +450,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值是否存在</returns>
         protected internal bool TryGet(string name, out string value)
         {
-            if (!Arguments.TryGetValue(name, out value))
-            {
-                return false;
-            }
-            value = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-            return true;
+            return TryGetValue(name, out value);
         }
 
 
@@ -523,7 +462,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out bool value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = false;
                 return false;
@@ -559,7 +498,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out DateTime value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = DateTime.MinValue;
                 return false;
@@ -582,7 +521,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out int value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = 0;
                 return false;
@@ -606,7 +545,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out decimal value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = 0;
                 return false;
@@ -630,7 +569,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out float value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = float.NaN;
                 return false;
@@ -654,7 +593,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out double value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = double.NaN;
                 return false;
@@ -677,7 +616,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out short value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = 0;
                 return false;
@@ -700,7 +639,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out long value)
         {
-            if (!Arguments.TryGetValue(name, out var str))
+            if (!TryGetValue(name, out var str))
             {
                 value = 0;
                 return false;
@@ -724,7 +663,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out string[] value)
         {
-            if (!Arguments.TryGetValue(name, out var str) || string.IsNullOrWhiteSpace(str))
+            if (!TryGetValue(name, out var str))
             {
                 value = new string[0];
                 return false;
@@ -748,7 +687,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out int[] value)
         {
-            if (!Arguments.TryGetValue(name, out var str) || string.IsNullOrWhiteSpace(str))
+            if (!TryGetValue(name, out var str))
             {
                 value = new int[0];
                 return false;
@@ -773,7 +712,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out List<int> value)
         {
-            if (!Arguments.TryGetValue(name, out var str) || string.IsNullOrWhiteSpace(str))
+            if (!TryGetValue(name, out var str))
             {
                 value = new List<int>();
                 return false;
@@ -797,7 +736,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGetIDs(string name, out List<long> value)
         {
-            if (!Arguments.TryGetValue(name, out var str) || string.IsNullOrWhiteSpace(str))
+            if (!TryGetValue(name, out var str))
             {
                 value = new List<long>();
                 return false;
@@ -822,7 +761,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal bool TryGet(string name, out long[] value)
         {
-            if (!Arguments.TryGetValue(name, out var str) || string.IsNullOrWhiteSpace(str))
+            if (!TryGetValue(name, out var str))
             {
                 value = new long[0];
                 return false;

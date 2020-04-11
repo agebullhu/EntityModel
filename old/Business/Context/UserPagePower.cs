@@ -1,3 +1,0 @@
-namespace Gboxt.Common.DataModel
-{
-}

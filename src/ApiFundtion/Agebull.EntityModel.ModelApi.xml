@@ -698,21 +698,6 @@
             当前登录用户
             </summary>
         </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.Caller">
-            <summary>
-            调用者（机器名）
-            </summary>
-        </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.RequestId">
-            <summary>
-            调用标识
-            </summary>
-        </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.UserAgent">
-            <summary>
-            HTTP调用时的UserAgent
-            </summary>
-        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.Message">
             <summary>
             原始调用帧消息
@@ -734,19 +719,9 @@
                 当前用户是否已登录成功
             </summary>
         </member>
-        <member name="F:Agebull.MicroZero.ZeroApis.ModelApiController._arguments">
-            <summary>
-                参数
-            </summary>
-        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.Arguments">
             <summary>
                 参数
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.InitArguments">
-            <summary>
-                初始化参数字典
             </summary>
         </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.Item(System.String)">
@@ -792,19 +767,29 @@
             <param name="name">参数名</param>
             <returns>参数值</returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.ConvertQueryString(System.String,System.Action{System.String})">
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.TryGetValue(System.String,System.String@)">
             <summary>
-                转换面参数
+                获取参数(文本)
             </summary>
             <param name="name">参数名称</param>
-            <param name="action">转换方法</param>
+            <param name="val"></param>
+            <returns>文本</returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetArg(System.String)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetString(System.String)">
             <summary>
                 获取参数(文本)
             </summary>
             <param name="name">参数名称</param>
             <returns>文本</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetNullArg``1(System.String,System.Func{System.String,``0},System.Nullable{``0})">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="def">默认值</param>
+            <returns>值</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetArg``1(System.String,System.Func{System.String,``0},``0)">
             <summary>
@@ -823,55 +808,47 @@
             <param name="convert">转换方法</param>
             <returns>参数为空或不存在,返回不成功,其它情况视convert返回值自行控制</returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetArg(System.String,System.String)">
-            <summary>
-                读参数(文本),如果参数为空或不存在,用默认值填充
-            </summary>
-            <param name="name">参数名称</param>
-            <param name="def">默认值</param>
-            <returns>文本</returns>
-        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetIntArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetDoubleArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetSingleArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetGuidArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetByteArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetIntArrayArg(System.String)">
             <summary>
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetIntArg(System.String,System.Int32)">
             <summary>
@@ -915,7 +892,7 @@
                 获取参数bool类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetDecimalArg(System.String)">
             <summary>
@@ -945,7 +922,7 @@
                 获取参数int类型
             </summary>
             <param name="name">参数名称</param>
-            <returns>int类型,为空则为-1,如果存在且不能转为int类型将出现异常</returns>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetLongAnyArg(System.String[])">
             <summary>
