@@ -76,7 +76,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数
         /// </summary>
-        protected internal Dictionary<string, object> Arguments => Message.Extend;
+        protected internal Dictionary<string, string> Arguments => Message.Dictionary;
 
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Agebull.MicroZero.ZeroApis
         {
             get
             {
-                if (arg == null || !Message.Extend.TryGetValue(arg, out var val))
+                if (arg == null || !Message.Dictionary.TryGetValue(arg, out var val))
                     return null;
                 return val?.ToString();
             }
@@ -147,9 +147,21 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <param name="name">参数名</param>
         /// <returns>参数值</returns>
+        [Obsolete("请改为GetString方法")]
         protected internal string GetArgValue(string name)
         {
             return this[name];
+        }
+
+        /// <summary>
+        ///     获取参数
+        /// </summary>
+        /// <param name="name">参数名</param>
+        /// <returns>参数值</returns>
+        [Obsolete("请改为GetString方法")]
+        protected internal string GetArg(string name)
+        {
+            return GetString(name);
         }
 
         /// <summary>
@@ -181,9 +193,8 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>文本</returns>
         protected internal string GetString(string name)
         {
-            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
-                return null;
-            return str;
+            Arguments.TryGetValue(name, out var value);
+            return value;
         }
 
         /// <summary>
@@ -196,9 +207,9 @@ namespace Agebull.MicroZero.ZeroApis
         protected internal T? GetNullArg<T>(string name, Func<string, T> convert, T? def = null)
             where T : struct
         {
-            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
+            if (!Arguments.TryGetValue(name, out var value) || value == null)
                 return def;
-            return convert(str);
+            return convert(value);
         }
 
         /// <summary>
@@ -210,9 +221,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>值</returns>
         protected internal T GetArg<T>(string name, Func<string, T> convert, T def)
         {
-            if (!Arguments.TryGetValue(name, out var value) || value == null || !(value is string str))
+            if (!Arguments.TryGetValue(name, out var value) || string.IsNullOrEmpty(value))
                 return def;
-            return convert(str);
+            return convert(value.Trim());
         }
 
 
@@ -224,7 +235,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>参数为空或不存在,返回不成功,其它情况视convert返回值自行控制</returns>
         protected internal bool GetArg(string name, Func<string, bool> convert)
         {
-            return GetArg<bool>(name, bool.Parse, false);
+            return GetArg(name, bool.Parse, false);
         }
 
         /// <summary>
@@ -234,7 +245,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal int GetIntArg(string name)
         {
-            return GetArg<int>(name, int.Parse, 0);
+            return GetArg(name, int.Parse, 0);
         }
 
         /// <summary>
@@ -244,7 +255,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal double GetDoubleArg(string name)
         {
-            return GetArg<double>(name, double.Parse, 0.0);
+            return GetArg(name, double.Parse, 0.0);
         }
 
         /// <summary>
@@ -254,7 +265,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal float GetSingleArg(string name)
         {
-            return GetArg<float>(name, float.Parse, 0.0F);
+            return GetArg(name, float.Parse, 0.0F);
         }
 
         /// <summary>
@@ -264,7 +275,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal Guid GetGuidArg(string name)
         {
-            return GetArg<Guid>(name, Guid.Parse, Guid.Empty);
+            return GetArg(name, Guid.Parse, Guid.Empty);
         }
         /// <summary>
         ///     获取参数int类型
@@ -273,7 +284,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal byte GetByteArg(string name)
         {
-            return GetArg<byte>(name, byte.Parse, (byte)0);
+            return GetArg(name, byte.Parse, (byte)0);
         }
 
         /// <summary>
@@ -299,7 +310,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,如果存在且不能转为int类型将出现异常</returns>
         protected internal int GetIntArg(string name, int def)
         {
-            return GetArg<int>(name, int.Parse, def);
+            return GetArg(name, int.Parse, def);
         }
 
         /// <summary>
@@ -319,7 +330,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime? GetDateArg(string name)
         {
-            return GetNullArg<DateTime>(name, DateTime.Parse);
+            return GetNullArg(name, DateTime.Parse);
         }
 
         /// <summary>
@@ -329,7 +340,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为DateTime.MinValue,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime GetDateArg2(string name)
         {
-            return GetArg<DateTime>(name, DateTime.Parse, DateTime.MinValue);
+            return GetArg(name, DateTime.Parse, DateTime.MinValue);
         }
 
         /// <summary>
@@ -340,7 +351,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
         protected internal DateTime GetDateArg(string name, DateTime def)
         {
-            return GetArg<DateTime>(name, DateTime.Parse, def);
+            return GetArg(name, DateTime.Parse, def);
         }
 
 
@@ -351,7 +362,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
         protected internal bool GetBoolArg(string name)
         {
-            return GetArg<bool>(name, bool.Parse, false);
+            return GetArg(name, bool.Parse, false);
         }
 
 
@@ -362,7 +373,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>decimal型数据,如果未读取值则为-1,如果存在且不能转为decimal类型将出现异常</returns>
         protected internal decimal GetDecimalArg(string name)
         {
-            return GetArg<decimal>(name, decimal.Parse, 0M);
+            return GetArg(name, decimal.Parse, 0M);
         }
 
         /// <summary>
@@ -373,7 +384,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>decimal型数据,如果存在且不能转为decimal类型将出现异常</returns>
         protected internal decimal GetDecimalArg(string name, decimal def)
         {
-            return GetArg<decimal>(name, decimal.Parse, def);
+            return GetArg(name, decimal.Parse, def);
         }
 
         /// <summary>
@@ -384,7 +395,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>long型数据,如果存在且不能转为long类型将出现异常</returns>
         protected internal long GetLongArg(string name, long def = -1)
         {
-            return GetArg<long>(name, long.Parse, def);
+            return GetArg(name, long.Parse, def);
         }
 
         /// <summary>

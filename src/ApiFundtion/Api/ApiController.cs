@@ -69,7 +69,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <returns></returns>
         [Route("edit/eid")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<EntityInfo> EntityType()
         {
             return ApiResultHelper.Succees(new EntityInfo
@@ -88,7 +88,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         [Obsolete]
         [Route("import/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public ApiFileResult Export2(QueryArgument args)
         {
             var data = new TData();
@@ -108,8 +108,8 @@ namespace Agebull.MicroZero.ZeroApis
         /// </remarks>
         /// <returns></returns>
         [Route("export/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult<(string name, string mime, byte[] bytes)> Export(QueryArgument args)
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        public ApiFileResult Export(QueryArgument args)
         {
             var data = new TData();
             GlobalContext.Current.Status.Feature = 1;
@@ -162,7 +162,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </remarks>
         /// <returns></returns>
         [Route("edit/list")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<ApiPageData<TData>> List(QueryArgument args)
         {
             IDisposable scope = null;
@@ -192,7 +192,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条数据查询
         /// </summary>
         [Route("edit/first")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> QueryFirst(TData arguent)
         {
             IDisposable scope = null;
@@ -222,7 +222,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条详细数据
         /// </summary>
         [Route("edit/details")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> Details(IdArguent arguent)
         {
             if (!TryGet("id", out long id))
@@ -237,7 +237,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     新增数据
         /// </summary>
         [Route("edit/addnew")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> AddNew(TData arg)
         {
             var data = DoAddNew();
@@ -250,7 +250,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     更新数据
         /// </summary>
         [Route("edit/update")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> Update(TData arg)
         {
             if (!TryGet("id", out long id))
@@ -265,7 +265,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     删除多条数据
         /// </summary>
         [Route("edit/delete")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Delete(IdsArguent arg)
         {
             DoDelete();

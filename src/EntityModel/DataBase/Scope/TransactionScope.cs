@@ -8,6 +8,7 @@
 
 #region 引用
 
+using Agebull.Common.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,96 +20,90 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     数据库事务范围对象
     /// </summary>
-    public class TransactionScope : ITransactionScope,IDisposable
+    public class TransactionScope : ITransactionScope, IDisposable
     {
-        /// <summary>
-        ///     数据库连接对象
-        /// </summary>
-        private readonly IDataTable _table;
 
-        /// <summary>
-        ///     上一个范围
-        /// </summary>
-        private readonly TransactionScope _preScope;
-
-        /// <summary>
-        ///    是否此处开始事务
-        /// </summary>
-        private readonly bool _isBegin;
-
-        private readonly DataTableScope _tableScope;
-        /// <summary>
-        ///     构造
-        /// </summary>
-        /// <param name="table">数据库对象</param>
-        private TransactionScope(IDataTable table)
-        {
-            _tableScope = DataTableScope.CreateScope(table);
-            _preScope = _local.Value;
-            _local.Value = this;
-
-            _table = table;
-            if (table.DataBase.Transaction != null)
-            {
-                return;
-            }
-            _isBegin = true;
-            //dataBase.BeginTransaction();
-        }
-
-        private static readonly AsyncLocal<TransactionScope> _local = new AsyncLocal<TransactionScope>();
+        private static readonly AsyncLocal<TransactionScope> local = new AsyncLocal<TransactionScope>();
 
         /// <summary>
         ///     当前范围
         /// </summary>
-        public static TransactionScope CurrentScope => _local.Value;
+        static TransactionScope CurrentScope => local.Value;
+
+        /// <summary>
+        ///     上一个范围
+        /// </summary>
+        private readonly TransactionScope PreScope;
 
         /// <summary>
         ///     是否已成功
         /// </summary>
-        public bool IsSucceed { get; private set; }
+        public bool? IsSucceed { get; private set; }
 
         /// <summary>
-        ///     结束所有范围
+        ///    是否此处开始事务
         /// </summary>
-        public static void EndAll()
+        private readonly bool IsBegin;
+        /// <summary>
+        /// 数据库对象
+        /// </summary>
+        private readonly IDataBase DataBase;
+        /// <summary>
+        ///     构造
+        /// </summary>
+        /// <param name="dataBase">数据库对象</param>
+        private TransactionScope(IDataBase dataBase)
         {
-            //while (CurrentScope != null)
-            //{
-            //    CurrentScope.DoDispose();
-            //}
+            PreScope = CurrentScope;
+            local.Value = this;
+            DataBase = dataBase;
+            if (DataBase.Transaction != null)
+            {
+                return;
+            }
+            IsBegin = true;
+            //dataBase.BeginTransaction();
         }
-
         /// <summary>
         ///     构造(自动构造了数据库对象的使用范围)
         /// </summary>
         /// <param name="dataBase">数据库对象</param>
 
-        public static TransactionScope CreateScope(IDataTable dataBase)
+        public static TransactionScope CreateScope(IDataBase dataBase)
         {
             return new TransactionScope(dataBase);
         }
 
         /// <summary>
-        ///     设置操作状态
+        ///     设置操作成功
         /// </summary>
-        /// <param name="succeed">是否成功</param>
-        public bool SetState(bool succeed)
+        /// <remarks>如果之前被设置为失败,此处即使设置成功也无效</remarks>
+        public bool Succeed()
         {
-            IsSucceed = succeed;
-            //失败向上冒泡，成功由上层自行决定
-            if (!succeed)
-            {
-                _preScope?.SetState(false);
-            }
-            return IsSucceed;
+            return SetState(true);
         }
 
         /// <summary>
-        ///     析构
+        ///     设置操作失败
         /// </summary>
-        private void DoDispose()
+        /// <remarks>被设置为失败,后续即使设置成功也无效</remarks>
+        public bool Failed()
         {
+            return SetState(true);
+        }
+
+        /// <summary>
+        ///     设置操作状态
+        /// </summary>
+        /// <param name="state">是否成功</param>
+        /// <remarks>如果之前被设置为失败,此处即使设置成功也无效</remarks>
+        public bool SetState(bool state)
+        {
+            if (IsSucceed == null || !state)
+                IsSucceed = state;
+            //向上冒泡
+            PreScope?.SetState(state);
+            return IsSucceed == true;
         }
 
         /// <summary>
@@ -116,51 +111,37 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public ValueTask DisposeAsync()
         {
-            DoDispose();
-            if (CurrentScope == this)
-            {
-                _local.Value = _preScope;
-            }
-            if (_isBegin)
-            {
-                //if (!IsSucceed)
-                //{
-                //    _dataBase.Rollback();
-                //    LogRecorder.MonitorTrace("事务回滚");
-                //}
-                //else
-                //{
-                //    _dataBase.Commit();
-                //    LogRecorder.MonitorTrace("事务提交");
-                //}
-            }
-            return _tableScope.DisposeAsync();
+            Dispose();
+            return new ValueTask(Task.CompletedTask);
         }
-
+        bool isDisposed;
         /// <summary>
         ///     析构
         /// </summary>
         public void Dispose()
         {
-            DoDispose();
+            if (isDisposed)
+                return;
+            isDisposed = true;
             if (CurrentScope == this)
             {
-                _local.Value = _preScope;
+                local.Value = PreScope;
             }
-            if (_isBegin)
+            if (!IsBegin)
             {
-                //if (!IsSucceed)
-                //{
-                //    _dataBase.Rollback();
-                //    LogRecorder.MonitorTrace("事务回滚");
-                //}
-                //else
-                //{
-                //    _dataBase.Commit();
-                //    LogRecorder.MonitorTrace("事务提交");
-                //}
+                return;
             }
-            _tableScope.Dispose();
+            local.Value = null;
+            //if (IsSucceed == true)
+            //{
+            //    DataBase.Rollback();
+            //    LogRecorder.MonitorTrace("事务回滚{0}", DataBase.Name);
+            //}
+            //else
+            //{
+            //    DataBase.Commit();
+            //    LogRecorder.MonitorTrace("事务提交{0}", DataBase.Name);
+            //}
         }
     }
 }

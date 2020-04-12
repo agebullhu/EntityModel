@@ -19,6 +19,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
+using Agebull.Common.Base;
 
 #endregion
 
@@ -29,12 +30,31 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     public abstract partial class MySqlDataBase : MySqlDataBase_, IDataBase
     {
-        #region 事务
+        #region 构造
 
-        //protected MySqlDataBase()
-        //{
-        //    Trace.WriteLine(".ctor", "MySqlDataBase");
-        //}
+        /// <summary>
+        /// 构造
+        /// </summary>
+        protected MySqlDataBase()
+        {
+            MySqlConnectionsManager.InternalInitialize();
+            IocScope.DisposeFunc.Add(Dispose);
+        }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => DataBaseType.MySql;
+
+
+        /// <summary>
+        /// 数据库名称
+        /// </summary>
+        public string DataBaseName { get; private set; }
+
+        #endregion
+
+        #region 事务
 
         /// <summary>
         ///     事务对象
@@ -55,7 +75,8 @@ namespace Agebull.EntityModel.MySql
         {
             if (Transaction != null)
                 return false;
-            Transaction = Connection.BeginTransaction();
+            Open();
+            Transaction = _connection.BeginTransaction();
 
             return true;
         }
@@ -81,125 +102,19 @@ namespace Agebull.EntityModel.MySql
         }
         #endregion
 
-        #region 引用范围
-
-        /// <summary>
-        /// 生成数据库使用范围
-        /// </summary>
-        /// <returns></returns>
-        IDisposable IDataBase.CreateDataBaseScope() => DataBaseScope.CreateScope(this);
-
-        /// <summary>
-        ///     引用数量
-        /// </summary>
-        public int QuoteCount { get; set; }
-
-        #endregion
-
-        #region 数据库连接对象
-
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        public DataBaseType DataBaseType => DataBaseType.MySql;
-
-        private MySqlConnection _connection;
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public MySqlConnection Connection => _connection ??= InitConnection();
-
-        /// <summary>
-        ///     连接对象
-        /// </summary>
-        public static readonly List<MySqlConnection> Connections = new List<MySqlConnection>();
-
-        /*// <summary>
-        ///     连接对象
-        /// </summary>
-        public static readonly Queue<MySqlConnection> IdleConnections = new Queue<MySqlConnection>();*/
-
-        /// <summary>
-        /// 初始化连接对象
-        /// </summary>
-        /// <returns></returns>
-        private MySqlConnection InitConnection()
-        {
-            //MySqlConnection connection;
-            //lock (IdleConnections)
-            //{
-            //    IdleConnections.TryDequeue(out connection);
-            //}
-
-            //if (connection != null)
-            //{
-            //    if (connection.State == ConnectionState.Open)
-            //        return connection;
-            //    lock (Connections)
-            //    {
-            //        Connections.Remove(connection);
-            //    }
-            //    connection.Dispose();
-            //}
-
-            var connection = new MySqlConnection(ConnectionString);
-            IocScope.DisposeFunc.Add(() => Close(connection));
-            lock (Connections)
-            {
-                Connections.Add(connection);
-            }
-            connection.Open();
-            lock (Connections)
-                LogRecorder.Debug("打开连接数：{0}",Connections.Count);
-            return connection;
-        }
-
-        #endregion
-
         #region 连接
 
         /// <summary>
-        ///     连接字符串
-        ///     Database=test;Data Source=localhost;User Id=root;Password=123456;pooling=false;CharSet=utf8;port=3306
+        /// 连接字符串配置节点名称,用于取出
         /// </summary>
-        private string _connectionString;
+        public string ConnectionStringName { get; set; }
 
         /// <summary>
-        ///     连接字符串
+        /// 是否锁定连接对象(更新插入删除发生后自动启用)
         /// </summary>
-        public string ConnectionString
-        {
-            get
-            {
-                if (_connectionString != null)
-                {
-                    return _connectionString;
-                }
+        public bool IsLockConnection { get; set; }
 
-                var str = LoadConnectionStringSetting();
-                var b = new MySqlConnectionStringBuilder(str);
-                //if (b.ConnectionTimeout <= 0 || b.ConnectionTimeout > 10)
-                //    b.ConnectionTimeout = 10;
-
-                //if (b.DefaultCommandTimeout <= 0 || b.DefaultCommandTimeout > 10)
-                //    b.DefaultCommandTimeout = 10;
-
-                DataBaseName = b.Database;
-                return _connectionString = b.ConnectionString;
-            }
-        }
-
-        /// <summary>
-        /// 数据库名称
-        /// </summary>
-        public string DataBaseName { get; private set; }
-
-        /// <summary>
-        /// 读取连接字符串
-        /// </summary>
-        /// <returns></returns>
-        protected abstract string LoadConnectionStringSetting();
+        internal MySqlConnection _connection;
 
         /// <summary>
         ///     打开连接
@@ -209,83 +124,13 @@ namespace Agebull.EntityModel.MySql
         {
             if (_connection != null/* && _connection.State == ConnectionState.Open*/)
                 return false;
-            _connection = InitConnection();
+            _connection = MySqlConnectionsManager.InitConnection(ConnectionStringName);
+            IsLockConnection = true;
             return true;
         }
+        #endregion
 
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        void IDataBase.Free()
-        {
-            if (_connection == null)
-                return;
-            //if (_connection.State == ConnectionState.Open)
-            //    lock (IdleConnections)
-            //    {
-            //        IdleConnections.Enqueue(_connection);
-            //    }
-            //else
-                Close(_connection);
-            _connection = null;
-        }
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        public void Close()
-        {
-            Close(_connection);
-            _connection = null;
-        }
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        private void Close(MySqlConnection connection)
-        {
-            //int cnt;
-            lock (Connections)
-            {
-                if (!Connections.Remove(connection))
-                    return;
-                //cnt = Connections.Count;
-            }
-            if (connection == null)
-            {
-                return;
-            }
-            if (connection.State == ConnectionState.Open)
-            {
-                try
-                {
-                    connection.Close();
-                }
-                catch (Exception exception)
-                {
-                    LogRecorder.Exception(exception);
-                }
-            }
-
-            try
-            {
-                connection.Dispose();
-            }
-            catch (Exception exception)
-            {
-                LogRecorder.Exception(exception);
-            }
-            //lock (Connections)
-            //    LogRecorder.Trace($"未关闭总数：{Connections.Count}");
-        }
-
-        /// <summary>
-        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
-        /// </summary>
-        protected virtual void DoDispose()
-        {
-        }
-
+        #region 析构
         private bool _isDisposed;
 
         /// <summary>
@@ -297,7 +142,18 @@ namespace Agebull.EntityModel.MySql
                 return;
             _isDisposed = true;
             DoDispose();
-            Close();
+
+            if (_connection != null)
+            {
+                _connection = null;
+                IsLockConnection = false;
+                if (Transaction != null)
+                {
+                    Transaction.Rollback();
+                    Transaction = null;
+                }
+                MySqlConnectionsManager.Close(_connection, ConnectionStringName);
+            }
         }
 
         /// <summary>
@@ -305,12 +161,16 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         ~MySqlDataBase()
         {
-            if (_isDisposed)
-                return;
-            _isDisposed = true;
-            DoDispose();
-            Close();
+            Dispose();
         }
+
+        /// <summary>
+        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
+        /// </summary>
+        protected virtual void DoDispose()
+        {
+        }
+
         #endregion
 
         #region 数据库特殊操作
@@ -325,10 +185,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public int Execute(string sql)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return ExecuteInner(sql);
-            }
+            return ExecuteInner(sql);
         }
 
         /// <summary>
@@ -373,10 +230,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public object ExecuteScalar(string sql, IEnumerable<DbParameter> args)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return ExecuteScalarInner(sql, args.ToArray());
-            }
+            return ExecuteScalarInner(sql, args.ToArray());
         }
 
         /// <summary>
@@ -390,12 +244,9 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public object ExecuteScalar(string sql, params DbParameter[] args)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return args == null || args.Length == 0
-                    ? ExecuteScalarInner(sql)
-                    : ExecuteScalarInner(sql, args);
-            }
+            return args == null || args.Length == 0
+                   ? ExecuteScalarInner(sql)
+                   : ExecuteScalarInner(sql, args);
         }
 
         /// <summary>
@@ -408,10 +259,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public T ExecuteScalar<T>(string sql)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return ExecuteScalarInner<T>(sql);
-            }
+            return ExecuteScalarInner<T>(sql);
         }
 
         /// <summary>
@@ -424,10 +272,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public object ExecuteScalar(string sql)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return ExecuteScalarInner(sql);
-            }
+            return ExecuteScalarInner(sql);
         }
 
 
@@ -442,10 +287,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public T ExecuteScalar<T>(string sql, params DbParameter[] args)
         {
-            //using (DataBaseScope.CreateScope(this))
-            {
-                return ExecuteScalarInner<T>(sql, args);
-            }
+            return ExecuteScalarInner<T>(sql, args);
         }
 
 
@@ -465,9 +307,8 @@ namespace Agebull.EntityModel.MySql
             var sql = new StringBuilder();
             foreach (var table in TableSql.Values)
             {
-                Clear(table.TableName);
+                sql.AppendLine($@"TRUNCATE TABLE `{table}`;");
             }
-
             Execute(sql.ToString());
         }
 
@@ -486,7 +327,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         protected int ExecuteInner(string sql, params DbParameter[] args)
         {
-            using var cmd = CreateCommand(sql, args);
+            using var scope = new ConnectionScope(this);
+            using var cmd = CreateCommand(scope, sql, args);
             return cmd.ExecuteNonQuery();
         }
 
@@ -501,8 +343,9 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         protected object ExecuteScalarInner(string sql, params DbParameter[] args)
         {
+            using var scope = new ConnectionScope(this);
             object result;
-            using (var cmd = CreateCommand(sql, args))
+            using (var cmd = CreateCommand(scope, sql, args))
             {
                 result = cmd.ExecuteScalar();
             }
@@ -539,53 +382,6 @@ namespace Agebull.EntityModel.MySql
             return (T)result;
         }
 
-        /// <summary>
-        ///     记录SQL日志
-        /// </summary>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        public static void TraceSql(MySqlCommand cmd)
-        {
-            if (!LogRecorder.LogDataSql)
-                return;
-            TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
-        }
-
-        /// <summary>
-        ///     记录SQL日志
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
-        {
-            if (!LogRecorder.LogDataSql)
-                return;
-            StringBuilder code = new StringBuilder();
-            code.AppendLine("/***************************************************************/");
-            var parameters = args as MySqlParameter[] ?? args.ToArray();
-            foreach (var par in parameters)
-            {
-                code.AppendLine($"declare ?{par.ParameterName} {par.MySqlDbType};");
-            }
-            foreach (var par in parameters.Where(p => p.Value != null && !p.IsNullable))
-            {
-                code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
-            }
-            foreach (var par in parameters.Where(p => p.Value == null || p.IsNullable))
-            {
-                code.AppendLine($"SET ?{par.ParameterName} = NULL;");
-            }
-            code.AppendLine(sql);
-            LogRecorder.RecordDataLog(code.ToString());
-        }
-
-
         #endregion
 
         #region 生成命令对象
@@ -593,73 +389,43 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(params DbParameter[] args)
+        public MySqlCommand CreateCommand(ConnectionScope scope, params DbParameter[] args)
         {
-            return CreateCommand(null, args);
+            return CreateCommand(scope, null, args);
         }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(string sql, DbParameter arg)
+        public MySqlCommand CreateCommand(ConnectionScope scope, string sql, DbParameter arg)
         {
-            return CreateCommand(sql, new[] { arg });
+            return CreateCommand(scope, sql, new[] { arg });
         }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        public async Task<MySqlCommand> CreateCommandAsync()
+        public MySqlCommand CreateCommand(ConnectionScope scope)
         {
-            if (_connection == null)
-                await OpenAsync();
-            var cmd = Connection.CreateCommand();
+            var cmd = scope.Connection.CreateCommand();
 
-            if (Transaction != null)
+            if (scope.Transaction != null)
             {
-                cmd.Transaction = Transaction;
+                cmd.Transaction = scope.Transaction;
             }
             return cmd;
         }
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        public async Task<MySqlCommand> CreateCommandAsync(string sql, IEnumerable<DbParameter> args = null)
-        {
-            if (_connection == null)
-                await OpenAsync();
-            var cmd = Connection.CreateCommand();
-
-            if (Transaction != null)
-            {
-                cmd.Transaction = Transaction;
-            }
-            if (sql != null)
-            {
-                cmd.CommandText = sql;
-            }
-            if (args != null)
-            {
-                var parameters = args.OfType<MySqlParameter>().ToArray();
-                if (parameters.Length > 0)
-                {
-                    cmd.Parameters.AddRange(parameters);
-                }
-            }
-            TraceSql(cmd);
-            return cmd;
-        }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null)
+        public MySqlCommand CreateCommand(ConnectionScope scope, string sql, IEnumerable<DbParameter> args = null)
         {
-            var cmd = Connection.CreateCommand();
+            var cmd = scope.Connection.CreateCommand();
 
-            if (Transaction != null)
+            if (scope.Transaction != null)
             {
-                cmd.Transaction = Transaction;
+                cmd.Transaction = scope.Transaction;
             }
             if (sql != null)
             {
@@ -694,69 +460,7 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-
-        #region 数据缓存
-
-        /*// <summary>
-        ///     缓存数据
-        /// </summary>
-        private readonly Dictionary<int, Dictionary<long, EditDataObject>> _dataCache =
-            new Dictionary<int, Dictionary<long, EditDataObject>>();
-
-        /// <summary>
-        ///     取缓存数据
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public TData GetData<TData>(int table, int id) where TData : EditDataObject
-        {
-            Dictionary<long, EditDataObject> tableDatas;
-            if (!_dataCache.TryGetValue(table, out tableDatas))
-            {
-                return null;
-            }
-            EditDataObject data;
-            if (!tableDatas.TryGetValue(id, out data))
-            {
-                return null;
-            }
-            return data as TData;
-        }
-
-        /// <summary>
-        ///     如不存在于缓存中，则加入，返回自身，如存在，则返回缓存中的数据。
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="id"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public TData TryAddToCache<TData>(int table, long id, TData data) where TData : EditDataObject
-        {
-            Dictionary<long, EditDataObject> tableDatas;
-            if (!_dataCache.TryGetValue(table, out tableDatas))
-            {
-                _dataCache.Add(table, tableDatas = new Dictionary<long, EditDataObject>());
-            }
-
-            if (tableDatas.ContainsKey(id))
-            {
-                return tableDatas[id] as TData;
-            }
-            tableDatas.Add(id, data);
-            return data;
-        }*/
-
-
-        #endregion
-
-
         #region 接口
-
-        string IDataBase.ConnectionString => ConnectionString;
-
 
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
@@ -793,21 +497,54 @@ namespace Agebull.EntityModel.MySql
             return ExecuteScalar<T>(sql, args.ToArray());
         }
 
-        DbCommand IDataBase.CreateCommand(params DbParameter[] args)
+        #endregion
+
+        #region SQL日志
+
+        /// <summary>
+        ///     记录SQL日志
+        /// </summary>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        public static void TraceSql(MySqlCommand cmd)
         {
-            return CreateCommand(args.ToArray());
+            if (!LogRecorder.LogDataSql)
+                return;
+            TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
 
-        DbCommand IDataBase.CreateCommand(string sql, DbParameter arg)
+        /// <summary>
+        ///     记录SQL日志
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
         {
-            return CreateCommand(arg);
+            if (!LogRecorder.LogDataSql)
+                return;
+            StringBuilder code = new StringBuilder();
+            code.AppendLine("/***************************************************************/");
+            var parameters = args as MySqlParameter[] ?? args.ToArray();
+            foreach (var par in parameters)
+            {
+                code.AppendLine($"declare ?{par.ParameterName} {par.MySqlDbType};");
+            }
+            foreach (var par in parameters)
+            {
+                if (par.Value == null || par.IsNullable)
+                    code.AppendLine($"SET ?{par.ParameterName} = NULL;");
+                else
+                    code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
+            }
+            code.AppendLine(sql);
+            LogRecorder.RecordDataLog(code.ToString());
         }
-
-        DbCommand IDataBase.CreateCommand(string sql, IEnumerable<DbParameter> args)
-        {
-            return CreateCommand(sql, args.ToArray());
-        }
-
 
 
         #endregion

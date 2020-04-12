@@ -38,7 +38,8 @@ namespace Agebull.EntityModel.MySql
         {
             if (Transaction != null)
                 return false;
-            Transaction = await Connection.BeginTransactionAsync();
+            await OpenAsync();
+            Transaction = await _connection.BeginTransactionAsync();
             return true;
         }
 
@@ -50,21 +51,11 @@ namespace Agebull.EntityModel.MySql
         /// 初始化连接对象
         /// </summary>
         /// <returns></returns>
-        private async Task<MySqlConnection> InitConnectionAsync()
+        private Task<MySqlConnection> InitConnectionAsync()
         {
-            var connection = new MySqlConnection(ConnectionString);
-            IocScope.DisposeFunc.Add(() => Close(connection));
-            int cnt;
-            lock (Connections)
-            {
-                Connections.Add(connection);
-                cnt = Connections.Count;
-            }
-            LogRecorder.Debug("打开连接数：{0}", cnt);
-            //Trace.WriteLine(_count++, "Open");
-            //Trace.WriteLine("Opened _connection", "MySqlDataBase");
-            await connection.OpenAsync();
-            return connection;
+            var connection = MySqlConnectionsManager.InitConnection(ConnectionStringName);
+
+            return Task.FromResult(connection);
         }
 
         #endregion
@@ -75,73 +66,10 @@ namespace Agebull.EntityModel.MySql
         ///     打开连接
         /// </summary>
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        public async Task<bool> OpenAsync()
+        public Task<bool> OpenAsync()
         {
-            if (_connection != null && _connection.State == ConnectionState.Open)
-            {
-                return false;
-            }
-            //if (_isClosed)
-            //{
-            //    //throw new Exception("已关闭的数据库对象不能再次使用");
-            //}
-            if (_connection == null)
-            {
-                _connection =await InitConnectionAsync();
-                return true;
-                //Trace.WriteLine("Create _connection", "MySqlDataBase");
-            }
-            if (string.IsNullOrEmpty(_connection.ConnectionString))
-            {
-                //Trace.WriteLine("Set ConnectionString", "MySqlDataBase");
-                _connection.ConnectionString = ConnectionString;
-            }
-            //Trace.WriteLine(_count++, "Open");
-            //Trace.WriteLine("Opened _connection", "MySqlDataBase");
-            await _connection.OpenAsync();
-            lock (Connections)
-                LogRecorder.Debug("打开连接数：{0}", Connections.Count);
-            return true;
-        }
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        public async Task CloseAsync()
-        {
-          await  CloseAsync(_connection);
-            _connection = null;
-        }
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        private async Task CloseAsync(MySqlConnection connection)
-        {
-            if (connection == null)
-            {
-                return;
-            }
-            try
-            {
-                if (connection.State == ConnectionState.Open)
-                {
-                  await  connection.CloseAsync();
-                }
-                connection.Dispose();
-            }
-            catch (Exception exception)
-            {
-                connection.Dispose();
-                LogRecorder.Exception(exception);
-            }
-            int cnt;
-            lock (Connections)
-            {
-                Connections.Remove(connection);
-                cnt = Connections.Count;
-            }
-            //LogRecorder.MonitorTrace($"未关闭总数{cnt}");
+            var res = Open();
+            return Task.FromResult(res);
         }
 
         #endregion
@@ -184,7 +112,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            await using var cmd = await CreateCommandAsync(sql, args);
+            using var scope = new ConnectionScope(this);
+            using var cmd = CreateCommand(scope, sql, args);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -199,7 +128,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args)
         {
-            await using var cmd = await CreateCommandAsync(sql, args);
+            using var scope = new ConnectionScope(this);
+            await using var cmd = CreateCommand(scope, sql, args);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -214,11 +144,9 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<object> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
-            object result;
-            await using (var cmd = await CreateCommandAsync(sql, args))
-            {
-                result = await cmd.ExecuteScalarAsync();
-            }
+            using var scope = new ConnectionScope(this);
+            using var cmd = CreateCommand(scope, sql, args);
+            var result = await cmd.ExecuteScalarAsync();
             return result == DBNull.Value ? null : result;
         }
 

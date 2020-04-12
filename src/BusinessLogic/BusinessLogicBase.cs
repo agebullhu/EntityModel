@@ -83,7 +83,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public bool LoopIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null)
         {
-            using (var scope = TransactionScope.CreateScope(Access))
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 foreach (var id in ids)
                 {
@@ -93,7 +93,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     }
                 }
                 onEnd?.Invoke();
-                scope.SetState(true);
+                scope.Succeed();
             }
             return true;
         }
@@ -111,7 +111,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public bool LoopIdsToData(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null)
         {
-            using (var scope = TransactionScope.CreateScope(Access))
+            using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
                 foreach (var id in ids)
                 {
@@ -122,7 +122,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     }
                 }
                 onEnd?.Invoke();
-                scope.SetState(true);
+                scope.Succeed();
             }
             return true;
         }

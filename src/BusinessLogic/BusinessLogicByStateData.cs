@@ -169,7 +169,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data == null)
                 return false;
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 //if (!DoResetState(data))
                 //    return false;
@@ -178,7 +178,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 data.IsFreeze = false;
                 Access.ResetState(data.Id);
                 OnStateChanged(data, BusinessCommandType.Reset);
-                return scope.SetState(true);
+                return scope.Succeed();
             }
         }
 
@@ -235,14 +235,14 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
                 return false;
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 Access.SetValue(p => p.IsFreeze, true, id);
                 Access.SetValue(p => p.DataState, DataStateType.Disable,
                     p => p.Id == id && p.DataState == DataStateType.None);
 
                 OnStateChanged(id, BusinessCommandType.Lock);
-                return scope.SetState(true);
+                return scope.Succeed();
             }
         }
 
@@ -255,13 +255,13 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             if (filter == null && !Access.ExistPrimaryKey(id))
                 return false;
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 Access.SetValue(p => p.DataState, state, id);
                 if (setFreeze != null)
                     Access.SetValue(p => p.IsFreeze, setFreeze.Value, id);
                 OnStateChanged(id, BusinessCommandType.SetState);
-                return scope.SetState(true);
+                return scope.Succeed();
             }
         }
 

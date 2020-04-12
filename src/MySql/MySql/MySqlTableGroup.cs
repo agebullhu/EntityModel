@@ -49,20 +49,19 @@ namespace Agebull.EntityModel.MySql
 
 
             var results = new List<T>();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters);
+                using var cmd = DataBase.CreateCommand(connectionScope, code.ToString(), convert.Parameters);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     var t = new T();
-                    readAction(reader,t);
+                    readAction(reader, t);
                     results.Add(t);
                 }
             }
 
             return results;
         }
-
     }
 }

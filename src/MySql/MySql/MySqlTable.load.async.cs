@@ -617,7 +617,7 @@ namespace Agebull.EntityModel.MySql
         protected async Task<object> CollectInnerAsync(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
                 return await DataBase.ExecuteScalarAsync(sql, args);
             }
@@ -745,9 +745,10 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-            await using (TransactionScope.CreateScope(this))
+            //await using (TransactionScope.CreateScope(DataBase))
             {
-                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
+                using var connectionScope = new ConnectionScope(DataBase);
+                await using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 await using var reader = (MySqlDataReader)(await cmd.ExecuteReaderAsync());
                 while (await reader.ReadAsync())
                 {
@@ -933,9 +934,9 @@ namespace Agebull.EntityModel.MySql
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                await using var cmd = await DataBase.CreateCommandAsync(sql, convert.Parameters);
+                await using var cmd = DataBase.CreateCommand(connectionScope, sql, convert.Parameters);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
@@ -992,8 +993,8 @@ namespace Agebull.EntityModel.MySql
         protected async Task<object> LoadValueInnerAsync(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-            await using (DataTableScope.CreateScope(this))
-                return await DataBase.ExecuteScalarAsync(sql, args);
+            using var connectionScope = new ConnectionScope(DataBase);
+            return await DataBase.ExecuteScalarAsync(sql, args);
         }
 
 
@@ -1004,9 +1005,9 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
+                await using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
@@ -1277,8 +1278,8 @@ namespace Agebull.EntityModel.MySql
         public async Task<bool> ReLoadAsync(TData entity)
         {
             bool res;
-            await using (DataTableScope.CreateScope(this))
-                res = await ReLoadInnerAsync(entity);
+            using var connectionScope = new ConnectionScope(DataBase);
+            res = await ReLoadInnerAsync(entity);
             entity.OnStatusChanged(NotificationStatusType.Refresh);
             return res;
         }
@@ -1302,9 +1303,9 @@ namespace Agebull.EntityModel.MySql
         protected async Task<TData> LoadFirstInnerAsync(string condition, DbParameter[] args)
         {
             TData entity = null;
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                await using var cmd = await CreateLoadCommandAsync(condition, args);
+                using var cmd = CreateLoadCommand(connectionScope, condition, args);
                 await using var reader = cmd.ExecuteReader();
                 if (await reader.ReadAsync())
                     entity = LoadEntity(reader);
@@ -1330,9 +1331,9 @@ namespace Agebull.EntityModel.MySql
         protected async Task<TData> LoadLastInnerAsync(string condition, DbParameter[] args)
         {
             TData entity = null;
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                await using var cmd = await CreateLoadCommandAsync(KeyField, true, condition, args);
+                using var cmd = CreateLoadCommand(connectionScope, KeyField, true, condition, args);
                 await using var reader = cmd.ExecuteReader();
                 while (await reader.ReadAsync())
                     entity = LoadEntity(reader);
@@ -1365,9 +1366,9 @@ namespace Agebull.EntityModel.MySql
         protected async Task<List<TData>> LoadDataInnerAsync(string condition, DbParameter[] args, string orderBy)
         {
             var results = new List<TData>();
-            await using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                await using (var cmd = await CreateLoadCommandAsync(condition, orderBy, args))
+                await using (var cmd = CreateLoadCommand(connectionScope, condition, orderBy, args))
                 {
                     await using var reader = cmd.ExecuteReader();
                     while (await reader.ReadAsync())
@@ -1385,9 +1386,10 @@ namespace Agebull.EntityModel.MySql
         protected async Task<List<TData>> LoadDataBySqlAsync(string sql, DbParameter[] args)
         {
             var results = new List<TData>();
-            await using (TransactionScope.CreateScope(this))
+            //await using (TransactionScope.CreateScope(DataBase))
             {
-                await using var cmd = await DataBase.CreateCommandAsync(sql, args);
+                using var connectionScope = new ConnectionScope(DataBase);
+                await using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 var task = cmd.ExecuteReaderAsync();
                 task.Wait();
                 await using var reader = (MySqlDataReader)task.Result;
@@ -1408,9 +1410,10 @@ namespace Agebull.EntityModel.MySql
         public async Task<List<TData>> LoadDataByProcedureAsync(string procedure, DbParameter[] args)
         {
             var results = new List<TData>();
-            await using (TransactionScope.CreateScope(this))
+            //await using (TransactionScope.CreateScope(DataBase))
             {
-                await using var cmd = await DataBase.CreateCommandAsync(procedure, args);
+                using var connectionScope = new ConnectionScope(DataBase);
+                await using var cmd = DataBase.CreateCommand(connectionScope, procedure, args);
                 cmd.CommandType = CommandType.StoredProcedure;
                 var res = await cmd.ExecuteReaderAsync();
                 await using var reader = (MySqlDataReader)res;

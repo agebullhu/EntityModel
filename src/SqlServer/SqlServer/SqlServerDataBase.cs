@@ -37,6 +37,11 @@ namespace Agebull.EntityModel.SqlServer
         //}
 
         /// <summary>
+        /// 是否锁定连接对象(更新插入删除发生后自动启用)
+        /// </summary>
+        public bool IsLockConnection { get; set; }
+
+        /// <summary>
         ///     事务
         /// </summary>
         public SqlTransaction Transaction { get; internal set; }
@@ -80,22 +85,13 @@ namespace Agebull.EntityModel.SqlServer
         }
         #endregion
 
-        #region 引用范围
-
-        /// <summary>
-        /// 生成数据库使用范围
-        /// </summary>
-        /// <returns></returns>
-        public IDisposable CreateDataBaseScope() => DataBaseScope.CreateScope(this);
-
-        /// <summary>
-        ///     引用数量
-        /// </summary>
-        public int QuoteCount { get; set; }
-
-        #endregion
-
         #region 连接
+
+        /// <summary>
+        /// 连接字符串配置节点名称,用于取出
+        /// </summary>
+        public string ConnectionStringName { get; set; }
+
         /// <summary>
         /// 数据库类型
         /// </summary>
@@ -206,23 +202,6 @@ namespace Agebull.EntityModel.SqlServer
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             _connection.Open();
             return true;
-        }
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        void IDataBase.Free()
-        {
-            if (_connection == null)
-                return;
-            //if (_connection.State == ConnectionState.Open)
-            //    lock (IdleConnections)
-            //    {
-            //        IdleConnections.Enqueue(_connection);
-            //    }
-            //else
-            Close(_connection);
-            _connection = null;
         }
 
         /// <summary>
@@ -760,9 +739,6 @@ namespace Agebull.EntityModel.SqlServer
 
         #region 接口
 
-        string IDataBase.ConnectionString => ConnectionString;
-
-
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
             return Execute(sql, args);
@@ -797,23 +773,6 @@ namespace Agebull.EntityModel.SqlServer
         {
             return ExecuteScalar<T>(sql, args.ToArray());
         }
-
-        DbCommand IDataBase.CreateCommand(params DbParameter[] args)
-        {
-            return CreateCommand(args.ToArray());
-        }
-
-        DbCommand IDataBase.CreateCommand(string sql, DbParameter arg)
-        {
-            return CreateCommand(arg);
-        }
-
-        DbCommand IDataBase.CreateCommand(string sql, IEnumerable<DbParameter> args)
-        {
-            return CreateCommand(sql, args.ToArray());
-        }
-
-
 
         #endregion
     }

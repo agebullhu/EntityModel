@@ -297,7 +297,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 if (!CanSave(data, true))
                 {
@@ -319,7 +319,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
                 if (!Saved(data, BusinessCommandType.AddNew))
                     return false;
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -340,7 +340,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 if (!CanSave(data, false))
                 {
@@ -356,7 +356,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     return false;
                 if (!Saved(data, BusinessCommandType.Update))
                     return false;
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -395,7 +395,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 if (!CanSave(data, true))
                 {
@@ -417,7 +417,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
                 if (!Saved(data, BusinessCommandType.AddNew))
                     return false;
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -438,7 +438,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 if (!CanSave(data, false))
                 {
@@ -454,7 +454,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     return false;
                 if (!Saved(data, BusinessCommandType.Update))
                     return false;
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -475,7 +475,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 foreach (var id in list)
                 {
@@ -483,7 +483,7 @@ namespace Agebull.EntityModel.BusinessLogic
                         return false;
                 }
 
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -499,14 +499,14 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 if (!DeleteInner(id))
                 {
                     return false;
                 }
 
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -572,7 +572,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
 
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 foreach (var id in list)
                 {
@@ -580,7 +580,7 @@ namespace Agebull.EntityModel.BusinessLogic
                         return false;
                 }
 
-                scope.SetState(true);
+                scope.Succeed();
             }
 
             return true;
@@ -595,10 +595,10 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            using (var scope = TransactionScope.CreateScope(Access))
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
             {
                 var res = await DeleteAsyncInner(id);
-                scope.SetState(true);
+                scope.Succeed();
                 return res;
             }
         }

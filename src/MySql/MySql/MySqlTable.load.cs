@@ -748,7 +748,6 @@ namespace Agebull.EntityModel.MySql
         protected object CollectInner(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = CreateCollectSql(fun, field, condition);
-            using (DataTableScope.CreateScope(this))
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -875,9 +874,9 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
             var sql = CreatePageSql(page, limit, order, desc, condition);
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(sql, args);
+                using var cmd = DataBase.CreateCommand(connectionScope,sql, args);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1063,9 +1062,9 @@ namespace Agebull.EntityModel.MySql
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var sql = CreateLoadValuesSql(field, convert);
             var values = new List<TField>();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(sql, convert.Parameters);
+                using var cmd = DataBase.CreateCommand(connectionScope, sql, convert.Parameters);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1122,7 +1121,7 @@ namespace Agebull.EntityModel.MySql
         protected object LoadValueInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
                 return DataBase.ExecuteScalar(sql, args);
             }
@@ -1136,9 +1135,9 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateLoadValueSql(field, condition);
             var values = new List<object>();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(sql, args);
+                using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1474,9 +1473,9 @@ namespace Agebull.EntityModel.MySql
         private void ReLoadInner(TData entity)
         {
             entity.__status.RejectChanged();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
+                using var cmd = CreateLoadCommand(connectionScope, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
                 using var reader = cmd.ExecuteReader();
                 if (!reader.Read())
                     return;
@@ -1509,9 +1508,9 @@ namespace Agebull.EntityModel.MySql
         protected TData LoadFirstInner(string condition, DbParameter[] args)
         {
             TData entity = null;
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = CreateLoadCommand(condition, args);
+                using var cmd = CreateLoadCommand(connectionScope, condition, args);
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                     entity = LoadEntity(reader);
@@ -1537,9 +1536,9 @@ namespace Agebull.EntityModel.MySql
         protected TData LoadLastInner(string condition, DbParameter[] args)
         {
             TData entity = null;
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
+                using (var cmd = CreateLoadCommand(connectionScope, KeyField, true, condition, args))
                 {
                     using var reader = cmd.ExecuteReader();
                     if (reader.Read())
@@ -1573,9 +1572,9 @@ namespace Agebull.EntityModel.MySql
         protected List<TData> LoadDataInner(string condition, DbParameter[] args, string orderBy)
         {
             var results = new List<TData>();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using (var cmd = CreateLoadCommand(condition, orderBy, args))
+                using (var cmd = CreateLoadCommand(connectionScope, condition, orderBy, args))
                 {
                     using var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -1593,9 +1592,9 @@ namespace Agebull.EntityModel.MySql
         protected List<TData> LoadDataBySql(string sql, DbParameter[] args)
         {
             var results = new List<TData>();
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(sql, args);
+                using var cmd = DataBase.CreateCommand(connectionScope,sql, args);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1615,9 +1614,9 @@ namespace Agebull.EntityModel.MySql
         {
             var results = new List<TData>();
 
-            using (DataTableScope.CreateScope(this))
+            using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(procedure, args);
+                using var cmd = DataBase.CreateCommand(connectionScope, procedure, args);
                 cmd.CommandType = CommandType.StoredProcedure;
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())

@@ -8,6 +8,7 @@
 
 #region 引用
 
+using System;
 using System.Threading.Tasks;
 using Agebull.Common.Base;
 
@@ -18,6 +19,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     数据库访问范围
     /// </summary>
+    [Obsolete]
     public class DataBaseScope : ScopeBase
     {
         /// <summary>
@@ -32,6 +34,7 @@ namespace Agebull.EntityModel.Common
         protected DataBaseScope(IDataBase dataBase)
         {
             DataBase = dataBase;
+            _isHereOpen = DataBase.Open();
         }
 
         /// <summary>
@@ -46,7 +49,6 @@ namespace Agebull.EntityModel.Common
         private async Task<DataBaseScope> CreateScope()
         {
             _isHereOpen = await DataBase.OpenAsync();
-            DataBase.QuoteCount += 1;
             return this;
         }
 
@@ -57,10 +59,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>范围</returns>
         public static DataBaseScope CreateScope(IDataBase dataBase)
         {
-            var scope = new DataBaseScope(dataBase);
-            scope._isHereOpen = scope.DataBase.Open();
-            scope.DataBase.QuoteCount += 1;
-            return scope;
+            return new DataBaseScope(dataBase);
         }
 
         /// <summary>
@@ -97,10 +96,9 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         protected override void OnDispose()
         {
-            DataBase.QuoteCount -= 1;
             if (_isHereOpen)
             {
-                DataBase.Close();
+                DataBase.Dispose();
             }
         }
     }

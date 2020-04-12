@@ -18,6 +18,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.BusinessLogic", "BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj", "{8AEB6F5B-45D5-4B85-997B-8C63875EDAF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{4998B55C-B170-4BA3-8747-C214CCF58E9A}"
+	ProjectSection(SolutionItems) = preProject
+		pack.bat = pack.bat
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrameTest", "FrameTest\FrameTest.csproj", "{4691114A-137D-4CE5-81AE-662F0E922AFF}"
 EndProject

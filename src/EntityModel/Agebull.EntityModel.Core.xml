@@ -1694,6 +1694,11 @@
             操作上下文
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Common.DbOperatorContext`1.Scope">
+            <summary>
+            其它范围
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Common.DbOperatorContext`1.Command">
             <summary>
             命令对象
@@ -1707,6 +1712,11 @@
         <member name="M:Agebull.EntityModel.Common.DbOperatorContext`1.Dispose">
             <summary>
             析构
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DbOperatorContext`1.System#IAsyncDisposable#DisposeAsync">
+            <summary>
+                清理资源
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ConditionItem">
@@ -1844,11 +1854,10 @@
             数据库类型
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.CreateDataBaseScope">
+        <member name="P:Agebull.EntityModel.Common.IDataBase.IsLockConnection">
             <summary>
-            生成数据库使用范围
+            是否锁定连接对象(更新插入删除发生后自动启用)
             </summary>
-            <returns></returns>
         </member>
         <member name="P:Agebull.EntityModel.Common.IDataBase.Transaction">
             <summary>
@@ -1877,14 +1886,9 @@
             提交事务
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataBase.QuoteCount">
+        <member name="P:Agebull.EntityModel.Common.IDataBase.ConnectionStringName">
             <summary>
-                引用计数
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataBase.ConnectionString">
-            <summary>
-                连接字符串
+            连接字符串配置节点名称,用于取出
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataBase.Open">
@@ -1893,21 +1897,11 @@
             </summary>
             <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.Free">
-            <summary>
-                关闭连接
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.Common.IDataBase.OpenAsync">
             <summary>
                 打开连接
             </summary>
             <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.Close">
-            <summary>
-                关闭连接
-            </summary>
         </member>
         <member name="M:Agebull.EntityModel.Common.IDataBase.Execute(System.String)">
             <summary>
@@ -1993,21 +1987,6 @@
             <remarks>
                 注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
             </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.CreateCommand(System.Data.Common.DbParameter[])">
-            <summary>
-                生成命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.CreateCommand(System.String,System.Data.Common.DbParameter)">
-            <summary>
-                生成命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataBase.CreateCommand(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
-            <summary>
-                生成命令
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.IParameterCreater">
             <summary>
@@ -2899,57 +2878,6 @@
                 创建表的SQL
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.DataTableScope">
-            <summary>
-                数据库访问范围
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DataTableScope._isHereOpen">
-            <summary>
-                是否此处打开数据库
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.#ctor(Agebull.EntityModel.Common.IDataTable)">
-            <summary>
-                构造
-            </summary>
-            <param name="table"></param>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableScope.Table">
-            <summary>
-                当前数据库对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.CreateScope">
-            <summary>
-                生成一个范围
-            </summary>
-            <returns>范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.CreateScope(Agebull.EntityModel.Common.IDataTable)">
-            <summary>
-                生成一个范围
-            </summary>
-            <param name="table">数据库对象</param>
-            <returns>范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.CreateScopeAsync(Agebull.EntityModel.Common.IDataTable)">
-            <summary>
-                生成一个范围
-            </summary>
-            <param name="table">数据库对象</param>
-            <returns>范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.DisposeAsync">
-            <summary>
-                清理资源
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableScope.Dispose">
-            <summary>
-                清理资源
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.Common.DbReaderScope`1">
             <summary>
                 修改读取字段范围
@@ -3079,30 +3007,14 @@
                 数据库事务范围对象
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.TransactionScope._table">
-            <summary>
-                数据库连接对象
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.TransactionScope._preScope">
-            <summary>
-                上一个范围
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.TransactionScope._isBegin">
-            <summary>
-               是否此处开始事务
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.TransactionScope.#ctor(Agebull.EntityModel.Common.IDataTable)">
-            <summary>
-                构造
-            </summary>
-            <param name="table">数据库对象</param>
-        </member>
         <member name="P:Agebull.EntityModel.Common.TransactionScope.CurrentScope">
             <summary>
                 当前范围
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.TransactionScope.PreScope">
+            <summary>
+                上一个范围
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.Common.TransactionScope.IsSucceed">
@@ -3110,27 +3022,46 @@
                 是否已成功
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.TransactionScope.EndAll">
+        <member name="F:Agebull.EntityModel.Common.TransactionScope.IsBegin">
             <summary>
-                结束所有范围
+               是否此处开始事务
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.TransactionScope.CreateScope(Agebull.EntityModel.Common.IDataTable)">
+        <member name="F:Agebull.EntityModel.Common.TransactionScope.DataBase">
+            <summary>
+            数据库对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.TransactionScope.#ctor(Agebull.EntityModel.Common.IDataBase)">
+            <summary>
+                构造
+            </summary>
+            <param name="dataBase">数据库对象</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.TransactionScope.CreateScope(Agebull.EntityModel.Common.IDataBase)">
             <summary>
                 构造(自动构造了数据库对象的使用范围)
             </summary>
             <param name="dataBase">数据库对象</param>
         </member>
+        <member name="M:Agebull.EntityModel.Common.TransactionScope.Succeed">
+            <summary>
+                设置操作成功
+            </summary>
+            <remarks>如果之前被设置为失败,此处即使设置成功也无效</remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.TransactionScope.Failed">
+            <summary>
+                设置操作失败
+            </summary>
+            <remarks>被设置为失败,后续即使设置成功也无效</remarks>
+        </member>
         <member name="M:Agebull.EntityModel.Common.TransactionScope.SetState(System.Boolean)">
             <summary>
                 设置操作状态
             </summary>
-            <param name="succeed">是否成功</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.TransactionScope.DoDispose">
-            <summary>
-                析构
-            </summary>
+            <param name="state">是否成功</param>
+            <remarks>如果之前被设置为失败,此处即使设置成功也无效</remarks>
         </member>
         <member name="M:Agebull.EntityModel.Common.TransactionScope.DisposeAsync">
             <summary>

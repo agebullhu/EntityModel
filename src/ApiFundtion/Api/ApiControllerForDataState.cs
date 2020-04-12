@@ -64,7 +64,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     重置数据状态
         /// </summary>
         [Route("state/reset")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Reset(IdsArguent arg)
         {
             OnReset();
@@ -77,7 +77,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     锁定数据
         /// </summary>
         [Route("state/lock")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Lock(IdsArguent arg)
         {
             OnLock();
@@ -90,7 +90,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     废弃数据
         /// </summary>
         [Route("state/discard")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Discard(IdsArguent arg)
         {
             OnDiscard();
@@ -103,7 +103,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     禁用数据
         /// </summary>
         [Route("state/disable")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Disable(IdsArguent arg)
         {
             OnDisable();
@@ -116,7 +116,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     启用数据
         /// </summary>
         [Route("state/enable")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Employe | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Enable(IdsArguent arg)
         {
             OnEnable();

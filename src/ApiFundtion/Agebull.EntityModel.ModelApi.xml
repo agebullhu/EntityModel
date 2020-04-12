@@ -767,6 +767,13 @@
             <param name="name">参数名</param>
             <returns>参数值</returns>
         </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.GetArg(System.String)">
+            <summary>
+                获取参数
+            </summary>
+            <param name="name">参数名</param>
+            <returns>参数值</returns>
+        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.TryGetValue(System.String,System.String@)">
             <summary>
                 获取参数(文本)

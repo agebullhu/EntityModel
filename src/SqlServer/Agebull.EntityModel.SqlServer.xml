@@ -225,6 +225,11 @@
                 表示SQL SERVER数据库对象
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.IsLockConnection">
+            <summary>
+            是否锁定连接对象(更新插入删除发生后自动启用)
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.Transaction">
             <summary>
                 事务
@@ -252,15 +257,9 @@
             提交事务
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.CreateDataBaseScope">
+        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.ConnectionStringName">
             <summary>
-            生成数据库使用范围
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.QuoteCount">
-            <summary>
-                引用数量
+            连接字符串配置节点名称,用于取出
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataBase.DataBaseType">
@@ -315,11 +314,6 @@
                 打开连接
             </summary>
             <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Agebull#EntityModel#Common#IDataBase#Free">
-            <summary>
-                关闭连接
-            </summary>
         </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerDataBase.Close">
             <summary>

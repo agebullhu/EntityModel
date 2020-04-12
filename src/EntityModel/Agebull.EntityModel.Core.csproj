@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>4.0.0.1-bata</Version>
+    <Version>4.0.0.10-bata</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -78,7 +78,6 @@
     <Compile Include="DataBase\Interface\ITransactionScope.cs" />
     <Compile Include="DataBase\Lambda\LambdaItem.cs" />
     <Compile Include="DataBase\Interface\TableSql.cs" />
-    <Compile Include="DataBase\Scope\DataTableScope.cs" />
     <Compile Include="DataBase\Scope\DbReaderScope.cs" />
     <Compile Include="DataBase\Scope\ReadTableScope.cs" />
     <Compile Include="DataBase\Scope\DataBaseScope.cs" />
@@ -90,6 +89,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.11-bate" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.24-bate" />
   </ItemGroup>
 </Project>

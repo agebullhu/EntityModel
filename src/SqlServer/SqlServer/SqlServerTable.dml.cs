@@ -39,12 +39,12 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Insert(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 if (!InsertInner(entity))
                     return false;
                 ReLoadInner(entity);
-                scope.SetState(true);
+                //scope.Succeed();
             }
             return true;
         }
@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 foreach (var entity in datas)
                 {
@@ -65,7 +65,7 @@ namespace Agebull.EntityModel.SqlServer
                     else
                         return 0;
                 }
-                scope.SetState(true);
+                //scope.Succeed();
             }
 
             foreach (var entity in datas)
@@ -113,11 +113,11 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Update(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 if (!UpdateInner(entity))
                     return false;
-                scope.SetState(true);
+                //scope.Succeed();
             }
             ReLoadInner(entity);
             return true;
@@ -130,7 +130,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 foreach (var entity in datas)
                 {
@@ -139,7 +139,7 @@ namespace Agebull.EntityModel.SqlServer
                     else
                         return 0;
                 }
-                scope.SetState(true);
+                //scope.Succeed();
             }
 
             foreach (var entity in datas)
@@ -210,7 +210,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 foreach (var entity in datas)
                 {
@@ -219,7 +219,7 @@ namespace Agebull.EntityModel.SqlServer
                     else
                         return 0;
                 }
-                scope.SetState(true);
+                //scope.Succeed();
             }
             return cnt;
         }
@@ -230,11 +230,11 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Delete(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 if (!DeleteInner(entity))
                     return false;
-                scope.SetState(true);
+                //scope.Succeed();
             }
             return true;
         }
@@ -263,7 +263,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 foreach (var entity in datas)
                 {
@@ -272,7 +272,7 @@ namespace Agebull.EntityModel.SqlServer
                     else
                         return 0;
                 }
-                scope.SetState(true);
+                //scope.Succeed();
             }
 
             foreach (var entity in datas)
@@ -285,11 +285,11 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public bool Save(TData entity)
         {
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 if (!SaveInner(entity))
                     return false;
-                scope.SetState(true);
+                //scope.Succeed();
             }
             return true;
         }
@@ -397,14 +397,14 @@ namespace Agebull.EntityModel.SqlServer
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(key);
             var paras = new[] { para };
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
                 var result = DataBase.Execute($@"DELETE FROM [{ContextWriteTable}] WHERE {condition};", para);
                 if (result == 0)
                     return false;
                 OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
-                scope.SetState(true);
+                //scope.Succeed();
             }
 
             OnKeyEvent(DataOperatorType.Delete, key);
@@ -419,14 +419,14 @@ namespace Agebull.EntityModel.SqlServer
         {
             var convert = Compile(lambda);
             int cnt;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
                 cnt = DataBase.Execute($@"DELETE FROM [{ContextWriteTable}] WHERE {convert.ConditionSql};", convert.Parameters);
                 if (cnt == 0)
                     return 0;
                 OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-                scope.SetState(true);
+                //scope.Succeed();
             }
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
             return cnt;
@@ -450,14 +450,14 @@ namespace Agebull.EntityModel.SqlServer
         private int DeleteByCondition(string condition, DbParameter[] args)
         {
             int cnt;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Delete);
                 cnt = DeleteInner(condition, args);
                 if (cnt == 0)
                     return 0;
                 OnOperatorExecuted(condition, args, DataOperatorType.Delete);
-                scope.SetState(true);
+                //scope.Succeed();
             }
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
             return cnt;
@@ -525,14 +525,14 @@ namespace Agebull.EntityModel.SqlServer
                 CreateFieldParameter(KeyField,GetDbType(KeyField), key)
             };
             int result;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2);
                 if (result == 0)
                     return 0;
                 OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
-                scope.SetState(true);
+                //scope.Succeed();
             }
             OnKeyEvent(DataOperatorType.Delete, key);
             return result;
@@ -711,14 +711,14 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreateUpdateSql(field, value, condition, arg2);
 
             int result;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Update);
                 result = DataBase.Execute(sql, arg2.ToArray());
                 if (result <= 0)
                     return 0;
                 OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-                scope.SetState(true);
+                //scope.Succeed();
             }
 
             return result;
@@ -765,7 +765,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var sql = CreateUpdateSql(expression, condition);
             int result;
-            using (var scope = TransactionScope.CreateScope(this))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
 
@@ -773,7 +773,7 @@ namespace Agebull.EntityModel.SqlServer
                 if (result == 0)
                     return 0;
                 OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-                scope.SetState(true);
+                //scope.Succeed();
             }
             return result;
         }

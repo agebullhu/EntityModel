@@ -117,70 +117,39 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected Task<MySqlCommand> CreateLoadCommandAsync(string condition, params DbParameter[] args)
+        protected MySqlCommand CreateLoadCommand(ConnectionScope scope,string condition, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, null);
-            return DataBase.CreateCommandAsync(sql.ToString(), args);
-        }
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        protected Task<MySqlCommand> CreateLoadCommandAsync(string condition, string order, params DbParameter[] args)
-        {
-            var sql = CreateLoadSql(condition, order);
-            return DataBase.CreateCommandAsync(sql.ToString(), args);
+            return DataBase.CreateCommand(scope, sql.ToString(), args);
         }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(string condition, params DbParameter[] args)
-        {
-            return CreateLoadCommand(condition, null, args);
-        }
-
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        protected MySqlCommand CreateLoadCommand(string condition, string order, params DbParameter[] args)
+        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string condition, string order, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, order);
-            return DataBase.CreateCommand(sql.ToString(), args);
+            return DataBase.CreateCommand(scope, sql.ToString(), args);
         }
 
         /// <summary>
         ///     生成载入命令
         /// </summary>
+        /// <param name="scope">连接使用范围</param>
         /// <param name="order">排序字段</param>
         /// <param name="desc">是否倒序</param>
         /// <param name="condition">数据条件</param>
         /// <param name="args">条件中的参数</param>
         /// <returns>载入命令</returns>
-        protected MySqlCommand CreateLoadCommand(string order, bool desc, string condition,
+        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string order, bool desc, string condition,
             params DbParameter[] args)
         {
             var field = !string.IsNullOrEmpty(order) ? order : KeyField;
             Debug.Assert(FieldDictionary.ContainsKey(field));
             var orderSql = $"`{FieldDictionary[field]}` {(desc ? "DESC" : "")}";
-            return CreateLoadCommand(condition, orderSql, args);
+            return CreateLoadCommand(scope, condition: condition, orderSql, args);
         }
 
-        /// <summary>
-        ///     生成载入命令
-        /// </summary>
-        /// <param name="order">排序字段</param>
-        /// <param name="desc">是否倒序</param>
-        /// <param name="condition">数据条件</param>
-        /// <param name="args">条件中的参数</param>
-        /// <returns>载入命令</returns>
-        protected Task<MySqlCommand> CreateLoadCommandAsync(string order, bool desc, string condition,
-            params DbParameter[] args)
-        {
-            var field = !string.IsNullOrEmpty(order) ? order : KeyField;
-            Debug.Assert(FieldDictionary.ContainsKey(field));
-            var orderSql = $"`{FieldDictionary[field]}` {(desc ? "DESC" : "")}";
-            return CreateLoadCommandAsync(condition, orderSql, args);
-        }
         #endregion
 
         #region 字段的参数帮助

@@ -33,10 +33,9 @@ namespace Agebull.EntityModel.Common
         #region 事务及连接范围
 
         /// <summary>
-        /// 生成数据库使用范围
+        /// 是否锁定连接对象(更新插入删除发生后自动启用)
         /// </summary>
-        /// <returns></returns>
-        IDisposable CreateDataBaseScope();
+        bool IsLockConnection { get;}
 
         /// <summary>
         ///     事务对象
@@ -68,15 +67,11 @@ namespace Agebull.EntityModel.Common
         #endregion
 
         #region 连接
-        /// <summary>
-        ///     引用计数
-        /// </summary>
-        int QuoteCount { get; set; }
 
         /// <summary>
-        ///     连接字符串
+        /// 连接字符串配置节点名称,用于取出
         /// </summary>
-        string ConnectionString { get; }
+        string ConnectionStringName { get; }
 
         /// <summary>
         ///     打开连接
@@ -85,20 +80,10 @@ namespace Agebull.EntityModel.Common
         bool Open();
 
         /// <summary>
-        ///     关闭连接
-        /// </summary>
-        void Free();
-
-        /// <summary>
         ///     打开连接
         /// </summary>
         /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
         Task<bool> OpenAsync();
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
-        void Close();
 
         #endregion
 
@@ -195,7 +180,7 @@ namespace Agebull.EntityModel.Common
 
         #region 生成命令对象
 
-        /// <summary>
+        /*// <summary>
         ///     生成命令
         /// </summary>
         DbCommand CreateCommand(params DbParameter[] args);
@@ -208,7 +193,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     生成命令
         /// </summary>
-        DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null);
+        DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null);*/
 
         #endregion
 
