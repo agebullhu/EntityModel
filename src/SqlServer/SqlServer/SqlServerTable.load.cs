@@ -126,7 +126,7 @@ namespace Agebull.EntityModel.SqlServer
             if (action.Body is MemberExpression expression)
                 return expression.Member.Name;
             if (!(action.Body is UnaryExpression body))
-                throw new Exception("表达式太复杂");
+                throw new ArgumentException("表达式太复杂",nameof(action));
 
             expression = (MemberExpression)body.Operand;
             return expression.Member.Name;

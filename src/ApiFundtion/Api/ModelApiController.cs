@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ZeroTeam.MessageMVC.Context;
-using Newtonsoft.Json;
 using ZeroTeam.MessageMVC.ZeroApis;
 using ZeroTeam.MessageMVC.Messages;
 
@@ -177,7 +176,7 @@ namespace Agebull.MicroZero.ZeroApis
                 val = null;
                 return false;
             }
-            if(!(value is string vl) ||  string.IsNullOrEmpty(vl))
+            if (!(value is string vl) || string.IsNullOrEmpty(vl))
             {
                 val = null;
                 return false;
@@ -642,6 +641,23 @@ namespace Agebull.MicroZero.ZeroApis
                 return false;
             }
         }
+        /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="value">参数值</param>
+        /// <returns>值</returns>
+        protected internal bool TryGetId<TData>(out long value)
+           where TData : EntityModel.Common.EditDataObject, new()
+        {
+            if (TryGet("id", out value))
+                return true;
+            var data = new TData();
+            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
+            if (TryGet(pri.JsonName, out value))
+                return true;
+            return TryGet(pri.Name, out value);
+        }
+
         /// <summary>
         ///     读参数,如果参数为空或不存在,用默认值填充
         /// </summary>

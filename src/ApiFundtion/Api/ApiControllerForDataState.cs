@@ -28,6 +28,75 @@ namespace Agebull.MicroZero.ZeroApis
         where TData : EditDataObject, IStateData, IIdentityData, new()
         where TBusinessLogic : class, IBusinessLogicByStateData<TData>, new()
     {
+        #region API
+
+        /// <summary>
+        ///     重置数据状态
+        /// </summary>
+        [Route("state/reset")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult Reset(IdsArguent arg)
+        {
+            OnReset();
+            return IsFailed
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     锁定数据
+        /// </summary>
+        [Route("state/lock")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult Lock(IdsArguent arg)
+        {
+            OnLock();
+            return IsFailed
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     废弃数据
+        /// </summary>
+        [Route("state/discard")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult Discard(IdsArguent arg)
+        {
+            OnDiscard();
+            return IsFailed
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     禁用数据
+        /// </summary>
+        [Route("state/disable")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult Disable(IdsArguent arg)
+        {
+            OnDisable();
+            return IsFailed
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     启用数据
+        /// </summary>
+        [Route("state/enable")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult Enable(IdsArguent arg)
+        {
+            OnEnable();
+            return IsFailed
+                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        #endregion
+
         #region 数据校验支持
 
         /// <summary>
@@ -54,75 +123,6 @@ namespace Agebull.MicroZero.ZeroApis
                 SetFailed(name + "[" + no + "]不唯一");
             else
                 GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
-        }
-
-        #endregion
-
-        #region API
-
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
-        [Route("state/reset")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Reset(IdsArguent arg)
-        {
-            OnReset();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
-        }
-
-        /// <summary>
-        ///     锁定数据
-        /// </summary>
-        [Route("state/lock")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Lock(IdsArguent arg)
-        {
-            OnLock();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
-        }
-
-        /// <summary>
-        ///     废弃数据
-        /// </summary>
-        [Route("state/discard")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Discard(IdsArguent arg)
-        {
-            OnDiscard();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
-        }
-
-        /// <summary>
-        ///     禁用数据
-        /// </summary>
-        [Route("state/disable")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Disable(IdsArguent arg)
-        {
-            OnDisable();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
-        }
-
-        /// <summary>
-        ///     启用数据
-        /// </summary>
-        [Route("state/enable")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Enable(IdsArguent arg)
-        {
-            OnEnable();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
         }
 
         #endregion
@@ -205,7 +205,6 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         #endregion
-
 
         #region 列表数据
 

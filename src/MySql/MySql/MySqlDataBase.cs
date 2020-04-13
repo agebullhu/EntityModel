@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.MySql
         protected MySqlDataBase()
         {
             MySqlConnectionsManager.InternalInitialize();
-            IocScope.DisposeFunc.Add(Dispose);
+            DependencyScope.DisposeFunc.Add(Dispose);
         }
 
         /// <summary>

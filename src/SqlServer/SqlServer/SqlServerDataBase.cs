@@ -164,7 +164,7 @@ namespace Agebull.EntityModel.SqlServer
         private SqlConnection InitConnection()
         {
             var connection = new SqlConnection(ConnectionString);
-            IocScope.DisposeFunc.Add(() => Close(connection));
+            DependencyScope.DisposeFunc.Add(() => Close(connection));
             int cnt;
             lock (Connections)
             {

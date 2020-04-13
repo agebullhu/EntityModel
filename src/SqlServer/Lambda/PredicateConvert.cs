@@ -278,7 +278,7 @@ namespace Agebull.EntityModel.SqlServer
             {
                 return "0";
             }
-            throw new ArgumentException("Invalid lambda expression");
+            throw new EntityModelDbException("Invalid lambda expression");
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace Agebull.EntityModel.SqlServer
                     case ExpressionType.NotEqual:
                         return $"({lefttext} IS NOT NULL)";
                     default:
-                        throw new ArgumentException("Invalid lambda expression");
+                        throw new EntityModelDbException("Invalid lambda expression");
                 }
             }
             //body
@@ -332,7 +332,7 @@ namespace Agebull.EntityModel.SqlServer
                 case ExpressionType.LessThan:
                     return $"({lefttext} < {righttext})";
                 default:
-                    throw new ArgumentException("Invalid lambda expression");
+                    throw new EntityModelDbException("Invalid lambda expression");
             }
         }
 
@@ -382,7 +382,7 @@ namespace Agebull.EntityModel.SqlServer
                 case ExpressionType.Increment:
                     return $"({ConvertExpression(expression.Operand)}) + 1";
                 default:
-                    throw new ArgumentException("Invalid lambda expression");
+                    throw new EntityModelDbException("Invalid lambda expression");
             }
         }
 
@@ -395,7 +395,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             if (expression.Method.DeclaringType == null)
             {
-                throw new ArgumentException("不支持参数的方法(仅支持属性的方法)");
+                throw new EntityModelDbException("不支持参数的方法(仅支持属性的方法)");
             }
             if (expression.Method.Name == "Equals")
             {
@@ -434,7 +434,7 @@ namespace Agebull.EntityModel.SqlServer
                     case "Replace":
                         return $"replace({ConvertExpression(expression.Object)},{GetArguments(expression)})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType.IsValueType && expression.Method.Name == "Equals")
                 return $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})";
@@ -445,7 +445,7 @@ namespace Agebull.EntityModel.SqlServer
                     case "Abs":
                         return $"abs({GetArguments(expression)})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Enum))
             {
@@ -454,7 +454,7 @@ namespace Agebull.EntityModel.SqlServer
                     case "HasFlag":
                         return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.Name == "Contains")
             {
@@ -464,7 +464,7 @@ namespace Agebull.EntityModel.SqlServer
                     if (!string.IsNullOrWhiteSpace(vl))
                         return $"{GetArguments(expression)} in ({vl})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             var name = _condition.AddParameter(GetValue(expression));
             return $"@{name}";
@@ -482,7 +482,7 @@ namespace Agebull.EntityModel.SqlServer
                 string field;
                 if (!_columnMap.TryGetValue(expression.Member.Name, out field))
                 {
-                    throw new ArgumentException(@"字段不存在于数据库中", expression.Member.Name);
+                    throw new EntityModelDbException($"字段不存在于数据库中.{expression.Member.Name}");
                 }
                 return $"[{field}]";
             }
@@ -507,7 +507,7 @@ namespace Agebull.EntityModel.SqlServer
                             return $"@{_condition.AddParameter(DateTime.Today)}";
                     }
                 }
-                throw new ArgumentException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
+                throw new EntityModelDbException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
             }
             var vl = GetValue(expression);
             if (vl.GetType().IsValueType)

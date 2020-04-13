@@ -261,7 +261,7 @@ namespace Hpc.Project.ImportSkuCsv
             }
             catch
             {
-                throw new Exception("文件无法打开");
+                throw new FileLoadException("文件无法打开");
             }
 
             var lines = Split(s);
@@ -301,7 +301,7 @@ namespace Hpc.Project.ImportSkuCsv
             }
             catch
             {
-                throw new Exception("文件无法打开");
+                throw new FileLoadException("文件无法打开");
             }
 
             return Split(s, action);

@@ -19,7 +19,7 @@ namespace Agebull.EntityModel.Excel
     /// <typeparam name="TAccess">数据类型对应的数据访问类</typeparam>
     public class ExcelExporter<TData, TAccess> : ScopeBase
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess :class, IDataTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
 
 
@@ -48,16 +48,14 @@ namespace Agebull.EntityModel.Excel
         ///     导出Excel
         /// </summary>
         /// <returns>数据</returns>
-        public byte[] ExportExcel(string name,string path)
+        public byte[] ExportExcel(string name, string path)
         {
             Book = new XSSFWorkbook(path);
             var sheet = Book.CreateSheet(name);
             ExportExcel(sheet);
-            using (var mem = new MemoryStream())
-            {
-                Book.Write(mem);
-                return mem.GetBuffer();
-            }
+            using var mem = new MemoryStream();
+            Book.Write(mem);
+            return mem.GetBuffer();
         }
 
         /// <summary>
@@ -71,12 +69,10 @@ namespace Agebull.EntityModel.Excel
         {
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);
-            ExportExcel(sheet, lambda);
-            using (var mem = new MemoryStream())
-            {
-                Book.Write(mem);
-                return mem.ToArray();
-            }
+            ExportExcel(sheet, lambda).Wait();
+            using var mem = new MemoryStream();
+            Book.Write(mem);
+            return mem.ToArray();
         }
 
         /// <summary>
@@ -86,16 +82,14 @@ namespace Agebull.EntityModel.Excel
         /// <param name="name"></param>
         /// <param name="path"></param>
         /// <returns>数据</returns>
-        public Task<byte[]> ExportExcelAsync(LambdaItem<TData> lambda, string name, string path)
+        public async Task<byte[]> ExportExcelAsync(LambdaItem<TData> lambda, string name, string path)
         {
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);
-            ExportExcel(sheet, lambda);
-            using (var mem = new MemoryStream())
-            {
-                Book.Write(mem);
-                return Task.FromResult(mem.ToArray());
-            }
+            await ExportExcel(sheet, lambda);
+            using var mem = new MemoryStream();
+            Book.Write(mem);
+            return mem.ToArray();
         }
 
         /// <summary>
@@ -104,9 +98,9 @@ namespace Agebull.EntityModel.Excel
         /// <param name="sheet">导入所在的工作表</param>
         /// <param name="lambda">查询条件</param>
         /// <returns>数据</returns>
-        public void ExportExcel(ISheet sheet, LambdaItem<TData> lambda)
+        public async Task ExportExcel(ISheet sheet, LambdaItem<TData> lambda)
         {
-            var datas = Access.All(lambda);
+            var datas = await Access.AllAsync(lambda);
             OnDataLoad?.Invoke(datas);
             WriteToSheet(sheet, datas);
         }
@@ -122,11 +116,9 @@ namespace Agebull.EntityModel.Excel
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);
             ExportExcel(sheet, lambda);
-            using (var mem = new MemoryStream())
-            {
-                Book.Write(mem);
-                return mem.GetBuffer();
-            }
+            using var mem = new MemoryStream();
+            Book.Write(mem);
+            return mem.GetBuffer();
         }
 
         /// <summary>
@@ -194,7 +186,7 @@ namespace Agebull.EntityModel.Excel
 
             int line = 0;
             var row = sheet.SafeGetRow(line);
-            var importFields = datas[0].__Struct.Properties.Values.Where(p => p.CanExport).OrderBy(p=>p.Index).ToArray();
+            var importFields = datas[0].__Struct.Properties.Values.Where(p => p.CanExport).OrderBy(p => p.Index).ToArray();
             int idx = 0;
             foreach (var field in importFields)
             {

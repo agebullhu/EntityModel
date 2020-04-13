@@ -48,7 +48,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public MySqlDataBase DataBase
         {
-            get => _dataBase ??= IocHelper.Create<TMySqlDataBase>();
+            get => _dataBase ??= DependencyHelper.Create<TMySqlDataBase>();
             set => _dataBase = value;
         }
 

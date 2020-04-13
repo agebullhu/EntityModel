@@ -91,7 +91,7 @@ namespace Agebull.Common
             {
                 if (machineId > MaxMachineId)
                 {
-                    throw new Exception("机器码ID非法");
+                    throw new SystemException("机器码ID非法");
                 }
                 _machineId = machineId;
             }
@@ -99,7 +99,7 @@ namespace Agebull.Common
             {
                 if (dataCenterId > MaxDataCenterId)
                 {
-                    throw new Exception("数据中心ID非法");
+                    throw new SystemException("数据中心ID非法");
                 }
                 _dataCenterId = dataCenterId;
             }
@@ -156,7 +156,7 @@ namespace Agebull.Common
                 }
                 if (timestamp < _lastTimestamp)
                 {
-                    throw new Exception("时间戳比上一次生成ID时时间戳还小，故异常");
+                    throw new SystemException("时间戳比上一次生成ID时时间戳还小，故异常");
                 }
                 _lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳  
                 id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | 

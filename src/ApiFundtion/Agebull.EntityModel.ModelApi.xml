@@ -22,36 +22,6 @@
                 业务逻辑对象
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.EntityType">
-            <summary>
-                实体类型
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.Export2(Agebull.MicroZero.ZeroApis.QueryArgument)">
-            <summary>
-                列表数据
-            </summary>
-            <remarks>
-            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
-            </remarks>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.Export(Agebull.MicroZero.ZeroApis.QueryArgument)">
-            <summary>
-                列表数据
-            </summary>
-            <remarks>
-            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
-            </remarks>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-                读取查询条件
-            </summary>
-            <param name="filter">筛选器</param>
-        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.List(Agebull.MicroZero.ZeroApis.QueryArgument)">
             <summary>
                 列表数据
@@ -85,6 +55,12 @@
             <summary>
                 删除多条数据
             </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
@@ -227,14 +203,6 @@
                 支持数据状态的启用禁用方法的页面的基类
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
-            <summary>
-                检查值的唯一性
-            </summary>
-            <typeparam name="TValue"></typeparam>
-            <param name="name"></param>
-            <param name="field"></param>
-        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.Reset(Agebull.MicroZero.ZeroApis.IdsArguent)">
             <summary>
                 重置数据状态
@@ -259,6 +227,14 @@
             <summary>
                 启用数据
             </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="name"></param>
+            <param name="field"></param>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.OnLock">
             <summary>
@@ -1011,6 +987,13 @@
             <param name="value">参数值</param>
             <returns>值</returns>
         </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.TryGetId``1(System.Int64@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="value">参数值</param>
+            <returns>值</returns>
+        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.TryGet(System.String,System.Int64@)">
             <summary>
                 读参数,如果参数为空或不存在,用默认值填充
@@ -1059,40 +1042,34 @@
             <param name="value">参数值</param>
             <returns>值</returns>
         </member>
-        <member name="T:Agebull.Common.DataModel.WebUI.AjaxResult">
+        <member name="T:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware">
             <summary>
-                AJAX的标准返回
+            日志处理中间件
             </summary>
         </member>
-        <member name="P:Agebull.Common.DataModel.WebUI.AjaxResult.State">
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.Processor">
             <summary>
-                结果状态
+            当前处理器
             </summary>
         </member>
-        <member name="P:Agebull.Common.DataModel.WebUI.AjaxResult.Succeed">
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Level">
             <summary>
-                结果状态
+            层级
             </summary>
         </member>
-        <member name="P:Agebull.Common.DataModel.WebUI.AjaxResult.Message">
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Scope">
             <summary>
-                操作消息
+            消息中间件的处理范围
             </summary>
         </member>
-        <member name="P:Agebull.Common.DataModel.WebUI.AjaxResult.Message2">
+        <member name="M:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#OnGlobalException(ZeroTeam.MessageMVC.Services.IService,ZeroTeam.MessageMVC.Messages.IInlineMessage,System.Object)">
             <summary>
-                操作消息
+            异常处理
             </summary>
-        </member>
-        <member name="T:Agebull.Common.DataModel.WebUI.AjaxResult`1">
-            <summary>
-                AJAX的标准返回
-            </summary>
-        </member>
-        <member name="P:Agebull.Common.DataModel.WebUI.AjaxResult`1.Value">
-            <summary>
-                结果值
-            </summary>
+            <param name="service">当前服务</param>
+            <param name="message">当前消息</param>
+            <param name="tag">扩展信息</param>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.EasyUI.EasyComboValues">
             <summary>

@@ -29,7 +29,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field"></param>
         protected virtual void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            if (!TryGetValue("No",out var no))
+            if (!TryGetValue("No", out var no))
             {
                 SetFailed(name + "为空");
                 return;
@@ -65,96 +65,6 @@ namespace Agebull.MicroZero.ZeroApis
         #region API
 
         /// <summary>
-        ///     实体类型
-        /// </summary>
-        /// <returns></returns>
-        [Route("edit/eid")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult<EntityInfo> EntityType()
-        {
-            return ApiResultHelper.Succees(new EntityInfo
-            {
-                EntityType = Business.EntityType,
-                //PageId = PageItem?.Id ?? 0
-            });
-        }
-
-        /// <summary>
-        ///     列表数据
-        /// </summary>
-        /// <remarks>
-        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
-        /// </remarks>
-        /// <returns></returns>
-        [Obsolete]
-        [Route("import/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public ApiFileResult Export2(QueryArgument args)
-        {
-            var data = new TData();
-            GlobalContext.Current.Status.Feature = 1;
-            var filter = new LambdaItem<TData>();
-            GetQueryFilter(filter);
-            var res = Business.Export(data.__Struct.Caption, filter);
-            GlobalContext.Current.Status.Feature = 0;
-            return ApiResultHelper.Succees(res);
-        }
-
-        /// <summary>
-        ///     列表数据
-        /// </summary>
-        /// <remarks>
-        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
-        /// </remarks>
-        /// <returns></returns>
-        [Route("export/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
-        public ApiFileResult Export(QueryArgument args)
-        {
-            var data = new TData();
-            GlobalContext.Current.Status.Feature = 1;
-            var filter = new LambdaItem<TData>();
-            GetQueryFilter(filter);
-            var res = Business.Export(data.__Struct.Caption, filter);
-            GlobalContext.Current.Status.Feature = 0;
-            return ApiResultHelper.Succees(res);
-        }
-        /// <summary>
-        ///     读取查询条件
-        /// </summary>
-        /// <param name="filter">筛选器</param>
-        public virtual void GetQueryFilter(LambdaItem<TData> filter)
-        {
-
-        }
-
-        IDisposable GetFieldFilter()
-        {
-            if (TryGet("_filter_", out string[] fieldFilter))
-            {
-                var test = new TData();
-                List<PropertySturct> properties = new List<PropertySturct>();
-                foreach (var field in fieldFilter)
-                {
-                    var pro = test.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == field || p.PropertyName == field);
-                    if (pro != null && pro.ColumnName != null)
-                    {
-                        properties.Add(pro);
-                    }
-                }
-                if (properties.Count > 0)
-                    return DbReaderScope<TData>.CreateScope(Business.Access, properties.Select(p => p.ColumnName).LinkToString(","), (reader, entity) =>
-                    {
-                        for (var idx = 0; idx < properties.Count; idx++)
-                        {
-                            if (!reader.IsDBNull(idx))
-                                entity.SetValue(properties[idx].Index, reader.GetValue(idx));
-                        }
-                    });
-            }
-            return null;
-        }
-        /// <summary>
         ///     列表数据
         /// </summary>
         /// <remarks>
@@ -162,7 +72,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </remarks>
         /// <returns></returns>
         [Route("edit/list")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<ApiPageData<TData>> List(QueryArgument args)
         {
             IDisposable scope = null;
@@ -192,7 +102,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条数据查询
         /// </summary>
         [Route("edit/first")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> QueryFirst(TData arguent)
         {
             IDisposable scope = null;
@@ -222,10 +132,10 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条详细数据
         /// </summary>
         [Route("edit/details")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> Details(IdArguent arguent)
         {
-            if (!TryGet("id", out long id))
+            if (!TryGetId<TData>(out long id))
                 return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoDetails(id);
             return IsFailed
@@ -237,7 +147,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     新增数据
         /// </summary>
         [Route("edit/addnew")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> AddNew(TData arg)
         {
             var data = DoAddNew();
@@ -250,10 +160,10 @@ namespace Agebull.MicroZero.ZeroApis
         ///     更新数据
         /// </summary>
         [Route("edit/update")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult<TData> Update(TData arg)
         {
-            if (!TryGet("id", out long id))
+            if (!TryGetId<TData>(out long id))
                 return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoUpdate(id);
             return IsFailed
@@ -265,7 +175,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     删除多条数据
         /// </summary>
         [Route("edit/delete")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Delete(IdsArguent arg)
         {
             DoDelete();
@@ -274,10 +184,105 @@ namespace Agebull.MicroZero.ZeroApis
                     : ApiResultHelper.Succees();
         }
 
+        /*// <summary>
+        ///     实体类型
+        /// </summary>
+        /// <returns></returns>
+        [Route("edit/eid")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public IApiResult<EntityInfo> EntityType()
+        {
+            return ApiResultHelper.Succees(new EntityInfo
+            {
+                EntityType = Business.EntityType,
+                //PageId = PageItem?.Id ?? 0
+            });
+        }
+        
+        /// <summary>
+        ///     导出到Excel
+        /// </summary>
+        /// <remarks>
+        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+        /// </remarks>
+        /// <returns></returns>
+        [Route("export/xlsx")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public ApiFileResult Export(TData args)
+        {
+            var data = new TData();
+            GlobalContext.Current.Status.Feature = 1;
+            var filter = new LambdaItem<TData>();
+            GetQueryFilter(filter);
+            var res = Business.Export(data.__Struct.Caption, filter);
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
+        }
+
+        /// <summary>
+        ///     从Excep导入
+        /// </summary>
+        /// <remarks>
+        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+        /// </remarks>
+        /// <returns></returns>
+        [Obsolete]
+        [Route("import/xlsx")]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        public ApiFileResult Import(TData args)
+        {
+            var data = new TData();
+            GlobalContext.Current.Status.Feature = 1;
+            var filter = new LambdaItem<TData>();
+            GetQueryFilter(filter);
+            var res = Business.Export(data.__Struct.Caption, filter);
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
+        }*/
+
         #endregion
 
         #region 列表读取支持
 
+        /// <summary>
+        ///     读取查询条件
+        /// </summary>
+        /// <param name="filter">筛选器</param>
+        public virtual void GetQueryFilter(LambdaItem<TData> filter)
+        {
+
+        }
+
+        IDisposable GetFieldFilter()
+        {
+            if (TryGet("_filter_", out string[] fieldFilter))
+            {
+                var test = new TData();
+                List<PropertySturct> properties = new List<PropertySturct>();
+                foreach (var field in fieldFilter)
+                {
+                    var pro = test.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == field || p.PropertyName == field);
+                    if (pro != null && pro.ColumnName != null)
+                    {
+                        properties.Add(pro);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"字段过渡参数(_filter_)中包含不存在的字段.{field}");
+                    }
+                }
+                if (properties.Count > 0)
+                    return DbReaderScope<TData>.CreateScope(Business.Access, properties.Select(p => p.ColumnName).LinkToString(","), (reader, entity) =>
+                    {
+                        for (var idx = 0; idx < properties.Count; idx++)
+                        {
+                            if (!reader.IsDBNull(idx))
+                                entity.SetValue(properties[idx].Index, reader.GetValue(idx));
+                        }
+                    });
+            }
+            return null;
+        }
         /// <summary>
         ///     取得列表数据
         /// </summary>
@@ -335,7 +340,7 @@ namespace Agebull.MicroZero.ZeroApis
         protected virtual void OnListLoaded(IList<TData> datas)
         {
         }
-        
+
         #endregion
 
         #region 基本增删改查

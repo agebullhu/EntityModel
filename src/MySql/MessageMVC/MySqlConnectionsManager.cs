@@ -1,12 +1,13 @@
 ﻿using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
+using Agebull.EntityModel.Common;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using ZeroTeam.MessageMVC;
 
@@ -74,7 +75,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         internal static void InternalInitialize()
         {
-            logger ??= IocHelper.LoggerFactory.CreateLogger<MySqlConnectionsManager>();
+            logger ??= DependencyHelper.LoggerFactory.CreateLogger<MySqlConnectionsManager>();
         }
         #endregion
 
@@ -198,20 +199,20 @@ namespace Agebull.EntityModel.MySql
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException(name);
+                throw new EntityModelDbException("连接字符串的配置名称不能为空");
             }
             var constr = ConfigurationManager.GetConnectionString(name, null);
 
             if (string.IsNullOrEmpty(constr))
             {
-                throw new NullReferenceException($"无法找到名为{name}的连接字符串");
+                throw new EntityModelDbException($"无法找到配置名称为{name}的连接字符串");
             }
             try
             {
                 //var b = new MySqlConnectionStringBuilder(connectionString);
                 var connection = new MySqlConnection(constr);
                 //int id = connection.ConnectionString.GetHashCode();
-                //IocScope.DisposeFunc.Add(() => CloseByFree(connection, name));
+                //DependencyScope.DisposeFunc.Add(() => CloseByFree(connection, name));
                 if (!Connections.TryGetValue(name, out var dataBaseInfo))
                 {
                     Connections.TryAdd(name, new DataBaseInfo

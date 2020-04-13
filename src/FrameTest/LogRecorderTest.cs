@@ -14,7 +14,7 @@ namespace FrameTest
             ConsoleKeyInfo key;
             do
             {
-                using (IocScope.CreateScope(DateTime.Now.ToString()))
+                using (DependencyScope.CreateScope(DateTime.Now.ToString()))
                 {
                     LogRecorder.SystemLog("System:{0}", RandomCode.Generate(6));
                     using (MonitorScope.CreateScope("test"))

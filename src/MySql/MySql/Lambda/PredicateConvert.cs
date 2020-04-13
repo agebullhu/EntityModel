@@ -297,7 +297,7 @@ namespace Agebull.EntityModel.MySql
             {
                 return "0";
             }
-            throw new ArgumentException("Invalid lambda expression");
+            throw new EntityModelDbException("Invalid lambda expression");
         }
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace Agebull.EntityModel.MySql
                     case ExpressionType.NotEqual:
                         return $"({lefttext} IS NOT NULL)";
                     default:
-                        throw new ArgumentException("Invalid lambda expression");
+                        throw new EntityModelDbException("Invalid lambda expression");
                 }
             }
             if (string.Equals(lefttext, "null", StringComparison.OrdinalIgnoreCase))
@@ -340,7 +340,7 @@ namespace Agebull.EntityModel.MySql
                     case ExpressionType.NotEqual:
                         return $"({righttext} IS NOT NULL)";
                     default:
-                        throw new ArgumentException("Invalid lambda expression");
+                        throw new EntityModelDbException("Invalid lambda expression");
                 }
             }
             //body
@@ -363,7 +363,7 @@ namespace Agebull.EntityModel.MySql
                 case ExpressionType.LessThan:
                     return $"({lefttext} < {righttext})";
                 default:
-                    throw new ArgumentException("Invalid lambda expression");
+                    throw new EntityModelDbException("Invalid lambda expression");
             }
         }
 
@@ -413,7 +413,7 @@ namespace Agebull.EntityModel.MySql
                 case ExpressionType.Increment:
                     return $"({ConvertExpression(expression.Operand)}) + 1";
                 default:
-                    throw new ArgumentException("Invalid lambda expression");
+                    throw new EntityModelDbException("Invalid lambda expression");
             }
         }
 
@@ -426,7 +426,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Method.DeclaringType == null)
             {
-                throw new ArgumentException($"不支持方法:{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.Name}");
             }
             if (expression.Method.Name == "Equals")
             {
@@ -462,7 +462,7 @@ namespace Agebull.EntityModel.MySql
                     case "Replace":
                         return $"REPLACE({ConvertExpression(expression.Object)},{GetArguments(expression)})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Math))
             {
@@ -471,7 +471,7 @@ namespace Agebull.EntityModel.MySql
                     case "Abs":
                         return $"ABS({GetArguments(expression)})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(Enum))
             {
@@ -480,7 +480,7 @@ namespace Agebull.EntityModel.MySql
                     case "HasFlag":
                         return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
 
             if (expression.Method.Name == "Contains")
@@ -491,7 +491,7 @@ namespace Agebull.EntityModel.MySql
                     if (!string.IsNullOrWhiteSpace(vl))
                         return $"{GetArguments(expression)} IN ({vl})";
                 }
-                throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
             }
             return CheckDynamicValue(GetValue(expression));
         }
@@ -505,9 +505,9 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Expression is ParameterExpression)
             {
-                if (_columnMap.TryGetValue(expression.Member.Name,out var field))
+                if (_columnMap.TryGetValue(expression.Member.Name, out var field))
                     return $"`{field}`";
-                throw new ArgumentException(@"字段不存在于数据库中", expression.Member.Name);
+                throw new EntityModelDbException($"字段不存在于数据库中.{expression.Member.Name}");
             }
             var par1 = expression.Expression as MemberExpression;
             if (!(par1?.Expression is ParameterExpression))
@@ -531,7 +531,7 @@ namespace Agebull.EntityModel.MySql
                         return $"?{_condition.AddParameter(DateTime.Today)}";
                 }
             }
-            throw new ArgumentException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
+            throw new EntityModelDbException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
         }
 
         string CheckDynamicValue(object vl)

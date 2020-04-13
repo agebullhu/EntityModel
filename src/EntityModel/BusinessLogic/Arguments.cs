@@ -40,7 +40,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         /// 返回的字段,为空表示无字段过滤
         /// </summary>
-        /// <example>nike</example>
+        /// <example>[Field1,Field2]</example>
         [JsonProperty("_filter_")]
         public string Filter { get; set; }
 
@@ -54,7 +54,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         /// 查询字段(为_any_时则为模糊查询),也可以直接将字段作为名称传递,其中日期类型字段可加(_beign _end )后缀查询时间范围,外键字段可以传多个值(逗号分开)使用包含查询
         /// </summary>
-        /// <example>name</example>
+        /// <example>[Field1,Field2]</example>
         [JsonProperty("_field_")]
         public string Field { get; set; }
 

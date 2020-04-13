@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Excel;
+using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 namespace Agebull.EntityModel.BusinessLogic
@@ -480,7 +481,9 @@ namespace Agebull.EntityModel.BusinessLogic
                 foreach (var id in list)
                 {
                     if (!DeleteInner(id))
+                    {
                         return false;
+                    }
                 }
 
                 scope.Succeed();
@@ -525,9 +528,11 @@ namespace Agebull.EntityModel.BusinessLogic
             //BUG: using (ManageModeScope.CreateScope())
             {
                 if (!DoDelete(id))
+                {
+                    GlobalContext.Current.Status.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                     return false;
+                }
                 OnDeleted(id);
-                LogRecorder.MonitorTrace("Delete");
                 OnStateChanged(id, BusinessCommandType.Delete);
             }
             return true;
@@ -616,9 +621,11 @@ namespace Agebull.EntityModel.BusinessLogic
             //BUG:using (ManageModeScope.CreateScope())
             {
                 if (!await DoDeleteAsync(id))
-                    return false;
+                {
+                    GlobalContext.Current.Status.LastMessage = $"主键值为({id})的数据不存在,删除失败";
+                    return false; 
+                }
                 OnDeleted(id);
-                LogRecorder.MonitorTrace("Delete");
                 OnStateChanged(id, BusinessCommandType.Delete);
             }
             return true;

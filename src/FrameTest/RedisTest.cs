@@ -10,13 +10,13 @@ namespace FrameTest
     {
         static RedisTest()
         {
-            IocHelper.AddSingleton<IRedis, CSRedisEx>();
-            IocHelper.AddSingleton<IRedisAsync, CSRedisAsync>();
+            DependencyHelper.AddSingleton<IRedis, CSRedisEx>();
+            DependencyHelper.AddSingleton<IRedisAsync, CSRedisAsync>();
         }
 
         public static void TestFind()
         {
-            //IocHelper.AddScoped<IRedis, StackExchangeRedis>();
+            //DependencyHelper.AddScoped<IRedis, StackExchangeRedis>();
 
             //删除Redis缓存,让前台自动更新
             using var proxy = new RedisProxy(0);

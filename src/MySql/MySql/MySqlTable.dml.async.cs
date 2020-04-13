@@ -354,7 +354,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>如果有载入首行,否则返回空</returns>
         public async Task<int> DeleteAsync(Expression<Func<TData, bool>> lambda)
         {
-            //throw new Exception("批量删除功能被禁用");
+            //throw new EntityModelDbException("批量删除功能被禁用");
             var convert = Compile(lambda);
             return await DeleteByConditionAsync(convert.ConditionSql, convert.Parameters);
         }
@@ -400,9 +400,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<int> DeleteAsync(string condition, params DbParameter[] args)
         {
-            //throw new Exception("批量删除功能被禁用");
+            //throw new EntityModelDbException("批量删除功能被禁用");
             if (string.IsNullOrWhiteSpace(condition))
-                throw new ArgumentException(@"删除条件不能为空,因为不允许执行全表删除", GetType().FullName);
+                throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
             return await DeleteByConditionAsync(condition, args);
         }
 
@@ -431,7 +431,7 @@ namespace Agebull.EntityModel.MySql
                 return 0;
             if (!string.IsNullOrEmpty(condition))
                 return await DataBase.ExecuteAsync(CreateDeleteSql(condition), args);
-            throw new ArgumentException(@"删除条件不能为空,因为不允许执行全表删除", GetType().FullName);
+            throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
         }
 
         #endregion

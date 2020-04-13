@@ -36,7 +36,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/deny")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult AuditDeny(IdsArguent arg)
         {
 
@@ -51,7 +51,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/pullback")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Pullback(IdsArguent arg)
         {
 
@@ -66,7 +66,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/submit")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult SubmitAudit(IdsArguent arg)
         {
 
@@ -81,7 +81,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/validate")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult Validate(IdsArguent arg)
         {
             if (!TryGet("selects", out long[] ids))
@@ -101,7 +101,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/pass")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult AuditPass(IdsArguent arg)
         {
 
@@ -116,7 +116,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/redo")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult UnAudit(IdsArguent arg)
         {
             OnUnAudit();
@@ -130,7 +130,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/back")]
-        [ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.ArgumentIsDefault)]
+        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
         public IApiResult BackAudit(IdsArguent arg)
         {
 

@@ -52,7 +52,7 @@ namespace Agebull.EntityModel.SqlServer
         private async Task<SqlConnection> InitConnectionAsync()
         {
             var connection = new SqlConnection(ConnectionString);
-            IocScope.DisposeFunc.Add(() => Close(connection));
+            DependencyScope.DisposeFunc.Add(() => Close(connection));
             int cnt;
             lock (Connections)
             {

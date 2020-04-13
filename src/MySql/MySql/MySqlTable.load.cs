@@ -82,7 +82,7 @@ namespace Agebull.EntityModel.MySql
             if (action.Body is MemberExpression expression)
                 return expression.Member.Name;
             if (!(action.Body is UnaryExpression body))
-                throw new Exception("表达式太复杂");
+                throw new EntityModelDbException("表达式太复杂");
 
             expression = (MemberExpression)body.Operand;
             return expression.Member.Name;
