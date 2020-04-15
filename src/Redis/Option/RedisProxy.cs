@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         static RedisProxy()
         {
-            ConfigurationManager.RegistOnChange(OnOptionChange, true);
+            ConfigurationManager.RegistOnChange("Redis",OnOptionChange, true);
         }
 
         /// <summary>

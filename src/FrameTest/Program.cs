@@ -5,7 +5,6 @@ namespace FrameTest
     {
         static void Main()
         {
-            LogRecorderTest.TestChange();
             //RedisTest.TestFind();
         }
         //static void Main(string[] args)

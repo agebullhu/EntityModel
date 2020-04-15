@@ -48,7 +48,7 @@ namespace Agebull.EntityModel.MySql
         {
             IsManagement = true;
             InternalInitialize();
-            ConfigurationManager.RegistOnChange(CheckOption, false);
+            ConfigurationManager.RegistOnChange("ConnectionStrings", CheckOption, false);
         }
 
         /// <summary>
