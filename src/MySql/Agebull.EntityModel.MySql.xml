@@ -63,6 +63,21 @@
             初始化
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.IsClose">
+            <summary>
+            是否已关闭
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.Connection">
+            <summary>
+            连接对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.DateTime">
+            <summary>
+            开始时间
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.MySql.ConnectionScope">
             <summary>
             数据库连接范围
@@ -171,21 +186,6 @@
             关闭连接对象
             </summary>
             <returns></returns>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.IsClose">
-            <summary>
-            是否已关闭
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.Connection">
-            <summary>
-            连接对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.DateTime">
-            <summary>
-            开始时间
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.MySql.PredicateConvert">
             <summary>

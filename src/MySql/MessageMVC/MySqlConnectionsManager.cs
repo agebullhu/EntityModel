@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using ZeroTeam.MessageMVC;
 
 namespace Agebull.EntityModel.MySql
@@ -16,11 +17,11 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     /// 连接管理
     /// </summary>
-    internal class MySqlConnectionsManager : IFlowMiddleware
+    internal class MySqlConnectionsManager : IFlowMiddleware, IHealthCheck
     {
         #region IFlowMiddleware
         static ILogger logger;
-        string IZeroMiddleware.Name => nameof(MySqlConnectionsManager);
+        string IZeroDependency.Name => nameof(MySqlConnectionsManager);
 
         int IZeroMiddleware.Level => 0xFFFF;
 
@@ -46,6 +47,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         void IFlowMiddleware.Initialize()
         {
+
             IsManagement = true;
             InternalInitialize();
             ConfigurationManager.RegistOnChange("ConnectionStrings", CheckOption, false);
@@ -76,6 +78,7 @@ namespace Agebull.EntityModel.MySql
         internal static void InternalInitialize()
         {
             logger ??= DependencyHelper.LoggerFactory.CreateLogger<MySqlConnectionsManager>();
+            logger.LogInformation("[MySqlConnectionsManager.InternalInitialize]");
         }
         #endregion
 
@@ -276,30 +279,60 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-    }
+        #region IHealthCheck
 
-    internal class DataBaseInfo
-    {
-        internal string ConnectionString { get; set; }
+        async Task<HealthInfo> IHealthCheck.Check()
+        {
+            var info = new HealthInfo
+            {
+                ItemName = nameof(MySqlConnectionsManager),
+                Items = new List<HealthItem>()
+            };
 
-        internal ConcurrentDictionary<int, ConnectionInfo> ActiveConnections = new ConcurrentDictionary<int, ConnectionInfo>();
-    }
+            var values = ConfigurationManager.Get<Dictionary<string, string>>("ConnectionStrings");
+            foreach (var kv in values)
+            {
+                info.Items.Add(await ConnectionTest(kv.Key, kv.Value));
+            }
+            return info;
+        }
 
-    internal class ConnectionInfo
-    {
-        /// <summary>
-        /// 是否已关闭
-        /// </summary>
-        internal bool IsClose { get; set; }
+        private static async Task<HealthItem> ConnectionTest(string name, string constr)
+        {
+            HealthItem item = new HealthItem
+            {
+                ItemName = name
+            };
+            var connection = new MySqlConnection(constr);
+            DateTime start = DateTime.Now;
+            try
+            {
+                await connection.OpenAsync();
+                await connection.CloseAsync();
 
-        /// <summary>
-        /// 连接对象
-        /// </summary>
-        internal MySqlConnection Connection { get; set; }
+                item.Value = (DateTime.Now - start).TotalMilliseconds;
+                if (item.Value < 10)
+                    item.Level = 5;
+                else if (item.Value < 100)
+                    item.Level = 4;
+                else if (item.Value < 500)
+                    item.Level = 3;
+                else if (item.Value < 3000)
+                    item.Level = 2;
+                else item.Level = 1;
+            }
+            catch (Exception ex)
+            {
+                item.Level = -1;
+                item.Details = ex.Message;
+            }
+            finally
+            {
+                connection.Dispose();
+            }
+            return item;
+        }
 
-        /// <summary>
-        /// 开始时间
-        /// </summary>
-        internal DateTime DateTime { get; set; }
+        #endregion
     }
 }
