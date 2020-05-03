@@ -943,5 +943,10 @@ namespace Agebull.EntityModel.Common
         /// 重置状态
         /// </summary>
         bool ResetState(Expression<Func<TData, bool>> lambda);
+
+        /// <summary>
+        /// 修改状态
+        /// </summary>
+        bool SetState(DataStateType state, bool isFreeze, long id);
     }
 }

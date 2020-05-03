@@ -150,17 +150,15 @@ namespace Agebull.EntityModel.SqlServer
             entity.__status.RejectChanged();
             using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                if (!await reader.ReadAsync())
+                    return;
+                using (new EntityLoadScope(entity))
                 {
-                    if (!await reader.ReadAsync())
-                        return;
-                    using (new EntityLoadScope(entity))
-                    {
-                        if (DynamicLoadAction != null)
-                            DynamicLoadAction(reader, entity);
-                        else
-                            LoadEntity(reader, entity);
-                    }
+                    if (DynamicLoadAction != null)
+                        DynamicLoadAction(reader, entity);
+                    else
+                        LoadEntity(reader, entity);
                 }
             }
 

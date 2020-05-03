@@ -503,10 +503,8 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         protected int ExecuteInner(string sql, params DbParameter[] args)
         {
-            using (var cmd = CreateCommand(sql, args))
-            {
-                return cmd.ExecuteNonQuery();
-            }
+            using var cmd = CreateCommand(sql, args);
+            return cmd.ExecuteNonQuery();
         }
 
         /// <summary>

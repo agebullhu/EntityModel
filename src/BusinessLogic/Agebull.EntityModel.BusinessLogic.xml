@@ -54,6 +54,11 @@
             锁定
             </summary>
         </member>
+        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Unlock">
+            <summary>
+            解锁
+            </summary>
+        </member>
         <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Submit">
             <summary>
             提交
@@ -309,11 +314,6 @@
                 启用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Lock(System.Int64)">
-            <summary>
-                锁定对象
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPassInner(`0)">
             <summary>
                 审核通过
@@ -509,21 +509,6 @@
             <typeparam name="TData">数据对象</typeparam>
             <typeparam name="TAccess">数据访问对象</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Enable(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                启用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Disable(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                禁用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Lock(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                禁用对象
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.CanSave(`0,System.Boolean)">
             <summary>
                 是否可以执行保存操作
@@ -581,12 +566,6 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.ResetState(`0)">
-            <summary>
-                重置数据状态
-            </summary>
-            <param name="data"></param>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Reset(System.Int64)">
             <summary>
                 重置数据状态
@@ -608,12 +587,7 @@
                 弃用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Lock(System.Int64)">
-            <summary>
-                锁定对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetDataState(System.Int64,Agebull.EntityModel.Common.DataStateType,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Nullable{System.Boolean})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetDataState(System.Int64,Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 修改状态
             </summary>

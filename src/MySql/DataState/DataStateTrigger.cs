@@ -5,42 +5,23 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 
 namespace Agebull.EntityModel.MySql
 {
     /// <summary>
     /// 版本数据更新触发器
     /// </summary>
-    public class MySqlDataTrigger : IDataTrigger
+    internal class DataStateTrigger : IDataTrigger
     {
         /// <summary>
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => DataBaseType.MySql;
 
-        void IDataUpdateTrigger.ContitionSqlCode<TEntity>(List<string> conditions)
-        {
-            //if (GlobalContext.Current.IsSystemMode || GlobalContext.Current.User.UserId == LoginUserInfo.SystemUserId)
-            //    return;
-            //if (DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIOrganizationData))
-            //{
-            //    conditions.Add($"`organization_id` = {GlobalContext.Current.Organizational.OrgId}");
-            //}
-        }
-
-        void IDataUpdateTrigger.OnPrepareSave(EditDataObject entity, DataOperatorType operatorType)
-        {
-            //if (GlobalContext.Current.IsSystemMode || GlobalContext.Current.User.UserId == LoginUserInfo.SystemUserId)
-            //    return;
-            //if (entity is IOrganizationData organizationData)
-            //{
-            //    organizationData.OrganizationId = GlobalContext.Current.Organizational.OrgId;
-            //}
-        }
-
         void IDataUpdateTrigger.AfterUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
-            if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIHistoryData))
+            if (!DataUpdateHandler.IsType<TEntity>(DataUpdateHandler.TypeofIHistoryData))
                 return;
             var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
             code.Append($@"

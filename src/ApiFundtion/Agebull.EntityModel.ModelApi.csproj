@@ -31,7 +31,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>4.0.0.32-bata</Version>
+    <Version>4.0.0.54-beta</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -50,10 +50,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
     <DocumentationFile>Agebull.EntityModel.ModelApi.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="WebSeitch\AjaxResult.cs" />
-  </ItemGroup>
   
   <ItemGroup>
     <Folder Include="Properties\" />

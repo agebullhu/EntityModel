@@ -33,14 +33,15 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <param name="service">当前服务</param>
         /// <param name="message">当前消息</param>
+        /// <param name="exception"></param>
         /// <param name="tag">扩展信息</param>
         /// <returns></returns>
-        Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, object tag)
+        Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message,Exception exception, object tag)
         {
-            LogRecorder.Exception(message.RuntimeStatus.Exception);
-            LogRecorder.MonitorTrace(() => $"发生未处理异常.{message.RuntimeStatus.Exception.Message}");
+            LogRecorder.Exception(exception);
+            LogRecorder.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
-            CheckException(message, message.RuntimeStatus.Exception);
+            CheckException(message,exception);
 
             return Task.CompletedTask;
         }
@@ -50,25 +51,25 @@ namespace Agebull.MicroZero.ZeroApis
             switch (exception)
             {
                 case ArgumentException _:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.ArgumentError, $"参数错误.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.ArgumentError, $"参数错误.{exception.Message}");
                     break;
                 case DbException _:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.Ignore, $"数据库异常.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.Ignore, $"数据库异常.{exception.Message}");
                     break;
                 case NotSupportedException _:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.Ignore, $"不支持的方法.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.Ignore, $"不支持的方法.{exception.Message}");
                     break;
                 case NullReferenceException _:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.Ignore, $"空引用错误.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.Ignore, $"空引用错误.{exception.Message}");
                     break;
                 case SystemException _:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.Ignore, $"系统级错误.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.Ignore, $"系统级错误.{exception.Message}");
                     break;
                 case MessageBusinessException mbe:
                     CheckException(message, mbe.InnerException);
                     break;
                 default:
-                    message.ResultData = ApiResultHelper.Error(DefaultErrorCode.UnhandleException, $"未知错误.{exception.Message}");
+                    message.ResultData = ApiResultHelper.State(OperatorStatusCode.UnhandleException, $"未知错误.{exception.Message}");
                     break;
             }
         }

@@ -36,14 +36,14 @@ namespace Agebull.EntityModel.MySql
             field = FieldDictionary[field];
             if (value == null)
                 return $"`{field}` = NULL";
-            if (value is string || value is DateTime || value is byte[])
+            if (value is string || value is Guid || value is DateTime || value is byte[])
             {
                 var name = "v_" + field;
                 parameters.Add(CreateFieldParameter(name, GetDbType(field), value));
                 return $"`{field}` = ?{name}";
             }
-            if (value is bool)
-                value = (bool)value ? 1 : 0;
+            if (value is bool bl)
+                value = bl ? 1 : 0;
             else if (value is Enum)
                 value = Convert.ToInt32(value);
             return $"`{field}` = {value}";
@@ -58,6 +58,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
+            CheckUpdateContition(ref condition);
             return $@"{BeforeUpdateSql(condition)}
 UPDATE `{ContextWriteTable}` 
    SET {valueExpression} 
@@ -65,19 +66,15 @@ UPDATE `{ContextWriteTable}`
 {AfterUpdateSql(condition)}";
         }
 
-
         /// <summary>
-        ///     生成更新的SQL
+        ///     得到可正确更新的条件
         /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="value">值</param>
-        /// <param name="condition">条件</param>
-        /// <param name="parameters">参数列表</param>
-        /// <returns>更新的SQL</returns>
-        private string CreateUpdateSql(string field, object value, string condition, IList<DbParameter> parameters)
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        protected virtual void CheckUpdateContition(ref string condition)
         {
-            return CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
         }
+
         #endregion
 
         #region 载入
@@ -113,7 +110,7 @@ UPDATE `{ContextWriteTable}`
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
             ContitionSqlCode(conditions);
-            DataUpdateHandler.ContitionSqlCode<TData>(TableId, conditions); 
+            DataUpdateHandler.ContitionSqlCode(this, conditions);
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();

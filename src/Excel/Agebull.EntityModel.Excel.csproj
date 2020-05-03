@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.0.0.32-bata</Version>
+    <Version>4.0.0.54-beta</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>

@@ -62,14 +62,12 @@ namespace Agebull.EntityModel.SqlServer
             var results = new List<T>();
             using (var cmd = DataBase.CreateCommand(code.ToString(), convert.Parameters))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        var t = new T();
-                        readAction(reader, t);
-                        results.Add(t);
-                    }
+                    var t = new T();
+                    readAction(reader, t);
+                    results.Add(t);
                 }
             }
             return results;
@@ -918,11 +916,9 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreatePageSql(page, limit, order, desc, condition);
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                        results.Add(LoadEntity(reader));
-                }
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                    results.Add(LoadEntity(reader));
             }
 
             for (var index = 0; index < results.Count; index++)
@@ -1106,17 +1102,13 @@ namespace Agebull.EntityModel.SqlServer
             var values = new List<TField>();
 
             {
-                using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
+                using var cmd = DataBase.CreateCommand(sql, convert.Parameters);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var vl = reader.GetValue(0);
-                            if (vl != DBNull.Value && vl != null)
-                                values.Add((TField)vl);
-                        }
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add((TField)vl);
                 }
             }
             return values;
@@ -1181,14 +1173,12 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add(vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add(vl);
                 }
             }
 
@@ -1516,17 +1506,15 @@ namespace Agebull.EntityModel.SqlServer
             entity.__status.RejectChanged();
             using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                if (!reader.Read())
+                    return;
+                using (new EntityLoadScope(entity))
                 {
-                    if (!reader.Read())
-                        return;
-                    using (new EntityLoadScope(entity))
-                    {
-                        if (DynamicLoadAction != null)
-                            DynamicLoadAction(reader, entity);
-                        else
-                            LoadEntity(reader, entity);
-                    }
+                    if (DynamicLoadAction != null)
+                        DynamicLoadAction(reader, entity);
+                    else
+                        LoadEntity(reader, entity);
                 }
             }
             var entity2 = EntityLoaded(entity);
@@ -1551,11 +1539,9 @@ namespace Agebull.EntityModel.SqlServer
             TData entity = null;
             using (var cmd = CreateOnceCommand(condition, KeyField, true, args))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                        entity = LoadEntity(reader);
-                }
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                    entity = LoadEntity(reader);
             }
 
             if (entity != null)
@@ -1580,11 +1566,9 @@ namespace Agebull.EntityModel.SqlServer
             TData entity = null;
             using (var cmd = CreateOnceCommand(condition, KeyField, false, args))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                        entity = LoadEntity(reader);
-                }
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                    entity = LoadEntity(reader);
             }
 
             if (entity != null)
@@ -1617,12 +1601,10 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = CreateLoadCommand(condition, orderBy, args))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1640,12 +1622,10 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1664,12 +1644,10 @@ namespace Agebull.EntityModel.SqlServer
             using (var cmd = DataBase.CreateCommand(procedure, args))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                using (var reader = cmd.ExecuteReader())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 

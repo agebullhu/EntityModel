@@ -714,16 +714,16 @@ namespace Agebull.EntityModel.MySql
         {
             field = FieldDictionary[field];
 
-            var arg2 = new List<DbParameter>();
-            if (args != null)
-                arg2.AddRange(args);
-            var sql = CreateUpdateSql(field, value, condition, arg2);
+            var parameters = new List<DbParameter>();
+            if (parameters != null)
+                parameters.AddRange(args);
+            var sql = CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
 
             int result;
             //await using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, args, DataOperatorType.Update);
-                result = DataBase.Execute(sql, arg2.ToArray());
+                result = DataBase.Execute(sql, parameters.ToArray());
                 if (result <= 0)
                     return 0;
                 OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
@@ -800,7 +800,7 @@ namespace Agebull.EntityModel.MySql
         {
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
-            DataUpdateHandler.BeforeUpdateSql(this, code, TableId, condition);
+            DataUpdateHandler.BeforeUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -813,7 +813,7 @@ namespace Agebull.EntityModel.MySql
         {
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
-            DataUpdateHandler.AfterUpdateSql(this, code, TableId, condition);
+            DataUpdateHandler.AfterUpdateSql(this, code,condition);
             return code.ToString();
         }
 
@@ -917,7 +917,7 @@ namespace Agebull.EntityModel.MySql
         {
             var sqlParameters = args as DbParameter[] ?? args.ToArray();
             OnOperatorExecuting(operatorType, condition, sqlParameters);
-            DataUpdateHandler.OnOperatorExecuting(TableId, condition, sqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecuting(this, condition, sqlParameters, operatorType);
         }
 
         /// <summary>
@@ -930,7 +930,7 @@ namespace Agebull.EntityModel.MySql
         {
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             OnOperatorExecuted(operatorType, condition, mySqlParameters);
-            DataUpdateHandler.OnOperatorExecuted(TableId, condition, mySqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecuted(this, condition, mySqlParameters, operatorType);
         }
 
         #endregion

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
+﻿using System.Text;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using Agebull.EntityModel.Interfaces;
 
 namespace Agebull.EntityModel.Redis
@@ -12,47 +11,15 @@ namespace Agebull.EntityModel.Redis
     /// </summary>
     public class RedisDataTrigger : IDataTrigger
     {
-        void IDataUpdateTrigger.OnDataSaved(EditDataObject entity, DataOperatorType operatorType)
-        {
-
-        }
-
-        void IDataUpdateTrigger.OnOperatorExecuted(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
-        {
-
-        }
-
-        void IDataUpdateTrigger.OnOperatorExecuting(int entityId, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
-        {
-
-        }
-
-        void IDataUpdateTrigger.ContitionSqlCode<TEntity>(List<string> conditions)
-        {
-        }
-
-        void IDataUpdateTrigger.OnPrepareSave(EditDataObject entity, DataOperatorType operatorType)
-        {
-        }
-
-        void IDataTrigger.InitType<TEntity>()
-        {
-        }
-
         /// <summary>
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => DataBaseType.Full;
 
-        void IDataUpdateTrigger.BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
-        {
-        }
-
         void IDataUpdateTrigger.AfterUpdateSql<TEntity>(IDataTable<TEntity> table, string condition, StringBuilder code)
         {
-            if (!DefaultDataUpdateTrigger.IsType<TEntity>(DefaultDataUpdateTrigger.TypeofIVersionData))
+            if (!DataUpdateHandler.IsType<TEntity>(DataUpdateHandler.TypeofIVersionData))
                 return;
-
             long ver;
             using (RedisProxy proxy = new RedisProxy(RedisProxy.Option.DbSystem))
             {

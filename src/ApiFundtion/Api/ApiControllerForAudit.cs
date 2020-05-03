@@ -34,64 +34,60 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     审核不通过
         /// </summary>
-
         [Route("audit/deny")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult AuditDeny(IdsArguent arg)
         {
 
             OnAuditDeny();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
         /// <summary>
         ///     拉回已提交的审核
         /// </summary>
-
         [Route("audit/pullback")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Pullback(IdsArguent arg)
         {
 
             OnPullback();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
         /// <summary>
         ///     提交审核
         /// </summary>
-
         [Route("audit/submit")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult SubmitAudit(IdsArguent arg)
         {
 
             OnSubmitAudit();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
         /// <summary>
         ///     校验审核数据
         /// </summary>
-
         [Route("audit/validate")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Validate(IdsArguent arg)
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 return ApiResultHelper.Helper.ArgumentError;
             }
 
             DoValidate(ids);
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -99,29 +95,27 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     审核通过
         /// </summary>
-
         [Route("audit/pass")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult AuditPass(IdsArguent arg)
         {
 
             OnAuditPass();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
         /// <summary>
         ///     重新审核
         /// </summary>
-
         [Route("audit/redo")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult UnAudit(IdsArguent arg)
         {
             OnUnAudit();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -130,13 +124,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
 
         [Route("audit/back")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult BackAudit(IdsArguent arg)
         {
 
             OnBackAudit();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -149,7 +143,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected virtual void OnSubmitAudit()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -157,7 +151,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (!DoValidate(ids))
                 return;
             if (!Business.Submit(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
 
         }
 
@@ -166,13 +160,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnBackAudit()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!Business.Back(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -180,13 +174,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnUnAudit()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!Business.UnAudit(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -194,19 +188,19 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected virtual void OnAuditPass()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!DoValidate(ids))
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
                 return;
             }
             var result = Business.AuditPass(ids);
             if (!result)
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         private bool DoValidate(IEnumerable<long> ids)
@@ -226,13 +220,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnPullback()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!Business.Pullback(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -240,13 +234,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnAuditDeny()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!Business.AuditDeny(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
         #endregion
 
@@ -257,7 +251,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            if (!TryGet("_audit_", out int audit) || audit == 0x100 || audit < 0)
+            if (!RequestArgumentConvert.TryGet("_audit_", out int audit) || audit == 0x100 || audit < 0)
                 return base.GetListData(lambda);
 
             if (audit <= (int)AuditStateType.End)
@@ -270,10 +264,10 @@ namespace Agebull.MicroZero.ZeroApis
             {
                 case 0x10: //废弃
                 case 0xFF: //删除
-                    SetArg("dataState", audit);
+                    RequestArgumentConvert.SetArgument("_state_", audit);
                     break;
                 case 0x13: //停用
-                    SetArg("dataState", (int)DataStateType.Disable);
+                    RequestArgumentConvert.SetArgument("_state_", (int)DataStateType.Disable);
                     break;
                 case 0x11: //未审核
                     lambda.AddRoot(p => p.AuditState <= AuditStateType.Again);

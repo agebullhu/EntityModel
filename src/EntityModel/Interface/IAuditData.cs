@@ -69,7 +69,7 @@ namespace Agebull.EntityModel.Common
         None,
 
         /// <summary>
-        ///     反审核
+        ///     重新处理
         /// </summary>
         Again,
 
@@ -95,7 +95,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 不正确的状态
         /// </summary>
-        Error
+        State
     }
     /// <summary>
     /// 审核状态扩展类
@@ -117,10 +117,10 @@ namespace Agebull.EntityModel.Common
                     return "已否决";
                 case AuditStateType.Pass:
                     return "已通过";
-                case AuditStateType.Again:
-                    return "反审核";
                 case AuditStateType.End:
-                    return "结束";
+                    return "终审通过";
+                case AuditStateType.Again:
+                    return "重新处理";
                 case AuditStateType.None:
                     return "草稿";
                 default:

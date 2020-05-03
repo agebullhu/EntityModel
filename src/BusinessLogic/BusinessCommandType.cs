@@ -42,6 +42,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         Lock,
         /// <summary>
+        /// Ω‚À¯
+        /// </summary>
+        Unlock,
+        /// <summary>
         /// Ã·Ωª
         /// </summary>
         Submit,

@@ -744,12 +744,10 @@ namespace Agebull.EntityModel.SqlServer
             var sql = CreatePageSql(page, limit, order, desc, condition);
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = (SqlDataReader)(await cmd.ExecuteReaderAsync()))
+                using var reader = (SqlDataReader)(await cmd.ExecuteReaderAsync());
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -934,14 +932,12 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, convert.Parameters))
             {
-                using (var reader = await cmd.ExecuteReaderAsync())
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add((TField)vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add((TField)vl);
                 }
             }
 
@@ -1006,14 +1002,12 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = DataBase.CreateCommand(sql, args))
             {
-                using (var reader = await cmd.ExecuteReaderAsync())
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        var vl = reader.GetValue(0);
-                        if (vl != DBNull.Value && vl != null)
-                            values.Add(vl);
-                    }
+                    var vl = reader.GetValue(0);
+                    if (vl != DBNull.Value && vl != null)
+                        values.Add(vl);
                 }
             }
 
@@ -1302,11 +1296,9 @@ namespace Agebull.EntityModel.SqlServer
             TData entity = null;
             using (var cmd = CreateLoadCommand(condition, args))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (await reader.ReadAsync())
-                        entity = LoadEntity(reader);
-                }
+                using var reader = cmd.ExecuteReader();
+                while (await reader.ReadAsync())
+                    entity = LoadEntity(reader);
             }
 
             if (entity != null)
@@ -1332,11 +1324,9 @@ namespace Agebull.EntityModel.SqlServer
 
             using (var cmd = CreateLoadCommand(KeyField, true, condition, args))
             {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (await reader.ReadAsync())
-                        entity = LoadEntity(reader);
-                }
+                using var reader = cmd.ExecuteReader();
+                while (await reader.ReadAsync())
+                    entity = LoadEntity(reader);
             }
 
             if (entity != null)
@@ -1370,11 +1360,9 @@ namespace Agebull.EntityModel.SqlServer
             {
                 using (var cmd = CreateLoadCommand(condition, orderBy, args))
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (await reader.ReadAsync())
-                            results.Add(LoadEntity(reader));
-                    }
+                    using var reader = cmd.ExecuteReader();
+                    while (await reader.ReadAsync())
+                        results.Add(LoadEntity(reader));
                 }
                 for (var index = 0; index < results.Count; index++)
                     results[index] = EntityLoaded(results[index]);
@@ -1393,12 +1381,10 @@ namespace Agebull.EntityModel.SqlServer
             {
                 var task = cmd.ExecuteReaderAsync();
                 task.Wait();
-                using (var reader = (SqlDataReader)task.Result)
+                using var reader = (SqlDataReader)task.Result;
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 
@@ -1417,12 +1403,10 @@ namespace Agebull.EntityModel.SqlServer
             using (var cmd = DataBase.CreateCommand(procedure, args))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                using (var reader = await cmd.ExecuteReaderAsync())
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        results.Add(LoadEntity(reader));
-                    }
+                    results.Add(LoadEntity(reader));
                 }
             }
 

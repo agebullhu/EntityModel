@@ -791,7 +791,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
-            DataUpdateHandler.BeforeUpdateSql(this, code, TableId, condition);
+            DataUpdateHandler.BeforeUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -804,7 +804,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
-            DataUpdateHandler.AfterUpdateSql(this, code, TableId, condition);
+            DataUpdateHandler.AfterUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -908,7 +908,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var sqlParameters = args as DbParameter[] ?? args.ToArray();
             OnOperatorExecuting(operatorType, condition, sqlParameters);
-            DataUpdateHandler.OnOperatorExecuting(TableId, condition, sqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecuting(this, condition, sqlParameters, operatorType);
         }
 
         /// <summary>
@@ -921,7 +921,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var mySqlParameters = args as DbParameter[] ?? args.ToArray();
             OnOperatorExecuted(operatorType, condition, mySqlParameters);
-            DataUpdateHandler.OnOperatorExecuted(TableId, condition, mySqlParameters, operatorType);
+            DataUpdateHandler.OnOperatorExecuted(this, condition, mySqlParameters, operatorType);
         }
 
         #endregion

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using Agebull.EntityModel.Common;
 using MySql.Data.MySqlClient;
@@ -280,7 +281,7 @@ namespace Agebull.EntityModel.MySql
             {
                 //scope.SetState();
             }
-            
+
             return await SaveInnerAsync(entity);
         }
 
@@ -665,14 +666,14 @@ namespace Agebull.EntityModel.MySql
         {
             field = FieldDictionary[field];
 
-            var arg2 = new List<DbParameter>();
+            var parameters = new List<DbParameter>();
             if (args != null)
-                arg2.AddRange(args);
-            var sql = CreateUpdateSql(field, value, condition, arg2);
+                parameters.AddRange(args);
+            var sql = CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
 
             int result;
             OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, arg2.ToArray());
+            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
             if (result <= 0)
                 return 0;
             OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
@@ -730,6 +731,63 @@ namespace Agebull.EntityModel.MySql
             return result;
         }
 
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段与值组合</param>
+        /// <param name="condition">条件</param>
+        /// <returns>更新行数</returns>
+        public async Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
+        {
+            return await SetValueAsync(condition, null, fields);
+        }
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段与值组合</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        public async Task<int> SetValueAsync(Expression<Func<TData, bool>> lambda, params (string field, object value)[] fields)
+        {
+            var convert = Compile(lambda);
+            return await SetValueAsync(convert.ConditionSql, convert.Parameters, fields);
+        }
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段</param>
+        /// <param name="condition">更新条件</param>
+        /// <param name="args">条件参数</param>
+        /// <returns>更新行数</returns>
+        public async Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
+        {
+            var parameters = new List<DbParameter>();
+            if (args != null)
+                parameters.AddRange(args);
+            bool first = true;
+            var code = new StringBuilder();
+            foreach (var field in fields)
+            {
+                if (first)
+                    first = false;
+                else
+                    code.AppendLine(",");
+                code.Append(FileUpdateSql(FieldDictionary[field.field], field.value, parameters));
+            }
+
+            var sql = CreateUpdateSql(code.ToString(), condition);
+
+            int result;
+            OnOperatorExecuting(condition, args, DataOperatorType.Update);
+            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
+            if (result <= 0)
+                return 0;
+            OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+            return result;
+        }
         #endregion
 
         #region 批量操作

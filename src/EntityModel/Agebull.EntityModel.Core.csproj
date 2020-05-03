@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>4.0.0.32-bata</Version>
+    <Version>4.0.0.54-beta</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -58,6 +58,8 @@
     <Compile Remove="Entity\ApiFileResult.cs" />
     <Compile Remove="Entity\ApiValueResult.cs" />
     <Compile Remove="Helper\EditScope.cs" />
+    <Compile Remove="Permissions\IPowerChecker.cs" />
+    <Compile Remove="Permissions\IRolePower.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="Status\EditArrestMode.cs" />
   </ItemGroup>
@@ -90,6 +92,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.54-bate" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.0.79-beta" />
   </ItemGroup>
 </Project>

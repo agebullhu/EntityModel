@@ -34,25 +34,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     重置数据状态
         /// </summary>
         [Route("state/reset")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Reset(IdsArguent arg)
         {
             OnReset();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
-                    : ApiResultHelper.Succees();
-        }
-
-        /// <summary>
-        ///     锁定数据
-        /// </summary>
-        [Route("state/lock")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
-        public IApiResult Lock(IdsArguent arg)
-        {
-            OnLock();
-            return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -60,12 +47,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     废弃数据
         /// </summary>
         [Route("state/discard")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Discard(IdsArguent arg)
         {
             OnDiscard();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -73,12 +60,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     禁用数据
         /// </summary>
         [Route("state/disable")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Disable(IdsArguent arg)
         {
             OnDisable();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -86,12 +73,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     启用数据
         /// </summary>
         [Route("state/enable")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Enable(IdsArguent arg)
         {
             OnEnable();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -107,13 +94,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field"></param>
         protected override void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            if (!TryGetValue(name, out var no))
+            if (!RequestArgumentConvert.TryGet(name, out string no))
             {
                 SetFailed(name + "为空");
                 return;
             }
 
-            var id = GetIntArg("id", 0);
+            var id = RequestArgumentConvert.GetInt("id", 0);
             Expression<Func<TData, bool>> condition;
             if (id == 0)
                 condition = p => p.DataState < DataStateType.Delete;
@@ -130,33 +117,18 @@ namespace Agebull.MicroZero.ZeroApis
         #region 操作
 
         /// <summary>
-        ///     锁定对象
-        /// </summary>
-        protected virtual void OnLock()
-        {
-            if (!TryGet("selects", out long[] ids))
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!Business.LoopIds(ids, Business.Lock))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
-        }
-
-        /// <summary>
         ///     恢复对象
         /// </summary>
         private void OnReset()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
 
             if (!Business.LoopIds(ids, Business.Reset))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -164,14 +136,14 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnDiscard()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
 
             if (!Business.LoopIds(ids, Business.Discard))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -179,14 +151,14 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnEnable()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
 
             if (!Business.LoopIds(ids, Business.Enable))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -194,14 +166,14 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnDisable()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
 
             if (!Business.LoopIds(ids, Business.Disable))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         #endregion
@@ -213,7 +185,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            if (!TryGet("_state_", out int state) || state < 0 || state >= 0x100)
+            if (!RequestArgumentConvert.TryGet("_state_", out int state) || state < 0 || state >= 0x100)
                 return base.GetListData(lambda);
             //BUG:using (ManageModeScope.CreateScope())
             {

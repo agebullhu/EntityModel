@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
+using ZeroTeam.MessageMVC.Context;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
@@ -28,35 +30,6 @@ namespace Agebull.EntityModel.BusinessLogic
         where TData : EditDataObject, IIdentityData, IStateData, new()
         where TAccess : class, IStateDataTable<TData>, new()
     {
-        #region 批量操作
-
-
-        /// <summary>
-        ///     启用对象
-        /// </summary>
-        public bool Enable(IEnumerable<long> sels)
-        {
-            return DoByIds(sels, Enable);
-        }
-
-        /// <summary>
-        ///     禁用对象
-        /// </summary>
-        public bool Disable(IEnumerable<long> sels)
-        {
-            return DoByIds(sels, Disable);
-        }
-
-        /// <summary>
-        ///     禁用对象
-        /// </summary>
-        public bool Lock(IEnumerable<long> sels)
-        {
-            return DoByIds(sels, Lock);
-        }
-
-        #endregion
-
         #region 数据状态逻辑
 
         /// <summary>
@@ -67,7 +40,13 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected override bool CanSave(TData data, bool isAdd)
         {
-            return !data.IsFreeze && data.DataState < DataStateType.Discard && base.CanSave(data, isAdd);
+            if (!base.CanSave(data, isAdd))
+                return false;
+            if (!data.IsFreeze)
+                return true;
+            GlobalContext.Current.Status.LastMessage = "数据已锁定";
+            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            return false;
         }
 
         /// <summary>
@@ -75,9 +54,11 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected override bool PrepareDelete(long id)
         {
-            if (Access.Any(p => p.Id == id && p.IsFreeze))
-                return false;
-            return base.PrepareDelete(id);
+            if (Access.Any(p => p.Id == id && !p.IsFreeze))
+                return base.PrepareDelete(id);
+            GlobalContext.Current.Status.LastMessage = "数据已锁定";
+            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            return false;
         }
 
         /// <summary>
@@ -129,8 +110,16 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!unityStateChanged)
                 return;
-            OnInnerCommand(data, cmd);
-            DoStateChanged(data);
+            GlobalContext.Current.Status.IsManageMode = true;
+            try
+            {
+                OnInnerCommand(data, cmd);
+                DoStateChanged(data);
+            }
+            finally
+            {
+                GlobalContext.Current.Status.IsManageMode = false;
+            }
         }
 
         /// <summary>
@@ -163,42 +152,13 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     重置数据状态
         /// </summary>
-        /// <param name="data"></param>
-        public bool ResetState(TData data)
-        {
-            if (data == null)
-                return false;
-            using var scope = TransactionScope.CreateScope(Access.DataBase);
-            {
-                //if (!DoResetState(data))
-                //    return false;
-
-                data.DataState = DataStateType.None;
-                data.IsFreeze = false;
-                Access.ResetState(data.Id);
-                OnStateChanged(data, BusinessCommandType.Reset);
-                return scope.Succeed();
-            }
-        }
-
-        ///// <summary>
-        /////     重置数据状态
-        ///// </summary>
-        ///// <param name="data"></param>
-        //protected virtual bool DoResetState(TData data)
-        //{
-        //    data.DataState = DataStateType.None;
-        //    data.IsFreeze = false;
-        //    return true;
-        //}
-
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
         /// <param name="id"></param>
         public virtual bool Reset(long id)
         {
-            return SetDataState(id, DataStateType.None, null, false);
+            if (!Access.ResetState(id))
+                return false;
+            OnStateChanged(id, BusinessCommandType.SetState);
+            return true;
         }
 
         /// <summary>
@@ -206,8 +166,8 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual bool Enable(long id)
         {
-            return SetDataState(id, DataStateType.Enable,
-                p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None), true);
+            return SetDataState(id, DataStateType.Enable, true,
+                p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
@@ -215,8 +175,8 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual bool Disable(long id)
         {
-            return SetDataState(id, DataStateType.Disable, p => p.Id == id && p.DataState == DataStateType.Enable,
-                true);
+            return SetDataState(id, DataStateType.Disable, true,
+                p => p.Id == id && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
@@ -224,44 +184,24 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual bool Discard(long id)
         {
-            return SetDataState(id, DataStateType.Discard, p => p.Id == id && p.DataState == DataStateType.None, true);
-        }
-
-        /// <summary>
-        ///     锁定对象
-        /// </summary>
-        public virtual bool Lock(long id)
-        {
-            if (!Access.Any(p => p.Id == id && p.DataState < DataStateType.Discard && !p.IsFreeze))
-                return false;
-            using var scope = TransactionScope.CreateScope(Access.DataBase);
-            {
-                Access.SetValue(p => p.IsFreeze, true, id);
-                Access.SetValue(p => p.DataState, DataStateType.Disable,
-                    p => p.Id == id && p.DataState == DataStateType.None);
-
-                OnStateChanged(id, BusinessCommandType.Lock);
-                return scope.Succeed();
-            }
+            return SetDataState(id, DataStateType.Discard, true, p => p.Id == id && p.DataState == DataStateType.None);
         }
 
         /// <summary>
         ///     修改状态
         /// </summary>
-        protected bool SetDataState(long id, DataStateType state, Expression<Func<TData, bool>> filter, bool? setFreeze)
+        protected bool SetDataState(long id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
         {
             if (filter != null && !Access.Any(filter))
                 return false;
             if (filter == null && !Access.ExistPrimaryKey(id))
                 return false;
+            Access.SetState(state, isFreeze, id);
             using var scope = TransactionScope.CreateScope(Access.DataBase);
-            {
-                Access.SetValue(p => p.DataState, state, id);
-                if (setFreeze != null)
-                    Access.SetValue(p => p.IsFreeze, setFreeze.Value, id);
-                OnStateChanged(id, BusinessCommandType.SetState);
-                return scope.Succeed();
-            }
+            Access.SetValue(p => p.IsFreeze, isFreeze, id);
+            Access.SetValue(p => p.DataState, state, id);
+            OnStateChanged(id, BusinessCommandType.SetState);
+            return scope.Succeed();
         }
 
         #endregion

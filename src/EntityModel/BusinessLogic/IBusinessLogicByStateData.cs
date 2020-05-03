@@ -23,33 +23,7 @@ namespace Agebull.EntityModel.BusinessLogic
         : IUiBusinessLogicBase<TData>
         where TData : EditDataObject, IIdentityData,IStateData, new()
     {
-        #region 批量操作
-
-
-        /// <summary>
-        ///     启用对象
-        /// </summary>
-        bool Enable(IEnumerable<long> sels);
-
-        /// <summary>
-        ///     禁用对象
-        /// </summary>
-        bool Disable(IEnumerable<long> sels);
-
-        /// <summary>
-        ///     禁用对象
-        /// </summary>
-        bool Lock(IEnumerable<long> sels);
-        #endregion
-
         #region 状态处理
-
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
-        /// <param name="data"></param>
-        bool ResetState(TData data);
-
 
         /// <summary>
         ///     重置数据状态
@@ -71,11 +45,6 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     弃用对象
         /// </summary>
         bool Discard(long id);
-
-        /// <summary>
-        ///     锁定对象
-        /// </summary>
-        bool Lock(long id);
 
         #endregion
     }

@@ -16,7 +16,7 @@
                 删除的SQL语句
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.DataStateTable`2.ResetStateFileSqlCode">
+        <member name="M:Agebull.EntityModel.MySql.DataStateTable`2.ResetStateFileSqlCode(System.Int32,System.Int32)">
             <summary>
                 重置状态的SQL语句
             </summary>
@@ -28,6 +28,18 @@
             <param name="conditions"></param>
             <returns></returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.DataStateTable`2.CheckUpdateContition(System.String@)">
+            <summary>
+                得到可正确更新的条件
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.DataStateTable`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Int64)">
+            <summary>
+            修改状态
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.DataStateTable`2.ResetState(System.Int64)">
             <summary>
             重置状态
@@ -38,12 +50,12 @@
             重置状态
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.MySql.MySqlDataTrigger">
+        <member name="T:Agebull.EntityModel.MySql.DataStateTrigger">
             <summary>
             版本数据更新触发器
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlDataTrigger.DataBaseType">
+        <member name="P:Agebull.EntityModel.MySql.DataStateTrigger.DataBaseType">
             <summary>
             数据库类型
             </summary>
@@ -56,11 +68,6 @@
         <member name="M:Agebull.EntityModel.MySql.AutoRegister.ZeroTeam#MessageMVC#AddIn#IAutoRegister#AutoRegist(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             注册
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.AutoRegister.ZeroTeam#MessageMVC#AddIn#IAutoRegister#Initialize">
-            <summary>
-            初始化
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.MySql.ConnectionInfo.IsClose">
@@ -108,12 +115,12 @@
             是否在控制中
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#IFlowMiddleware#End">
+        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#ILifeFlow#Destory">
             <summary>
                 初始化
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#IFlowMiddleware#Initialize">
+        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#ILifeFlow#Initialize">
             <summary>
                 初始化
             </summary>
@@ -1409,6 +1416,31 @@
             <param name="expression">更新SQL表达式</param>
             <param name="condition">条件</param>
             <param name="args">参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.SetValueAsync(System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段与值组合</param>
+            <param name="condition">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.SetValueAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段与值组合</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.SetValueAsync(System.String,System.Data.Common.DbParameter[],System.Collections.Generic.IEnumerable{System.ValueTuple{System.String,System.Object}})">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
             <returns>更新行数</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.InsertAsync(Agebull.EntityModel.Common.DbOperatorContext{MySql.Data.MySqlClient.MySqlCommand},`0)">
@@ -3287,15 +3319,12 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.CreateUpdateSql(System.String,System.Object,System.String,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.CheckUpdateContition(System.String@)">
             <summary>
-                生成更新的SQL
+                得到可正确更新的条件
             </summary>
-            <param name="field">字段</param>
-            <param name="value">值</param>
-            <param name="condition">条件</param>
-            <param name="parameters">参数列表</param>
-            <returns>更新的SQL</returns>
+            <param name="condition"></param>
+            <returns></returns>
         </member>
         <member name="F:Agebull.EntityModel.MySql.MySqlTable`2._baseConditionInited">
             <summary>

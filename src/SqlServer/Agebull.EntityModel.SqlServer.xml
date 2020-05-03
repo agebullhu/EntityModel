@@ -16,7 +16,7 @@
                 删除的SQL语句
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.SqlServer.DataStateTable`2.ResetStateFileSqlCode">
+        <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.ResetStateFileSqlCode(System.Int32,System.Int32)">
             <summary>
                 重置状态的SQL语句
             </summary>
@@ -28,6 +28,18 @@
             <param name="conditions"></param>
             <returns></returns>
         </member>
+        <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.CheckUpdateContition(System.String@)">
+            <summary>
+                得到可正确更新的条件
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Int64)">
+            <summary>
+            修改状态
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.ResetState(System.Int64)">
             <summary>
             重置状态
@@ -38,12 +50,12 @@
             重置状态
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.SqlServer.SqlServerDataTrigger">
+        <member name="T:Agebull.EntityModel.SqlServer.DataStateTrigger">
             <summary>
             版本数据更新触发器
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.SqlServer.SqlServerDataTrigger.DataBaseType">
+        <member name="P:Agebull.EntityModel.SqlServer.DataStateTrigger.DataBaseType">
             <summary>
             数据库类型
             </summary>
@@ -2854,6 +2866,13 @@
             <param name="value">值</param>
             <param name="parameters">参数列表</param>
             <returns>单个字段更新的SQL</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.CheckUpdateContition(System.String@)">
+            <summary>
+                得到可正确更新的条件
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
         </member>
         <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.CreateUpdateSql(System.String,System.String)">
             <summary>

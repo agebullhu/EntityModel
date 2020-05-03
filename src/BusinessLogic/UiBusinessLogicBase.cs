@@ -207,7 +207,11 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual bool CanSave(TData data, bool isAdd)
         {
-            return isAdd || data.__status.IsModified;
+            if (isAdd || data.__status.IsModified)
+                return true;
+            GlobalContext.Current.Status.LastMessage = "数据未修改";
+            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            return false;
         }
 
         /// <summary>

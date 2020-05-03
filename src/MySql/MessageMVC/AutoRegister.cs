@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using ZeroTeam.MessageMVC;
 using ZeroTeam.MessageMVC.AddIn;
 
@@ -15,17 +16,12 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 注册
         /// </summary>
-        void IAutoRegister.AutoRegist(IServiceCollection services)
+        Task IAutoRegister.AutoRegist(IServiceCollection services)
         {
             services.AddSingleton<IFlowMiddleware, MySqlConnectionsManager>();
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        void IAutoRegister.Initialize()
-        {
-        }
     }
 
 }

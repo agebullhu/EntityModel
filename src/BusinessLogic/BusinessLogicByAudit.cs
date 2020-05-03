@@ -258,7 +258,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
                 return false;
-            return ResetState(Access.LoadByPrimaryKey(id));
+            return base.Reset(id);
         }
 
 
@@ -288,16 +288,6 @@ namespace Agebull.EntityModel.BusinessLogic
             if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
                 return false;
             return base.Enable(id);
-        }
-
-        /// <summary>
-        ///     Ëø¶¨¶ÔÏó
-        /// </summary>
-        public override bool Lock(long id)
-        {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
-                return false;
-            return base.Lock(id);
         }
 
         #endregion

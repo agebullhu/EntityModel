@@ -152,10 +152,8 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            using (var cmd = CreateCommand(sql, args))
-            {
-                return await cmd.ExecuteNonQueryAsync();
-            }
+            using var cmd = CreateCommand(sql, args);
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>

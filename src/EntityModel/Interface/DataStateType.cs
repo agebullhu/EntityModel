@@ -67,6 +67,6 @@
         /// <remarks>
         ///  用于框架内部,调用者可忽略
         /// </remarks>
-        Error = 0x101
+        State = 0x101
     }
 }

@@ -6,10 +6,9 @@ using System.Linq.Expressions;
 using ZeroTeam.MessageMVC.Context;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.BusinessLogic;
-using Agebull.MicroZero.WebApi;
 using ZeroTeam.MessageMVC.ZeroApis;
-using ApiFileResult = ZeroTeam.MessageMVC.ZeroApis.IApiResult<(string name, string mime, byte[] bytes)>;
 
+#pragma warning disable IDE0060 // 删除未使用的参数
 namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
@@ -29,13 +28,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field"></param>
         protected virtual void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            if (!TryGetValue("No", out var no))
+            if (!RequestArgumentConvert.TryGet("No", out string no))
             {
                 SetFailed(name + "为空");
                 return;
             }
 
-            var id = GetIntArg("id", 0);
+            var id = RequestArgumentConvert.GetInt("id", 0);
             var result = id == 0
                 ? Business.Access.IsUnique(field, no)
                 : Business.Access.IsUnique(field, no, id);
@@ -72,7 +71,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </remarks>
         /// <returns></returns>
         [Route("edit/list")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
         public IApiResult<ApiPageData<TData>> List(QueryArgument args)
         {
             IDisposable scope = null;
@@ -88,7 +87,7 @@ namespace Agebull.MicroZero.ZeroApis
                 var data = GetListData(filter);
                 GlobalContext.Current.Status.Feature = 0;
                 return IsFailed
-                    ? ApiResultHelper.Error<ApiPageData<TData>>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<ApiPageData<TData>>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees(data);
             }
             finally
@@ -102,7 +101,7 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条数据查询
         /// </summary>
         [Route("edit/first")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
         public IApiResult<TData> QueryFirst(TData arguent)
         {
             IDisposable scope = null;
@@ -119,7 +118,7 @@ namespace Agebull.MicroZero.ZeroApis
                 }
                 GlobalContext.Current.Status.Feature = 0;
                 return IsFailed
-                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees(data);
             }
             finally
@@ -132,14 +131,14 @@ namespace Agebull.MicroZero.ZeroApis
         ///     单条详细数据
         /// </summary>
         [Route("edit/details")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
         public IApiResult<TData> Details(IdArguent arguent)
         {
-            if (!TryGetId<TData>(out long id))
-                return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
+            if (!RequestArgumentConvert.TryGetId<TData>(out long id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoDetails(id);
             return IsFailed
-                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees(data);
         }
 
@@ -147,12 +146,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     新增数据
         /// </summary>
         [Route("edit/addnew")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult<TData> AddNew(TData arg)
         {
             var data = DoAddNew();
             return IsFailed
-                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees(data);
         }
 
@@ -160,14 +159,14 @@ namespace Agebull.MicroZero.ZeroApis
         ///     更新数据
         /// </summary>
         [Route("edit/update")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult<TData> Update(TData arg)
         {
-            if (!TryGetId<TData>(out long id))
-                return ApiResultHelper.Error<TData>(DefaultErrorCode.ArgumentError, "参数[id]不是有效的数字");
+            if (!RequestArgumentConvert.TryGetId<TData>(out long id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的数字");
             var data = DoUpdate(id);
             return IsFailed
-                    ? ApiResultHelper.Error<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees(data);
         }
 
@@ -175,12 +174,12 @@ namespace Agebull.MicroZero.ZeroApis
         ///     删除多条数据
         /// </summary>
         [Route("edit/delete")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Delete(IdsArguent arg)
         {
             DoDelete();
             return IsFailed
-                    ? ApiResultHelper.Error(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -189,7 +188,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <returns></returns>
         [Route("edit/eid")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult<EntityInfo> EntityType()
         {
             return ApiResultHelper.Succees(new EntityInfo
@@ -207,7 +206,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </remarks>
         /// <returns></returns>
         [Route("export/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public ApiFileResult Export(TData args)
         {
             var data = new TData();
@@ -228,7 +227,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         [Obsolete]
         [Route("import/xlsx")]
-        [ApiAccessOptionFilter(ApiAccessOption.UserAccess | ApiAccessOption.ArgumentIsDefault)]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public ApiFileResult Import(TData args)
         {
             var data = new TData();
@@ -255,7 +254,7 @@ namespace Agebull.MicroZero.ZeroApis
 
         IDisposable GetFieldFilter()
         {
-            if (TryGet("_filter_", out string[] fieldFilter))
+            if (RequestArgumentConvert.TryGet("_filter_", out string[] fieldFilter))
             {
                 var test = new TData();
                 List<PropertySturct> properties = new List<PropertySturct>();
@@ -297,16 +296,16 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private ApiPageData<TData> LoadListData(string condition, DbParameter[] args)
         {
-            var page = GetIntArg("page", 1);
-            var rows = GetIntArg("rows", 20);
-            TryGet("sort", out string sort);
+            var page = RequestArgumentConvert.GetInt("_page_", 1);
+            var size = RequestArgumentConvert.GetInt("_size_", 20);
+            RequestArgumentConvert.TryGet("_sort_", out string sort);
             if (sort == null)
                 sort = Business.Access.KeyField;
-            var desc = TryGet("order", out string order) && order?.ToLower() == "desc";
+            var desc = RequestArgumentConvert.TryGet("_order_", out string order) && order?.ToLower() == "desc";
 
             //SaveQueryArguments(page, sort, adesc, rows);
 
-            var data = Business.PageData(page, rows, sort, desc, condition, args);
+            var data = Business.PageData(page, size, sort, desc, condition, args);
             OnListLoaded(data.Rows);
             return data;
         }
@@ -402,17 +401,17 @@ namespace Agebull.MicroZero.ZeroApis
             data.__status.IsFromClient = true;
             //数据校验
 
-            var convert = new FormConvert(this, data);
+            var convert = new FormConvert(data);
             ReadFormData(data, convert);
             if (convert.Failed)
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
                 GlobalContext.Current.Status.LastMessage = convert.Message;
                 return null;
             }
             if (!Business.AddNew(data))
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
                 return null;
             }
             return data;
@@ -426,27 +425,27 @@ namespace Agebull.MicroZero.ZeroApis
             var data = Business.Details(id);
             if (data == null)
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
                 GlobalContext.Current.Status.LastMessage = "参数错误";
                 return null;
             }
             data.__status.IsExist = true;
             data.__status.IsFromClient = true;
             //数据校验
-            var convert = new FormConvert(this, data)
+            var convert = new FormConvert(data)
             {
                 IsUpdata = true
             };
             ReadFormData(data, convert);
             if (convert.Failed)
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.ArgumentError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
                 GlobalContext.Current.Status.LastMessage = convert.Message;
                 return null;
             }
             if (!Business.Update(data))
             {
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
                 return null;
             }
             return data;
@@ -457,16 +456,16 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void DoDelete()
         {
-            if (!TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
             {
                 SetFailed("没有数据");
                 return;
             }
             if (!Business.Delete(ids))
-                GlobalContext.Current.Status.LastState = DefaultErrorCode.BusinessError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         #endregion
     }
-
 }
+#pragma warning restore IDE0060 // 删除未使用的参数

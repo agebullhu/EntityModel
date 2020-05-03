@@ -33,24 +33,26 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     初始化
         /// </summary>
-        void IFlowMiddleware.End()
+        Task ILifeFlow.Destory()
         {
             foreach (var group in Connections)
             {
                 foreach (var conn in group.Value.ActiveConnections.Values)
                     CloseConnection(conn.Connection, group.Key);
             }
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     初始化
         /// </summary>
-        void IFlowMiddleware.Initialize()
+        Task ILifeFlow.Initialize()
         {
 
             IsManagement = true;
             InternalInitialize();
             ConfigurationManager.RegistOnChange("ConnectionStrings", CheckOption, false);
+            return Task.CompletedTask;
         }
 
         /// <summary>

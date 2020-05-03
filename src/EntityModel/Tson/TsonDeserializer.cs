@@ -23,7 +23,7 @@ namespace Agebull.Common.Tson
             Success,
             Empty,
             Nil,
-            Error
+            State
         }
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace Agebull.Common.Tson
             if (srcType != TsonDataType.Array)
             {
                 SkipByType(srcType);
-                return TypeCheckState.Error;
+                return TypeCheckState.State;
             }
 
             if (ReadType() == type)
                 return TypeCheckState.Success;
             Postion--;
             SkipByType(srcType);
-            return TypeCheckState.Error;
+            return TypeCheckState.State;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Agebull.Common.Tson
             if (srcType == type)
                 return TypeCheckState.Success;
             SkipByType(srcType);
-            return TypeCheckState.Error;
+            return TypeCheckState.State;
         }
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace Agebull.Common.Tson
         public List<T> ReadList<T>(Func<T> read, TsonDataType type)
         {
             var state = IsDestArrayType(type);
-            if (state == TypeCheckState.Error || state == TypeCheckState.Nil)
+            if (state == TypeCheckState.State || state == TypeCheckState.Nil)
                 return null;
             var array = new List<T>();
             if (state == TypeCheckState.Empty)
@@ -316,7 +316,7 @@ namespace Agebull.Common.Tson
             where TList : class, IList<TValue>, new()
         {
             var state = IsDestArrayType(type);
-            if (state == TypeCheckState.Error || state == TypeCheckState.Nil)
+            if (state == TypeCheckState.State || state == TypeCheckState.Nil)
                 return null;
             var array = new TList();
             if (state == TypeCheckState.Empty)
@@ -335,7 +335,7 @@ namespace Agebull.Common.Tson
         public T[] ReadArray<T>(Func<T> read, TsonDataType type)
         {
             var state = IsDestArrayType(type);
-            if (state == TypeCheckState.Error || state == TypeCheckState.Nil)
+            if (state == TypeCheckState.State || state == TypeCheckState.Nil)
                 return null;
             if (state == TypeCheckState.Empty)
                 return new T[0];
@@ -355,7 +355,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -374,7 +374,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -393,7 +393,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -412,7 +412,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -431,7 +431,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -450,7 +450,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -469,7 +469,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -488,7 +488,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -507,7 +507,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -526,7 +526,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -545,7 +545,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -564,7 +564,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;
@@ -583,7 +583,7 @@ namespace Agebull.Common.Tson
         {
             switch (IsDestType(TsonDataType.Float))
             {
-                case TypeCheckState.Error:
+                case TypeCheckState.State:
                     return def;
                 case TypeCheckState.Nil:
                     return null;

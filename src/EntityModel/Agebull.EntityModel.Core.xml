@@ -272,141 +272,6 @@
                 说明
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.DefaultDataUpdateTrigger">
-            <summary>
-            默认的数据更新触发器
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.TypeInterfaces">
-            <summary>
-            类型接口实现的数字表示
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.TypeofIAuthorData">
-            <summary>
-            表示
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.TypeofIHistoryData">
-            <summary>
-            表示
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.TypeofIOrganizationData">
-            <summary>
-            表示
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.TypeofIVersionData">
-            <summary>
-            表示
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.DataBaseType">
-            <summary>
-            数据库类型
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.Agebull#EntityModel#Common#IDataTrigger#InitType``1">
-            <summary>
-            初始化类型
-            </summary>
-            <typeparam name="TEntity"></typeparam>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.IsType``1(System.Int32)">
-            <summary>
-            是否指定类型
-            </summary>
-            <typeparam name="TEntity"></typeparam>
-            <param name="type"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.IsType(System.Object,System.Int32)">
-            <summary>
-            是否指定类型
-            </summary>
-            <param name="type"></param>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.IDataTrigger">
-            <summary>
-                数据更新触发器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTrigger.InitType``1">
-            <summary>
-                初始化类型
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.IDataUpdateTrigger">
-            <summary>
-                数据更新触发器
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataUpdateTrigger.DataBaseType">
-            <summary>
-            数据库类型
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
-            <summary>
-                与更新同时执行的SQL(更新之前立即执行)
-            </summary>
-            <param name="table">当前数据操作对象</param>
-            <param name="condition">当前场景的执行条件</param>
-            <param name="code">写入SQL的文本构造器</param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
-            <summary>
-                与更新同时执行的SQL(更新之后立即执行)
-            </summary>
-            <param name="table">当前数据操作对象</param>
-            <param name="condition">当前场景的执行条件</param>
-            <param name="code">写入SQL的文本构造器</param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ContitionSqlCode``1(System.Collections.Generic.List{System.String})">
-            <summary>
-                得到可正确拼接的SQL条件语句（可能是没有）
-            </summary>
-            <param name="conditions">当前场景的执行条件,互相使用AND</param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnPrepareSave(Agebull.EntityModel.Common.EditDataObject,Agebull.EntityModel.Common.DataOperatorType)">
-            <summary>
-                保存前处理
-            </summary>
-            <param name="entity">保存的对象</param>
-            <param name="operatorType">操作类型</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnDataSaved(Agebull.EntityModel.Common.EditDataObject,Agebull.EntityModel.Common.DataOperatorType)">
-            <summary>
-                保存完成后期处理
-            </summary>
-            <param name="entity">保存的对象</param>
-            <param name="operatorType">操作类型</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuting(System.Int32,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
-            <summary>
-                更新语句前处理(单个实体操作不引发)
-            </summary>
-            <param name="entityId">实体类型ID</param>
-            <param name="condition">执行条件</param>
-            <param name="args">参数值</param>
-            <param name="operatorType">操作类型</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuted(System.Int32,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
-            <summary>
-                更新语句后处理(单个实体操作不引发)
-            </summary>
-            <param name="entityId">实体类型ID</param>
-            <param name="condition">执行条件</param>
-            <param name="args">参数值</param>
-            <param name="operatorType">操作类型</param>
-        </member>
         <member name="T:Agebull.EntityModel.Common.EntitySturct">
             <summary>
                 表示实体结构
@@ -531,6 +396,95 @@
             <summary>
                 对象
             </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.DefaultDataUpdateTrigger">
+            <summary>
+            默认的数据更新触发器
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDataTrigger">
+            <summary>
+                数据更新触发器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTrigger.InitType``1">
+            <summary>
+                初始化类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDataUpdateTrigger">
+            <summary>
+                数据更新触发器
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IDataUpdateTrigger.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnPrepareSave``1(``0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存前处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnDataSaved``1(``0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存完成后期处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
+            <summary>
+                与更新同时执行的SQL(更新之前立即执行)
+            </summary>
+            <param name="table">当前数据操作对象</param>
+            <param name="condition">当前场景的执行条件</param>
+            <param name="code">写入SQL的文本构造器</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
+            <summary>
+                与更新同时执行的SQL(更新之后立即执行)
+            </summary>
+            <param name="table">当前数据操作对象</param>
+            <param name="condition">当前场景的执行条件</param>
+            <param name="code">写入SQL的文本构造器</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ContitionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
+            <summary>
+                得到可正确拼接的SQL条件语句（可能是没有）
+            </summary>
+            <param name="table">当前数据操作对象</param>
+            <param name="conditions">附加的条件集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                更新语句前处理(单个实体操作不引发)
+            </summary>
+            <param name="table">当前数据操作对象</param>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                更新语句后处理(单个实体操作不引发)
+            </summary>
+            <param name="table">当前数据操作对象</param>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
         </member>
         <member name="T:Agebull.EntityModel.Common.ParameterItem">
             <summary>
@@ -1044,7 +998,7 @@
              数据实际处于删除状态,用户不可见
             </remarks>
         </member>
-        <member name="F:Agebull.EntityModel.Common.DataStateType.Error">
+        <member name="F:Agebull.EntityModel.Common.DataStateType.State">
             <summary>
                 错误状态
             </summary>
@@ -1093,7 +1047,7 @@
         </member>
         <member name="F:Agebull.EntityModel.Common.AuditStateType.Again">
             <summary>
-                反审核
+                重新处理
             </summary>
         </member>
         <member name="F:Agebull.EntityModel.Common.AuditStateType.Submit">
@@ -1116,7 +1070,7 @@
                 结束
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.Error">
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.State">
             <summary>
             不正确的状态
             </summary>
@@ -2803,6 +2757,11 @@
             重置状态
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Int64)">
+            <summary>
+            修改状态
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.ITransactionScope">
             <summary>
                 表示访问条件和参数
@@ -3213,27 +3172,6 @@
             </summary>
             <typeparam name="TData">数据对象</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Enable(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                启用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Disable(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                禁用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Lock(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-                禁用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.ResetState(`0)">
-            <summary>
-                重置数据状态
-            </summary>
-            <param name="data"></param>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Reset(System.Int64)">
             <summary>
                 重置数据状态
@@ -3253,11 +3191,6 @@
         <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Discard(System.Int64)">
             <summary>
                 弃用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Lock(System.Int64)">
-            <summary>
-                锁定对象
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1">
@@ -3344,10 +3277,99 @@
                 删除对象
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Vue.DataItem">
+            <summary>
+            简单的数据节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Text">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.TreeNode">
+            <summary>
+            树节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.IsLeaf">
+            <summary>
+            是否有子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Children">
+            <summary>
+            子级
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Events.DataUpdateHandler">
             <summary>
                 数据更新处理器
             </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeInterfaces">
+            <summary>
+            类型接口实现的数字表示
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIAuthorData">
+            <summary>
+            表示
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIHistoryData">
+            <summary>
+            表示
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIOrganizationData">
+            <summary>
+            表示
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIVersionData">
+            <summary>
+            表示
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.InitType``1">
+            <summary>
+            初始化类型
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.IsType``1(System.Int32)">
+            <summary>
+            是否指定类型
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="type"></param>
+            <returns></returns>
         </member>
         <member name="P:Agebull.EntityModel.Events.DataUpdateHandler.EventProxy">
             <summary>
@@ -3359,94 +3381,61 @@
             通用处理器
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Events.DataUpdateHandler.Triggers">
-            <summary>
-                更新注入处理器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.RegisterUpdateHandler(Agebull.EntityModel.Common.IDataTrigger)">
-            <summary>
-                注册数据更新注入器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.UnRegisterUpdateHandler(Agebull.EntityModel.Common.IDataTrigger)">
-            <summary>
-                反注册数据更新注入器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.RegisterUpdateHandler(System.Int32,Agebull.EntityModel.Common.IDataUpdateTrigger)">
-            <summary>
-                注册数据更新注入器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.UnRegisterUpdateHandler(System.Int32,Agebull.EntityModel.Common.IDataUpdateTrigger)">
-            <summary>
-                反注册数据更新注入器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnPrepareSave(Agebull.EntityModel.Common.EditDataObject,Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnPrepareSave``1(``0,Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 保存前处理
             </summary>
             <param name="data">保存的对象</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnDataSaved(Agebull.EntityModel.Common.EditDataObject,Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnDataSaved``1(``0,Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 保存完成后期处理
             </summary>
             <param name="data">保存的对象</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuting(System.Int32,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句前处理(单个实体操作不引发)
             </summary>
-            <param name="entityId">实体类型ID</param>
+            <param name="table">当前数据操作对象</param>
             <param name="condition">执行条件</param>
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuted(System.Int32,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句后处理(单个实体操作不引发)
             </summary>
-            <param name="entityId">实体类型ID</param>
+            <param name="table">当前数据操作对象</param>
             <param name="condition">执行条件</param>
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ContitionSqlCode``1(System.Int32,System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ContitionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
-            <param name="entityId">实体类型ID</param>
+            <param name="table">当前数据操作对象</param>
             <param name="conditions">附加的条件集合</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.InitType``1">
-            <summary>
-                初始化类型
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.Int32,System.String)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.String)">
             <summary>
                 与更新同时执行的SQL(更新之前立即执行)
             </summary>
             <param name="table">当前数据操作对象</param>
             <param name="code">写入SQL的文本构造器</param>
             <param name="condition">当前场景的执行条件</param>
-            <param name="entityId">实体类型ID</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.Int32,System.String)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.String)">
             <summary>
                 与更新同时执行的SQL(更新之后立即执行)
             </summary>
             <param name="table">当前数据操作对象</param>
             <param name="condition">当前场景的执行条件</param>
-            <param name="entityId">实体类型ID</param>
             <param name="code">写入SQL的文本构造器</param>
             <returns></returns>
         </member>
@@ -3644,6 +3633,250 @@
                 最后修改日期
             </summary>
             <value>DateTime</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.DataScopeType">
+            <summary>
+            权限范围枚举类型
+            </summary>
+            <remark>
+            权限范围
+            </remark>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.None">
+            <summary>
+            无
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.Person">
+            <summary>
+            本人
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.Home">
+            <summary>
+            本级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.PersonAndHome">
+            <summary>
+            本人及本级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.Lower">
+            <summary>
+            下级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.HomeAndLower">
+            <summary>
+            本级及以下
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.Full">
+            <summary>
+            本人本级及下级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.DataScopeType.Unlimited">
+            <summary>
+            无限制
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.AuthEnumHelper">
+            <summary>
+            枚举扩展
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Permissions.AuthEnumHelper.ToCaption(Agebull.EntityModel.Permissions.PageItemType)">
+            <summary>
+                节点类型枚举类型名称转换
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Permissions.AuthEnumHelper.ToCaption(Agebull.EntityModel.Permissions.DataScopeType)">
+            <summary>
+                权限范围枚举类型名称转换
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Permissions.AuthEnumHelper.ToCaption(Agebull.EntityModel.Permissions.RolePowerType)">
+            <summary>
+                权限枚举类型名称转换
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.IPageItem">
+            <summary>
+                表示页面节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Id">
+            <summary>
+                对象标识
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Index">
+            <summary>
+                序号
+            </summary>
+            <remarks>
+                序号
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.ItemType">
+            <summary>
+            节点类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Path">
+            <summary>
+                目录
+            </summary>
+            <remarks>
+                目录
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Icon">
+            <summary>
+                图标
+            </summary>
+            <remarks>
+                图标
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Name">
+            <summary>
+                名称
+            </summary>
+            <remarks>
+                名称
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Caption">
+            <summary>
+                标题
+            </summary>
+            <remarks>
+                标题
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Url">
+            <summary>
+                页面连接
+            </summary>
+            <remarks>
+                页面连接
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.Memo">
+            <summary>
+                备注
+            </summary>
+            <remarks>
+                备注
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.ParentId">
+            <summary>
+                上级节点
+            </summary>
+            <remarks>
+                上级节点
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.IsHide">
+            <summary>
+                不显示
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IPageItem.IsPublic">
+            <summary>
+                无权限控制的公开页面
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.IRoleData">
+            <summary>
+            表示一个角色数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IRoleData.Id">
+            <summary>
+            角色标识
+            </summary>
+            <remarks>
+            角色标识
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IRoleData.Role">
+            <summary>
+            角色名称
+            </summary>
+            <remarks>
+            角色名称
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IRoleData.Caption">
+            <summary>
+            角色显示的文本
+            </summary>
+            <remarks>
+            角色显示的文本
+            </remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.Permissions.IRoleData.Memo">
+            <summary>
+            备注
+            </summary>
+            <remarks>
+            备注
+            </remarks>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.PageItemType">
+            <summary>
+            页面节点类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.PageItemType.Root">
+            <summary>
+            顶级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.PageItemType.Folder">
+            <summary>
+            文件夹
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.PageItemType.Page">
+            <summary>
+            页面
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.PageItemType.Button">
+            <summary>
+            按钮
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.PageItemType.Action">
+            <summary>
+            动作
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Permissions.RolePowerType">
+            <summary>
+            角色权限类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.RolePowerType.None">
+            <summary>
+            未设置
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.RolePowerType.Allow">
+            <summary>
+            允许
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Permissions.RolePowerType.Deny">
+            <summary>
+            拒绝
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.EasyUI.IconHelper">
             <summary>

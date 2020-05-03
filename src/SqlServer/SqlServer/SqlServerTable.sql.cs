@@ -49,6 +49,15 @@ namespace Agebull.EntityModel.SqlServer
             return $"[{field}] = {value}";
         }
 
+        /// <summary>
+        ///     得到可正确更新的条件
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        protected virtual void CheckUpdateContition(ref string condition)
+        {
+        }
+
 
         /// <summary>
         ///     生成更新的SQL
@@ -58,6 +67,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>更新的SQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
+            CheckUpdateContition(ref condition);
             return $@"{BeforeUpdateSql(condition)}
 UPDATE [{ContextWriteTable}]
    SET {valueExpression} 
@@ -113,7 +123,7 @@ UPDATE [{ContextWriteTable}]
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
             ContitionSqlCode(conditions);
-            DataUpdateHandler.ContitionSqlCode<TData>(TableId, conditions); 
+            DataUpdateHandler.ContitionSqlCode<TData>(this, conditions); 
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();

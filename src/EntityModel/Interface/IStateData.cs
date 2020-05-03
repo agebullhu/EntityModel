@@ -50,7 +50,7 @@ namespace Agebull.EntityModel.Common
                     return "草稿";
                 case DataStateType.Discard:
                     return "废弃";
-                case DataStateType.Error:
+                case DataStateType.State:
                     return "不正确的状态";
                 case DataStateType.Orther:
                     return "其它人编辑中";
