@@ -1,8 +1,8 @@
+using Agebull.EntityModel.Common;
+using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Data.Common;
-using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
 
 namespace Agebull.EntityModel.MySql
 {

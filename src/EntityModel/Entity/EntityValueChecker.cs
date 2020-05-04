@@ -11,7 +11,7 @@
         /// <param name="txt"></param>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static bool IsModify(this string txt,string val)
+        public static bool IsModify(this string txt, string val)
         {
             if (string.IsNullOrWhiteSpace(txt))
             {

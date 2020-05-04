@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示使用雪花码的非自增主键数据
     /// </summary>
-    public interface ISnowFlakeId: IIdentityData
+    public interface ISnowFlakeId : IIdentityData
     {
 
     }
@@ -44,5 +44,5 @@ namespace Agebull.EntityModel.Common
     public interface IUnionUniqueEntity
     {
     }
-    
+
 }

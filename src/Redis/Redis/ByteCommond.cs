@@ -148,7 +148,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public static byte[] StringBytes(string value)
         {
-            return ToByte( value);
+            return ToByte(value);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public static byte[] IntBytes(int value)
         {
-            return ToByte( value);
+            return ToByte(value);
         }
         /// <summary>
         ///     整数变为字节
@@ -167,7 +167,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public static byte[] DecimalBytes(decimal value)
         {
-            return ToByte( value);
+            return ToByte(value);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public static byte[] LongToBytes(long value)
         {
-            return ToByte( value);
+            return ToByte(value);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public static byte[] DoubleToBytes(double value)
         {
-            return ToByte( value);
+            return ToByte(value);
         }
         #endregion
         #region BYTE反转
@@ -201,7 +201,7 @@ namespace Agebull.EntityModel.Common
         {
             if (bytes == null || bytes.Length == 0)
                 return null;
-            return Encoding.UTF8.GetString(bytes );
+            return Encoding.UTF8.GetString(bytes);
         }
 
         /// <summary>

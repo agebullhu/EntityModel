@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Agebull.Common.Base;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Agebull.Common.Base;
 
 namespace Agebull.Common.Tson
 {
@@ -34,9 +34,9 @@ namespace Agebull.Common.Tson
             if (Ver > 2)
                 throw new NullReferenceException("buffer必须为有效的TSON数据");
             var type = ReadByte();
-            if (type > (byte) TsonDataType.DateTime && type < (byte) TsonDataType.Object)
+            if (type > (byte)TsonDataType.DateTime && type < (byte)TsonDataType.Object)
                 throw new NullReferenceException("buffer必须为有效的TSON数据");
-            DataType= (TsonDataType)type;
+            DataType = (TsonDataType)type;
         }
         /// <summary>
         /// 开始子级
@@ -48,7 +48,7 @@ namespace Agebull.Common.Tson
             if (ver > 2)
                 throw new NullReferenceException("buffer必须为有效的TSON数据");
             var type = ReadByte();
-            if (type > (byte) TsonDataType.DateTime && type < (byte) TsonDataType.Object)
+            if (type > (byte)TsonDataType.DateTime && type < (byte)TsonDataType.Object)
                 throw new NullReferenceException("buffer必须为有效的TSON数据");
             return (TsonDataType)type;
         }

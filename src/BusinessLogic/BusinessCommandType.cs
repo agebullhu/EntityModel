@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         /// ÍË
         /// </summary>
-        Back, 
+        Back,
         /// <summary>
         /// Í¨¹ý
         /// </summary>

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Agebull.EntityModel.Common;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Agebull.EntityModel.Common;
 
 namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// Redis操作接口
     /// </summary>
-    public interface IRedisAsync: IRedisBase
+    public interface IRedisAsync : IRedisBase
     {
         /// <summary>
         /// 写值

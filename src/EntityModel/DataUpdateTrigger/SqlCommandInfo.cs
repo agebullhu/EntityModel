@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="cmd"></param>
         /// <returns></returns>                   
-        public static SqlCommandInfo ToCommandInfo(EntitySubsist subsist,string condition, DbCommand cmd)
+        public static SqlCommandInfo ToCommandInfo(EntitySubsist subsist, string condition, DbCommand cmd)
         {
             var info = new SqlCommandInfo
             {
@@ -36,13 +36,13 @@ namespace Agebull.EntityModel.Common
             {
                 info.Parameters.Add(new ParameterItem
                 {
-                    Name=para.ParameterName,
+                    Name = para.ParameterName,
                     DbType = para.DbType,
                     Value = para.Value == null || para.Value == DBNull.Value ? null : para.Value.ToString()
                 });
             }
             return info;
         }
-        
+
     }
 }

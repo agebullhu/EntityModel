@@ -18,7 +18,7 @@
         /// <summary>
         /// 系统数据
         /// </summary>
-        public int DbSystem { get; set; }= 15;
+        public int DbSystem { get; set; } = 15;
 
         /// <summary>
         /// WEB端的缓存
@@ -38,7 +38,7 @@
         /// <summary>
         /// 连接字符串名称
         /// </summary>
-        public string ConnectionName { get; set; }= "Redis";
+        public string ConnectionName { get; set; } = "Redis";
 
         #endregion
 

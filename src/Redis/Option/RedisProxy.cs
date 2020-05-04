@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
+using System;
+using System.Collections.Generic;
 
 namespace Agebull.EntityModel.Redis
 {
@@ -38,7 +37,7 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         static RedisProxy()
         {
-            ConfigurationManager.RegistOnChange("Redis",OnOptionChange, true);
+            ConfigurationManager.RegistOnChange("Redis", OnOptionChange, true);
         }
 
         /// <summary>

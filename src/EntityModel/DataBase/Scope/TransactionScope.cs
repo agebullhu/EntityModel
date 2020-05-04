@@ -8,7 +8,6 @@
 
 #region 引用
 
-using Agebull.Common.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

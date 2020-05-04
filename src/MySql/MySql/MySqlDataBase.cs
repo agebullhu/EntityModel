@@ -8,18 +8,16 @@
 
 #region 引用
 
+using Agebull.Common.Ioc;
+using Agebull.Common.Logging;
+using Agebull.EntityModel.Common;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using MySql.Data.MySqlClient;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Agebull.Common.Logging;
-using System.Data.Common;
-using System.Threading.Tasks;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
-using Agebull.Common.Base;
 
 #endregion
 

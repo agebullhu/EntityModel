@@ -1,9 +1,6 @@
 using Agebull.Common;
 using Agebull.EntityModel.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
 using ZeroTeam.MessageMVC.Context;
 
 namespace Agebull.EntityModel.Common

@@ -1,6 +1,6 @@
+using Agebull.Common.Base;
 using System;
 using System.Data.Common;
-using Agebull.Common.Base;
 
 namespace Agebull.EntityModel.Common
 {
@@ -19,7 +19,7 @@ namespace Agebull.EntityModel.Common
             if (string.IsNullOrWhiteSpace(fields))
                 fields = null;
             _table = table;
-            _fields = table.DynamicReadFields ;
+            _fields = table.DynamicReadFields;
             _loadAction = table.DynamicLoadAction;
             table.DynamicReadFields = fields;
             table.DynamicLoadAction = loadAction;

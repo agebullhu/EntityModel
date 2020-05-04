@@ -8,15 +8,15 @@
 
 #region 引用
 
+using Agebull.Common.Ioc;
+using Agebull.Common.Logging;
+using Agebull.EntityModel.Common;
 using System;
 using System.Data;
-using System.Text;
-using Agebull.Common.Logging;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Text;
 using System.Threading.Tasks;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -86,7 +86,7 @@ namespace Agebull.EntityModel.SqlServer
             //}
             if (_connection == null)
             {
-                _connection =await InitConnectionAsync();
+                _connection = await InitConnectionAsync();
                 return true;
                 //Trace.WriteLine("Create _connection", "SqlServerDataBase");
             }
@@ -108,7 +108,7 @@ namespace Agebull.EntityModel.SqlServer
         public async Task CloseAsync()
 #pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
         {
-           Close(_connection);
+            Close(_connection);
             _connection = null;
         }
 

@@ -10,13 +10,13 @@
 
 #endregion
 
+using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using ZeroTeam.MessageMVC.Context;
-using Agebull.EntityModel.Common;
-using Agebull.Common.Ioc;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Agebull.EntityModel.MySql
 {

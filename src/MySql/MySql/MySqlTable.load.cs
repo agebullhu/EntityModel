@@ -8,19 +8,17 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Linq.Expressions;
-using Agebull.EntityModel.Events;
-
-using Agebull.EntityModel.Common;
-using Agebull.MicroZero.ZeroApis;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
@@ -876,7 +874,7 @@ namespace Agebull.EntityModel.MySql
             var sql = CreatePageSql(page, limit, order, desc, condition);
             using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(connectionScope,sql, args);
+                using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1594,7 +1592,7 @@ namespace Agebull.EntityModel.MySql
             var results = new List<TData>();
             using var connectionScope = new ConnectionScope(DataBase);
             {
-                using var cmd = DataBase.CreateCommand(connectionScope,sql, args);
+                using var cmd = DataBase.CreateCommand(connectionScope, sql, args);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {

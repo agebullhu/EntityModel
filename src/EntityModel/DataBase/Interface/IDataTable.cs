@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.MicroZero.ZeroApis;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
@@ -641,7 +640,7 @@ namespace Agebull.EntityModel.Common
         ///     分页读取
         /// </summary>
         ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
-        
+
         /// <summary>
         ///     分页读取
         /// </summary>

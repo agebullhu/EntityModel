@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Agebull.EntityModel.Common;
+using System;
 using System.Collections.Generic;
-using Agebull.EntityModel.Common;
 
 namespace Agebull.EntityModel.Redis
 {

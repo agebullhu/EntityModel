@@ -1,6 +1,6 @@
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace Agebull.EntityModel.Common
 {
@@ -13,13 +13,13 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 名称
         /// </summary>
-        [DataMember, JsonProperty("name",NullValueHandling = NullValueHandling.Ignore)]
+        [DataMember, JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
         protected string _name;
 
         /// <summary>
         ///     名称
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("名称")]
+        [IgnoreDataMember, JsonIgnore, Category("*设计"), DisplayName("名称")]
         public string Name
         {
             get => _name;
@@ -44,7 +44,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     标题
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("标题")]
+        [IgnoreDataMember, JsonIgnore, Category("*设计"), DisplayName("标题")]
         public string Caption
         {
             get => _caption ?? _name;
@@ -68,7 +68,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     说明
         /// </summary>
-        [IgnoreDataMember,JsonIgnore, Category("*设计"), DisplayName("说明")]
+        [IgnoreDataMember, JsonIgnore, Category("*设计"), DisplayName("说明")]
         public string Description
         {
             get => _description;

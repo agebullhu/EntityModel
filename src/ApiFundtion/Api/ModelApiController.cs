@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ZeroTeam.MessageMVC.Context;
-using ZeroTeam.MessageMVC.ZeroApis;
+﻿using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.Messages;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     /// ZeroApi控制器基类
     /// </summary>
-    public abstract class ModelApiController : IApiControler
+    public abstract class ModelApiController : IApiController
     {
         /// <summary>
         /// 构造

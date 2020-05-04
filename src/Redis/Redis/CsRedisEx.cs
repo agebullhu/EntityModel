@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Agebull.Common.Configuration;
-using Agebull.EntityModel.Redis;
-using CSRedis;
-using Newtonsoft.Json;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Redis;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Agebull.Common.DataModel.Redis
 {

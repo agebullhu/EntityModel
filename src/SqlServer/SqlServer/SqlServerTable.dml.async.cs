@@ -8,13 +8,13 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.EntityModel.Common;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Data.SqlClient.SqlCommand>;
 
 #endregion
@@ -345,7 +345,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(key);
-            var paras = new[] {para};
+            var paras = new[] { para };
             //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 OnOperatorExecuting(condition, paras, DataOperatorType.Delete);

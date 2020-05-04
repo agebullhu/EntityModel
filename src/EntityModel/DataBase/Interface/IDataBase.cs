@@ -35,7 +35,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 是否锁定连接对象(更新插入删除发生后自动启用)
         /// </summary>
-        bool IsLockConnection { get;}
+        bool IsLockConnection { get; }
 
         /// <summary>
         ///     事务对象

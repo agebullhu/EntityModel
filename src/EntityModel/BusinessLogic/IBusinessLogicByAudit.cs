@@ -8,9 +8,9 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
-using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TData">数据对象</typeparam>
     public interface IBusinessLogicByAudit<TData>
         : IBusinessLogicByStateData<TData>
-        where TData : EditDataObject, IIdentityData,IStateData,IAuditData, new()
+        where TData : EditDataObject, IIdentityData, IStateData, IAuditData, new()
     {
         #region 消息
 
@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量提交
         /// </summary>
-         bool Submit(IEnumerable<long> sels);
+        bool Submit(IEnumerable<long> sels);
 
         /// <summary>
         ///     批量退回
@@ -48,12 +48,12 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量通过
         /// </summary>
-         bool AuditPass(IEnumerable<long> sels);
+        bool AuditPass(IEnumerable<long> sels);
 
         /// <summary>
         ///     批量拉回
         /// </summary>
-         bool Pullback(IEnumerable<long> sels);
+        bool Pullback(IEnumerable<long> sels);
 
         /// <summary>
         ///     批量否决
@@ -63,7 +63,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量反审核
         /// </summary>
-         bool UnAudit(IEnumerable<long> sels);
+        bool UnAudit(IEnumerable<long> sels);
 
         /// <summary>
         ///     批量数据校验
@@ -79,7 +79,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-         bool Validate(long id);
+        bool Validate(long id);
 
         /// <summary>
         ///     审核通过
@@ -111,7 +111,7 @@ namespace Agebull.EntityModel.BusinessLogic
         bool Back(long id);
 
         #endregion
-        
-        
+
+
     }
 }

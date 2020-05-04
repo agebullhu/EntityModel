@@ -1,5 +1,4 @@
-﻿using Agebull.Common.Configuration;
-using Agebull.EntityModel.Common;
+﻿using Agebull.EntityModel.Common;
 using CSRedis;
 using System;
 using System.Collections.Concurrent;
@@ -67,7 +66,7 @@ namespace Agebull.Common.DataModel.Redis
         {
             get
             {
-                
+
                 if (_client != null)
                     return _client;
                 return _client = CreateClient(CurrentDb);

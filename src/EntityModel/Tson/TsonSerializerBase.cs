@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Agebull.Common.Base;
+using System;
 using System.IO;
-using Agebull.Common.Base;
 
 namespace Agebull.Common.Tson
 {
@@ -37,7 +37,7 @@ namespace Agebull.Common.Tson
         /// <summary>
         ///     开始
         /// </summary>
-        public void Begin(TsonDataType type= TsonDataType.Object)
+        public void Begin(TsonDataType type = TsonDataType.Object)
         {
             Stream.WriteByte(Ver);
             Stream.WriteByte((byte)type);

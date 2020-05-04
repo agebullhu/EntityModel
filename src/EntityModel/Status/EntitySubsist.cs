@@ -78,7 +78,7 @@ namespace Agebull.EntityModel.Common
         ///     更新
         /// </summary>
         Update,
-        
+
         /// <summary>
         ///     删除
         /// </summary>

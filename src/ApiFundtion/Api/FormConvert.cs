@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ZeroTeam.MessageMVC.Messages;
 
 #endregion
 

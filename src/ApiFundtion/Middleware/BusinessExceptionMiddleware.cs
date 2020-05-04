@@ -36,12 +36,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="exception"></param>
         /// <param name="tag">扩展信息</param>
         /// <returns></returns>
-        Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message,Exception exception, object tag)
+        Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, Exception exception, object tag)
         {
             LogRecorder.Exception(exception);
             LogRecorder.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
-            CheckException(message,exception);
+            CheckException(message, exception);
 
             return Task.CompletedTask;
         }

@@ -8,15 +8,14 @@
 
 #region 引用
 
+using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
 
 #endregion
 
@@ -117,7 +116,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(ConnectionScope scope,string condition, params DbParameter[] args)
+        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, null);
             return DataBase.CreateCommand(scope, sql.ToString(), args);
@@ -180,7 +179,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(fields));
-            return fields.Select(field => (DbParameter) new MySqlParameter(field, GetDbType(field))).ToArray();
+            return fields.Select(field => (DbParameter)new MySqlParameter(field, GetDbType(field))).ToArray();
         }
 
         /// <summary>
@@ -547,7 +546,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetUpdateCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetUpdateCommand(entity, (MySqlCommand) cmd);
+            SetUpdateCommand(entity, (MySqlCommand)cmd);
         }
 
         /// <summary>
@@ -557,7 +556,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetInsertCommand(entity, (MySqlCommand) cmd);
+            SetInsertCommand(entity, (MySqlCommand)cmd);
         }
 
         /// <summary>
@@ -567,7 +566,7 @@ namespace Agebull.EntityModel.MySql
         TData IDataTable<TData>.Load(DbDataReader reader)
         {
             var entity = new TData();
-            LoadEntity((MySqlDataReader) reader, entity);
+            LoadEntity((MySqlDataReader)reader, entity);
             return entity;
         }
 

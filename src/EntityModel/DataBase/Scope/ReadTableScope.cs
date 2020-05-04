@@ -6,8 +6,8 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-using System;
 using Agebull.Common.Base;
+using System;
 
 namespace Agebull.EntityModel.Common
 {
@@ -72,7 +72,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>读取对象范围</returns>
         public static IDisposable CreateScope(IDataTable table, string read)
         {
-            return new TableSwitchScope(table, read,null);
+            return new TableSwitchScope(table, read, null);
         }
 
         /// <summary>

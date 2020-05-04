@@ -17,7 +17,7 @@ namespace Agebull.EntityModel.Permissions
         ///     对象标识
         /// </summary>
         long Id { get; set; }
-        
+
         /// <summary>
         ///     序号
         /// </summary>

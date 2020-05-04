@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Agebull.EntityModel.Common;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Agebull.EntityModel.Common;
 
 namespace Agebull.EntityModel.SqlServer
 {

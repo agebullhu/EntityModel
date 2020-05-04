@@ -24,7 +24,7 @@ namespace Agebull.EntityModel.Interfaces
         ///     数据版本
         /// </summary>
         /// <value>int</value>
-        long DataVersion{ get; set; }
+        long DataVersion { get; set; }
     }
 
     /// <summary>

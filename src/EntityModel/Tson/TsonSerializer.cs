@@ -11,7 +11,7 @@ namespace Agebull.Common.Tson
         /// <summary>
         /// 构造
         /// </summary>
-        public TsonSerializer(TsonDataType type = TsonDataType.Object) : base(2,type)
+        public TsonSerializer(TsonDataType type = TsonDataType.Object) : base(2, type)
         {
 
         }

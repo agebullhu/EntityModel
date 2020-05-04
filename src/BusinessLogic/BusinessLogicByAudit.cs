@@ -8,11 +8,10 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
-
-using Agebull.EntityModel.Interfaces;
-using Agebull.EntityModel.Common;
 using ZeroTeam.MessageMVC.Context;
 
 #endregion
@@ -27,7 +26,7 @@ namespace Agebull.EntityModel.BusinessLogic
     public class BusinessLogicByAudit<TData, TAccess>
         : BusinessLogicByStateData<TData, TAccess>, IBusinessLogicByAudit<TData>
         where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
-        where TAccess :class , IStateDataTable<TData>, new()
+        where TAccess : class, IStateDataTable<TData>, new()
     {
         #region 消息
 

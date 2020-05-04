@@ -8,7 +8,6 @@
 
 #region 引用
 
-using System.Collections.Generic;
 using Agebull.EntityModel.Common;
 
 #endregion
@@ -21,7 +20,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TData">数据对象</typeparam>
     public interface IBusinessLogicByStateData<TData>
         : IUiBusinessLogicBase<TData>
-        where TData : EditDataObject, IIdentityData,IStateData, new()
+        where TData : EditDataObject, IIdentityData, IStateData, new()
     {
         #region 状态处理
 

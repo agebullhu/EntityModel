@@ -8,19 +8,17 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using Agebull.EntityModel.Events;
-
-using Agebull.EntityModel.Common;
-using Agebull.MicroZero.ZeroApis;
 using System.Text;
 using ZeroTeam.MessageMVC.ZeroApis;
 
@@ -124,7 +122,7 @@ namespace Agebull.EntityModel.SqlServer
             if (action.Body is MemberExpression expression)
                 return expression.Member.Name;
             if (!(action.Body is UnaryExpression body))
-                throw new ArgumentException("表达式太复杂",nameof(action));
+                throw new ArgumentException("表达式太复杂", nameof(action));
 
             expression = (MemberExpression)body.Operand;
             return expression.Member.Name;
@@ -1158,7 +1156,7 @@ namespace Agebull.EntityModel.SqlServer
         protected object LoadValueInner(string field, string condition, params DbParameter[] args)
         {
             var sql = CreateLoadValueSql(field, condition);
-            
+
             return DataBase.ExecuteScalar(sql, args);
         }
 

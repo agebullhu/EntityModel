@@ -8,16 +8,16 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
+using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Newtonsoft.Json;
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
-using MySql.Data.MySqlClient;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<MySql.Data.MySqlClient.MySqlCommand>;
 #endregion
 
@@ -813,7 +813,7 @@ namespace Agebull.EntityModel.MySql
         {
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
-            DataUpdateHandler.AfterUpdateSql(this, code,condition);
+            DataUpdateHandler.AfterUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -1021,7 +1021,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public DbOperatorContext BeginInsert()
         {
-           var scope = new ConnectionScope(DataBase);
+            var scope = new ConnectionScope(DataBase);
             var ctx = new DbOperatorContext
             {
                 Scope = scope,
@@ -1059,8 +1059,8 @@ namespace Agebull.EntityModel.MySql
             var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
             if (!string.IsNullOrEmpty(sql))
             {
-                
-                    DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
             ReLoadInner(entity);
 
@@ -1094,7 +1094,7 @@ namespace Agebull.EntityModel.MySql
                 Scope = scope,
                 Command = DataBase.CreateCommand(scope)
             };
-                var entity = new TData();
+            var entity = new TData();
             SetUpdateCommand(entity, ctx.Command);
             ctx.Command.CommandText = UpdateSqlCode;
             ctx.Command.Prepare();
@@ -1116,7 +1116,7 @@ namespace Agebull.EntityModel.MySql
             if (!string.IsNullOrEmpty(sql))
             {
                 //using (TransactionScope.CreateScope(DataBase))
-                    DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
             ReLoadInner(entity);

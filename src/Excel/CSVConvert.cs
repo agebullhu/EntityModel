@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Agebull.EntityModel.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Agebull.EntityModel.Common;
 
 namespace Hpc.Project.ImportSkuCsv
 {

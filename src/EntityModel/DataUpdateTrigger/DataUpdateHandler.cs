@@ -6,15 +6,14 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
+using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Agebull.Common;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Interfaces;
 
 namespace Agebull.EntityModel.Events
 {
@@ -179,7 +178,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="code">写入SQL的文本构造器</param>
         /// <param name="condition">当前场景的执行条件</param>
         /// <returns></returns>
-        public static void BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code,string condition)
+        public static void BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, string condition)
             where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>().Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))

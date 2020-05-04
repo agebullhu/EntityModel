@@ -8,13 +8,13 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
 
 #endregion
 
@@ -123,7 +123,7 @@ UPDATE [{ContextWriteTable}]
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
             ContitionSqlCode(conditions);
-            DataUpdateHandler.ContitionSqlCode<TData>(this, conditions); 
+            DataUpdateHandler.ContitionSqlCode<TData>(this, conditions);
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();
@@ -200,7 +200,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// <param name="order">排序字段</param>
         /// <param name="desc">是否反序</param>
         /// <returns>载入的SQL语句</returns>
-        private StringBuilder CreateOnceSql(string condition, string order,bool desc)
+        private StringBuilder CreateOnceSql(string condition, string order, bool desc)
         {
             var sql = new StringBuilder();
             sql.AppendLine(@"SELECT TOP 1");
@@ -248,7 +248,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
         /// <returns></returns>
         private string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
-            if(pageSize <=0 || page < 0)
+            if (pageSize <= 0 || page < 0)
             {
                 return CreateLoadSql(condition, $@" [{order}] {(desc ? "DESC" : "ASC")}");
             }

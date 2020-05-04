@@ -8,6 +8,9 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -15,9 +18,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Newtonsoft.Json;
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
 using DataUpdateHandler = Agebull.EntityModel.Events.DataUpdateHandler;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Data.SqlClient.SqlCommand>;
 
@@ -92,7 +92,7 @@ namespace Agebull.EntityModel.SqlServer
                 }
                 else
                 {
-                    if (cmd.ExecuteNonQuery()== 0)
+                    if (cmd.ExecuteNonQuery() == 0)
                         return false;
                 }
 

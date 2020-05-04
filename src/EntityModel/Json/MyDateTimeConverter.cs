@@ -8,9 +8,9 @@
 
 #region 引用
 
-using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 #endregion
 
@@ -46,7 +46,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="serializer">The calling serializer.</param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var date = (DateTime) value;
+            var date = (DateTime)value;
             if (date <= new DateTime(1901, 1, 1))
             {
                 writer.WriteNull();

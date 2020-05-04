@@ -8,13 +8,13 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
 
 #endregion
 

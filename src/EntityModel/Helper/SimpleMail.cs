@@ -1,7 +1,7 @@
+using Agebull.Common.Configuration;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using Agebull.Common.Configuration;
 
 namespace Agebull.EntityModel.Common
 {

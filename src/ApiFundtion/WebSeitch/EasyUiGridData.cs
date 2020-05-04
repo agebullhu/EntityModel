@@ -8,8 +8,8 @@
 
 #region 引用
 
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 #endregion
 
@@ -40,6 +40,6 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         [JsonProperty("footer", Required = Required.Default)]
         public IList<T> Footer { get; set; }
-        
+
     }
 }

@@ -8,6 +8,8 @@
 
 #region 引用
 
+using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,8 +17,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -248,7 +248,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="field">生成参数的字段</param>
         /// <param name="type">数据类型</param>
         /// <param name="value">值</param>
-        public DbParameter CreateFieldParameter(string field,SqlDbType type, object value)
+        public DbParameter CreateFieldParameter(string field, SqlDbType type, object value)
         {
             return SqlServerDataBase_.CreateParameter(field, value, type);
         }
@@ -559,7 +559,7 @@ namespace Agebull.EntityModel.SqlServer
         void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetInsertCommand(entity,(SqlCommand) cmd);
+            SetInsertCommand(entity, (SqlCommand)cmd);
         }
 
         /// <summary>

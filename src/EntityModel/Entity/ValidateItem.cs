@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
-        /// 校验节点
-        /// </summary>
-        [JsonObject(MemberSerialization.OptIn)]
+    /// 校验节点
+    /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class ValidateResultDictionary
     {
         /// <summary>

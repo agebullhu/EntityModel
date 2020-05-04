@@ -8,9 +8,9 @@
 
 #region ÒıÓÃ
 
+using Agebull.Common.Base;
 using System;
 using System.Threading.Tasks;
-using Agebull.Common.Base;
 
 #endregion
 

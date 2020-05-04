@@ -8,6 +8,10 @@
 
 #region 引用
 
+using Agebull.Common.Configuration;
+using Agebull.Common.Ioc;
+using Agebull.Common.Logging;
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,10 +19,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using Agebull.Common.Configuration;
-using Agebull.Common.Ioc;
-using Agebull.Common.Logging;
-using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -171,7 +171,7 @@ namespace Agebull.EntityModel.SqlServer
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorder.Debug("打开连接数：{0}",cnt);
+            LogRecorder.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             connection.Open();

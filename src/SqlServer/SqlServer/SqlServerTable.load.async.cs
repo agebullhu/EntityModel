@@ -8,6 +8,8 @@
 
 #region ÒýÓÃ
 
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,10 +20,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.EntityModel.Events;
-
-using Agebull.EntityModel.Common;
-using Agebull.MicroZero.ZeroApis;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
@@ -1455,7 +1453,7 @@ namespace Agebull.EntityModel.SqlServer
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
-            return !await ExistAsync($"([{FieldDictionary[fieldName]}] = ?c_vl_ AND {FieldConditionSQL(PrimaryKey,"<>")}"
+            return !await ExistAsync($"([{FieldDictionary[fieldName]}] = ?c_vl_ AND {FieldConditionSQL(PrimaryKey, "<>")}"
                 , new SqlParameter
                 {
                     ParameterName = "c_vl_",

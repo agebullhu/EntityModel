@@ -1,9 +1,8 @@
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 
 namespace Agebull.EntityModel.Redis
 {

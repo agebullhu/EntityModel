@@ -1,8 +1,7 @@
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 
 namespace Agebull.EntityModel.Redis
 {
@@ -17,7 +16,7 @@ namespace Agebull.EntityModel.Redis
         /// ππ‘Ï
         /// </summary>
         /// <param name="db"></param>
-        public RedisProxy(int db = 0):base(db)
+        public RedisProxy(int db = 0) : base(db)
         {
         }
         #endregion
@@ -232,7 +231,7 @@ namespace Agebull.EntityModel.Redis
         /// <returns></returns>
         public TData GetEntity<TData>(long id, TData def = null) where TData : class, new()
         {
-           return Redis.GetEntity(id, def);
+            return Redis.GetEntity(id, def);
         }
 
         /// <summary>

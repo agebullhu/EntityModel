@@ -77,7 +77,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
         void OnOperatorExecuting<TEntity>(IDataTable<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
-            where TEntity : EditDataObject, new() { }
+            where TEntity : EditDataObject, new()
+        { }
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
@@ -87,7 +88,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
         void OnOperatorExecuted<TEntity>(IDataTable<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
-            where TEntity : EditDataObject, new() { }
+            where TEntity : EditDataObject, new()
+        { }
     }
 
 

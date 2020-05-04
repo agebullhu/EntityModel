@@ -8,11 +8,11 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Agebull.EntityModel.Common;
 
 #endregion
 
@@ -23,9 +23,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class BusinessLogicBase<TData, TAccess>: IBusinessLogicBase<TData>
+    public class BusinessLogicBase<TData, TAccess> : IBusinessLogicBase<TData>
         where TData : EditDataObject, IIdentityData, new()
-        where TAccess :class, IDataTable<TData>, new()
+        where TAccess : class, IDataTable<TData>, new()
     {
         #region 基础支持对象
 
@@ -150,7 +150,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (id == 0)
                 return null;
-            var data= Access.LoadByPrimaryKey(id);
+            var data = Access.LoadByPrimaryKey(id);
             if (data == null)
                 return null;
             OnDetailsLoaded(data, false);

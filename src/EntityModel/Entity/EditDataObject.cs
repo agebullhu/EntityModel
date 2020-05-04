@@ -8,10 +8,10 @@
 
 #region 引用
 
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 #endregion
 

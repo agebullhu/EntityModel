@@ -8,12 +8,11 @@
 
 #region 引用
 
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
 
 #endregion
 

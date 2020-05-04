@@ -1,12 +1,9 @@
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Redis;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Agebull.Common.Configuration;
-using Agebull.EntityModel.Redis;
-using CSRedis;
-using Newtonsoft.Json;
-using Agebull.EntityModel.Common;
 
 #pragma warning disable 693
 

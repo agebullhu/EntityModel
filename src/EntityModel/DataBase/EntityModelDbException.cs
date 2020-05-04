@@ -8,10 +8,7 @@
 
 #region ÒýÓÃ
 
-using System;
 using System.Data.Common;
-using System.Threading.Tasks;
-using Agebull.Common.Base;
 
 #endregion
 
@@ -28,7 +25,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="message"></param>
         public EntityModelDbException(string message) : base(message)
         {
-            
+
         }
     }
 }
