@@ -1,8 +1,11 @@
-﻿namespace Agebull.EntityModel.Common
+﻿using System;
+
+namespace Agebull.EntityModel.Common
 {
     /// <summary>
     /// 数字与BYTE的转换辅助对象
     /// </summary>
+    [Obsolete]
     public class RedisOption
     {
         #region 配置

@@ -8,6 +8,7 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
+    [Obsolete]
     public class RedisProxy : RedisProxy<IRedis>
     {
         #region 构造

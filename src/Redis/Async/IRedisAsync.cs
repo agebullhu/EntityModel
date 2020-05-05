@@ -8,6 +8,7 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// Redis操作接口
     /// </summary>
+    [Obsolete]
     public interface IRedisAsync : IRedisBase
     {
         /// <summary>

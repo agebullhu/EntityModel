@@ -9,6 +9,7 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
+    [Obsolete]
     public class CSRedisEx : CSRedisBase, IRedis
     {
         #region 文本读写

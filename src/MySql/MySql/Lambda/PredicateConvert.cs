@@ -321,50 +321,35 @@ namespace Agebull.EntityModel.MySql
             }
             if (string.Equals(righttext, "null", StringComparison.OrdinalIgnoreCase))
             {
-                switch (expression.NodeType)
+                return expression.NodeType switch
                 {
-                    case ExpressionType.Equal:
-                        return $"({lefttext} IS NULL)";
-                    case ExpressionType.NotEqual:
-                        return $"({lefttext} IS NOT NULL)";
-                    default:
-                        throw new EntityModelDbException("Invalid lambda expression");
-                }
+                    ExpressionType.Equal => $"({lefttext} IS NULL)",
+                    ExpressionType.NotEqual => $"({lefttext} IS NOT NULL)",
+                    _ => throw new EntityModelDbException("Invalid lambda expression"),
+                };
             }
             if (string.Equals(lefttext, "null", StringComparison.OrdinalIgnoreCase))
             {
-                switch (expression.NodeType)
+                return expression.NodeType switch
                 {
-                    case ExpressionType.Equal:
-                        return $"({righttext} IS NULL)";
-                    case ExpressionType.NotEqual:
-                        return $"({righttext} IS NOT NULL)";
-                    default:
-                        throw new EntityModelDbException("Invalid lambda expression");
-                }
+                    ExpressionType.Equal => $"({righttext} IS NULL)",
+                    ExpressionType.NotEqual => $"({righttext} IS NOT NULL)",
+                    _ => throw new EntityModelDbException("Invalid lambda expression"),
+                };
             }
             //body
-            switch (expression.NodeType)
+            return expression.NodeType switch
             {
-                case ExpressionType.AndAlso:
-                    return $"({CheckSingle(lefttext)} AND {CheckSingle(righttext)})";
-                case ExpressionType.OrElse:
-                    return $"({CheckSingle(lefttext)} OR {CheckSingle(righttext)})";
-                case ExpressionType.Equal:
-                    return $"({lefttext} = {righttext})";
-                case ExpressionType.NotEqual:
-                    return $"({lefttext} <> {righttext})";
-                case ExpressionType.GreaterThanOrEqual:
-                    return $"({lefttext} >= {righttext})";
-                case ExpressionType.GreaterThan:
-                    return $"({lefttext} > {righttext})";
-                case ExpressionType.LessThanOrEqual:
-                    return $"({lefttext} <= {righttext})";
-                case ExpressionType.LessThan:
-                    return $"({lefttext} < {righttext})";
-                default:
-                    throw new EntityModelDbException("Invalid lambda expression");
-            }
+                ExpressionType.AndAlso => $"({CheckSingle(lefttext)} AND {CheckSingle(righttext)})",
+                ExpressionType.OrElse => $"({CheckSingle(lefttext)} OR {CheckSingle(righttext)})",
+                ExpressionType.Equal => $"({lefttext} = {righttext})",
+                ExpressionType.NotEqual => $"({lefttext} <> {righttext})",
+                ExpressionType.GreaterThanOrEqual => $"({lefttext} >= {righttext})",
+                ExpressionType.GreaterThan => $"({lefttext} > {righttext})",
+                ExpressionType.LessThanOrEqual => $"({lefttext} <= {righttext})",
+                ExpressionType.LessThan => $"({lefttext} < {righttext})",
+                _ => throw new EntityModelDbException("Invalid lambda expression"),
+            };
         }
 
         /// <summary>
@@ -400,21 +385,16 @@ namespace Agebull.EntityModel.MySql
         /// <returns>解释后的SQL文本</returns>
         private string Convert(UnaryExpression expression)
         {
-            switch (expression.NodeType)
+            return expression.NodeType switch
             {
-                case ExpressionType.Not:
-                    return expression.Operand is ParameterExpression parameterExpression
-                        ? $"`{parameterExpression.Name}` == 0"
-                        : $"NOT({ConvertExpression(expression.Operand)})";
-                case ExpressionType.Convert:
-                    return ConvertExpression(expression.Operand);
-                case ExpressionType.Decrement:
-                    return $"({ConvertExpression(expression.Operand)}) - 1";
-                case ExpressionType.Increment:
-                    return $"({ConvertExpression(expression.Operand)}) + 1";
-                default:
-                    throw new EntityModelDbException("Invalid lambda expression");
-            }
+                ExpressionType.Not => expression.Operand is ParameterExpression parameterExpression
+                                       ? $"`{parameterExpression.Name}` == 0"
+                                       : $"NOT({ConvertExpression(expression.Operand)})",
+                ExpressionType.Convert => ConvertExpression(expression.Operand),
+                ExpressionType.Decrement => $"({ConvertExpression(expression.Operand)}) - 1",
+                ExpressionType.Increment => $"({ConvertExpression(expression.Operand)}) + 1",
+                _ => throw new EntityModelDbException("Invalid lambda expression"),
+            };
         }
 
         /// <summary>
@@ -445,53 +425,52 @@ namespace Agebull.EntityModel.MySql
             }
             if (expression.Method.DeclaringType == typeof(string))
             {
-                switch (expression.Method.Name)
+                return expression.Method.Name switch
                 {
-                    case "ToUpper":
-                        return $"UPPER({ConvertExpression(expression.Object)})";
-                    case "Contains":
-                        return $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))";
-                    case "ToLower":
-                        return $"LOWER({ConvertExpression(expression.Object)})";
-                    case "Trim":
-                        return $"TRIM({ConvertExpression(expression.Object)})";
-                    case "TrimStart":
-                        return $"LTRIM({ConvertExpression(expression.Object)})";
-                    case "TrimEnd":
-                        return $"RTRIM({ConvertExpression(expression.Object)})";
-                    case "Replace":
-                        return $"REPLACE({ConvertExpression(expression.Object)},{GetArguments(expression)})";
-                }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                    "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like concat({ConvertExpression(expression.Arguments[1])}, '%'))",
+                    "ToUpper" => $"UPPER({ConvertExpression(expression.Object)})",
+                    "Contains" => $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))",
+                    "ToLower" => $"LOWER({ConvertExpression(expression.Object)})",
+                    "Trim" => $"TRIM({ConvertExpression(expression.Object)})",
+                    "TrimStart" => $"LTRIM({ConvertExpression(expression.Object)})",
+                    "TrimEnd" => $"RTRIM({ConvertExpression(expression.Object)})",
+                    "Replace" => $"REPLACE({ConvertExpression(expression.Object)},{GetArguments(expression)})",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
             }
             if (expression.Method.DeclaringType == typeof(Math))
             {
-                switch (expression.Method.Name)
+                return expression.Method.Name switch
                 {
-                    case "Abs":
-                        return $"ABS({GetArguments(expression)})";
-                }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                    "Abs" => $"ABS({GetArguments(expression)})",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
             }
             if (expression.Method.DeclaringType == typeof(Enum))
             {
-                switch (expression.Method.Name)
+                return expression.Method.Name switch
                 {
-                    case "HasFlag":
-                        return string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression));
-                }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                    "HasFlag" => string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression)),
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
             }
 
             if (expression.Method.Name == "Contains")
             {
-                //if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+                string value;
+                string field;
+                if (expression.Object == null)//扩展方法
                 {
-                    var vl = ConvertExpression(expression.Object);
-                    if (!string.IsNullOrWhiteSpace(vl))
-                        return $"{GetArguments(expression)} IN ({vl})";
+                    value = ConvertExpression(expression.Arguments[0]);
+                    field = ConvertExpression(expression.Arguments[1]);
                 }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                else
+                {
+                    value = ConvertExpression(expression.Object);
+                    field = GetArguments(expression);
+                }
+                if (!string.IsNullOrWhiteSpace(field) && !string.IsNullOrWhiteSpace(value))
+                    return $"{field} IN ({value})";
             }
             return CheckDynamicValue(GetValue(expression));
         }
@@ -536,7 +515,6 @@ namespace Agebull.EntityModel.MySql
 
         string CheckDynamicValue(object vl)
         {
-
             if (vl == null)
             {
                 return $"?{_condition.AddParameter((object)null)}";
@@ -591,7 +569,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>解释后的SQL文本</returns>
         private string Convert(ConstantExpression expression)
         {
-            if (expression.Value == null || expression.Value.ToString().ToLower() == "null")
+            if (expression.Value == null)
             {
                 return "NULL";
             }
@@ -627,17 +605,13 @@ namespace Agebull.EntityModel.MySql
                     return (bool)expression.Value ? "1" : "0";
                 case "char":
                 case "Char":
-                    switch ((char)expression.Value)
+                    return ((char)expression.Value) switch
                     {
-                        case '\t':
-                            return "'\t'";
-                        case '\r':
-                            return "'\r'";
-                        case '\n':
-                            return "'\n'";
-                    }
-
-                    return $"'{expression.Value}'";
+                        '\t' => "'\t'",
+                        '\r' => "'\r'",
+                        '\n' => "'\n'",
+                        _ => $"'{expression.Value}'",
+                    };
             }
             var name = _condition.AddParameter(expression.Value);
             return $"?{name}";

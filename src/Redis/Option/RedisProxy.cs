@@ -9,6 +9,7 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// REDIS¥˙¿Ì¿‡
     /// </summary>
+    [Obsolete]
     public class RedisProxy<TRedis> : IDisposable
         where TRedis : IRedisBase
     {

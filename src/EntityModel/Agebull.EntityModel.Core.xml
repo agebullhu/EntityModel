@@ -2538,6 +2538,15 @@
             <param name="lambda">条件</param>
             <returns>内容</returns>
         </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="condition">条件</param>
+            <param name="args">参数</param>
+            <returns>内容</returns>
+        </member>
         <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadData(Agebull.EntityModel.Events.MulitCondition)">
             <summary>
                 载入条件数据
@@ -2847,6 +2856,19 @@
             构造
             </summary>
             <param name="message"></param>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.StringEx">
+            <summary>
+                用于SQL解析
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.StringEx.LeftLike(System.String,System.String)">
+            <summary>
+            用于SQL中的后部Like,如[field] like 'abc%',以使用索引
+            </summary>
+            <param name="str"></param>
+            <param name="des"></param>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.Common.DbReaderScope`1">
             <summary>

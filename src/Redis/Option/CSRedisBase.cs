@@ -10,6 +10,7 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
+    [Obsolete]
     public class CSRedisBase : IDisposable
     {
         #region 配置

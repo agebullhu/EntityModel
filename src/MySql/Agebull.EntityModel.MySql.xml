@@ -2396,6 +2396,12 @@
             <param name="condition">条件</param>
             <returns>内容</returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取一个字段
+            </summary>
+            <returns>数据</returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Func{System.Object,``0},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取一个字段
@@ -3090,6 +3096,12 @@
             <param name="fieldExpression">字段</param>
             <param name="lambda">条件</param>
             <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取一个字段
+            </summary>
+            <returns>数据</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
             <summary>

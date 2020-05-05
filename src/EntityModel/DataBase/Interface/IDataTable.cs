@@ -694,6 +694,14 @@ namespace Agebull.EntityModel.Common
         List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
             Func<object, TField> parse, Expression<Func<TData, bool>> lambda);
 
+        /// <summary>
+        ///     读取一个字段
+        /// </summary>
+        /// <param name="fieldExpression">字段</param>
+        /// <param name="condition">条件</param>
+        /// <param name="args">参数</param>
+        /// <returns>内容</returns>
+        List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition, DbParameter[] args);
         #endregion
 
         #region 数据读取

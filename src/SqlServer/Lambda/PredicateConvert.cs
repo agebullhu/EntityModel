@@ -414,27 +414,19 @@ namespace Agebull.EntityModel.SqlServer
             }
             if (expression.Method.DeclaringType == typeof(string))
             {
-                switch (expression.Method.Name)
+                return expression.Method.Name switch
                 {
-                    case "ToUpper":
-                        return $"upper({ConvertExpression(expression.Object)})";
-                    case "Equals":
-                        return $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})";
-                    case "Contains":
-                        return
-                            $"({ConvertExpression(expression.Object)} Like '%'+{GetArguments(expression)}+'%')";
-                    case "ToLower":
-                        return $"lower({ConvertExpression(expression.Object)})";
-                    case "Trim":
-                        return $"trim({ConvertExpression(expression.Object)})";
-                    case "TrimStart":
-                        return $"ltrim({ConvertExpression(expression.Object)})";
-                    case "TrimEnd":
-                        return $"rtrim({ConvertExpression(expression.Object)})";
-                    case "Replace":
-                        return $"replace({ConvertExpression(expression.Object)},{GetArguments(expression)})";
-                }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                    "ToUpper" => $"upper({ConvertExpression(expression.Object)})",
+                    "Equals" => $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})",
+                    "Contains" => $"({ConvertExpression(expression.Object)} Like '%'+{GetArguments(expression)}+'%')",
+                    "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like {ConvertExpression(expression.Arguments[1])}+'%')",
+                    "ToLower" => $"lower({ConvertExpression(expression.Object)})",
+                    "Trim" => $"trim({ConvertExpression(expression.Object)})",
+                    "TrimStart" => $"ltrim({ConvertExpression(expression.Object)})",
+                    "TrimEnd" => $"rtrim({ConvertExpression(expression.Object)})",
+                    "Replace" => $"replace({ConvertExpression(expression.Object)},{GetArguments(expression)})",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
             }
             if (expression.Method.DeclaringType.IsValueType && expression.Method.Name == "Equals")
                 return $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})";
@@ -458,13 +450,20 @@ namespace Agebull.EntityModel.SqlServer
             }
             if (expression.Method.Name == "Contains")
             {
-                //if (expression.Method.DeclaringType.IsGenericType && expression.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))
+                string value;
+                string field;
+                if (expression.Object == null)//扩展方法
                 {
-                    var vl = ConvertExpression(expression.Object);
-                    if (!string.IsNullOrWhiteSpace(vl))
-                        return $"{GetArguments(expression)} in ({vl})";
+                    value = ConvertExpression(expression.Arguments[0]);
+                    field = ConvertExpression(expression.Arguments[1]);
                 }
-                throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}");
+                else
+                {
+                    value = ConvertExpression(expression.Object);
+                    field = GetArguments(expression);
+                }
+                if (!string.IsNullOrWhiteSpace(field) && !string.IsNullOrWhiteSpace(value))
+                    return $"{field} IN ({value})";
             }
             var name = _condition.AddParameter(GetValue(expression));
             return $"@{name}";

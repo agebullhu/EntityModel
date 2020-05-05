@@ -1115,6 +1115,18 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     读取一个字段
         /// </summary>
+        /// <returns>数据</returns>
+        public List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition, DbParameter[] args)
+        {
+            var field = GetPropertyName(fieldExpression);
+
+            var result = LoadValuesInner(field, condition, args);
+            return result.Count == 0 ? new List<TField>() : result.Select(p => (TField)p).ToList();
+        }
+
+        /// <summary>
+        ///     读取一个字段
+        /// </summary>
         /// <param name="fieldExpression">字段</param>
         /// <param name="condition">条件</param>
         /// <returns>内容</returns>

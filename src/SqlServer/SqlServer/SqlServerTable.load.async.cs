@@ -959,6 +959,18 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     读取一个字段
         /// </summary>
+        /// <returns>数据</returns>
+        public async Task<List<TField>> LoadValuesAsync<TField>(Expression<Func<TData, TField>> fieldExpression, string condition, DbParameter[] args)
+        {
+            var field = GetPropertyName(fieldExpression);
+
+            var result = await LoadValuesInnerAsync(field, condition, args);
+            return result.Count == 0 ? new List<TField>() : result.Select(p => (TField)p).ToList();
+        }
+
+        /// <summary>
+        ///     读取一个字段
+        /// </summary>
         /// <param name="fieldExpression">字段</param>
         /// <param name="parse">转换数据类型方法</param>
         /// <param name="lambda">条件</param>

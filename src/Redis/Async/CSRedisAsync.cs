@@ -12,6 +12,7 @@ namespace Agebull.Common.DataModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
+    [Obsolete]
     public class CSRedisAsync : CSRedisBase, IDisposable, IRedisAsync
     {
         #region 文本读写

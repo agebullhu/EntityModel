@@ -9,6 +9,7 @@ namespace Agebull.EntityModel.Redis
     /// <summary>
     /// REDIS代理类
     /// </summary>
+    [Obsolete]
     public class RedisProxyAsync : RedisProxy<IRedisAsync>
     {
         #region 构造
