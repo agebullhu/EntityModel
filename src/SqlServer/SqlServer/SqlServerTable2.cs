@@ -47,7 +47,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public SqlServerDataBase DataBase
         {
-            get => _dataBase ??= DependencyHelper.Create<TDataBase>();
+            get => _dataBase ??= DependencyHelper.GetService<TDataBase>();
             set => _dataBase = value;
         }
 

@@ -15,7 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -24,9 +24,9 @@ using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
-namespace Agebull.EntityModel.SqlServer
+namespace Agebull.EntityModel.Sqlite
 {
-    partial class SqlServerTable<TData, TDataBase>
+    partial class SqliteTable<TData, TDataBase>
     {
         #region 遍历所有
 
@@ -39,7 +39,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <param name="lambda"></param>
         /// <param name="readAction"></param>
         /// <returns></returns>
-        public List<T> Group<T>(string group, Dictionary<string, string> colls, Expression<Func<TData, bool>> lambda, Action<SqlDataReader, T> readAction)
+        public List<T> Group<T>(string group, Dictionary<string, string> colls, Expression<Func<TData, bool>> lambda, Action<SqliteDataReader, T> readAction)
             where T : class, new()
         {
             var groupF = FieldDictionary[group];
@@ -52,7 +52,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             var convert = Compile(lambda);
             code.AppendLine($" FROM {ContextReadTable} ");
-            code.AppendLine(ConditionSqlCode(convert.ConditionSql));
+            ConditionSqlCode(code, convert.ConditionSql);
             code.Append($" GROUP BY {groupF};");
 
 
@@ -1213,7 +1213,7 @@ namespace Agebull.EntityModel.SqlServer
             List<DbParameter> args = new List<DbParameter>();
             foreach (var item in condition.Parameters)
             {
-                var pa = new SqlParameter(item.Name, item.Type);
+                var pa = new SqliteParameter(item.Name, item.Type);
                 if (item.Value == null)
                     pa.Value = DBNull.Value;
                 else
@@ -1495,7 +1495,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <returns>读取数据的实体</returns>
-        public TData LoadEntity(SqlDataReader reader)
+        public TData LoadEntity(SqliteDataReader reader)
         {
             var entity = new TData();
             using (new EntityLoadScope(entity))
@@ -1684,10 +1684,10 @@ namespace Agebull.EntityModel.SqlServer
             var fieldName = GetPropertyName(field);
             var convert = Compile(condition);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
-            convert.AddAndCondition($"([{FieldDictionary[fieldName]}] = @c_vl_)", new SqlParameter
+            convert.AddAndCondition($"([{FieldDictionary[fieldName]}] = @c_vl_)", new SqliteParameter
             {
                 ParameterName = "c_vl_",
-                SqlDbType = GetDbType(fieldName),
+                SqliteType = GetDbType(fieldName),
                 Value = val
             });
             return !Exist(convert.ConditionSql, convert.Parameters);
@@ -1707,10 +1707,10 @@ namespace Agebull.EntityModel.SqlServer
             var fieldName = GetPropertyName(field);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
             return !Exist($"([{FieldDictionary[fieldName]}] = @c_vl_ AND {FieldConditionSQL(PrimaryKey, "<>")}"
-                , new SqlParameter
+                , new SqliteParameter
                 {
                     ParameterName = "c_vl_",
-                    SqlDbType = GetDbType(fieldName),
+                    SqliteType = GetDbType(fieldName),
                     Value = val
                 }
                 , CreatePimaryKeyParameter(key));
@@ -1729,10 +1729,10 @@ namespace Agebull.EntityModel.SqlServer
             var fieldName = GetPropertyName(field);
             Debug.Assert(FieldDictionary.ContainsKey(fieldName));
             return !Exist($"([{FieldDictionary[fieldName]}] = @c_vl_)"
-                , new SqlParameter
+                , new SqliteParameter
                 {
                     ParameterName = "c_vl_",
-                    SqlDbType = GetDbType(fieldName),
+                    SqliteType = GetDbType(fieldName),
                     Value = val
                 });
         }

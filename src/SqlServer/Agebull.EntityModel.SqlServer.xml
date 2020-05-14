@@ -21,7 +21,7 @@
                 重置状态的SQL语句
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.ContitionSqlCode(System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.SqlServer.DataStateTable`2.ConditionSqlCode(System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
@@ -2915,14 +2915,14 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.ContitionSqlCode(System.String)">
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.ConditionSqlCode(System.String)">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
             <param name="condition"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.ContitionSqlCode(System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.SqlServer.SqlServerTable`2.ConditionSqlCode(System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>

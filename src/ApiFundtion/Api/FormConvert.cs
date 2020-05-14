@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
@@ -87,6 +88,86 @@ namespace Agebull.MicroZero.ZeroApis
 
         #endregion
 
+        #region 基本操作
+
+
+        /// <summary>
+        ///     参数
+        /// </summary>
+        private readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
+
+        /// <summary>
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        bool TryGet<T>(string name, Func<string, T> convert, out T value)
+        {
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
+            {
+                value = default;
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                value = default;
+                return true;
+            }
+            try
+            {
+                value = convert(str.Trim());
+                return true;
+            }
+            catch
+            {
+                AddMessage(name, $"转换为{typeof(T).Name}出错");
+                Failed = true;
+                value = default;
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        bool TryGet<T>(string name, Func<string, T> convert, out T? value)
+            where T : struct
+        {
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
+            {
+                value = null;
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                value = null;
+                return true;
+            }
+            try
+            {
+                value = convert(str.Trim());
+                return true;
+            }
+            catch
+            {
+                AddMessage(name, $"转换为{typeof(T).Name}出错");
+                Failed = true;
+                value = default;
+                return false;
+            }
+        }
+
+        #endregion
+
         #region 字段值转换 
 
         /// <summary>
@@ -97,7 +178,13 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out string value)
         {
-            return RequestArgumentConvert.TryGet(field, out value);
+            if (!Arguments.TryGetValue(field, out var str))
+            {
+                value = default;
+                return false;
+            }
+            value = str;
+            return true;
         }
 
         /// <summary>
@@ -109,7 +196,19 @@ namespace Agebull.MicroZero.ZeroApis
         public bool TryGetEnum<TEnum>(string field, out TEnum value)
             where TEnum : struct
         {
-            return RequestArgumentConvert.TryGetEnum(field, out value);
+            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetEnum<TEnum>(string field, out TEnum? value)
+            where TEnum : struct
+        {
+            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
         }
 
         /// <summary>
@@ -120,13 +219,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out byte value)
         {
-            if (RequestArgumentConvert.TryGet(field, byte.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, byte.Parse, out value);
         }
 
         /// <summary>
@@ -137,13 +230,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out byte? value)
         {
-            if (RequestArgumentConvert.TryGet(field, byte.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, byte.Parse, out value);
         }
 
         /// <summary>
@@ -154,13 +241,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out sbyte value)
         {
-            if (RequestArgumentConvert.TryGet(field, sbyte.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, sbyte.Parse, out value);
         }
 
         /// <summary>
@@ -171,13 +252,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out sbyte? value)
         {
-            if (RequestArgumentConvert.TryGet(field, sbyte.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, sbyte.Parse, out value);
         }
 
         /// <summary>
@@ -188,13 +263,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out short value)
         {
-            if (RequestArgumentConvert.TryGet(field, short.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, short.Parse, out value);
         }
 
         /// <summary>
@@ -205,13 +274,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out short? value)
         {
-            if (RequestArgumentConvert.TryGet(field, short.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, short.Parse, out value);
         }
 
         /// <summary>
@@ -222,13 +285,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ushort value)
         {
-            if (RequestArgumentConvert.TryGet(field, ushort.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, ushort.Parse, out value);
         }
 
         /// <summary>
@@ -239,14 +296,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ushort? value)
         {
-            if (RequestArgumentConvert.TryGet(field, ushort.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, ushort.Parse, out value);
         }
+
         /// <summary>
         /// 字段值转换
         /// </summary>
@@ -255,13 +307,22 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out bool value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
+            return TryGet(field, str =>
             {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+                switch (str.ToLower())
+                {
+                    default:
+                        return bool.Parse(str);
+                    case "off":
+                    case "no":
+                    case "0":
+                        return false;
+                    case "on":
+                    case "yes":
+                    case "1":
+                        return true;
+                }
+            }, out value);
         }
 
         /// <summary>
@@ -272,13 +333,22 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out bool? value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
+            return TryGet(field, str =>
             {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+                switch (str.ToLower())
+                {
+                    default:
+                        return bool.Parse(str);
+                    case "off":
+                    case "no":
+                    case "0":
+                        return false;
+                    case "on":
+                    case "yes":
+                    case "1":
+                        return true;
+                }
+            }, out value);
         }
 
         /// <summary>
@@ -289,13 +359,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out int value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, int.Parse, out value);
         }
 
         /// <summary>
@@ -306,14 +370,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out int? value)
         {
-            if (RequestArgumentConvert.TryGet(field, int.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, int.Parse, out value);
         }
+
         /// <summary>
         /// 字段值转换
         /// </summary>
@@ -322,13 +381,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out uint value)
         {
-            if (RequestArgumentConvert.TryGet(field, uint.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, uint.Parse, out value);
         }
 
         /// <summary>
@@ -339,13 +392,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out uint? value)
         {
-            if (RequestArgumentConvert.TryGet(field, uint.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, uint.Parse, out value);
         }
 
         /// <summary>
@@ -356,13 +403,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out long value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, long.Parse, out value);
         }
 
         /// <summary>
@@ -373,13 +414,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out long? value)
         {
-            if (RequestArgumentConvert.TryGet(field, long.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, long.Parse, out value);
         }
 
         /// <summary>
@@ -390,13 +425,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ulong value)
         {
-            if (RequestArgumentConvert.TryGet(field, ulong.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, ulong.Parse, out value);
         }
 
         /// <summary>
@@ -407,13 +436,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ulong? value)
         {
-            if (RequestArgumentConvert.TryGet(field, ulong.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, ulong.Parse, out value);
         }
 
         /// <summary>
@@ -424,13 +447,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out float value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, float.Parse, out value);
         }
 
         /// <summary>
@@ -441,13 +458,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out float? value)
         {
-            if (RequestArgumentConvert.TryGet(field, float.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, float.Parse, out value);
         }
 
         /// <summary>
@@ -458,13 +469,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out double value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, double.Parse, out value);
         }
 
         /// <summary>
@@ -475,13 +480,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out double? value)
         {
-            if (RequestArgumentConvert.TryGet(field, double.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, double.Parse, out value);
         }
 
         /// <summary>
@@ -492,13 +491,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out DateTime value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, DateTime.Parse, out value);
         }
 
         /// <summary>
@@ -509,13 +502,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out DateTime? value)
         {
-            if (RequestArgumentConvert.TryGet(field, DateTime.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, DateTime.Parse, out value);
         }
 
         /// <summary>
@@ -526,13 +513,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out decimal value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, decimal.Parse, out value);
         }
 
         /// <summary>
@@ -543,13 +524,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out decimal? value)
         {
-            if (RequestArgumentConvert.TryGet(field, decimal.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, decimal.Parse, out value);
         }
         /// <summary>
         /// 字段值转换
@@ -559,13 +534,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out Guid value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, Guid.Parse, out value);
         }
 
         /// <summary>
@@ -576,13 +545,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out Guid? value)
         {
-            if (RequestArgumentConvert.TryGet(field, Guid.Parse, out value))
-            {
-                return true;
-            }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return TryGet(field, Guid.Parse, out value);
         }
 
 
@@ -594,29 +557,29 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<int> value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
+            if (!Arguments.TryGetValue(field, out var str))
+            {
+                value = default;
+                return false;
+            }
+            value = new List<int>();
+            if (string.IsNullOrWhiteSpace(str))
             {
                 return true;
             }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
-        }
-        /// <summary>
-        /// 字段值转换
-        /// </summary>
-        /// <param name="field">名称</param>
-        /// <param name="value">字段名称</param>
-        /// <returns>是否接收值</returns>
-        public bool TryGetValue(string field, out List<long> value)
-        {
-            if (RequestArgumentConvert.TryGet(field, out value))
+            var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var word in words)
             {
-                return true;
+                if (int.TryParse(word, out var num))
+                {
+                    value.Add(num);
+                    continue;
+                }
+                AddMessage(field, "参数值转换出错");
+                Failed = true;
+                return false;
             }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -625,16 +588,41 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="field">名称</param>
         /// <param name="value">字段名称</param>
         /// <returns>是否接收值</returns>
-        public bool TryGetIDs(string field, out List<long> value)
+        public bool TryGetValue(string field, out List<long> value)
         {
-            if (RequestArgumentConvert.TryGet(field, out value))
+            if (!Arguments.TryGetValue(field, out var str))
+            {
+                value = default;
+                return false;
+            }
+            value = new List<long>();
+            if (string.IsNullOrWhiteSpace(str))
             {
                 return true;
             }
-            AddMessage(field, "参数值转换出错");
-            Failed = true;
-            return false;
+            var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var word in words)
+            {
+                if (long.TryParse(word, out var num))
+                {
+                    value.Add(num);
+                    continue;
+                }
+                AddMessage(field, "参数值转换出错");
+                Failed = true;
+                return false;
+            }
+            return true;
         }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetIDs(string field, out List<long> value) => TryGetValue(field, out value);
+
         #endregion
     }
 }

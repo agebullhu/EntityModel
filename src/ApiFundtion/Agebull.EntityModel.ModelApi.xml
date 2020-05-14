@@ -400,6 +400,29 @@
                 是否发生解析错误
             </summary>
         </member>
+        <member name="F:Agebull.MicroZero.ZeroApis.FormConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},System.Nullable{``0}@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.String@)">
             <summary>
             字段值转换
@@ -409,6 +432,14 @@
             <returns>是否接收值</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetEnum``1(System.String,``0@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetEnum``1(System.String,System.Nullable{``0}@)">
             <summary>
             字段值转换
             </summary>
@@ -932,6 +963,16 @@
             <param name="name">参数名称</param>
             <param name="convert">转换方法</param>
             <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@,System.Boolean@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <param name="hase">参数是否存在</param>
             <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">

@@ -460,7 +460,7 @@
             <param name="code">写入SQL的文本构造器</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ContitionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ConditionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
@@ -3435,7 +3435,7 @@
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ContitionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ConditionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>

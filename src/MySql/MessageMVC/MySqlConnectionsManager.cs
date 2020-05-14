@@ -51,7 +51,7 @@ namespace Agebull.EntityModel.MySql
 
             IsManagement = true;
             InternalInitialize();
-            ConfigurationManager.RegistOnChange("ConnectionStrings", CheckOption, false);
+            ConfigurationHelper.RegistOnChange("ConnectionStrings", CheckOption, false);
             return Task.CompletedTask;
         }
 
@@ -62,7 +62,7 @@ namespace Agebull.EntityModel.MySql
         {
             foreach (var group in Connections.ToArray())
             {
-                var str = ConfigurationManager.GetConnectionString(group.Key);
+                var str = ConfigurationHelper.GetConnectionString(group.Key);
                 if (str == group.Value.ConnectionString)
                     continue;
                 Connections.TryRemove(group.Key, out var info);
@@ -206,7 +206,7 @@ namespace Agebull.EntityModel.MySql
             {
                 throw new EntityModelDbException("连接字符串的配置名称不能为空");
             }
-            var constr = ConfigurationManager.GetConnectionString(name, null);
+            var constr = ConfigurationHelper.GetConnectionString(name, null);
 
             if (string.IsNullOrEmpty(constr))
             {
@@ -291,7 +291,7 @@ namespace Agebull.EntityModel.MySql
                 Items = new List<HealthItem>()
             };
 
-            var values = ConfigurationManager.Get<Dictionary<string, string>>("ConnectionStrings");
+            var values = ConfigurationHelper.Get<Dictionary<string, string>>("ConnectionStrings");
             foreach (var kv in values)
             {
                 info.Items.Add(await ConnectionTest(kv.Key, kv.Value));

@@ -10,44 +10,44 @@
 
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
+using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.Linq;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql
+namespace Agebull.EntityModel.Sqlite
 {
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
-    /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
-    public abstract partial class MySqlTable<TData, TMySqlDataBase> : SimpleConfig, IDataTable<TData>
+    /// <typeparam name="TDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
+    public abstract partial class SqliteTable<TData, TDataBase> : SimpleConfig, IDataTable<TData>
         where TData : EditDataObject, new()
-        where TMySqlDataBase : MySqlDataBase
+        where TDataBase : SqliteDataBase
     {
         #region 数据库
-
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public DataBaseType DataBaseType => DataBaseType.MySql;
+        public DataBaseType DataBaseType => DataBaseType.Sqlite;
 
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
-        private MySqlDataBase _dataBase;
+        private SqliteDataBase _dataBase;
 
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
-        public MySqlDataBase DataBase
+        public SqliteDataBase DataBase
         {
-            get => _dataBase ??= DependencyHelper.GetService<TMySqlDataBase>();
+            get => _dataBase ??= DependencyHelper.GetService<TDataBase>();
             set => _dataBase = value;
         }
 
@@ -62,7 +62,7 @@ namespace Agebull.EntityModel.MySql
         IDataBase IDataTable.DataBase
         {
             get => DataBase;
-            set => DataBase = (MySqlDataBase)value;
+            set => DataBase = (SqliteDataBase)value;
         }
 
         #endregion
@@ -90,6 +90,11 @@ namespace Agebull.EntityModel.MySql
         string IDataTable.FullLoadSql => FullLoadSqlCode;
 
         /// <summary>
+        ///     是否作为基类存在的
+        /// </summary>
+        public bool IsBaseClass { get; set; }
+
+        /// <summary>
         ///     设计时的主键字段
         /// </summary>
         string IDataTable.PrimaryKey => PrimaryKey;
@@ -105,9 +110,28 @@ namespace Agebull.EntityModel.MySql
         string IDataTable.WriteTableName => WriteTableName;
 
         /// <summary>
+        ///     字段字典(运行时)
+        /// </summary>
+        public Dictionary<string, string> FieldDictionary => OverrideFieldMap ?? FieldMap;
+
+        /// <summary>
         ///     主键字段(可动态覆盖PrimaryKey)
         /// </summary>
-        string IDataTable.KeyField => KeyField;
+        private string _keyField;
+
+        /// <summary>
+        ///     主键字段(可动态覆盖PrimaryKey)
+        /// </summary>
+        public string KeyField
+        {
+            get
+            {
+                if (_keyField != null)
+                    return _keyField;
+                return _keyField = PrimaryKey;
+            }
+            set => _keyField = value;
+        }
 
         #endregion
 
@@ -116,37 +140,44 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string condition, params DbParameter[] args)
+        protected SqliteCommand CreateLoadCommand(string condition, params DbParameter[] args)
         {
-            var sql = CreateLoadSql(condition, null);
-            return DataBase.CreateCommand(scope, sql.ToString(), args);
+            return CreateLoadCommand(condition, null, args);
         }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string condition, string order, params DbParameter[] args)
+        protected SqliteCommand CreateLoadCommand(string condition, string order, params DbParameter[] args)
         {
             var sql = CreateLoadSql(condition, order);
-            return DataBase.CreateCommand(scope, sql.ToString(), args);
+            return DataBase.CreateCommand(sql, args);
+        }
+
+        /// <summary>
+        ///     生成命令
+        /// </summary>
+        protected SqliteCommand CreateOnceCommand(string condition, string order, bool desc, params DbParameter[] args)
+        {
+            var sql = CreateOnceSql(condition, order, desc);
+            return DataBase.CreateCommand(sql, args);
         }
 
         /// <summary>
         ///     生成载入命令
         /// </summary>
-        /// <param name="scope">连接使用范围</param>
         /// <param name="order">排序字段</param>
         /// <param name="desc">是否倒序</param>
         /// <param name="condition">数据条件</param>
         /// <param name="args">条件中的参数</param>
         /// <returns>载入命令</returns>
-        protected MySqlCommand CreateLoadCommand(ConnectionScope scope, string order, bool desc, string condition,
+        protected SqliteCommand CreateLoadCommand(string order, bool desc, string condition,
             params DbParameter[] args)
         {
             var field = !string.IsNullOrEmpty(order) ? order : KeyField;
             Debug.Assert(FieldDictionary.ContainsKey(field));
-            var orderSql = $"`{FieldDictionary[field]}` {(desc ? "DESC" : "")}";
-            return CreateLoadCommand(scope, condition: condition, orderSql, args);
+            var orderSql = $"[{FieldMap[field]}] {(desc ? "DESC" : "")}";
+            return CreateLoadCommand(condition, orderSql, args);
         }
 
         #endregion
@@ -154,13 +185,13 @@ namespace Agebull.EntityModel.MySql
         #region 字段的参数帮助
 
         /// <summary>
-        ///     得到字段的MySqlDbType类型
+        ///     得到字段的SqliteType类型
         /// </summary>
         /// <param name="field">字段名称</param>
         /// <returns>参数</returns>
-        protected virtual MySqlDbType GetDbType(string field)
+        protected virtual SqliteType GetDbType(string field)
         {
-            return MySqlDbType.VarString;
+            return SqliteType.Text;
         }
 
 
@@ -179,7 +210,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(fields));
-            return fields.Select(field => (DbParameter)new MySqlParameter(field, GetDbType(field))).ToArray();
+            return fields.Select(field => (DbParameter)new SqliteParameter(field, GetDbType(field))).ToArray();
         }
 
         /// <summary>
@@ -205,20 +236,20 @@ namespace Agebull.EntityModel.MySql
         ///     生成字段的参数
         /// </summary>
         /// <param name="field">生成参数的字段</param>
-        public MySqlParameter CreateFieldParameter(string field)
+        public DbParameter CreateFieldParameter(string field)
         {
-            return new MySqlParameter(field, GetDbType(field));
+            return new SqliteParameter(field, GetDbType(field));
         }
 
         /// <summary>
         ///     生成字段的参数
         /// </summary>
         /// <param name="field">生成参数的字段</param>
-        /// <param name="type"></param>
+        /// <param name="type">数据类型</param>
         /// <param name="value">值</param>
-        public MySqlParameter CreateFieldParameter(string field, MySqlDbType type, object value)
+        public DbParameter CreateFieldParameter(string field, SqliteType type, object value)
         {
-            return MySqlDataBase_.CreateParameter(field, value, type);
+            return SqliteDataBase_.CreateParameter(field, value, type);
         }
 
         /// <summary>
@@ -226,7 +257,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="field">生成参数的字段</param>
         /// <param name="entity">取值的实体</param>
-        public MySqlParameter CreateFieldParameter(string field, TData entity)
+        public DbParameter CreateFieldParameter(string field, TData entity)
         {
             return CreateFieldParameter(field, GetDbType(field), entity.GetValue(field));
         }
@@ -237,7 +268,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="field">生成参数的字段</param>
         /// <param name="entity">取值的实体</param>
         /// <param name="entityField">取值的字段</param>
-        public MySqlParameter CreateFieldParameter(string field, DataObjectBase entity, string entityField)
+        public DbParameter CreateFieldParameter(string field, DataObjectBase entity, string entityField)
         {
             return CreateFieldParameter(field, GetDbType(field), entity.GetValue(entityField));
         }
@@ -245,27 +276,27 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成主键字段的参数
         /// </summary>
-        public MySqlParameter CreatePimaryKeyParameter()
+        public DbParameter CreatePimaryKeyParameter()
         {
-            return new MySqlParameter(KeyField, GetDbType(KeyField));
+            return new SqliteParameter(KeyField, GetDbType(KeyField));
         }
 
         /// <summary>
         ///     生成主键字段的参数
         /// </summary>
         /// <param name="value">主键值</param>
-        public MySqlParameter CreatePimaryKeyParameter(object value)
+        public DbParameter CreatePimaryKeyParameter(object value)
         {
-            return MySqlDataBase_.CreateParameter(KeyField, value, GetDbType(KeyField));
+            return SqliteDataBase_.CreateParameter(KeyField, value, GetDbType(KeyField));
         }
 
         /// <summary>
         ///     生成主键字段的参数
         /// </summary>
         /// <param name="entity">取值的实体</param>
-        public MySqlParameter CreatePimaryKeyParameter(TData entity)
+        public DbParameter CreatePimaryKeyParameter(TData entity)
         {
-            return MySqlDataBase_.CreateParameter(KeyField, entity.GetValue(KeyField),
+            return SqliteDataBase_.CreateParameter(KeyField, entity.GetValue(KeyField),
                 GetDbType(KeyField));
         }
 
@@ -318,41 +349,11 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     表的唯一标识
         /// </summary>
-        public abstract int TableId { get; }
+        int IDataTable.TableId => 0;
 
         #endregion
 
         #region 数据结构
-
-        /// <summary>
-        ///     是否作为基类存在的
-        /// </summary>
-        public bool IsBaseClass { get; set; }
-
-        /// <summary>
-        ///     字段字典(运行时)
-        /// </summary>
-        public Dictionary<string, string> FieldDictionary => OverrideFieldMap ?? FieldMap;
-
-        /// <summary>
-        ///     主键字段(可动态覆盖PrimaryKey)
-        /// </summary>
-        private string _keyField;
-
-        /// <summary>
-        ///     主键字段(可动态覆盖PrimaryKey)
-        /// </summary>
-        public string KeyField
-        {
-            get
-            {
-                if (_keyField != null)
-                    return _keyField;
-                return _keyField = PrimaryKey;
-            }
-            set => _keyField = value;
-        }
-
 
         /// <summary>
         ///     全表读取的SQL语句
@@ -363,7 +364,6 @@ namespace Agebull.EntityModel.MySql
         ///     读表名
         /// </summary>
         protected abstract string ReadTableName { get; }
-
         /// <summary>
         ///     写表名
         /// </summary>
@@ -372,12 +372,12 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected virtual string FullLoadSqlCode => $@"SELECT {FullLoadFields} FROM `{ContextReadTable}`";
+        protected virtual string DeleteSqlCode => $@"DELETE FROM [{ContextWriteTable}]";
 
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected virtual string DeleteSqlCode => $@"DELETE FROM `{ContextWriteTable}`";
+        protected virtual string FullLoadSqlCode => $@"SELECT {FullLoadFields} FROM [{ContextReadTable}]";
 
         /// <summary>
         ///     插入的SQL语句
@@ -411,7 +411,10 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     字段字典(设计时)
         /// </summary>
-        public virtual Dictionary<string, string> FieldMap => _fieldMap ??= Fields.ToDictionary(p => p, p => p);
+        public virtual Dictionary<string, string> FieldMap
+        {
+            get { return _fieldMap ?? (_fieldMap = Fields.ToDictionary(p => p, p => p)); }
+        }
 
         /// <summary>
         ///     所有字段(设计时)
@@ -423,15 +426,11 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public Dictionary<string, string> OverrideFieldMap { get; set; }
 
+
         #endregion
 
 
         #region 动态上下文扩展
-
-        /// <summary>
-        /// 当前上下文的读取器
-        /// </summary>
-        public Action<DbDataReader, TData> DynamicLoadAction { get; set; }
 
 
         /// <summary>
@@ -443,6 +442,11 @@ namespace Agebull.EntityModel.MySql
         ///     动态读取的表
         /// </summary>
         protected string DynamicReadTable;
+
+        /// <summary>
+        /// 当前上下文的读取器
+        /// </summary>
+        public Action<DbDataReader, TData> DynamicLoadAction { get; set; }
 
         /// <summary>
         ///     取得实际设置的ContextReadTable动态读取的表
@@ -468,7 +472,6 @@ namespace Agebull.EntityModel.MySql
         ///     当前上下文读取的表名
         /// </summary>
         public string ContextReadTable => DynamicReadTable ?? ReadTableName;
-
 
         /// <summary>
         ///     动态写入的表
@@ -506,11 +509,10 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        public virtual void SimpleLoad(MySqlDataReader reader, TData entity)
+        public virtual void SimpleLoad(SqliteDataReader reader, TData entity)
         {
             LoadEntity(reader, entity);
         }
-
         #endregion
 
         #region 纯虚方法
@@ -518,7 +520,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     设置更新数据的命令
         /// </summary>
-        protected virtual void SetUpdateCommand(TData entity, MySqlCommand cmd)
+        protected virtual void SetUpdateCommand(TData entity, SqliteCommand cmd)
         {
         }
 
@@ -526,7 +528,7 @@ namespace Agebull.EntityModel.MySql
         ///     设置插入数据的命令
         /// </summary>
         /// <returns>返回真说明要取主键</returns>
-        protected virtual bool SetInsertCommand(TData entity, MySqlCommand cmd)
+        protected virtual bool SetInsertCommand(TData entity, SqliteCommand cmd)
         {
             return false;
         }
@@ -536,7 +538,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        protected virtual void LoadEntity(MySqlDataReader reader, TData entity)
+        protected virtual void LoadEntity(SqliteDataReader reader, TData entity)
         {
         }
 
@@ -546,7 +548,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetUpdateCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetUpdateCommand(entity, (MySqlCommand)cmd);
+            SetUpdateCommand(entity, (SqliteCommand)cmd);
         }
 
         /// <summary>
@@ -556,7 +558,7 @@ namespace Agebull.EntityModel.MySql
         void IDataTable<TData>.SetInsertCommandPara(TData entity, DbCommand cmd)
         {
             cmd.Parameters.Clear();
-            SetInsertCommand(entity, (MySqlCommand)cmd);
+            SetInsertCommand(entity, (SqliteCommand)cmd);
         }
 
         /// <summary>
@@ -566,10 +568,9 @@ namespace Agebull.EntityModel.MySql
         TData IDataTable<TData>.Load(DbDataReader reader)
         {
             var entity = new TData();
-            LoadEntity((MySqlDataReader)reader, entity);
+            LoadEntity((SqliteDataReader)reader, entity);
             return entity;
         }
-
         #endregion
     }
 }

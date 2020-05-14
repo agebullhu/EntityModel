@@ -195,7 +195,7 @@ namespace Agebull.EntityModel.Common
         //        {
         //            return _version;
         //        }
-        //        var ev = ConfigurationManager.AppSettings["EntityVersion"];
+        //        var ev = ConfigurationHelper.AppSettings["EntityVersion"];
         //        return _version = string.IsNullOrWhiteSpace(ev) ? (byte) 1 : byte.Parse(ev);
         //    }
         //}

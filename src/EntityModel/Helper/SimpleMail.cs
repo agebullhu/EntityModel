@@ -29,7 +29,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="content"></param>
         public static void SendMail(string subject, string content, List<string> recivers)
         {
-            var sec = ConfigurationManager.Get("Email");
+            var sec = ConfigurationHelper.Get("Email");
             var emailAcount = sec["EmailAcount"];
             var emailPassword = sec["EmailPassword"];
             var from = sec["FromEmail"];

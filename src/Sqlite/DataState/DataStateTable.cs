@@ -18,33 +18,35 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using ZeroTeam.MessageMVC.Context;
 
-namespace Agebull.EntityModel.MySql
+namespace Agebull.EntityModel.Sqlite
 {
     /// <summary>
     /// 数据状态基类
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
-    /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
-    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>, IStateDataTable<TData>
+    /// <typeparam name="TSqlServerDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
+    public abstract class DataStateTable<TData, TSqlServerDataBase> : SqliteTable<TData, TSqlServerDataBase>, IStateDataTable<TData>
         where TData : EditDataObject, IStateData, IIdentityData, new()
-        where TMySqlDataBase : MySqlDataBase
+        where TSqlServerDataBase : SqliteDataBase
     {
         static DataStateTable()
         {
             DependencyHelper.ServiceCollection.TryAddSingleton<IDataTrigger, DataStateTrigger>();
         }
 
-
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected sealed override string DeleteSqlCode => $@"UPDATE `{ContextWriteTable}` SET `{FieldDictionary[nameof(IStateData.DataState)]}`=255";
+        protected sealed override string DeleteSqlCode => $@"UPDATE [{ContextWriteTable}] 
+SET [{FieldDictionary[nameof(IStateData.DataState)]}]=255";
 
         /// <summary>
         ///     重置状态的SQL语句
         /// </summary>
         protected virtual string ResetStateFileSqlCode(int state = 0, int isFreeze = 0) =>
-            $@"`{FieldDictionary[nameof(IStateData.DataState)]}`={state},`{FieldDictionary[nameof(IStateData.IsFreeze)]}`={isFreeze}";
+            $@"
+[{FieldDictionary[nameof(IStateData.DataState)]}]={state},
+[{FieldDictionary[nameof(IStateData.IsFreeze)]}]={isFreeze}";
 
         /// <summary>
         ///     得到可正确拼接的SQL条件语句（可能是没有）
@@ -55,7 +57,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (GlobalContext.Current.Status.IsManageMode)
                 return;
-            conditions.Add($"`{FieldDictionary[nameof(IStateData.DataState)]}` < 255");
+            conditions.Add($"[{FieldDictionary[nameof(IStateData.DataState)]}] < 255");
         }
 
         /// <summary>
@@ -68,9 +70,9 @@ namespace Agebull.EntityModel.MySql
             if (GlobalContext.Current.Status.IsManageMode)
                 return;
             if (condition == null)
-                condition = $"`{FieldDictionary[nameof(IStateData.IsFreeze)]}` = 0";
+                condition = $"[{FieldDictionary[nameof(IStateData.IsFreeze)]}] = 0";
             else
-                condition = $"`{FieldDictionary[nameof(IStateData.IsFreeze)]}` = 0 AND ({condition})";
+                condition = $"[{FieldDictionary[nameof(IStateData.IsFreeze)]}] = 0 AND ({condition})";
         }
 
         /// <summary>
@@ -78,10 +80,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public virtual bool SetState(DataStateType state, bool isFreeze, long id)
         {
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode((int)state, isFreeze ? 1 : 0)} 
 WHERE {PrimaryKeyConditionSQL}";
-            using var connectionScope = new ConnectionScope(DataBase);
             return DataBase.Execute(sql, CreatePimaryKeyParameter(id)) == 1;
         }
 
@@ -91,11 +92,10 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(long id)
         {
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode()} 
 WHERE {PrimaryKeyConditionSQL}";
 
-            using var connectionScope = new ConnectionScope(DataBase);
             return DataBase.Execute(sql, CreatePimaryKeyParameter(id)) == 1;
         }
 
@@ -105,10 +105,9 @@ WHERE {PrimaryKeyConditionSQL}";
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode()} 
 WHERE {convert.ConditionSql}";
-            using var connectionScope = new ConnectionScope(DataBase);
             return DataBase.Execute(sql, convert.Parameters) > 0;
         }
     }

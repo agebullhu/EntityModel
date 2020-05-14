@@ -1,12 +1,4 @@
-﻿// // /*****************************************************
-// // (c)2016-2016 Copy right www.gboxt.com
-// // 作者:
-// // 工程:
-// // 建立:2016-06-07
-// // 修改:2016-06-16
-// // *****************************************************/
-
-#region 引用
+﻿#region 引用
 
 using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
@@ -16,24 +8,24 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using System.Linq;
 using System.Text;
 
 #endregion
 
-namespace Agebull.EntityModel.SqlServer
+namespace Agebull.EntityModel.Sqlite
 {
     /// <summary>
-    ///     表示SQL SERVER数据库对象
+    ///     表示Sqlite数据库对象
     /// </summary>
-    public partial class SqlServerDataBase : SqlServerDataBase_, IDataBase
+    public partial class SqliteDataBase : SqliteDataBase_, IDataBase
     {
         #region 事务
 
-        //protected SqlServerDataBase()
+        //protected SqliteDataBase()
         //{
-        //    Trace.WriteLine(".ctor", "SqlServerDataBase");
+        //    Trace.WriteLine(".ctor", "SqliteDataBase");
         //}
 
         /// <summary>
@@ -44,7 +36,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     事务
         /// </summary>
-        public SqlTransaction Transaction { get; internal set; }
+        public SqliteTransaction Transaction { get; internal set; }
 
         /// <inheritdoc />
         /// <summary>
@@ -95,7 +87,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public DataBaseType DataBaseType => DataBaseType.SqlServer;
+        public DataBaseType DataBaseType => DataBaseType.Sqlite;
 
         /// <summary>
         /// 数据库名称
@@ -120,7 +112,7 @@ namespace Agebull.EntityModel.SqlServer
                 }
 
                 var str = LoadConnectionStringSetting();
-                var b = new SqlConnectionStringBuilder(str);
+                var b = new SqliteConnectionStringBuilder(str);
                 //if (b.ConnectionTimeout <= 0 || b.ConnectionTimeout > 10)
                 //    b.ConnectionTimeout = 10;
 
@@ -138,32 +130,32 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns></returns>
         protected virtual string LoadConnectionStringSetting()
         {
-            return ConfigurationHelper.ConnectionStrings["SqlServer"];
+            return ConfigurationHelper.ConnectionStrings[ConnectionStringName ?? "Sqlite"];
         }
 
         /// <summary>
         ///     连接对象
         /// </summary>
-        private SqlConnection _connection;
+        private SqliteConnection _connection;
 
         /// <summary>
         ///     连接对象
         /// </summary>
-        public SqlConnection Connection => _connection ??= InitConnection();
+        public SqliteConnection Connection => _connection ??= InitConnection();
 
 
         /// <summary>
         ///     连接对象
         /// </summary>
-        public static readonly List<SqlConnection> Connections = new List<SqlConnection>();
+        public static readonly List<SqliteConnection> Connections = new List<SqliteConnection>();
 
         /// <summary>
         /// 初始化连接对象
         /// </summary>
         /// <returns></returns>
-        private SqlConnection InitConnection()
+        private SqliteConnection InitConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            var connection = new SqliteConnection(ConnectionString);
             DependencyScope.DisposeFunc.Add(() => Close(connection));
             int cnt;
             lock (Connections)
@@ -173,7 +165,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             LogRecorder.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
-            //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
+            //Trace.WriteLine("Opened _connection", "SqliteDataBase");
             connection.Open();
             return connection;
         }
@@ -191,15 +183,15 @@ namespace Agebull.EntityModel.SqlServer
             {
                 _connection = InitConnection();
                 return true;
-                //Trace.WriteLine("Create _connection", "SqlServerDataBase");
+                //Trace.WriteLine("Create _connection", "SqliteDataBase");
             }
             if (string.IsNullOrEmpty(_connection.ConnectionString))
             {
-                //Trace.WriteLine("Set ConnectionString", "SqlServerDataBase");
+                //Trace.WriteLine("Set ConnectionString", "SqliteDataBase");
                 _connection.ConnectionString = ConnectionString;
             }
             //Trace.WriteLine(_count++, "Open");
-            //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
+            //Trace.WriteLine("Opened _connection", "SqliteDataBase");
             _connection.Open();
             return true;
         }
@@ -217,7 +209,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     关闭连接
         /// </summary>
-        private void Close(SqlConnection connection)
+        private void Close(SqliteConnection connection)
         {
             //int cnt;
             lock (Connections)
@@ -254,7 +246,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     连接对象
         /// </summary>
-        public SqlConnection GetCurrentConnection()
+        public SqliteConnection GetCurrentConnection()
         {
             return _connection;
         }
@@ -293,7 +285,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         /// 析构
         /// </summary>
-        ~SqlServerDataBase()
+        ~SqliteDataBase()
         {
             if (_isDisposed)
                 return;
@@ -336,7 +328,7 @@ namespace Agebull.EntityModel.SqlServer
             {
                 return args.Length == 0
                     ? ExecuteInner(sql)
-                    : ExecuteInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqlParameter { Value = p }).ToArray());
+                    : ExecuteInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqliteParameter { Value = p }).ToArray());
             }
         }
 
@@ -375,7 +367,7 @@ namespace Agebull.EntityModel.SqlServer
             {
                 return args.Length == 0
                     ? ExecuteScalarInner(sql)
-                    : ExecuteScalarInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqlParameter { Value = p }).ToArray());
+                    : ExecuteScalarInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqliteParameter { Value = p }).ToArray());
             }
         }
 
@@ -533,7 +525,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        public static void TraceSql(SqlCommand cmd)
+        public static void TraceSql(SqliteCommand cmd)
         {
             if (!LogRecorder.LogDataSql)
                 return;
@@ -551,16 +543,14 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<DbParameter> args)
         {
-            if (!LogRecorder.LogDataSql)
-                return;
-            if (string.IsNullOrWhiteSpace(sql))
+            if (!LogRecorder.LogDataSql || string.IsNullOrWhiteSpace(sql))
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine($"/******************************{DateTime.Now}*********************************/");
-            var parameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
+            var parameters = args as SqliteParameter[] ?? args.Cast<SqliteParameter>().ToArray();
             foreach (var par in parameters)
             {
-                code.AppendLine($"declare @{par.ParameterName} {par.SqlDbType};");
+                code.AppendLine($"declare @{par.ParameterName} {par.DbType};");
             }
             foreach (var par in parameters.Where(p => p.Value != null && !p.IsNullable))
             {
@@ -571,7 +561,6 @@ namespace Agebull.EntityModel.SqlServer
                 code.AppendLine($"SET @{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
-            code.AppendLine("GO");
             LogRecorder.RecordDataLog(code.ToString());
         }
 
@@ -615,7 +604,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             var result = args.Length == 0
                 ? ExecuteScalarInner(sql)
-                : ExecuteScalarInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqlParameter { Value = p }).ToArray());
+                : ExecuteScalarInner(sql, args.Select(p => p is DbParameter parameter ? parameter : new SqliteParameter { Value = p }).ToArray());
             return (T)result;
         }
 
@@ -626,7 +615,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     生成命令
         /// </summary>
-        public SqlCommand CreateCommand(params DbParameter[] args)
+        public SqliteCommand CreateCommand(params DbParameter[] args)
         {
             return CreateCommand(null, args);
         }
@@ -636,7 +625,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     生成命令
         /// </summary>
-        public SqlCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null)
+        public SqliteCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null)
         {
             var cmd = Connection.CreateCommand();
 
@@ -650,14 +639,16 @@ namespace Agebull.EntityModel.SqlServer
             }
             if (args != null)
             {
-                var sqlParameters = args as SqlParameter[] ?? args.Cast<SqlParameter>().ToArray();
+                var sqlParameters = args as SqliteParameter[] ?? args.Cast<SqliteParameter>().ToArray();
                 if (sqlParameters.Any(p => p != null))
                 {
-                    cmd.Parameters.AddRange(
-                        sqlParameters.Where(p => p != null)
-                            .Select(
-                                p => new SqlParameter(p.ParameterName, p.SqlDbType, p.Size, p.Direction, p.IsNullable, p.Precision, p.Scale,
-                                        p.SourceColumn, p.SourceVersion, p.Value)).ToArray());
+                    foreach (SqliteParameter parameter in sqlParameters)
+                    {
+                        cmd.Parameters.Add(new SqliteParameter(parameter.ParameterName, parameter.SqliteType, parameter.Size, parameter.SourceColumn)
+                        {
+                            Value = parameter.Value
+                        });
+                    }
                 }
             }
             TraceSql(cmd);
@@ -677,61 +668,7 @@ namespace Agebull.EntityModel.SqlServer
         ///     表的常用SQL
         /// </summary>
         /// <remarks>请设置为键大小写不敏感字典,因为Sql没有强制表名的大小写区别</remarks>
-        public Dictionary<string, TableSql> TableSql => tableSql ?? (tableSql = new Dictionary<string, TableSql>(StringComparer.OrdinalIgnoreCase));
-
-        #endregion
-
-        #region 数据缓存
-
-        /// <summary>
-        ///     缓存数据
-        /// </summary>
-        private readonly Dictionary<int, Dictionary<long, EditDataObject>> _dataCache =
-            new Dictionary<int, Dictionary<long, EditDataObject>>();
-
-        /// <summary>
-        ///     取缓存数据
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public TData GetData<TData>(int table, int id) where TData : EditDataObject
-        {
-            if (!_dataCache.TryGetValue(table, out var tableDatas))
-            {
-                return null;
-            }
-
-            if (!tableDatas.TryGetValue(id, out var data))
-            {
-                return null;
-            }
-            return data as TData;
-        }
-
-        /// <summary>
-        ///     如不存在于缓存中，则加入，返回自身，如存在，则返回缓存中的数据。
-        /// </summary>
-        /// <typeparam name="TData"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="id"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public TData TryAddToCache<TData>(int table, long id, TData data) where TData : EditDataObject
-        {
-            if (!_dataCache.TryGetValue(table, out var tableDatas))
-            {
-                _dataCache.Add(table, tableDatas = new Dictionary<long, EditDataObject>());
-            }
-
-            if (tableDatas.ContainsKey(id))
-            {
-                return tableDatas[id] as TData;
-            }
-            tableDatas.Add(id, data);
-            return data;
-        }
+        public Dictionary<string, TableSql> TableSql => tableSql ??= new Dictionary<string, TableSql>(StringComparer.OrdinalIgnoreCase);
 
         #endregion
 

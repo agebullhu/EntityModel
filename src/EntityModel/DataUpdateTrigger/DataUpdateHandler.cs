@@ -96,7 +96,7 @@ namespace Agebull.EntityModel.Events
 
         static DataUpdateHandler()
         {
-            EventProxy = DependencyHelper.Create<IEntityEventProxy>();
+            EventProxy = DependencyHelper.GetService<IEntityEventProxy>();
         }
 
         /// <summary>
@@ -165,10 +165,10 @@ namespace Agebull.EntityModel.Events
         /// <param name="table">当前数据操作对象</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        public static void ContitionSqlCode<TEntity>(IDataTable<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new()
+        public static void ConditionSqlCode<TEntity>(IDataTable<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
-                trigger.ContitionSqlCode<TEntity>(table, conditions);
+                trigger.ConditionSqlCode(table, conditions);
         }
 
         /// <summary>

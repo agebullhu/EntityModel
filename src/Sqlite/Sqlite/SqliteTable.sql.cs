@@ -18,9 +18,9 @@ using System.Text;
 
 #endregion
 
-namespace Agebull.EntityModel.SqlServer
+namespace Agebull.EntityModel.Sqlite
 {
-    partial class SqlServerTable<TData, TDataBase>
+    partial class SqliteTable<TData, TDataBase>
     {
         #region 更新
 
@@ -36,7 +36,7 @@ namespace Agebull.EntityModel.SqlServer
             field = FieldDictionary[field];
             if (value == null)
                 return $"[{field}] = NULL";
-            if (value is string || value is DateTime || value is byte[])
+            if (value is string || value is DateTime || value is Guid || value is byte[])
             {
                 var name = "v_" + field;
                 parameters.Add(CreateFieldParameter(name, GetDbType(field), value));
@@ -91,69 +91,6 @@ UPDATE [{ContextWriteTable}]
         #endregion
 
         #region 载入
-
-        /// <summary>
-        /// 基本条件初始化完成的标识
-        /// </summary>
-        private bool _baseConditionInited;
-
-        /// <summary>
-        ///  初始化基本条件
-        /// </summary>
-        /// <returns></returns>
-        protected virtual void InitBaseCondition()
-        {
-        }
-
-        /// <summary>
-        ///     得到可正确拼接的SQL条件语句（可能是没有）
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        private string ConditionSqlCode(string condition)
-        {
-            List<string> conditions = new List<string>();
-            if (!_baseConditionInited)
-            {
-                InitBaseCondition();
-                _baseConditionInited = true;
-            }
-            if (!string.IsNullOrEmpty(BaseCondition))
-                conditions.Add(BaseCondition);
-            if (!string.IsNullOrEmpty(condition))
-                conditions.Add(condition);
-            ConditionSqlCode(conditions);
-            DataUpdateHandler.ConditionSqlCode(this, conditions);
-            if (conditions.Count == 0)
-                return null;
-            var code = new StringBuilder();
-
-            bool isFirst = true;
-            foreach (var con in conditions)
-            {
-                if (isFirst)
-                {
-                    isFirst = false;
-                    code.Append("\nWHERE ");
-                }
-                else
-                {
-                    code.Append(" AND ");
-                }
-                code.Append($"({con})");
-            }
-            return code.ToString();
-        }
-
-        /// <summary>
-        ///     得到可正确拼接的SQL条件语句（可能是没有）
-        /// </summary>
-        /// <param name="conditions"></param>
-        /// <returns></returns>
-        protected virtual void ConditionSqlCode(List<string> conditions)
-        {
-        }
-
         /// <summary>
         ///     生成汇总的SQL语句
         /// </summary>
@@ -165,8 +102,10 @@ UPDATE [{ContextWriteTable}]
         {
             if (field != "*")
                 field = $"[{FieldMap[field]}]";
-            var sql = $@"SELECT {fun}({field}) FROM {ContextReadTable}{ConditionSqlCode(condition)};";
-            return sql;
+
+            var sql = new StringBuilder();
+            CreateLoadSql(sql, $"{fun}({field})", condition, null, false);
+            return sql.ToString();
         }
 
         /// <summary>
@@ -177,8 +116,9 @@ UPDATE [{ContextWriteTable}]
         /// <returns>载入字段值的SQL语句</returns>
         private string CreateLoadValueSql(string field, string condition)
         {
-            Debug.Assert(FieldDictionary.ContainsKey(field));
-            return $@"SELECT [{FieldMap[field]}] FROM {ContextReadTable}{ConditionSqlCode(condition)};";
+            var sql = new StringBuilder();
+            CreateLoadSql(sql, FieldMap[field], condition, null, false,1);
+            return sql.ToString();
         }
 
         /// <summary>
@@ -189,8 +129,9 @@ UPDATE [{ContextWriteTable}]
         /// <returns>载入字段值的SQL语句</returns>
         private string CreateLoadValuesSql(string field, ConditionItem convert)
         {
-            return $@"SELECT [{FieldMap[field]}] 
-FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
+            var sql = new StringBuilder();
+            CreateLoadSql(sql, FieldMap[field], convert.ConditionSql, null, false,1);
+            return sql.ToString();
         }
 
         /// <summary>
@@ -200,23 +141,13 @@ FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         /// <param name="order">排序字段</param>
         /// <param name="desc">是否反序</param>
         /// <returns>载入的SQL语句</returns>
-        private StringBuilder CreateOnceSql(string condition, string order, bool desc)
+        private string CreateOnceSql(string condition, string order, bool desc)
         {
             var sql = new StringBuilder();
-            sql.AppendLine(@"SELECT TOP 1");
-            sql.AppendLine(ContextLoadFields);
-            sql.AppendFormat(@"FROM {0}", ContextReadTable);
-            sql.AppendLine(ConditionSqlCode(condition));
-            if (!string.IsNullOrWhiteSpace(order))
-            {
-                sql.AppendLine();
-                sql.Append($"ORDER BY {order}");
-                if (desc)
-                    sql.Append(" DESC");
-            }
-            sql.Append(";");
-            return sql;
+            CreateLoadSql(sql, ContextLoadFields, condition, order, desc,1);
+            return sql.ToString();
         }
+
         /// <summary>
         ///     生成载入的SQL语句
         /// </summary>
@@ -226,16 +157,7 @@ FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         private string CreateLoadSql(string condition, string order)
         {
             var sql = new StringBuilder();
-            sql.AppendLine(@"SELECT");
-            sql.AppendLine(ContextLoadFields);
-            sql.AppendFormat(@"FROM {0}", ContextReadTable);
-            sql.AppendLine(ConditionSqlCode(condition));
-            if (!string.IsNullOrWhiteSpace(order))
-            {
-                sql.AppendLine();
-                sql.Append($"ORDER BY {order}");
-            }
-            sql.Append(";");
+            CreateLoadSql(sql, ContextLoadFields, condition, order, false);
             return sql.ToString();
         }
 
@@ -250,19 +172,47 @@ FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         /// <returns></returns>
         private string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
-            if (pageSize <= 0 || page < 0)
-            {
-                return CreateLoadSql(condition, $@" [{order}] {(desc ? "DESC" : "ASC")}");
-            }
             var orderField = string.IsNullOrWhiteSpace(order) || !FieldDictionary.ContainsKey(order)
                 ? KeyField
                 : FieldDictionary[order];
 
-            return $@"SELECT * FROM (
-    SELECT {ContextLoadFields},
-           ROW_NUMBER() OVER (ORDER BY [{orderField}] {(desc ? "DESC" : "ASC")}) AS __rs
-      FROM {ContextReadTable}{ConditionSqlCode(condition)}
-) t WHERE __rs > {(page - 1) * pageSize} AND __rs <= {page * pageSize};";
+            var sql = new StringBuilder();
+            CreateLoadSql(sql, ContextLoadFields, condition, orderField, desc,pageSize,page);
+            return sql.ToString();
+        }
+
+        /// <summary>
+        ///     生成载入的SQL语句
+        /// </summary>
+        /// <param name="sql">StringBuilder对象</param>
+        /// <param name="fields">字段</param>
+        /// <param name="condition">数据条件</param>
+        /// <param name="order">排序字段</param>
+        /// <param name="desc">正序或反序</param>
+        /// <param name="page">从1开始的页号</param>
+        /// <param name="pageSize">每页几行(强制大于0,小于500行)</param>
+        /// <returns>载入的SQL语句</returns>
+        private void CreateLoadSql(StringBuilder sql, string fields, string condition, string order, bool desc, int pageSize = 0, int page=-1)
+        {
+            sql.AppendLine(@"SELECT");
+            sql.AppendLine(fields);
+            sql.AppendLine($"FROM {ContextReadTable}");
+            ConditionSqlCode(sql, condition);
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                sql.Append($"ORDER BY {order}");
+                if (desc)
+                    sql.Append(" DESC");
+                sql.AppendLine();
+            }
+            if (pageSize > 0 )
+            {
+                sql.Append($"Limit {pageSize}");
+                if (page > 1)
+                {
+                    sql.Append($"Offset {(page - 1) * pageSize};");
+                }
+            }
         }
 
         #endregion
@@ -277,23 +227,31 @@ FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         private string CreateDeleteSql(string condition)
         {
             return $@"{BeforeUpdateSql(condition)}
-{DeleteSqlCode} WHERE {condition};
-{AfterUpdateSql(condition)}";
-        }
 
-        /// <summary>
-        ///     生成删除的SQL语句
-        /// </summary>
-        /// <param name="convert">删除条件</param>
-        /// <returns>删除的SQL语句</returns>
-        private string CreateDeleteSql(ConditionItem convert)
-        {
-            return CreateDeleteSql(convert.ConditionSql);
+{DeleteSqlCode}
+WHERE {condition};
+
+{AfterUpdateSql(condition)}";
         }
 
         #endregion
 
         #region 字段条件
+
+
+        /// <summary>
+        /// 基本条件初始化完成的标识
+        /// </summary>
+        private bool _baseConditionInited;
+
+        /// <summary>
+        ///  初始化基本条件
+        /// </summary>
+        /// <returns></returns>
+        protected virtual void InitBaseCondition()
+        {
+        }
+
 
         /// <summary>
         ///     用在条件中的字段条件
@@ -332,11 +290,61 @@ FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         {
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
+            var join = isAnd ? "AND" : "OR";
             var sql = new StringBuilder();
             sql.AppendFormat(@"({0})", FieldConditionSQL(fields[0]));
             for (var idx = 1; idx < fields.Length; idx++)
-                sql.AppendFormat(@" {0} ({1}) ", isAnd ? "AND" : "OR", FieldConditionSQL(fields[idx]));
+                sql.AppendFormat(@" {0} ({1}) ", join, FieldConditionSQL(fields[idx]));
             return sql.ToString();
+        }
+
+
+        /// <summary>
+        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        private void ConditionSqlCode(StringBuilder code, string condition)
+        {
+            List<string> conditions = new List<string>();
+            if (!_baseConditionInited)
+            {
+                InitBaseCondition();
+                _baseConditionInited = true;
+            }
+            if (!string.IsNullOrEmpty(BaseCondition))
+                conditions.Add(BaseCondition);
+            if (!string.IsNullOrEmpty(condition))
+                conditions.Add(condition);
+            ConditionSqlCode(conditions);
+            DataUpdateHandler.ConditionSqlCode(this, conditions);
+            if (conditions.Count == 0)
+                return;
+            code.Append("WHERE ");
+            bool isFirst = true;
+            foreach (var con in conditions)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    code.Append(" AND ");
+                }
+                code.Append($"({con})");
+            }
+            code.AppendLine();
+        }
+
+        /// <summary>
+        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        /// </summary>
+        /// <param name="conditions"></param>
+        /// <returns></returns>
+        protected virtual void ConditionSqlCode(List<string> conditions)
+        {
         }
 
         #endregion

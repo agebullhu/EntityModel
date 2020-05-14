@@ -18,7 +18,7 @@ using System.Text;
 
 #endregion
 
-namespace Agebull.EntityModel.SqlServer
+namespace Agebull.EntityModel.Sqlite
 {
     /// <summary>
     ///     用于Sql Servr 的Lambda表达式解析器(仅支持查询条件)
@@ -150,7 +150,7 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>结果条件对象(SQL条件和参数)</returns>
         public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> root)
         {
-            var condition = new ConditionItem(new SqlServerDataBase_());
+            var condition = new ConditionItem(new SqliteDataBase_());
             Convert(map, root, condition, true);
             return condition;
         }
@@ -180,7 +180,7 @@ namespace Agebull.EntityModel.SqlServer
                 Convert(map, ch, condition, true);
             }
 
-            ConditionItem item = new ConditionItem(new SqlServerDataBase_())
+            ConditionItem item = new ConditionItem(new SqliteDataBase_())
             {
                 ParaIndex = root._condition.ParaIndex
             };
@@ -207,7 +207,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             if (_condition == null)
             {
-                _condition = new ConditionItem(new SqlServerDataBase_());
+                _condition = new ConditionItem(new SqliteDataBase_());
             }
             var old = _condition.ConditionSql;
             var sql = ConvertExpression(predicate.Body);

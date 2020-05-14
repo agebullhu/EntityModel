@@ -97,7 +97,7 @@ UPDATE `{ContextWriteTable}`
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        private string ContitionSqlCode(string condition)
+        private string ConditionSqlCode(string condition)
         {
             List<string> conditions = new List<string>();
             if (!_baseConditionInited)
@@ -109,8 +109,8 @@ UPDATE `{ContextWriteTable}`
                 conditions.Add(BaseCondition);
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
-            ContitionSqlCode(conditions);
-            DataUpdateHandler.ContitionSqlCode(this, conditions);
+            ConditionSqlCode(conditions);
+            DataUpdateHandler.ConditionSqlCode(this, conditions);
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();
@@ -137,7 +137,7 @@ UPDATE `{ContextWriteTable}`
         /// </summary>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        protected virtual void ContitionSqlCode(List<string> conditions)
+        protected virtual void ConditionSqlCode(List<string> conditions)
         {
         }
 
@@ -152,7 +152,7 @@ UPDATE `{ContextWriteTable}`
         {
             if (field != "*")
                 field = $"`{FieldMap[field]}`";
-            var sql = $@"SELECT {fun}({field}) FROM {ContextReadTable}{ContitionSqlCode(condition)};";
+            var sql = $@"SELECT {fun}({field}) FROM {ContextReadTable}{ConditionSqlCode(condition)};";
             return sql;
         }
 
@@ -165,7 +165,7 @@ UPDATE `{ContextWriteTable}`
         private string CreateLoadValueSql(string field, string condition)
         {
             Debug.Assert(FieldDictionary.ContainsKey(field));
-            return $@"SELECT `{FieldDictionary[field]}` FROM {ContextReadTable}{ContitionSqlCode(condition)};";
+            return $@"SELECT `{FieldDictionary[field]}` FROM {ContextReadTable}{ConditionSqlCode(condition)};";
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ UPDATE `{ContextWriteTable}`
         private string CreateLoadValuesSql(string field, ConditionItem convert)
         {
             return $@"SELECT `{FieldDictionary[field]}` 
-FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
+FROM {ContextReadTable}{ConditionSqlCode(convert.ConditionSql)};";
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
             sql.AppendLine(@"SELECT");
             sql.AppendLine(ContextLoadFields);
             sql.AppendFormat(@"FROM {0}", ContextReadTable);
-            sql.AppendLine(ContitionSqlCode(condition));
+            sql.AppendLine(ConditionSqlCode(condition));
             if (!string.IsNullOrWhiteSpace(order))
             {
                 sql.AppendLine();
@@ -219,7 +219,7 @@ FROM {ContextReadTable}{ContitionSqlCode(convert.ConditionSql)};";
 
             var sql = new StringBuilder();
             sql.Append($@"SELECT {ContextLoadFields}
-FROM {ContextReadTable}{ContitionSqlCode(condition)}
+FROM {ContextReadTable}{ConditionSqlCode(condition)}
 ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
             if (pageSize >= 0)

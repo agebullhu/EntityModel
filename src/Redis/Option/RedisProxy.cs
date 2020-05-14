@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         static RedisProxy()
         {
-            ConfigurationManager.RegistOnChange("Redis", OnOptionChange, true);
+            ConfigurationHelper.RegistOnChange("Redis", OnOptionChange, true);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Agebull.EntityModel.Redis
         /// </summary>
         private static void OnOptionChange()
         {
-            Option = ConfigurationManager.Get<RedisOption>("Redis") ?? new RedisOption();
+            Option = ConfigurationHelper.Get<RedisOption>("Redis") ?? new RedisOption();
             foreach (var client in Instances)
                 client.OnOptionChange(Option);
         }
@@ -152,7 +152,7 @@ namespace Agebull.EntityModel.Redis
 
         private TRedis CreateClient()
         {
-            var redis = DependencyHelper.Create<TRedis>();
+            var redis = DependencyHelper.GetService<TRedis>();
             redis.Option = Option;
             if (redis == null)
                 throw new DependencyException(typeof(TRedis), "未正确注册Redis对象");

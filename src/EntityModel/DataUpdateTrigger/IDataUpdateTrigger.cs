@@ -67,7 +67,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="table">当前数据操作对象</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        void ContitionSqlCode<TEntity>(IDataTable<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new() { }
+        void ConditionSqlCode<TEntity>(IDataTable<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new() { }
 
         /// <summary>
         ///     更新语句前处理(单个实体操作不引发)

@@ -42,7 +42,7 @@ namespace Agebull.EntityModel.MySql
             }
             var convert = Compile(lambda);
             code.AppendLine($" FROM {ContextReadTable} ");
-            code.AppendLine(ContitionSqlCode(convert.ConditionSql));
+            code.AppendLine(ConditionSqlCode(convert.ConditionSql));
             code.Append($" GROUP BY {groupF};");
 
 

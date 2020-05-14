@@ -586,18 +586,11 @@ namespace Agebull.EntityModel.SqlServer
             if (setValueSql == null)
                 return -1;
             var convert = Compile(lambda);
-            var sql = CreateUpdateSql(setValueSql, convert.ConditionSql);
-            int result;
-
-            using (var cmd = DataBase.CreateCommand())
-            {
-                SetUpdateCommand(entity, cmd);
-                cmd.CommandText = CreateUpdateSql(sql, convert.ConditionSql);
-                SqlServerDataBase.TraceSql(cmd);
-                result = await cmd.ExecuteNonQueryAsync();
-            }
-
-            return result;
+            using var cmd = DataBase.CreateCommand();
+            SetUpdateCommand(entity, cmd);
+            cmd.CommandText = CreateUpdateSql(setValueSql, convert.ConditionSql);
+            SqlServerDataBase.TraceSql(cmd);
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>

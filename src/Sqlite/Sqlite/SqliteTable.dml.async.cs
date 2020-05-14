@@ -9,21 +9,19 @@
 #region 引用
 
 using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<MySql.Data.MySqlClient.MySqlCommand>;
+using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<Microsoft.Data.Sqlite.SqliteCommand>;
 
 #endregion
 
-namespace Agebull.EntityModel.MySql
+namespace Agebull.EntityModel.Sqlite
 {
-    partial class MySqlTable<TData, TMySqlDataBase>
+    partial class SqliteTable<TData, TDataBase>
     {
         #region 实体更新
 
@@ -32,15 +30,12 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<bool> InsertAsync(TData entity)
         {
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
-                {
-                    if (!await InsertInnerAsync(entity))
-                        return false;
-                    //scope.Succeed();
-                }
+                if (!await InsertInnerAsync(entity))
+                    return false;
                 await ReLoadInnerAsync(entity);
+                //scope.Succeed();
             }
 
             return true;
@@ -53,25 +48,21 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
+                foreach (var entity in datas)
                 {
-                    foreach (var entity in datas)
-                    {
-                        if (await InsertInnerAsync(entity))
-                            ++cnt;
-                        else
-                            return 0;
-                    }
-
-                    //scope.Succeed();
+                    if (await InsertInnerAsync(entity))
+                        ++cnt;
+                    else
+                        return 0;
                 }
 
-                foreach (var entity in datas)
-                    await ReLoadInnerAsync(entity);
+                //scope.Succeed();
             }
 
+            foreach (var entity in datas)
+                await ReLoadInnerAsync(entity);
             return cnt;
         }
 
@@ -82,28 +73,31 @@ namespace Agebull.EntityModel.MySql
         protected async Task<bool> InsertInnerAsync(TData entity)
         {
             PrepareSave(entity, DataOperatorType.Insert);
-            await using var connectionScope = new ConnectionScope(DataBase);
-            await using var cmd = DataBase.CreateCommand(connectionScope);
-            var isIdentitySql = SetInsertCommand(entity, cmd);
-            MySqlDataBase.TraceSql(cmd);
-            if (isIdentitySql)
+            using (var cmd = DataBase.CreateCommand())
             {
-                var key = await cmd.ExecuteScalarAsync();
-                if (key == DBNull.Value || key == null)
-                    return false;
-                entity.SetValue(KeyField, key);
-            }
-            else
-            {
-                if (await cmd.ExecuteNonQueryAsync() == 0)
-                    return false;
+                var isIdentitySql = SetInsertCommand(entity, cmd);
+                SqliteDataBase.TraceSql(cmd);
+                if (isIdentitySql)
+                {
+                    var key = await cmd.ExecuteScalarAsync();
+                    if (key == DBNull.Value || key == null)
+                        return false;
+                    entity.SetValue(KeyField, key);
+                }
+                else
+                {
+                    var res = await cmd.ExecuteNonQueryAsync();
+                    if (res == 0)
+                        return false;
+                }
+
+                var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
+                if (!string.IsNullOrEmpty(sql))
+                {
+                    await DataBase.ExecuteAsync(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
+                }
             }
 
-            var sql = AfterUpdateSql(PrimaryKeyConditionSQL);
-            if (!string.IsNullOrEmpty(sql))
-            {
-                await DataBase.ExecuteAsync(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
-            }
             EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
@@ -114,18 +108,14 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<bool> UpdateAsync(TData entity)
         {
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
-                {
-                    if (!await UpdateInnerAsync(entity))
-                        return false;
-                    //scope.Succeed();
-                }
-
-                await ReLoadInnerAsync(entity);
+                if (!await UpdateInnerAsync(entity))
+                    return false;
+                //scope.Succeed();
             }
 
+            await ReLoadInnerAsync(entity);
             return true;
         }
 
@@ -136,49 +126,45 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
+                foreach (var entity in datas)
                 {
-                    foreach (var entity in datas)
-                    {
-                        if (await UpdateInnerAsync(entity))
-                            ++cnt;
-                    }
-
-                    //scope.Succeed();
+                    if (await UpdateInnerAsync(entity))
+                        ++cnt;
                 }
 
-                foreach (var entity in datas)
-                    await ReLoadInnerAsync(entity);
+                //scope.Succeed();
             }
 
+            foreach (var entity in datas)
+                await ReLoadInnerAsync(entity);
             return cnt;
         }
 
         /// <summary>
         ///     重新载入
         /// </summary>
-        private async Task<bool> ReLoadInnerAsync(TData entity)
+        private async Task ReLoadInnerAsync(TData entity)
         {
             entity.__status.RejectChanged();
-            await using var connectionScope = new ConnectionScope(DataBase);
-            await using var cmd = CreateLoadCommand(connectionScope, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
-            await using var reader = (MySqlDataReader)await cmd.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return false;
-            using (new EntityLoadScope(entity))
+            using (var cmd = CreateLoadCommand(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity)))
             {
-                if (DynamicLoadAction != null)
-                    DynamicLoadAction(reader, entity);
-                else
-                    LoadEntity(reader, entity);
+                using var reader = cmd.ExecuteReader();
+                if (!await reader.ReadAsync())
+                    return;
+                using (new EntityLoadScope(entity))
+                {
+                    if (DynamicLoadAction != null)
+                        DynamicLoadAction(reader, entity);
+                    else
+                        LoadEntity(reader, entity);
+                }
             }
 
             var entity2 = EntityLoaded(entity);
             if (entity != entity2)
                 entity.CopyValue(entity2);
-            return true;
         }
 
         /// <summary>
@@ -188,22 +174,19 @@ namespace Agebull.EntityModel.MySql
         {
             var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
-                {
-                    foreach (var entity in datas)
-                    {
-                        if (await UpdateInnerAsync(entity))
-                            ++cnt;
-                        else
-                            return 0;
-                    }
-                    //scope.Succeed();
-                }
                 foreach (var entity in datas)
-                    await ReLoadInnerAsync(entity);
+                {
+                    if (await UpdateInnerAsync(entity))
+                        ++cnt;
+                    else
+                        return 0;
+                }
+
+                //scope.Succeed();
             }
+
             return cnt;
         }
 
@@ -213,7 +196,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<bool> DeleteAsync(TData entity)
         {
-            //await //await using (var scope = TransactionScope.CreateScope(DataBase))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
                 if (!await DeleteInnerAsync(entity))
                     return false;
@@ -232,14 +215,10 @@ namespace Agebull.EntityModel.MySql
                 return false;
             entity.__status.IsDelete = true;
             PrepareSave(entity, DataOperatorType.Delete);
-            //await //await using (var scope = TransactionScope.CreateScope(DataBase))
-            {
-                var result = await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
-                if (result == 0)
-                    return false;
-                //scope.Succeed();
-                EndSaved(entity, DataOperatorType.Delete);
-            }
+            var result = await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
+            if (result == 0)
+                return false;
+            EndSaved(entity, DataOperatorType.Delete);
             return true;
         }
 
@@ -249,26 +228,23 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<int> SaveAsync(IEnumerable<TData> entities)
         {
+            var datas = entities as TData[] ?? entities.ToArray();
             int cnt = 0;
-            await using var connectionScope = new ConnectionScope(DataBase);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                var datas = entities as TData[] ?? entities.ToArray();
-                //await //await using (var scope = TransactionScope.CreateScope(DataBase))
+                foreach (var entity in datas)
                 {
-                    foreach (var entity in datas)
-                    {
-                        if (await SaveInnerAsync(entity))
-                            ++cnt;
-                        else
-                            return 0;
-                    }
-
-                    //scope.Succeed();
+                    if (await SaveInnerAsync(entity))
+                        ++cnt;
+                    else
+                        return 0;
                 }
 
-                foreach (var entity in datas)
-                    await ReLoadInnerAsync(entity);
+                //scope.Succeed();
             }
+
+            foreach (var entity in datas)
+                await ReLoadInnerAsync(entity);
             return cnt;
         }
 
@@ -277,12 +253,14 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<bool> SaveAsync(TData entity)
         {
-            //await //await using (var scope = TransactionScope.CreateScope(DataBase))
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                //scope.SetState();
+                if (!await SaveInnerAsync(entity))
+                    return false;
+                //scope.Succeed();
             }
 
-            return await SaveInnerAsync(entity);
+            return true;
         }
 
         /// <summary>
@@ -290,18 +268,11 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         private async Task<bool> SaveInnerAsync(TData entity)
         {
-            bool state;
-            //await //await using (var scope = TransactionScope.CreateScope(DataBase))
-            {
-                if (entity.__status.IsDelete)
-                    state = await DeleteInnerAsync(entity);
-                else if (entity.__status.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
-                    state = await InsertInnerAsync(entity);
-                else
-                    state = await UpdateInnerAsync(entity);
-                //scope.SetState(state);
-            }
-            return state;
+            if (entity.__status.IsDelete)
+                return DeleteInner(entity);
+            if (entity.__status.IsNew || !ExistPrimaryKey(entity.GetValue(KeyField)))
+                return InsertInner(entity);
+            return await UpdateInnerAsync(entity);
         }
 
 
@@ -313,18 +284,23 @@ namespace Agebull.EntityModel.MySql
         {
             if (UpdateByMidified && !entity.__status.IsModified)
                 return false;
+            int result;
             PrepareSave(entity, DataOperatorType.Update);
             string sql = GetModifiedSqlCode(entity);
             if (sql == null)
                 return false;
-            await using var connectionScope = new ConnectionScope(DataBase);
-            await using var cmd = DataBase.CreateCommand(connectionScope);
-            SetUpdateCommand(entity, cmd);
-            cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
 
-            MySqlDataBase.TraceSql(cmd);
+            using (var cmd = DataBase.CreateCommand())
+            {
+                SetUpdateCommand(entity, cmd);
+                cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
 
-            if (await cmd.ExecuteNonQueryAsync() <= 0)
+                SqliteDataBase.TraceSql(cmd);
+
+                result = await cmd.ExecuteNonQueryAsync();
+            }
+
+            if (result <= 0)
             {
                 return false;
             }
@@ -342,7 +318,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task<bool> DeletePrimaryKeyAsync(object key)
         {
-            await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
+            var cnt = await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
+            if (cnt == 0)
+                return false;
             OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
@@ -355,7 +333,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>如果有载入首行,否则返回空</returns>
         public async Task<int> DeleteAsync(Expression<Func<TData, bool>> lambda)
         {
-            //throw new EntityModelDbException("批量删除功能被禁用");
+            //throw new Exception("批量删除功能被禁用");
             var convert = Compile(lambda);
             return await DeleteByConditionAsync(convert.ConditionSql, convert.Parameters);
         }
@@ -368,11 +346,17 @@ namespace Agebull.EntityModel.MySql
             var condition = PrimaryKeyConditionSQL;
             var para = CreatePimaryKeyParameter(key);
             var paras = new[] { para };
-            OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
-            var result = await DataBase.ExecuteAsync($@"DELETE FROM `{ContextWriteTable}` WHERE {condition};", para);
-            if (result == 0)
-                return false;
-            OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
+            {
+                OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
+                var result =
+                    await DataBase.ExecuteAsync($@"DELETE FROM [{ContextWriteTable}] WHERE {condition};", para);
+                if (result == 0)
+                    return false;
+                OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
+                //scope.Succeed();
+            }
+
             OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
@@ -386,12 +370,17 @@ namespace Agebull.EntityModel.MySql
         {
             var convert = Compile(lambda);
             int cnt;
-            OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-            cnt = await DataBase.ExecuteAsync($@"DELETE FROM `{ContextWriteTable}` WHERE {convert.ConditionSql};",
-                convert.Parameters);
-            if (cnt == 0)
-                return 0;
-            OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
+            {
+                OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+                cnt = await DataBase.ExecuteAsync($@"DELETE FROM [{ContextWriteTable}] WHERE {convert.ConditionSql};",
+                    convert.Parameters);
+                if (cnt == 0)
+                    return 0;
+                OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+                //scope.Succeed();
+            }
+
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
             return cnt;
         }
@@ -414,11 +403,16 @@ namespace Agebull.EntityModel.MySql
         private async Task<int> DeleteByConditionAsync(string condition, DbParameter[] args)
         {
             int cnt;
-            OnOperatorExecuting(condition, args, DataOperatorType.Delete);
-            cnt = await DeleteInnerAsync(condition, args);
-            if (cnt == 0)
-                return 0;
-            OnOperatorExecuted(condition, args, DataOperatorType.Delete);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
+            {
+                OnOperatorExecuting(condition, args, DataOperatorType.Delete);
+                cnt = await DeleteInnerAsync(condition, args);
+                if (cnt == 0)
+                    return 0;
+                OnOperatorExecuted(condition, args, DataOperatorType.Delete);
+                //scope.Succeed();
+            }
+
             OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
             return cnt;
         }
@@ -486,11 +480,16 @@ namespace Agebull.EntityModel.MySql
                 CreateFieldParameter(KeyField, GetDbType(KeyField), key)
             };
             int result;
-            OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, arg2);
-            if (result == 0)
-                return 0;
-            OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
+            {
+                OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
+                result = await DataBase.ExecuteAsync(sql, arg2.ToArray());
+                if (result == 0)
+                    return 0;
+                OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
+                //scope.Succeed();
+            }
+
             OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
@@ -587,11 +586,10 @@ namespace Agebull.EntityModel.MySql
             if (setValueSql == null)
                 return -1;
             var convert = Compile(lambda);
-            await using var connectionScope = new ConnectionScope(DataBase);
-            await using var cmd = DataBase.CreateCommand(connectionScope);
+            using var cmd = DataBase.CreateCommand();
             SetUpdateCommand(entity, cmd);
             cmd.CommandText = CreateUpdateSql(setValueSql, convert.ConditionSql);
-            MySqlDataBase.TraceSql(cmd);
+            SqliteDataBase.TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -663,17 +661,22 @@ namespace Agebull.EntityModel.MySql
         {
             field = FieldDictionary[field];
 
-            var parameters = new List<DbParameter>();
+            var arg2 = new List<DbParameter>();
             if (args != null)
-                parameters.AddRange(args);
-            var sql = CreateUpdateSql(FileUpdateSql(field, value, parameters), condition);
+                arg2.AddRange(args);
+            var sql = CreateUpdateSql(field, value, condition, arg2);
 
             int result;
-            OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
-            if (result <= 0)
-                return 0;
-            OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+            //using (var scope = TransactionScope.CreateScope(DataBase))
+            {
+                OnOperatorExecuting(condition, args, DataOperatorType.Update);
+                result = await DataBase.ExecuteAsync(sql, arg2.ToArray());
+                if (result <= 0)
+                    return 0;
+                OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+                //scope.Succeed();
+            }
+
             return result;
         }
 
@@ -719,72 +722,20 @@ namespace Agebull.EntityModel.MySql
         {
             var sql = CreateUpdateSql(expression, condition);
             int result;
-            OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
-
-            result = await DataBase.ExecuteAsync(sql, args);
-            if (result == 0)
-                return 0;
-            OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-            return result;
-        }
-
-
-        /// <summary>
-        ///     条件更新
-        /// </summary>
-        /// <param name="fields">字段与值组合</param>
-        /// <param name="condition">条件</param>
-        /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
-        {
-            return await SetValueAsync(condition, null, fields);
-        }
-
-        /// <summary>
-        ///     条件更新
-        /// </summary>
-        /// <param name="fields">字段与值组合</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(Expression<Func<TData, bool>> lambda, params (string field, object value)[] fields)
-        {
-            var convert = Compile(lambda);
-            return await SetValueAsync(convert.ConditionSql, convert.Parameters, fields);
-        }
-
-        /// <summary>
-        ///     条件更新
-        /// </summary>
-        /// <param name="fields">字段</param>
-        /// <param name="condition">更新条件</param>
-        /// <param name="args">条件参数</param>
-        /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
-        {
-            var parameters = new List<DbParameter>();
-            if (args != null)
-                parameters.AddRange(args);
-            bool first = true;
-            var code = new StringBuilder();
-            foreach (var field in fields)
+            //using (var scope = TransactionScope.CreateScope(DataBase))
             {
-                if (first)
-                    first = false;
-                else
-                    code.AppendLine(",");
-                code.Append(FileUpdateSql(FieldDictionary[field.field], field.value, parameters));
+                OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
+
+                result = await DataBase.ExecuteAsync(sql, args);
+                if (result == 0)
+                    return 0;
+                OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+                //scope.Succeed();
             }
 
-            var sql = CreateUpdateSql(code.ToString(), condition);
-
-            int result;
-            OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
-            if (result <= 0)
-                return 0;
-            OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
             return result;
         }
+
         #endregion
 
         #region 批量操作

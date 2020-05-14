@@ -420,6 +420,39 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="name">参数名称</param>
         /// <param name="convert">转换方法</param>
         /// <param name="value">参数值</param>
+        /// <param name="hase">参数是否存在</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        internal static bool TryGet<T>(string name, Func<string, T> convert, out T value, out bool hase)
+        {
+            hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
+            {
+                value = default;
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                value = default;
+                return false;
+            }
+            try
+            {
+                value = convert(str.Trim());
+                return true;
+            }
+            catch
+            {
+                value = default;
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public static bool TryGet<T>(string name, Func<string, T> convert, out T value)
         {

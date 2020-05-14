@@ -6,10 +6,6 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-#region 引用
-
-#endregion
-
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,24 +33,27 @@ namespace Agebull.EntityModel.SqlServer
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        protected sealed override string DeleteSqlCode => $@"UPDATE `{ContextWriteTable}` SET `{FieldDictionary[nameof(IStateData.DataState)]}`=255";
+        protected sealed override string DeleteSqlCode => $@"UPDATE [{ContextWriteTable}] 
+SET [{FieldDictionary[nameof(IStateData.DataState)]}]=255";
 
         /// <summary>
         ///     重置状态的SQL语句
         /// </summary>
         protected virtual string ResetStateFileSqlCode(int state = 0, int isFreeze = 0) =>
-            $@"`{FieldDictionary[nameof(IStateData.DataState)]}`={state},`{FieldDictionary[nameof(IStateData.IsFreeze)]}`={isFreeze}";
+            $@"
+[{FieldDictionary[nameof(IStateData.DataState)]}]={state},
+[{FieldDictionary[nameof(IStateData.IsFreeze)]}]={isFreeze}";
 
         /// <summary>
         ///     得到可正确拼接的SQL条件语句（可能是没有）
         /// </summary>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        protected override void ContitionSqlCode(List<string> conditions)
+        protected override void ConditionSqlCode(List<string> conditions)
         {
             if (GlobalContext.Current.Status.IsManageMode)
                 return;
-            conditions.Add($"`{FieldDictionary[nameof(IStateData.DataState)]}` < 255");
+            conditions.Add($"[{FieldDictionary[nameof(IStateData.DataState)]}] < 255");
         }
 
         /// <summary>
@@ -67,9 +66,9 @@ namespace Agebull.EntityModel.SqlServer
             if (GlobalContext.Current.Status.IsManageMode)
                 return;
             if (condition == null)
-                condition = $"`{FieldDictionary[nameof(IStateData.IsFreeze)]}` = 0";
+                condition = $"[{FieldDictionary[nameof(IStateData.IsFreeze)]}] = 0";
             else
-                condition = $"`{FieldDictionary[nameof(IStateData.IsFreeze)]}` = 0 AND ({condition})";
+                condition = $"[{FieldDictionary[nameof(IStateData.IsFreeze)]}] = 0 AND ({condition})";
         }
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </summary>
         public virtual bool SetState(DataStateType state, bool isFreeze, long id)
         {
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode((int)state, isFreeze ? 1 : 0)} 
 WHERE {PrimaryKeyConditionSQL}";
             return DataBase.Execute(sql, CreatePimaryKeyParameter(id)) == 1;
@@ -89,7 +88,7 @@ WHERE {PrimaryKeyConditionSQL}";
         /// </summary>
         public virtual bool ResetState(long id)
         {
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode()} 
 WHERE {PrimaryKeyConditionSQL}";
 
@@ -102,7 +101,7 @@ WHERE {PrimaryKeyConditionSQL}";
         public virtual bool ResetState(Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
-            var sql = $@"UPDATE `{ContextWriteTable}` 
+            var sql = $@"UPDATE [{ContextWriteTable}]
 SET {ResetStateFileSqlCode()} 
 WHERE {convert.ConditionSql}";
             return DataBase.Execute(sql, convert.Parameters) > 0;
