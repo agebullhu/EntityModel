@@ -503,6 +503,23 @@ namespace Agebull.EntityModel.Sqlite
         /// <summary>
         ///     汇总方法
         /// </summary>
+        public object Collect(string fun, string field)
+        {
+            return CollectInner(fun, FieldMap[field], null, null);
+        }
+
+        /// <summary>
+        ///     汇总方法
+        /// </summary>
+        public object Collect<TValue>(string fun, Expression<Func<TData, TValue>> field)
+        {
+            var expression = (MemberExpression)field.Body;
+            return CollectInner(fun, FieldMap[expression.Member.Name], null, null);
+        }
+
+        /// <summary>
+        ///     汇总方法
+        /// </summary>
         public object Collect(string fun, string field, string condition, params DbParameter[] args)
         {
             return CollectInner(fun, FieldMap[field], condition, args);
@@ -527,7 +544,7 @@ namespace Agebull.EntityModel.Sqlite
         /// </summary>
         public bool Exist()
         {
-            return Count() > 0;
+            return Any();
         }
 
         /// <summary>
@@ -535,7 +552,7 @@ namespace Agebull.EntityModel.Sqlite
         /// </summary>
         public bool Exist(string condition, params DbParameter[] args)
         {
-            return Count(condition, args) > 0;
+            return Any(condition, args);
         }
 
         /// <summary>
@@ -625,7 +642,6 @@ namespace Agebull.EntityModel.Sqlite
         }
         #endregion
 
-
         #region Any
 
         /// <summary>
@@ -675,6 +691,179 @@ namespace Agebull.EntityModel.Sqlite
 
         #endregion
 
+        #region Min
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public decimal? Min(string field)
+        {
+            var obj = CollectInner("Min", FieldMap[field], null, null);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public decimal? Min(string field, string condition, params DbParameter[] args)
+        {
+            var obj = CollectInner("Min", FieldMap[field], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="condition2">条件2，默认为空</param>
+        public decimal? Min<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
+            string condition2 = null)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert = Compile(lambda);
+            var condition = condition2 == null
+                ? convert.ConditionSql
+                : convert.ConditionSql == null
+                    ? condition2
+                    : $"({convert.ConditionSql}) AND ({condition2})";
+
+            var obj = CollectInner("Min", FieldMap[expression.Member.Name], condition, convert.Parameters);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public decimal? Min<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
+            Expression<Func<TData, bool>> b)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert1 = Compile(a);
+            var convert2 = Compile(b);
+            var obj = CollectInner("Min", FieldMap[expression.Member.Name],
+                $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+                , convert1.Parameters.Union(convert2.Parameters).ToArray());
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="condition">查询表达式</param>
+        /// <param name="args"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public decimal? Min<TValue>(Expression<Func<TData, TValue>> field, string condition,
+            params DbParameter[] args)
+        {
+            var expression = (MemberExpression)field.Body;
+            var obj = CollectInner("Min", FieldMap[expression.Member.Name], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        #endregion
+
+        #region Max
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public decimal? Max(string field)
+        {
+            var obj = CollectInner("Max", FieldMap[field], null, null);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return  Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public decimal? Max(string field, string condition, params DbParameter[] args)
+        {
+            var obj = CollectInner("Max", FieldMap[field], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="condition2">条件2，默认为空</param>
+        public decimal? Max<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
+            string condition2 = null)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert = Compile(lambda);
+            var condition = condition2 == null
+                ? convert.ConditionSql
+                : convert.ConditionSql == null
+                    ? condition2
+                    : $"({convert.ConditionSql}) AND ({condition2})";
+
+            var obj = CollectInner("Max", FieldMap[expression.Member.Name], condition, convert.Parameters);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public decimal? Max<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
+            Expression<Func<TData, bool>> b)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert1 = Compile(a);
+            var convert2 = Compile(b);
+            var obj = CollectInner("Max", FieldMap[expression.Member.Name],
+                $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+                , convert1.Parameters.Union(convert2.Parameters).ToArray());
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="condition">查询表达式</param>
+        /// <param name="args"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public decimal? Max<TValue>(Expression<Func<TData, TValue>> field, string condition,
+            params DbParameter[] args)
+        {
+            var expression = (MemberExpression)field.Body;
+            var obj = CollectInner("Max", FieldMap[expression.Member.Name], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        #endregion
 
         #region Sum
 

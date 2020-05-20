@@ -314,6 +314,11 @@
                 启用对象
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SaveAuditData(`0)">
+            <summary>
+                审核通过
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPassInner(`0)">
             <summary>
                 审核通过

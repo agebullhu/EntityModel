@@ -66,6 +66,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     列表数据
         /// </summary>
+        /// <param name="args">查询参数</param>
         /// <remarks>
         /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
         /// </remarks>

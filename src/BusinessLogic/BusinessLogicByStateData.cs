@@ -108,15 +108,16 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!unityStateChanged)
                 return;
+            var old = GlobalContext.Current.Status.IsManageMode;
             GlobalContext.Current.Status.IsManageMode = true;
             try
             {
-                OnInnerCommand(data, cmd);
                 DoStateChanged(data);
+                OnInnerCommand(data, cmd);
             }
             finally
             {
-                GlobalContext.Current.Status.IsManageMode = false;
+                GlobalContext.Current.Status.IsManageMode = old;
             }
         }
 
@@ -130,8 +131,9 @@ namespace Agebull.EntityModel.BusinessLogic
             if (!unityStateChanged)
                 return;
             var data = Access.LoadByPrimaryKey(id);
-            if (data != null)
-                OnStateChanged(data, cmd);
+            if (data == null)
+                return;
+            OnStateChanged(data,cmd);
         }
 
         /// <summary>

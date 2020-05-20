@@ -134,10 +134,8 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns></returns>
         public virtual bool Validate(long id)
         {
-            using (var scope = TransactionScope.CreateScope(Access.DataBase))
-            {
-                return scope.SetState(DoValidateInner(Details(id)));
-            }
+            using var scope = TransactionScope.CreateScope(Access.DataBase);
+            return scope.SetState(DoValidateInner(Details(id)));
         }
 
         /// <summary>
@@ -296,6 +294,22 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     审核通过
         /// </summary>
+        protected bool SaveAuditData(TData data)
+        {
+            var old = GlobalContext.Current.Status.IsManageMode;
+            GlobalContext.Current.Status.IsManageMode = true;
+            try
+            {
+                return Access.Update(data);
+            }
+            finally
+            {
+                GlobalContext.Current.Status.IsManageMode = old;
+            }
+        }
+        /// <summary>
+        ///     审核通过
+        /// </summary>
         protected bool AuditPassInner(TData data)
         {
             return AuditInner(data, true);
@@ -331,7 +345,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
 
             SetAuditState(data, AuditStateType.None, DataStateType.None);
-            Access.Update(data);
+            SaveAuditData(data);
             OnStateChanged(data, BusinessCommandType.Pullback);
             return true;
         }
@@ -365,7 +379,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 SetAuditState(data, AuditStateType.Deny, DataStateType.None);
                 DoAuditDeny(data);
             }
-            Access.Update(data);
+            SaveAuditData(data);
             if (pass)
             {
                 OnAuditPassed(data);
@@ -390,7 +404,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             SetAuditState(data, AuditStateType.Again, DataStateType.None);
             DoUnAudit(data);
-            Access.Update(data);
+            SaveAuditData(data);
             OnUnAudited(data);
             OnStateChanged(data, BusinessCommandType.ReAudit);
             return true;
@@ -413,8 +427,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
             SetAuditState(data, AuditStateType.Again, DataStateType.None);
-            if (!Access.Update(data))
-                return false;
+            SaveAuditData(data);
             OnBacked(data);
             OnStateChanged(data, BusinessCommandType.Back);
             return true;
@@ -456,7 +469,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
             SetAuditState(data, AuditStateType.Submit, DataStateType.None);
-            Access.Update(data);
+            SaveAuditData(data);
             OnStateChanged(data, BusinessCommandType.Submit);
             return true;
         }

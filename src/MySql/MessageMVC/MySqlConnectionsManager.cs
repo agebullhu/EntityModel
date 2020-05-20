@@ -48,7 +48,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         Task ILifeFlow.Initialize()
         {
-
             IsManagement = true;
             InternalInitialize();
             ConfigurationHelper.RegistOnChange("ConnectionStrings", CheckOption, false);
@@ -114,7 +113,6 @@ namespace Agebull.EntityModel.MySql
                 AddFree(connection, name);
         }
         #endregion
-
 
         #region 连接池
 
@@ -233,7 +231,7 @@ namespace Agebull.EntityModel.MySql
                 });
                 AddUsing(connection, name);
                 connection.Open();
-                logger.Debug("打开连接数：{0}", dataBaseInfo.ActiveConnections.Count);
+                LogRecorder.Trace("打开连接数：{0}", dataBaseInfo.ActiveConnections.Count);
                 return connection;
             }
             catch (Exception exception)
@@ -276,7 +274,7 @@ namespace Agebull.EntityModel.MySql
             {
                 logger.Exception(exception, nameof(Close));
             }
-            logger.Debug("未关闭总数：{0}", list.ActiveConnections.Count);
+            logger.Trace("未关闭总数：{0}", list.ActiveConnections.Count);
         }
 
         #endregion

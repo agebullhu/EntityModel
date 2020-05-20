@@ -2091,6 +2091,16 @@
             <param name="orderBys">排序</param>
             <returns>数据</returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.CollectAsync(System.String,System.String)">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.CollectAsync``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.CollectAsync(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 汇总方法
@@ -2184,6 +2194,78 @@
             </summary>
             <param name="a">查询表达式</param>
             <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MinAsyn(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MinAsyn(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MaxAsyn(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MaxAsyn(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.SumAsync(System.String)">
@@ -2800,6 +2882,16 @@
             <param name="b"></param>
             <returns>是否存在数据</returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Collect(System.String,System.String)">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Collect``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Collect(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 汇总方法
@@ -2893,6 +2985,78 @@
             </summary>
             <param name="a">查询表达式</param>
             <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Min(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Min(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Max(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Max(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.Sum(System.String)">

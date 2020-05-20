@@ -332,19 +332,36 @@ namespace Agebull.EntityModel.Sqlite
         /// <summary>
         ///     汇总方法
         /// </summary>
-        public async Task<object> CollectAsync(string fun, string field, string condition, params DbParameter[] args)
+        public Task<object> CollectAsync(string fun, string field)
         {
-            return await CollectInnerAsync(fun, FieldMap[field], condition, args);
+            return CollectInnerAsync(fun, FieldMap[field], null, null);
+        }
+
+        /// <summary>
+        ///     汇总方法
+        /// </summary>
+        public Task<object> CollectAsync<TValue>(string fun, Expression<Func<TData, TValue>> field)
+        {
+            var expression = (MemberExpression)field.Body;
+            return CollectInnerAsync(fun, FieldMap[expression.Member.Name], null, null);
+        }
+
+        /// <summary>
+        ///     汇总方法
+        /// </summary>
+        public Task<object> CollectAsync(string fun, string field, string condition, params DbParameter[] args)
+        {
+            return CollectInnerAsync(fun, FieldMap[field], condition, args);
         }
 
 
         /// <summary>
         ///     汇总方法
         /// </summary>
-        public async Task<object> CollectAsync(string fun, string field, Expression<Func<TData, bool>> lambda)
+        public Task<object> CollectAsync(string fun, string field, Expression<Func<TData, bool>> lambda)
         {
             var convert = Compile(lambda);
-            return await CollectInnerAsync(fun, field, convert.ConditionSql, convert.Parameters);
+            return CollectInnerAsync(fun, field, convert.ConditionSql, convert.Parameters);
         }
 
         #endregion
@@ -354,17 +371,17 @@ namespace Agebull.EntityModel.Sqlite
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        public async Task<bool> ExistAsync()
+        public Task<bool> ExistAsync()
         {
-            return await CountAsync() > 0;
+            return AnyAsync();
         }
 
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        public async Task<bool> ExistAsync(string condition, params DbParameter[] args)
+        public Task<bool> ExistAsync(string condition, params DbParameter[] args)
         {
-            return await CountAsync(condition, args) > 0;
+            return AnyAsync(condition, args);
         }
 
         /// <summary>
@@ -372,9 +389,9 @@ namespace Agebull.EntityModel.Sqlite
         /// </summary>
         /// <param name="id">id</param>
         /// <returns>是否存在数据</returns>
-        public async Task<bool> ExistPrimaryKeyAsync<T>(T id)
+        public Task<bool> ExistPrimaryKeyAsync<T>(T id)
         {
-            return await ExistInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(id));
+            return ExistInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(id));
         }
 
         #endregion
@@ -454,7 +471,6 @@ namespace Agebull.EntityModel.Sqlite
         }
         #endregion
 
-
         #region Any
 
         /// <summary>
@@ -503,7 +519,6 @@ namespace Agebull.EntityModel.Sqlite
         }
 
         #endregion
-
 
         #region Sum
 
@@ -577,6 +592,180 @@ namespace Agebull.EntityModel.Sqlite
             var expression = (MemberExpression)field.Body;
             var obj = await CollectInnerAsync("Sum", FieldMap[expression.Member.Name], condition, args);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
+        }
+
+        #endregion
+
+        #region Min
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public async Task<decimal?> MinAsyn(string field)
+        {
+            var obj = await CollectInnerAsync("Min", FieldMap[field], null, null);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public async Task<decimal?> MinAsyn(string field, string condition, params DbParameter[] args)
+        {
+            var obj = await CollectInnerAsync("Min", FieldMap[field], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="condition2">条件2，默认为空</param>
+        public async Task<decimal?> MinAsyn<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
+            string condition2 = null)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert = Compile(lambda);
+            var condition = condition2 == null
+                ? convert.ConditionSql
+                : convert.ConditionSql == null
+                    ? condition2
+                    : $"({convert.ConditionSql}) AND ({condition2})";
+
+            var obj = await CollectInnerAsync("Min", FieldMap[expression.Member.Name], condition, convert.Parameters);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public async Task<decimal?> MinAsyn<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
+            Expression<Func<TData, bool>> b)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert1 = Compile(a);
+            var convert2 = Compile(b);
+            var obj = await CollectInnerAsync("Min", FieldMap[expression.Member.Name],
+                $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+                , convert1.Parameters.Union(convert2.Parameters).ToArray());
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="condition">查询表达式</param>
+        /// <param name="args"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public async Task<decimal?> MinAsyn<TValue>(Expression<Func<TData, TValue>> field, string condition,
+            params DbParameter[] args)
+        {
+            var expression = (MemberExpression)field.Body;
+            var obj = await CollectInnerAsync("Min", FieldMap[expression.Member.Name], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        #endregion
+
+        #region Max
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public async Task<decimal?> MaxAsyn(string field)
+        {
+            var obj = await CollectInnerAsync("Max", FieldMap[field], null, null);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     汇总
+        /// </summary>
+        public async Task<decimal?> MaxAsyn(string field, string condition, params DbParameter[] args)
+        {
+            var obj = await CollectInnerAsync("Max", FieldMap[field], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="condition2">条件2，默认为空</param>
+        public async Task<decimal?> MaxAsyn<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
+            string condition2 = null)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert = Compile(lambda);
+            var condition = condition2 == null
+                ? convert.ConditionSql
+                : convert.ConditionSql == null
+                    ? condition2
+                    : $"({convert.ConditionSql}) AND ({condition2})";
+
+            var obj = await CollectInnerAsync("Max", FieldMap[expression.Member.Name], condition, convert.Parameters);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public async Task<decimal?> MaxAsyn<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
+            Expression<Func<TData, bool>> b)
+        {
+            var expression = (MemberExpression)field.Body;
+            var convert1 = Compile(a);
+            var convert2 = Compile(b);
+            var obj = await CollectInnerAsync("Max", FieldMap[expression.Member.Name],
+                $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+                , convert1.Parameters.Union(convert2.Parameters).ToArray());
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
+        }
+
+        /// <summary>
+        ///     合计
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="condition">查询表达式</param>
+        /// <param name="args"></param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public async Task<decimal?> MaxAsyn<TValue>(Expression<Func<TData, TValue>> field, string condition,
+            params DbParameter[] args)
+        {
+            var expression = (MemberExpression)field.Body;
+            var obj = await CollectInnerAsync("Max", FieldMap[expression.Member.Name], condition, args);
+            if (obj == DBNull.Value || obj == null)
+                return null;
+            return Convert.ToDecimal(obj);
         }
 
         #endregion

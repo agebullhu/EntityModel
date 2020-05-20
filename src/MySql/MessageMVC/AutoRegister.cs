@@ -15,10 +15,11 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 注册
         /// </summary>
-        Task IAutoRegister.AutoRegist(IServiceCollection services)
+        Task<bool> IAutoRegister.AutoRegist(IServiceCollection services)
         {
             services.AddSingleton<IFlowMiddleware, MySqlConnectionsManager>();
-            return Task.CompletedTask;
+            services.AddSingleton<IHealthCheck, MySqlConnectionsManager>();
+            return Task.FromResult(false);
         }
 
     }
