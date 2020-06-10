@@ -31,7 +31,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>4.0.0.75</Version>
+    <Version>4.0.0.76</Version>
     <RootNamespace />
   </PropertyGroup>
 
