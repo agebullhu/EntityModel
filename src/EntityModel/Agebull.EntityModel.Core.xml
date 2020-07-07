@@ -1185,16 +1185,21 @@
                 对当前对象的属性的更改,请自行保存,否则将丢失
             </remarks>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IIdentityData">
+        <member name="T:Agebull.EntityModel.Common.IIdentityData`1">
             <summary>
                 表示有唯一数字标识的数据
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IIdentityData.Id">
+        <member name="P:Agebull.EntityModel.Common.IIdentityData`1.Id">
             <summary>
                 数字标识
             </summary>
             <value>int</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IIdentityData">
+            <summary>
+                表示有唯一数字标识的数据
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ISnowFlakeId">
             <summary>
@@ -1217,16 +1222,21 @@
                 表示有唯一数字标识的数据
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IInnerTree">
+        <member name="T:Agebull.EntityModel.Common.IInnerTree`1">
             <summary>
                 表示这条数据支持内联层级
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IInnerTree.ParentId">
+        <member name="P:Agebull.EntityModel.Common.IInnerTree`1.ParentId">
             <summary>
                 上级
             </summary>
             <value>string</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IInnerTree">
+            <summary>
+                表示这条数据支持内联层级
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ILogicDeleteData">
             <summary>
@@ -1238,14 +1248,19 @@
                 是否已逻辑删除
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IOrganizationData">
+        <member name="T:Agebull.EntityModel.Common.IOrganizationData`1">
             <summary>
             组织边界对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IOrganizationData.OrganizationId">
+        <member name="P:Agebull.EntityModel.Common.IOrganizationData`1.OrganizationId">
             <summary>
             组织标识
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IOrganizationData">
+            <summary>
+            组织边界对象
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ISqlCondition">
@@ -2756,7 +2771,7 @@
             </summary>
             <typeparam name="TData"></typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.ResetState(System.Int64)">
+        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.ResetState``1(``0)">
             <summary>
             重置状态
             </summary>
@@ -2766,7 +2781,7 @@
             重置状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Int64)">
+        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.SetState``1(Agebull.EntityModel.Common.DataStateType,System.Boolean,``0)">
             <summary>
             修改状态
             </summary>
@@ -3065,183 +3080,187 @@
                 析构
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1">
+        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2">
             <summary>
             业务逻辑对象基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.Access">
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.Access">
             <summary>
             数据访问对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.EntityType">
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.EntityType">
             <summary>
             实体类型
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.DoByIds(System.Collections.Generic.IEnumerable{System.Int64},System.Func{System.Int64,System.Boolean},System.Action)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.DoByIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Boolean},System.Action)">
             <summary>
                 执行ID组合字串的操作（来自页面的,号组合的ID）
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.LoopIds(System.Collections.Generic.IEnumerable{System.Int64},System.Func{System.Int64,System.Boolean},System.Action)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.LoopIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Boolean},System.Action)">
             <summary>
                 执行ID组合字串的操作（来自页面的,号组合的ID）
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.DoByIds(System.Collections.Generic.IEnumerable{System.Int64},System.Func{`0,System.Boolean},System.Action)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.DoByIds(System.Collections.Generic.IEnumerable{`1},System.Func{`0,System.Boolean},System.Action)">
             <summary>
                 执行ID组合字串的操作（来自页面的,号组合的ID）
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.LoopIdsToData(System.Collections.Generic.IEnumerable{System.Int64},System.Func{`0,System.Boolean},System.Action)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.LoopIdsToData(System.Collections.Generic.IEnumerable{`1},System.Func{`0,System.Boolean},System.Action)">
             <summary>
                 执行ID组合字串的操作（来自页面的,号组合的ID）
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`1.Details(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.Details(`1)">
             <summary>
                 载入当前操作的数据
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1">
+        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2">
             <summary>
                 基于审核扩展的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.CancelValidate">
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.CancelValidate">
             <summary>
                 取消校验(审核时有效)
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Submit(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Submit(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量提交
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Back(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Back(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量退回
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.AuditPass(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.AuditPass(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Pullback(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Pullback(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量拉回
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.AuditDeny(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.AuditDeny(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量否决
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.UnAudit(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.UnAudit(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量反审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Validate(System.Collections.Generic.IEnumerable{System.Int64},System.Action{Agebull.EntityModel.Common.ValidateResult})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Validate(System.Collections.Generic.IEnumerable{`1},System.Action{Agebull.EntityModel.Common.ValidateResult})">
             <summary>
                 批量数据校验
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Validate(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Validate(`1)">
             <summary>
                 数据正确性校验
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.AuditPass(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.AuditPass(`1)">
             <summary>
                 审核通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.AuditDeny(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.AuditDeny(`1)">
             <summary>
                 审核不通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.UnAudit(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.UnAudit(`1)">
             <summary>
                 反审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Submit(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Submit(`1)">
             <summary>
                 提交审核
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`1.Back(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.Back(`1)">
             <summary>
                 退回编辑
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1">
+        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2">
             <summary>
             基于数据状态的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Reset(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2.Reset(`1)">
             <summary>
                 重置数据状态
             </summary>
             <param name="id"></param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Enable(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2.Enable(`1)">
             <summary>
                 启用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Disable(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2.Disable(`1)">
             <summary>
                 禁用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`1.Discard(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2.Discard(`1)">
             <summary>
                 弃用对象
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1">
+        <member name="T:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2">
             <summary>
             支持界面操作的业务逻辑对象基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.PageData(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 取得列表数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 取得列表数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.PageData(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.PageData(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Export(System.String,Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.Export(System.String,Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
             导出到Excel
             </summary>
@@ -3249,52 +3268,52 @@
             <param name="filter"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Save(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.Save(`0)">
             <summary>
                 新增
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.SaveAsync(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.SaveAsync(`0)">
             <summary>
                 新增
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.AddNew(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.AddNew(`0)">
             <summary>
                 新增
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.AddNewAsync(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.AddNewAsync(`0)">
             <summary>
                 新增
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Update(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.Update(`0)">
             <summary>
                 更新对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.UpdateAsync(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.UpdateAsync(`0)">
             <summary>
                 更新对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Delete(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.Delete(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 删除对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.Delete(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.Delete(`1)">
             <summary>
                 删除对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.DeleteAsync(System.Int64)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.DeleteAsync(`1)">
             <summary>
                 删除对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`1.DeleteAsync(System.Collections.Generic.IEnumerable{System.Int64})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.DeleteAsync(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 删除对象
             </summary>
@@ -6143,11 +6162,11 @@
                 反序
             </summary>
         </member>
-        <member name="M:ZeroTeam.MessageMVC.ZeroApis.PageArgument.Validate(System.String@)">
+        <member name="M:ZeroTeam.MessageMVC.ZeroApis.PageArgument.Validate(ZeroTeam.MessageMVC.ZeroApis.IOperatorStatus@)">
             <summary>
                 数据校验
             </summary>
-            <param name="message">返回的消息</param>
+            <param name="status">检查状态</param>
             <returns>成功则返回真</returns>
         </member>
         <member name="T:ZeroTeam.MessageMVC.ZeroApis.ApiPage">

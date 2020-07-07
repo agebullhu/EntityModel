@@ -16,9 +16,10 @@ namespace Agebull.EntityModel.Excel
     ///     Excel导出类
     /// </summary>
     /// <typeparam name="TData">数据类型</typeparam>
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
     /// <typeparam name="TAccess">数据类型对应的数据访问类</typeparam>
-    public class ExcelExporter<TData, TAccess> : ScopeBase
-        where TData : EditDataObject, IIdentityData, new()
+    public class ExcelExporter<TData,TPrimaryKey, TAccess> : ScopeBase
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
         where TAccess : class, IDataTable<TData>, new()
     {
 

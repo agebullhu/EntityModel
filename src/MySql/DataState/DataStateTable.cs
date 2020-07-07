@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.MySql
     /// <typeparam name="TData">实体</typeparam>
     /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
     public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>, IStateDataTable<TData>
-        where TData : EditDataObject, IStateData, IIdentityData, new()
+        where TData : EditDataObject, IStateData, IIdentityData<long>, new()
         where TMySqlDataBase : MySqlDataBase
     {
         static DataStateTable()
@@ -76,7 +76,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 修改状态
         /// </summary>
-        public virtual bool SetState(DataStateType state, bool isFreeze, long id)
+        public virtual bool SetState<TPrimaryKey>(DataStateType state, bool isFreeze, TPrimaryKey id)
         {
             var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode((int)state, isFreeze ? 1 : 0)} 
@@ -89,7 +89,7 @@ WHERE {PrimaryKeyConditionSQL}";
         /// <summary>
         /// 重置状态
         /// </summary>
-        public virtual bool ResetState(long id)
+        public virtual bool ResetState<TPrimaryKey>(TPrimaryKey id)
         {
             var sql = $@"UPDATE `{ContextWriteTable}` 
 SET {ResetStateFileSqlCode()} 

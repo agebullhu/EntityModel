@@ -38,26 +38,31 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         /// <summary>
         ///     数据校验
         /// </summary>
-        /// <param name="message">返回的消息</param>
+        /// <param name="status">检查状态</param>
         /// <returns>成功则返回真</returns>
-        public virtual bool Validate(out string message)
+        public virtual bool Validate(out IOperatorStatus status)
         {
+            status = ApiResultHelper.Succees(); 
             var msg = new StringBuilder();
-            var success = true;
+            status.Success = true;
             if (PageIndex < 0)
             {
-                success = false;
+                status.Success = false;
                 msg.Append("页号必须大于或等于0");
             }
 
             if (PageSize <= 0 || PageSize > 100)
             {
-                success = false;
+                status.Success = false;
                 msg.Append("行数必须大于0且小于100");
             }
-
-            message = msg.ToString();
-            return success;
+            if (status.Success)
+            {
+                return true;
+            }
+            status.Message= msg.ToString();
+            status.Code = OperatorStatusCode.ArgumentError;
+            return status.Success;
         }
     }
 

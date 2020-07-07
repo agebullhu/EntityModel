@@ -62,44 +62,36 @@
             <param name="action">处理方法，第一个参数为解析出的行数组，第一个参数指是否为第一行即标题行</param>
             <returns>解析到的行数</returns>
         </member>
-        <member name="T:Agebull.EntityModel.Excel.ExcelExporter`2">
+        <member name="T:Agebull.EntityModel.Excel.ExcelExporter`3">
             <summary>
                 Excel导出类
             </summary>
             <typeparam name="TData">数据类型</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
             <typeparam name="TAccess">数据类型对应的数据访问类</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.Access">
+        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`3.Access">
             <summary>
                 数据访问对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.CreateAccess">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.CreateAccess">
             <summary>
                 数据访问对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.Book">
+        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`3.Book">
             <summary>
             工作簿对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(System.String,System.String)">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(System.String,System.String)">
             <summary>
                 导出Excel
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
-            <summary>
-                导出Excel
-            </summary>
-            <param name="lambda">查询条件</param>
-            <param name="name"></param>
-            <param name="path"></param>
-            <returns>数据</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcelAsync(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
             <summary>
                 导出Excel
             </summary>
@@ -108,7 +100,16 @@
             <param name="path"></param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet,Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcelAsync(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="lambda">查询条件</param>
+            <param name="name"></param>
+            <param name="path"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(NPOI.SS.UserModel.ISheet,Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 导出Excel
             </summary>
@@ -116,7 +117,7 @@
             <param name="lambda">查询条件</param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
             <summary>
                 导出Excel
             </summary>
@@ -124,7 +125,7 @@
             <param name="name"></param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(NPOI.SS.UserModel.ISheet,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 导出Excel
             </summary>
@@ -132,33 +133,33 @@
             <param name="lambda">查询条件</param>
             <returns>数据</returns>
         </member>
-        <member name="F:Agebull.EntityModel.Excel.ExcelExporter`2.OnDataLoad">
+        <member name="F:Agebull.EntityModel.Excel.ExcelExporter`3.OnDataLoad">
             <summary>
             数据载入的处理
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet)">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.ExportExcel(NPOI.SS.UserModel.ISheet)">
             <summary>
                 导出Excel
             </summary>
             <param name="sheet">导入所在的工作表</param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.WriteToSheet(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.WriteToSheet(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
             <summary>
             写入数据到工作表
             </summary>
             <param name="sheet"></param>
             <param name="datas"></param>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.WriteToSheetByConfig(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.WriteToSheetByConfig(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
             <summary>
             写入数据到工作表
             </summary>
             <param name="sheet"></param>
             <param name="datas"></param>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.OnDispose">
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`3.OnDispose">
             <summary>
             清理资源
             </summary>

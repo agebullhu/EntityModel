@@ -51,11 +51,11 @@ namespace Agebull.Common
 
             var result = DecodingSubcode(timestampSegment);
 
-            result = result << SmallFlakes.WorkerLength;
+            result <<= SmallFlakes.WorkerLength;
 
             result += DecodingSubcode(workerSegment);
 
-            result = result << SmallFlakes.CounterLength;
+            result <<= SmallFlakes.CounterLength;
 
             result += DecodingSubcode(localSegment);
 
@@ -72,7 +72,7 @@ namespace Agebull.Common
 
                 buildStack.Push(SmallFlakes.elements[index]);
 
-                segment = segment / SmallFlakes.elements.Length;
+                segment /= SmallFlakes.elements.Length;
 
                 if (segment == 0)
                 {

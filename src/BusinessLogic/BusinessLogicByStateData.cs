@@ -23,9 +23,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class BusinessLogicByStateData<TData, TAccess>
-        : UiBusinessLogicBase<TData, TAccess>, IBusinessLogicByStateData<TData>
-        where TData : EditDataObject, IIdentityData, IStateData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public class BusinessLogicByStateData<TData, TPrimaryKey, TAccess>
+        : UiBusinessLogicBase<TData, TPrimaryKey, TAccess>, IBusinessLogicByStateData<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
         where TAccess : class, IStateDataTable<TData>, new()
     {
         #region 数据状态逻辑
@@ -50,9 +51,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override bool PrepareDelete(long id)
+        protected override bool PrepareDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && !p.IsFreeze))
+            if (Access.Any(p => Equals(p.Id , id) && !p.IsFreeze))
                 return base.PrepareDelete(id);
             GlobalContext.Current.Status.LastMessage = "数据已锁定";
             GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
@@ -62,7 +63,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
-        protected override void OnDeleted(long id)
+        protected override void OnDeleted(TPrimaryKey id)
         {
             OnStateChanged(id, BusinessCommandType.Delete);
             base.OnDeleted(id);
@@ -71,9 +72,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected override bool DoDelete(long id)
+        protected override bool DoDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => p.DataState == DataStateType.Delete && p.Id == id))
+            if (Access.Any(p => p.DataState == DataStateType.Delete && Equals(p.Id , id)))
                 return Access.PhysicalDelete(id);
             return Access.DeletePrimaryKey(id);
         }
@@ -126,7 +127,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected sealed override void OnStateChanged(long id, BusinessCommandType cmd)
+        protected sealed override void OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;
@@ -153,7 +154,7 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     重置数据状态
         /// </summary>
         /// <param name="id"></param>
-        public virtual bool Reset(long id)
+        public virtual bool Reset(TPrimaryKey id)
         {
             if (!Access.ResetState(id))
                 return false;
@@ -164,33 +165,33 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     启用对象
         /// </summary>
-        public virtual bool Enable(long id)
+        public virtual bool Enable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Enable, true,
-                p => p.Id == id && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
+                p => Equals(p.Id , id) && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public virtual bool Disable(long id)
+        public virtual bool Disable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Disable, true,
-                p => p.Id == id && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
+                p => Equals(p.Id , id) && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
         ///     弃用对象
         /// </summary>
-        public virtual bool Discard(long id)
+        public virtual bool Discard(TPrimaryKey id)
         {
-            return SetDataState(id, DataStateType.Discard, true, p => p.Id == id && p.DataState == DataStateType.None);
+            return SetDataState(id, DataStateType.Discard, true, p => Equals(p.Id , id) && p.DataState == DataStateType.None);
         }
 
         /// <summary>
         ///     修改状态
         /// </summary>
-        protected bool SetDataState(long id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
+        protected bool SetDataState(TPrimaryKey id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
         {
             if (filter != null && !Access.Any(filter))
                 return false;
@@ -212,10 +213,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicByStateData<TData, TAccess, TDatabase>
-        : BusinessLogicByStateData<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, IStateData, new()
+    public class BusinessLogicByStateData<TData, TAccess>
+        : BusinessLogicByStateData<TData,long, TAccess>
+        where TData : EditDataObject, IIdentityData<long>, IStateData, new()
         where TAccess : class, IStateDataTable<TData>, new()
     {
     }

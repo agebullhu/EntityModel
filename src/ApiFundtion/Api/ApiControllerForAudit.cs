@@ -22,10 +22,10 @@ namespace Agebull.MicroZero.ZeroApis
     /// <summary>
     ///     审核支持API页面的基类
     /// </summary>
-    public abstract class ApiControllerForAudit<TData, TBusinessLogic>
-        : ApiControllerForDataState<TData, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TBusinessLogic : class, IBusinessLogicByAudit<TData>, new()
+    public abstract class ApiControllerForAudit<TData, TPrimaryKey, TBusinessLogic>
+        : ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IBusinessLogicByAudit<TData, TPrimaryKey>, new()
     {
         #region API
 
@@ -78,7 +78,7 @@ namespace Agebull.MicroZero.ZeroApis
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult Validate(IdsArguent arg)
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 return ApiResultHelper.Helper.ArgumentError;
             }
@@ -141,7 +141,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected virtual void OnSubmitAudit()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -158,7 +158,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnBackAudit()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -172,7 +172,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnUnAudit()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -186,7 +186,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected virtual void OnAuditPass()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -201,7 +201,7 @@ namespace Agebull.MicroZero.ZeroApis
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
-        private bool DoValidate(IEnumerable<long> ids)
+        private bool DoValidate(IEnumerable<TPrimaryKey> ids)
         {
             var message = new ValidateResultDictionary();
             var succeed = Business.Validate(ids, message.TryAdd);
@@ -218,7 +218,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnPullback()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -232,7 +232,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnAuditDeny()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -279,4 +279,13 @@ namespace Agebull.MicroZero.ZeroApis
         #endregion
     }
 
+    /// <summary>
+    ///     审核支持API页面的基类
+    /// </summary>
+    public abstract class ApiControllerForAudit<TData,  TBusinessLogic>
+        : ApiControllerForAudit<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<long>, new()
+        where TBusinessLogic : class, IBusinessLogicByAudit<TData, long>, new()
+    {
+    }
 }

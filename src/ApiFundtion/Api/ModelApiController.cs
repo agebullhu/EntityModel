@@ -71,7 +71,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     当前用户是否已登录成功
         /// </summary>
-        protected internal bool UserIsLogin => UserInfo.UserId > 0;
+        protected internal bool UserIsLogin => !string.IsNullOrEmpty(UserInfo.UserId);
 
         #endregion
 

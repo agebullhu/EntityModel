@@ -31,7 +31,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        bool PrepareDelete<T>(IEnumerable<long> ids);
+        bool PrepareDelete<T, TPrimaryKey>(IEnumerable<TPrimaryKey> ids);
 
         /// <summary>
         /// ≤È—Ø«∞ºÏ≤È
@@ -132,7 +132,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        internal static bool PrepareDelete<T>(long[] ids)
+        internal static bool PrepareDelete<T,TPrimaryKey>(TPrimaryKey[] ids)
         {
             var type = typeof(T);
             foreach (var creaters in Checker)
@@ -142,7 +142,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 foreach (var creater in creaters.Value.Dictionary.Values)
                 {
                     var checker = creater();
-                    if (!checker.PrepareDelete<T>(ids))
+                    if (!checker.PrepareDelete<T, TPrimaryKey>(ids))
                         return false;
                 }
             }

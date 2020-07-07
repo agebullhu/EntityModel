@@ -39,6 +39,7 @@ namespace Agebull.EntityModel.Common
         {
             return data.DataState == DataStateType.Delete;
         }
+
         /// <summary>
         ///     数据状态枚举类型
         /// </summary>

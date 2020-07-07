@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体SQLite版本</Description>
     <AssemblyTitle>Agebull.EntityModel.SQLite</AssemblyTitle>
-    <Version>4.0.0.76</Version>
+    <Version>4.0.0.78</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.SQLite</AssemblyName>

@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.Excel
     ///     Excel导入类
     /// </summary>
     public class ExcelImporter<TData> : ScopeBase
-        where TData : EditDataObject, IIdentityData, new()
+        where TData : EditDataObject, IIdentityData<long>, new()
     {
         #region 准备
 

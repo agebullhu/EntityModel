@@ -14,9 +14,9 @@ namespace Agebull.MicroZero.ZeroApis
     /// <summary>
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
-    public abstract class ApiController<TData, TBusinessLogic> : ModelApiController
-        where TData : EditDataObject, IIdentityData, new()
-        where TBusinessLogic : class, IUiBusinessLogicBase<TData>, new()
+    public abstract class ApiController<TData, TPrimaryKey, TBusinessLogic> : ModelApiController
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IUiBusinessLogicBase<TData, TPrimaryKey>, new()
     {
         #region 数据校验支持
 
@@ -55,9 +55,16 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         protected TBusinessLogic Business
         {
-            get => _business ?? (_business = new TBusinessLogic());
+            get => _business ??= new TBusinessLogic();
             set => _business = value;
         }
+
+        /// <summary>
+        /// 转换方法
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        abstract protected (bool, TPrimaryKey) Convert(string value);
 
         #endregion
 
@@ -135,8 +142,8 @@ namespace Agebull.MicroZero.ZeroApis
         [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
         public IApiResult<TData> Details(IdArguent arguent)
         {
-            if (!RequestArgumentConvert.TryGetId<TData>(out long id))
-                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的数字");
+            if (!RequestArgumentConvert.TryGetId<TData,TPrimaryKey>(Convert, out TPrimaryKey id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
             var data = DoDetails(id);
             return IsFailed
                     ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
@@ -163,8 +170,8 @@ namespace Agebull.MicroZero.ZeroApis
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public IApiResult<TData> Update(TData arg)
         {
-            if (!RequestArgumentConvert.TryGetId<TData>(out long id))
-                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的数字");
+            if (!RequestArgumentConvert.TryGetId<TData, TPrimaryKey>(Convert, out TPrimaryKey id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
             var data = DoUpdate(id);
             return IsFailed
                     ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
@@ -355,10 +362,10 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        protected virtual TData DoDetails(long id)
+        protected virtual TData DoDetails(TPrimaryKey id)
         {
             TData data;
-            if (id <= 0)
+            if (Equals(id, default))
             {
                 data = CreateData();
                 OnDetailsLoaded(data, true);
@@ -421,7 +428,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     更新对象
         /// </summary>
-        protected virtual TData DoUpdate(long id)
+        protected virtual TData DoUpdate(TPrimaryKey id)
         {
             var data = Business.Details(id);
             if (data == null)
@@ -457,7 +464,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void DoDelete()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -467,6 +474,24 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     自动实现基本增删改查API页面的基类
+    /// </summary>
+    public abstract class ApiController<TData,TBusinessLogic> : ApiController<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IIdentityData<long>, new()
+        where TBusinessLogic : class, IUiBusinessLogicBase<TData, long>, new()
+    {
+        ///<inheritdoc/>
+        protected sealed override (bool, long) Convert(string value)
+        {
+            if(value != null && long.TryParse(value,out var id))
+            {
+                return (true, id);
+            }
+            return (false, 0);
+        }
     }
 }
 #pragma warning restore IDE0060 // 删除未使用的参数

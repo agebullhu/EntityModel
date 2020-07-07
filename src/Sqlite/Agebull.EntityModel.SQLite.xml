@@ -35,12 +35,12 @@
             <param name="condition"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Sqlite.DataStateTable`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Int64)">
+        <member name="M:Agebull.EntityModel.Sqlite.DataStateTable`2.SetState``1(Agebull.EntityModel.Common.DataStateType,System.Boolean,``0)">
             <summary>
             修改状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Sqlite.DataStateTable`2.ResetState(System.Int64)">
+        <member name="M:Agebull.EntityModel.Sqlite.DataStateTable`2.ResetState``1(``0)">
             <summary>
             重置状态
             </summary>

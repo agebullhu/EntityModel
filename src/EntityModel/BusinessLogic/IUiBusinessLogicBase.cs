@@ -12,8 +12,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 支持界面操作的业务逻辑对象基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    public interface IUiBusinessLogicBase<TData> : IBusinessLogicBase<TData>
-        where TData : EditDataObject, IIdentityData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public interface IUiBusinessLogicBase<TData,TPrimaryKey> : IBusinessLogicBase<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
     {
         #region 读数据
 
@@ -92,23 +93,23 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        bool Delete(IEnumerable<long> lid);
+        bool Delete(IEnumerable<TPrimaryKey> lid);
 
         /// <summary>
         ///     删除对象
         /// </summary>
-        bool Delete(long id);
+        bool Delete(TPrimaryKey id);
 
         /// <summary>
         ///     删除对象
         /// </summary>
-        Task<bool> DeleteAsync(long id);
+        Task<bool> DeleteAsync(TPrimaryKey id);
 
 
         /// <summary>
         ///     删除对象
         /// </summary>
-        Task<bool> DeleteAsync(IEnumerable<long> lid);
+        Task<bool> DeleteAsync(IEnumerable<TPrimaryKey> lid);
 
         #endregion
     }

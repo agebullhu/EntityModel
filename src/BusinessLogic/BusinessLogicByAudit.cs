@@ -23,9 +23,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class BusinessLogicByAudit<TData, TAccess>
-        : BusinessLogicByStateData<TData, TAccess>, IBusinessLogicByAudit<TData>
-        where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public class BusinessLogicByAudit<TData, TPrimaryKey, TAccess>
+        : BusinessLogicByStateData<TData, TPrimaryKey, TAccess>, IBusinessLogicByAudit<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IHistoryData, IAuditData, IStateData, new()
         where TAccess : class, IStateDataTable<TData>, new()
     {
         #region 消息
@@ -71,7 +72,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量提交
         /// </summary>
-        public bool Submit(IEnumerable<long> sels)
+        public bool Submit(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, SubmitInner);
         }
@@ -79,7 +80,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量退回
         /// </summary>
-        public bool Back(IEnumerable<long> sels)
+        public bool Back(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, BackInner);
         }
@@ -87,7 +88,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量通过
         /// </summary>
-        public bool AuditPass(IEnumerable<long> sels)
+        public bool AuditPass(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, AuditPassInner);
         }
@@ -95,7 +96,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量拉回
         /// </summary>
-        public bool Pullback(IEnumerable<long> sels)
+        public bool Pullback(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, PullbackInner);
         }
@@ -103,7 +104,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量否决
         /// </summary>
-        public bool AuditDeny(IEnumerable<long> sels)
+        public bool AuditDeny(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, AuditDenyInner);
         }
@@ -111,14 +112,14 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量反审核
         /// </summary>
-        public bool UnAudit(IEnumerable<long> sels)
+        public bool UnAudit(IEnumerable<TPrimaryKey> sels)
         {
             return DoByIds(sels, UnAuditInner);
         }
         /// <summary>
         ///     批量数据校验
         /// </summary>
-        public bool Validate(IEnumerable<long> sels, Action<ValidateResult> putError)
+        public bool Validate(IEnumerable<TPrimaryKey> sels, Action<ValidateResult> putError)
         {
             return LoopIdsToData(sels, data => DoValidateInner(data, putError));
         }
@@ -132,7 +133,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Validate(long id)
+        public virtual bool Validate(TPrimaryKey id)
         {
             using var scope = TransactionScope.CreateScope(Access.DataBase);
             return scope.SetState(DoValidateInner(Details(id)));
@@ -141,7 +142,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     审核通过
         /// </summary>
-        public bool AuditPass(long id)
+        public bool AuditPass(TPrimaryKey id)
         {
             var data = Details(id);
             if (data == null)
@@ -155,7 +156,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     审核不通过
         /// </summary>
-        public bool AuditDeny(long id)
+        public bool AuditDeny(TPrimaryKey id)
         {
             var data = Details(id);
             if (data == null)
@@ -170,7 +171,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     反审核
         /// </summary>
-        public bool UnAudit(long id)
+        public bool UnAudit(TPrimaryKey id)
         {
             var data = Details(id);
             if (data == null)
@@ -188,7 +189,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Submit(long id)
+        public bool Submit(TPrimaryKey id)
         {
             var data = Details(id);
             if (data == null)
@@ -206,7 +207,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Back(long id)
+        public bool Back(TPrimaryKey id)
         {
             var data = Details(id);
             if (data == null)
@@ -226,9 +227,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override bool PrepareDelete(long id)
+        protected override bool PrepareDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState == AuditStateType.None))
+            if (Access.Any(p => Equals(p.Id , id) && p.AuditState == AuditStateType.None))
                 return base.PrepareDelete(id);
             GlobalContext.Current.Status.LastMessage = "仅未进行任何审核操作的数据可以被删除";
             return false;
@@ -251,9 +252,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public override bool Reset(long id)
+        public override bool Reset(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+            if (Access.Any(p => Equals(p.Id , id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return base.Reset(id);
         }
@@ -262,27 +263,27 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public override bool Disable(long id)
+        public override bool Disable(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+            if (Access.Any(p => Equals(p.Id , id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return base.Disable(id);
         }
         /// <summary>
         ///     弃用对象
         /// </summary>
-        public override bool Discard(long id)
+        public override bool Discard(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+            if (Access.Any(p => Equals(p.Id , id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return base.Discard(id);
         }
         /// <summary>
         ///     启用对象
         /// </summary>
-        public override bool Enable(long id)
+        public override bool Enable(TPrimaryKey id)
         {
-            if (Access.Any(p => p.Id == id && p.AuditState != AuditStateType.Pass))
+            if (Access.Any(p => Equals(p.Id , id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return base.Enable(id);
         }
@@ -737,10 +738,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class BusinessLogicByAudit<TData, TAccess, TDatabase>
-        : BusinessLogicByAudit<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, IHistoryData, IAuditData, IStateData, new()
+    public class BusinessLogicByAudit<TData, TAccess>
+        : BusinessLogicByAudit<TData,long, TAccess>
+        where TData : EditDataObject, IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
         where TAccess : class, IStateDataTable<TData>, new()
     {
     }

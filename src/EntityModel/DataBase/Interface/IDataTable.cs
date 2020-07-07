@@ -944,7 +944,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 重置状态
         /// </summary>
-        bool ResetState(long id);
+        bool ResetState<TPrimaryKey>(TPrimaryKey id);
 
         /// <summary>
         /// 重置状态
@@ -954,6 +954,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 修改状态
         /// </summary>
-        bool SetState(DataStateType state, bool isFreeze, long id);
+        bool SetState<TPrimaryKey>(DataStateType state, bool isFreeze, TPrimaryKey id);
     }
 }

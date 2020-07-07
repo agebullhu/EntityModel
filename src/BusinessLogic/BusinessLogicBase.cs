@@ -22,9 +22,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 业务逻辑对象基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class BusinessLogicBase<TData, TAccess> : IBusinessLogicBase<TData>
-        where TData : EditDataObject, IIdentityData, new()
+    public class BusinessLogicBase<TData,TPrimaryKey, TAccess> : IBusinessLogicBase<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
         where TAccess : class, IDataTable<TData>, new()
     {
         #region 基础支持对象
@@ -39,7 +40,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        IDataTable<TData> IBusinessLogicBase<TData>.Access => Access;
+        IDataTable<TData> IBusinessLogicBase<TData, TPrimaryKey>.Access => Access;
 
         /// <summary>
         ///     数据访问对象
@@ -73,7 +74,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool DoByIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null)
+        public bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TPrimaryKey, bool> func, Action onEnd = null)
         {
             return LoopIds(ids, func, onEnd);
         }
@@ -81,7 +82,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool LoopIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null)
+        public bool LoopIds(IEnumerable<TPrimaryKey> ids, Func<TPrimaryKey, bool> func, Action onEnd = null)
         {
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
@@ -101,7 +102,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool DoByIds(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null)
+        public bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null)
         {
             return LoopIdsToData(ids, func, onEnd);
         }
@@ -109,7 +110,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        public bool LoopIdsToData(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null)
+        public bool LoopIdsToData(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null)
         {
             using (var scope = TransactionScope.CreateScope(Access.DataBase))
             {
@@ -146,9 +147,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        public virtual TData Details(long id)
+        public virtual TData Details(TPrimaryKey id)
         {
-            if (id == 0)
+            if (Equals(id,default))
                 return null;
             var data = Access.LoadByPrimaryKey(id);
             if (data == null)
@@ -160,9 +161,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        public virtual async Task<TData> DetailAsync(long id)
+        public virtual async Task<TData> DetailAsync(TPrimaryKey id)
         {
-            if (id == 0)
+            if (Equals(id, default))
                 return null;
             var data = await Access.LoadByPrimaryKeyAsync(id);
             if (data == null)
@@ -190,5 +191,16 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #endregion
 
+    }
+
+    /// <summary>
+    /// 业务逻辑对象基类
+    /// </summary>
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TAccess">数据访问对象</typeparam>
+    public class BusinessLogicBase<TData, TAccess> : BusinessLogicBase<TData, long, TAccess>
+        where TData : EditDataObject, IIdentityData<long>, new()
+        where TAccess : class, IDataTable<TData>, new()
+    {
     }
 }

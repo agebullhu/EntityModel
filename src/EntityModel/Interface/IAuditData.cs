@@ -29,7 +29,7 @@ namespace Agebull.EntityModel.Common
         ///     …Û∫À»À
         /// </summary>
         /// <value>string</value>
-        long AuditorId { get; set; }
+        string AuditorId { get; set; }
 
 
         /// <summary>

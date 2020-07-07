@@ -18,9 +18,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 基于数据状态的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    public interface IBusinessLogicByStateData<TData>
-        : IUiBusinessLogicBase<TData>
-        where TData : EditDataObject, IIdentityData, IStateData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public interface IBusinessLogicByStateData<TData, TPrimaryKey> : IUiBusinessLogicBase<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
     {
         #region 状态处理
 
@@ -28,22 +28,22 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     重置数据状态
         /// </summary>
         /// <param name="id"></param>
-        bool Reset(long id);
+        bool Reset(TPrimaryKey id);
 
         /// <summary>
         ///     启用对象
         /// </summary>
-        bool Enable(long id);
+        bool Enable(TPrimaryKey id);
 
         /// <summary>
         ///     禁用对象
         /// </summary>
-        bool Disable(long id);
+        bool Disable(TPrimaryKey id);
 
         /// <summary>
         ///     弃用对象
         /// </summary>
-        bool Discard(long id);
+        bool Discard(TPrimaryKey id);
 
         #endregion
     }

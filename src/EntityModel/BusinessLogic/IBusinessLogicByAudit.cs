@@ -20,9 +20,9 @@ namespace Agebull.EntityModel.BusinessLogic
     ///     基于审核扩展的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    public interface IBusinessLogicByAudit<TData>
-        : IBusinessLogicByStateData<TData>
-        where TData : EditDataObject, IIdentityData, IStateData, IAuditData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public interface IBusinessLogicByAudit<TData, TPrimaryKey> : IBusinessLogicByStateData<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, IAuditData, new()
     {
         #region 消息
 
@@ -38,37 +38,37 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     批量提交
         /// </summary>
-        bool Submit(IEnumerable<long> sels);
+        bool Submit(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量退回
         /// </summary>
-        bool Back(IEnumerable<long> sels);
+        bool Back(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量通过
         /// </summary>
-        bool AuditPass(IEnumerable<long> sels);
+        bool AuditPass(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量拉回
         /// </summary>
-        bool Pullback(IEnumerable<long> sels);
+        bool Pullback(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量否决
         /// </summary>
-        bool AuditDeny(IEnumerable<long> sels);
+        bool AuditDeny(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量反审核
         /// </summary>
-        bool UnAudit(IEnumerable<long> sels);
+        bool UnAudit(IEnumerable<TPrimaryKey> sels);
 
         /// <summary>
         ///     批量数据校验
         /// </summary>
-        bool Validate(IEnumerable<long> sels, Action<ValidateResult> putError);
+        bool Validate(IEnumerable<TPrimaryKey> sels, Action<ValidateResult> putError);
 
         #endregion
 
@@ -79,39 +79,37 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        bool Validate(long id);
+        bool Validate(TPrimaryKey id);
 
         /// <summary>
         ///     审核通过
         /// </summary>
-        bool AuditPass(long id);
+        bool AuditPass(TPrimaryKey id);
 
         /// <summary>
         ///     审核不通过
         /// </summary>
-        bool AuditDeny(long id);
+        bool AuditDeny(TPrimaryKey id);
 
         /// <summary>
         ///     反审核
         /// </summary>
-        bool UnAudit(long id);
+        bool UnAudit(TPrimaryKey id);
 
         /// <summary>
         ///     提交审核
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        bool Submit(long id);
+        bool Submit(TPrimaryKey id);
 
         /// <summary>
         ///     退回编辑
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        bool Back(long id);
+        bool Back(TPrimaryKey id);
 
         #endregion
-
-
     }
 }

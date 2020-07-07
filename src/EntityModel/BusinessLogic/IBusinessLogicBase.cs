@@ -20,7 +20,8 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 业务逻辑对象基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    public interface IBusinessLogicBase<TData>
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public interface IBusinessLogicBase<TData,TPrimaryKey>
         where TData : EditDataObject, new()
     {
         #region 基础属性
@@ -42,22 +43,22 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool DoByIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null);
+        bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TPrimaryKey, bool> func, Action onEnd = null);
 
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool LoopIds(IEnumerable<long> ids, Func<long, bool> func, Action onEnd = null);
+        bool LoopIds(IEnumerable<TPrimaryKey> ids, Func<TPrimaryKey, bool> func, Action onEnd = null);
 
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool DoByIds(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null);
+        bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null);
 
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool LoopIdsToData(IEnumerable<long> ids, Func<TData, bool> func, Action onEnd = null);
+        bool LoopIdsToData(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null);
         #endregion
 
         #region 读数据
@@ -65,7 +66,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        TData Details(long id);
+        TData Details(TPrimaryKey id);
 
         #endregion
 

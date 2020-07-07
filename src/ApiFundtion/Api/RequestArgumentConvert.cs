@@ -381,6 +381,7 @@ namespace Agebull.MicroZero.ZeroApis
             return true;
         }
 
+
         /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充
         /// </summary>
@@ -439,6 +440,40 @@ namespace Agebull.MicroZero.ZeroApis
             {
                 value = convert(str.Trim());
                 return true;
+            }
+            catch
+            {
+                value = default;
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
+        /// <param name="hase">参数是否存在</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        internal static bool TryGet<T>(string name, Func<string, (bool state, T value)> convert, out T value, out bool hase)
+        {
+            hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
+            {
+                value = default;
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                value = default;
+                return false;
+            }
+            try
+            {
+                var re = convert(str.Trim());
+                value = re.value;
+                return re.state;
             }
             catch
             {
@@ -767,6 +802,42 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="value">参数值</param>
+        /// <param name="convert">转换器</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetId<TData, TPrimaryKey>(Func<string, (bool state, TPrimaryKey key)> convert, out TPrimaryKey value)
+           where TData : EntityModel.Common.EditDataObject, new()
+        {
+            if (TryGetValue("id", out var str))
+            {
+                var re = convert(str);
+                value = re.key;
+                return re.state;
+            }
+            var data = new TData();
+            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
+
+            if (TryGetValue(pri.JsonName, out str))
+            {
+                var re = convert(str);
+                value = re.key;
+                return re.state;
+            }
+
+            if (TryGetValue(pri.Name, out str))
+            {
+                var re = convert(str);
+                value = re.key;
+                return re.state;
+            }
+            value = default;
+            return false;
+        }
+
+
+        /// <summary>
         ///     试图读参数
         /// </summary>
         /// <param name="name">参数名称</param>
@@ -958,6 +1029,41 @@ namespace Agebull.MicroZero.ZeroApis
                     return false;
                 }
                 values = array.Select(long.Parse).ToList();
+                return values.Count > 0;
+            }
+            catch
+            {
+                values = null;
+                return false;
+            }
+        }
+        /// <summary>
+        ///     试图读参数
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="convert"></param>
+        /// <param name="values">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetIDs<TPrimaryKey>(string name, Func<string, (bool state, TPrimaryKey key)> convert, out List<TPrimaryKey> values)
+        {
+            values = new List<TPrimaryKey>();
+            if (!TryGetValue(name, out var str))
+            {
+                return false;
+            }
+            try
+            {
+                var array = str.Split(new[] { ',', '[', ']', '\"', '\'' }, StringSplitOptions.RemoveEmptyEntries);
+                if (array.Length == 0)
+                {
+                    return false;
+                }
+                foreach (var key in array)
+                {
+                    var re = convert(key);
+                    if (re.state)
+                        values.Add(re.key);
+                }
                 return values.Count > 0;
             }
             catch

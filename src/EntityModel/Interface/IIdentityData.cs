@@ -11,22 +11,30 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示有唯一数字标识的数据
     /// </summary>
-    public interface IIdentityData
+    public interface IIdentityData<TPrimaryKey>
     {
         /// <summary>
         ///     数字标识
         /// </summary>
         /// <value>int</value>
-        long Id { get; set; }
+        TPrimaryKey Id { get; set; }
+    }
+
+    /// <summary>
+    ///     表示有唯一数字标识的数据
+    /// </summary>
+    public interface IIdentityData : IIdentityData<long>
+    {
     }
 
     /// <summary>
     ///     表示使用雪花码的非自增主键数据
     /// </summary>
-    public interface ISnowFlakeId : IIdentityData
+    public interface ISnowFlakeId : IIdentityData<long>
     {
 
     }
+
     /// <summary>
     ///     表示有标题的数据
     /// </summary>

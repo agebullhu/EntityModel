@@ -16,9 +16,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess>
-        : BusinessLogicBase<TData, TAccess>, IUiBusinessLogicBase<TData>
-        where TData : EditDataObject, IIdentityData, new()
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    public class UiBusinessLogicBase<TData, TPrimaryKey, TAccess>
+        : BusinessLogicBase<TData, TPrimaryKey, TAccess>, IUiBusinessLogicBase<TData, TPrimaryKey>
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
         where TAccess : class, IDataTable<TData>, new()
     {
 
@@ -164,7 +165,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns></returns>
         public (string name, string mime, byte[] bytes) Export(string sheetName, LambdaItem<TData> filter)
         {
-            var exporter = new ExcelExporter<TData, TAccess>
+            var exporter = new ExcelExporter<TData, TPrimaryKey, TAccess>
             {
                 OnDataLoad = OnListLoaded
             };
@@ -183,7 +184,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns></returns>
         public async Task<(string name, string mime, byte[] bytes)> ExportAsync(string sheetName, LambdaItem<TData> filter)
         {
-            var exporter = new ExcelExporter<TData, TAccess>
+            var exporter = new ExcelExporter<TData, TPrimaryKey, TAccess>
             {
                 OnDataLoad = OnListLoaded
             };
@@ -288,7 +289,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual bool Save(TData data)
         {
-            return data.Id == 0 ? AddNew(data) : Update(data);
+            return Equals(data.Id,default) ? AddNew(data) : Update(data);
         }
 
         /// <summary>
@@ -334,7 +335,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual bool Update(TData data)
         {
-            if (data.Id <= 0)
+            if (Equals(data.Id, default))
             {
                 return AddNew(data);
             }
@@ -386,7 +387,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual async Task<bool> SaveAsync(TData data)
         {
-            return data.Id == 0 ? await AddNewAsync(data) : await UpdateAsync(data);
+            return Equals(data.Id, default) ? await AddNewAsync(data) : await UpdateAsync(data);
         }
 
         /// <summary>
@@ -432,7 +433,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual async Task<bool> UpdateAsync(TData data)
         {
-            if (data.Id <= 0)
+            if (Equals(data.Id, default))
             {
                 return await AddNewAsync(data);
             }
@@ -471,10 +472,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        public bool Delete(IEnumerable<long> ids)
+        public bool Delete(IEnumerable<TPrimaryKey> ids)
         {
             var list = ids.ToArray();
-            if (!DataExtendChecker.PrepareDelete<TData>(list))
+            if (!DataExtendChecker.PrepareDelete<TData, TPrimaryKey>(list))
             {
                 return false;
             }
@@ -498,9 +499,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        public bool Delete(long id)
+        public bool Delete(TPrimaryKey id)
         {
-            if (!DataExtendChecker.PrepareDelete<TData>(new[] { id }))
+            if (!DataExtendChecker.PrepareDelete<TData, TPrimaryKey>(new[] { id }))
             {
                 return false;
             }
@@ -521,7 +522,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        private bool DeleteInner(long id)
+        private bool DeleteInner(TPrimaryKey id)
         {
             if (!PrepareDelete(id))
             {
@@ -544,7 +545,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected virtual bool DoDelete(long id)
+        protected virtual bool DoDelete(TPrimaryKey id)
         {
             return Access.DeletePrimaryKey(id);
         }
@@ -552,7 +553,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected virtual bool PrepareDelete(long id)
+        protected virtual bool PrepareDelete(TPrimaryKey id)
         {
             return true;
         }
@@ -560,22 +561,19 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
-        protected virtual void OnDeleted(long id)
+        protected virtual void OnDeleted(TPrimaryKey id)
         {
 
         }
 
-        #endregion
-
-        #region 删除
 
         /// <summary>
         ///     删除对象
         /// </summary>
-        public async Task<bool> DeleteAsync(IEnumerable<long> ids)
+        public async Task<bool> DeleteAsync(IEnumerable<TPrimaryKey> ids)
         {
             var list = ids.ToArray();
-            if (!DataExtendChecker.PrepareDelete<TData>(list))
+            if (!DataExtendChecker.PrepareDelete<TData, TPrimaryKey>(list))
             {
                 return false;
             }
@@ -597,9 +595,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        public async Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(TPrimaryKey id)
         {
-            if (!DataExtendChecker.PrepareDelete<TData>(new[] { id }))
+            if (!DataExtendChecker.PrepareDelete<TData, TPrimaryKey>(new[] { id }))
             {
                 return false;
             }
@@ -614,7 +612,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象
         /// </summary>
-        private async Task<bool> DeleteAsyncInner(long id)
+        private async Task<bool> DeleteAsyncInner(TPrimaryKey id)
         {
             if (!PrepareDelete(id))
             {
@@ -637,7 +635,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected virtual async Task<bool> DoDeleteAsync(long id)
+        protected virtual async Task<bool> DoDeleteAsync(TPrimaryKey id)
         {
             return await Access.DeletePrimaryKeyAsync(id);
         }
@@ -663,7 +661,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected virtual void OnStateChanged(long id, BusinessCommandType cmd)
+        protected virtual void OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
         {
 
         }
@@ -687,10 +685,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TAccess">数据访问对象</typeparam>
-    /// <typeparam name="TDatabase">数据库对象</typeparam>
-    public class UiBusinessLogicBase<TData, TAccess, TDatabase>
-        : UiBusinessLogicBase<TData, TAccess>
-        where TData : EditDataObject, IIdentityData, new()
+    public class UiBusinessLogicBase<TData, TAccess>
+        : UiBusinessLogicBase<TData, long, TAccess>
+        where TData : EditDataObject, IIdentityData<long>, new()
         where TAccess : class, IDataTable<TData>, new()
     {
     }

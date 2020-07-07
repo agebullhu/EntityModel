@@ -11,6 +11,7 @@
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
@@ -22,10 +23,13 @@ namespace Agebull.MicroZero.ZeroApis
     /// <summary>
     ///     支持数据状态的启用禁用方法的页面的基类
     /// </summary>
-    public abstract class ApiControllerForDataState<TData, TBusinessLogic> :
-        ApiController<TData, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IIdentityData, new()
-        where TBusinessLogic : class, IBusinessLogicByStateData<TData>, new()
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    /// <typeparam name="TBusinessLogic">业务对象</typeparam>
+    public abstract class ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic> :
+        ApiController<TData, TPrimaryKey, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IBusinessLogicByStateData<TData, TPrimaryKey>, new()
     {
         #region API
 
@@ -104,7 +108,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (id == 0)
                 condition = p => p.DataState < DataStateType.Delete;
             else
-                condition = p => p.Id != id && p.DataState < DataStateType.Delete;
+                condition = p => !Equals(p.Id , id) && p.DataState < DataStateType.Delete;
             if (Business.Access.IsUnique(field, no, condition))
                 SetFailed(name + "[" + no + "]不唯一");
             else
@@ -120,7 +124,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnReset()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -135,7 +139,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnDiscard()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -150,7 +154,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnEnable()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -165,7 +169,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         private void OnDisable()
         {
-            if (!RequestArgumentConvert.TryGet("selects", out long[] ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
@@ -194,5 +198,22 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         #endregion
+    }
+    /// <summary>
+    ///     自动实现基本增删改查API页面的基类
+    /// </summary>
+    public abstract class ApiControllerForDataState<TData, TBusinessLogic> : ApiControllerForDataState<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IIdentityData<long>, new()
+        where TBusinessLogic : class, IBusinessLogicByStateData<TData, long>, new()
+    {
+        ///<inheritdoc/>
+        protected sealed override (bool, long) Convert(string value)
+        {
+            if (value != null && long.TryParse(value, out var id))
+            {
+                return (true, id);
+            }
+            return (false, 0);
+        }
     }
 }
