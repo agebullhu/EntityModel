@@ -99,19 +99,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="args"> Ù–‘</param>
         private void RaiseStatusChangedInner(PropertyChangedEventArgs args)
         {
-            if (statusChanged == null)
-            {
-                return;
-            }
-            try
-            {
-                statusChanged(this, args);
-            }
-            catch (Exception ex)
-            {
-                LogRecorder.Exception(ex, "ObjectCollection.RaiseStatusChangedInner");
-                throw;
-            }
+            statusChanged?.Invoke(this, args);
         }
 
         #endregion

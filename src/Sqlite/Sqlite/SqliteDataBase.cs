@@ -163,7 +163,7 @@ namespace Agebull.EntityModel.Sqlite
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorder.Debug("打开连接数：{0}", cnt);
+            DependencyScope.Logger.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqliteDataBase");
             connection.Open();
@@ -230,7 +230,7 @@ namespace Agebull.EntityModel.Sqlite
                 }
                 catch (Exception exception)
                 {
-                    LogRecorder.Exception(exception);
+                    DependencyScope.Logger.Exception(exception);
                 }
             }
 
@@ -240,7 +240,7 @@ namespace Agebull.EntityModel.Sqlite
             }
             catch (Exception exception)
             {
-                LogRecorder.Exception(exception);
+                DependencyScope.Logger.Exception(exception);
             }
         }
         /// <summary>
@@ -527,8 +527,6 @@ namespace Agebull.EntityModel.Sqlite
         /// </remarks>
         public static void TraceSql(SqliteCommand cmd)
         {
-            if (!LogRecorder.LogDataSql)
-                return;
             TraceSql(cmd.CommandText, cmd.Parameters.OfType<DbParameter>());
         }
 
@@ -543,7 +541,7 @@ namespace Agebull.EntityModel.Sqlite
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<DbParameter> args)
         {
-            if (!LogRecorder.LogDataSql || string.IsNullOrWhiteSpace(sql))
+            if (!LoggerExtend.LogDataSql || string.IsNullOrWhiteSpace(sql))
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine($"/******************************{DateTime.Now}*********************************/");
@@ -561,7 +559,7 @@ namespace Agebull.EntityModel.Sqlite
                 code.AppendLine($"SET @{par.ParameterName} = NULL;");
             }
             code.AppendLine(sql);
-            LogRecorder.RecordDataLog(code.ToString());
+            DependencyScope.Logger.RecordDataLog(code.ToString());
         }
 
         /// <summary>

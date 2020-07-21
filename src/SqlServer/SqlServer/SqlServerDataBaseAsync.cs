@@ -59,7 +59,7 @@ namespace Agebull.EntityModel.SqlServer
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorder.Debug("打开连接数：{0}", cnt);
+            DependencyScope.Logger.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             await connection.OpenAsync();

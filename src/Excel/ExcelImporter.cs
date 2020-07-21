@@ -9,6 +9,7 @@
 #region ÒýÓÃ
 
 using Agebull.Common.Base;
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using NPOI.HSSF.Util;
@@ -485,7 +486,7 @@ namespace Agebull.EntityModel.Excel
             }
             catch (Exception e)
             {
-                LogRecorder.Exception(e);
+                DependencyScope.Logger.Exception(e);
             }
         }
 

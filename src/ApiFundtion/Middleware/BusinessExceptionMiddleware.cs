@@ -1,4 +1,5 @@
-﻿using Agebull.Common.Logging;
+﻿using Agebull.Common.Ioc;
+using Agebull.Common.Logging;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -38,8 +39,8 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, Exception exception, object tag)
         {
-            LogRecorder.Exception(exception);
-            LogRecorder.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
+            DependencyScope.Logger.Exception(exception);
+            FlowTracer.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
             CheckException(message, exception);
 

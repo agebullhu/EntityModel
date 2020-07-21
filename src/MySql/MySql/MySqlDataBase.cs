@@ -508,8 +508,6 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(MySqlCommand cmd)
         {
-            if (!LogRecorder.LogDataSql)
-                return;
             TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
 
@@ -524,7 +522,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
         {
-            if (!LogRecorder.LogDataSql)
+            if (!LoggerExtend.LogDataSql)
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
@@ -541,7 +539,7 @@ namespace Agebull.EntityModel.MySql
                     code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
             code.AppendLine(sql);
-            LogRecorder.RecordDataLog(code.ToString());
+            DependencyScope.Logger.RecordDataLog(code.ToString());
         }
 
 

@@ -231,7 +231,7 @@ namespace Agebull.EntityModel.MySql
                 });
                 AddUsing(connection, name);
                 connection.Open();
-                LogRecorder.Trace("打开连接数：{0}", dataBaseInfo.ActiveConnections.Count);
+                DependencyScope.Logger.Trace("打开连接数：{0}", dataBaseInfo.ActiveConnections.Count);
                 return connection;
             }
             catch (Exception exception)

@@ -8,6 +8,7 @@
 
 #region ÒýÓÃ
 
+using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using System;
@@ -82,7 +83,7 @@ namespace Agebull.EntityModel.MySql
             }
             catch (Exception e)
             {
-                LogRecorder.Exception(e, expression.ToString());
+                DependencyScope.Logger.Exception(e, expression.ToString());
                 return null;
             }
         }

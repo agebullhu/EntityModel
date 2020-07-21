@@ -171,7 +171,7 @@ namespace Agebull.EntityModel.SqlServer
                 Connections.Add(connection);
                 cnt = Connections.Count;
             }
-            LogRecorder.Debug("打开连接数：{0}", cnt);
+            DependencyScope.Logger.Debug("打开连接数：{0}", cnt);
             //Trace.WriteLine(_count++, "Open");
             //Trace.WriteLine("Opened _connection", "SqlServerDataBase");
             connection.Open();
@@ -238,7 +238,7 @@ namespace Agebull.EntityModel.SqlServer
                 }
                 catch (Exception exception)
                 {
-                    LogRecorder.Exception(exception);
+                    DependencyScope.Logger.Exception(exception);
                 }
             }
 
@@ -248,7 +248,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             catch (Exception exception)
             {
-                LogRecorder.Exception(exception);
+                DependencyScope.Logger.Exception(exception);
             }
         }
         /// <summary>
@@ -535,8 +535,6 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public static void TraceSql(SqlCommand cmd)
         {
-            if (!LogRecorder.LogDataSql)
-                return;
             TraceSql(cmd.CommandText, cmd.Parameters.OfType<DbParameter>());
         }
 
@@ -551,9 +549,7 @@ namespace Agebull.EntityModel.SqlServer
         /// </remarks>
         public static void TraceSql(string sql, IEnumerable<DbParameter> args)
         {
-            if (!LogRecorder.LogDataSql)
-                return;
-            if (string.IsNullOrWhiteSpace(sql))
+            if (!LoggerExtend.LogDataSql || string.IsNullOrWhiteSpace(sql))
                 return;
             StringBuilder code = new StringBuilder();
             code.AppendLine($"/******************************{DateTime.Now}*********************************/");
@@ -572,7 +568,7 @@ namespace Agebull.EntityModel.SqlServer
             }
             code.AppendLine(sql);
             code.AppendLine("GO");
-            LogRecorder.RecordDataLog(code.ToString());
+            DependencyScope.Logger.RecordDataLog(code.ToString());
         }
 
         /// <summary>
