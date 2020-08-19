@@ -15,10 +15,53 @@ using System;
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
+    ///     属性特性
+    /// </summary>
+    [Flags]
+    public enum PropertyFeatrue
+    {
+        /// <summary>
+        /// 无
+        /// </summary>
+        None,
+        /// <summary>
+        /// 数据库列
+        /// </summary>
+        DbCloumn,
+
+        /// <summary>
+        /// 属性
+        /// </summary>
+        Property,
+
+
+        /// <summary>
+        /// 接口
+        /// </summary>
+        Interface,
+
+
+        /// <summary>
+        /// 别名
+        /// </summary>
+        Alias
+    }
+
+    /// <summary>
     ///     表示属性结构
     /// </summary>
     public sealed class PropertySturct : SimpleConfig
     {
+        /// <summary>
+        /// 字段特性
+        /// </summary>
+        public PropertyFeatrue Featrue { get; set; }
+
+        /// <summary>
+        ///     连接字段
+        /// </summary>
+        public string Link { get; set; }
+
         /// <summary>
         ///     标题
         /// </summary>

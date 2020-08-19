@@ -6,9 +6,9 @@ using ZeroTeam.MessageMVC.Context;
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
-    /// 默认的数据更新触发器
+    ///特性数据更新触发器
     /// </summary>
-    public class DefaultDataUpdateTrigger : IDataTrigger
+    public class CharacterDataUpdateTrigger : IDataTrigger
     {
         #region 接口实现的侵入准备
 
@@ -33,14 +33,23 @@ namespace Agebull.EntityModel.Common
             if (entity is IAuthorData authorData)
             {
                 authorData.AddDate = DateTime.Now;
-                authorData.Author = GlobalContext.Current.User.NickName;
+                //authorData.Author = GlobalContext.Current.User.NickName;
                 authorData.AuthorId = GlobalContext.Current.User.UserId;
             }
             if (entity is IHistoryData historyData)
             {
                 historyData.LastModifyDate = DateTime.Now;
-                historyData.LastReviser = GlobalContext.Current.User.NickName;
+                //historyData.LastReviser = GlobalContext.Current.User.NickName;
                 historyData.LastReviserId = GlobalContext.Current.User.UserId;
+            }
+            if (entity is IOrganizationData organizationData && GlobalContext.Current.User is IOrganizationData organizationUser)
+            {
+                organizationData.OrganizationId = organizationUser.OrganizationId;
+            }
+            if (entity is IDepartmentData departmentData && GlobalContext.Current.User is IDepartmentData departmentUser)
+            {
+                departmentData.DepartmentId = departmentUser.DepartmentId;
+                departmentData.DepartmentCode = departmentUser.DepartmentCode;
             }
         }
 
@@ -53,7 +62,7 @@ namespace Agebull.EntityModel.Common
             if (entity is IHistoryData historyData)
             {
                 historyData.LastModifyDate = DateTime.Now;
-                historyData.LastReviser = GlobalContext.Current.User.NickName;
+                //historyData.LastReviser = GlobalContext.Current.User.NickName;
                 historyData.LastReviserId = GlobalContext.Current.User.UserId;
             }
         }

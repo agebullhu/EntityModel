@@ -28,7 +28,12 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 是否在控制中
         /// </summary>
-        static bool IsManagement;
+        internal static bool IsManagement;
+
+        /// <summary>
+        /// 是否在控制中
+        /// </summary>
+        internal static MySqlConnectionsManager Instance { get; set; }
 
         /// <summary>
         ///     初始化
@@ -48,7 +53,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         Task ILifeFlow.Initialize()
         {
-            IsManagement = true;
             InternalInitialize();
             ConfigurationHelper.RegistOnChange("ConnectionStrings", CheckOption, false);
             return Task.CompletedTask;
@@ -78,6 +82,8 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         internal static void InternalInitialize()
         {
+            if (IsManagement)
+                return;
             logger ??= DependencyHelper.LoggerFactory.CreateLogger<MySqlConnectionsManager>();
             logger.LogInformation("[MySqlConnectionsManager.InternalInitialize]");
         }

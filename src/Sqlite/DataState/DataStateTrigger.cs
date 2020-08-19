@@ -21,12 +21,16 @@ namespace Agebull.EntityModel.Sqlite
         {
             if (!DataUpdateHandler.IsType<TEntity>(DataUpdateHandler.TypeofIHistoryData))
                 return;
-            var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
             code.Append($@"
 UPDATE [{table.ContextWriteTable}]
 SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.User.UserId},
-    [{table.FieldDictionary[nameof(IHistoryData.LastReviser)]}] = '{name}',
     [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = GetDate()");
+//            var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
+//            code.Append($@"
+//UPDATE [{table.ContextWriteTable}]
+//SET [{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}] = {GlobalContext.Current.User.UserId},
+//    [{table.FieldDictionary[nameof(IHistoryData.LastReviser)]}] = '{name}',
+//    [{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}] = GetDate()");
             if (!string.IsNullOrEmpty(condition))
             {
                 code.Append($@"

@@ -48,7 +48,7 @@ namespace Agebull.EntityModel.Events
     public enum EntityEventValueType
     {
         /// <summary>
-        ///     未知
+        ///     无
         /// </summary>
         None,
 
@@ -107,6 +107,7 @@ namespace Agebull.EntityModel.Events
         /// </remarks>
         public string Value { get; set; }
     }
+
     /// <summary>
     /// 实体事件代理
     /// </summary>

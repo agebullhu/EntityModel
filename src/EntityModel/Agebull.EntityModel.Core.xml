@@ -312,9 +312,49 @@
                 属性总量
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Common.PropertyFeatrue">
+            <summary>
+                属性特性
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.PropertyFeatrue.None">
+            <summary>
+            无
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.PropertyFeatrue.DbCloumn">
+            <summary>
+            数据库列
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.PropertyFeatrue.Property">
+            <summary>
+            属性
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.PropertyFeatrue.Interface">
+            <summary>
+            接口
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.PropertyFeatrue.Alias">
+            <summary>
+            别名
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.PropertySturct">
             <summary>
                 表示属性结构
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.PropertySturct.Featrue">
+            <summary>
+            字段特性
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.PropertySturct.Link">
+            <summary>
+                连接字段
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.Common.PropertySturct.Title">
@@ -397,26 +437,15 @@
                 对象
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.DefaultDataUpdateTrigger">
-            <summary>
-            默认的数据更新触发器
-            </summary>
+        <member name="T:Agebull.EntityModel.Common.CharacterDataUpdateTrigger">
+             <summary>
+            特性数据更新触发器
+             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.DefaultDataUpdateTrigger.DataBaseType">
+        <member name="P:Agebull.EntityModel.Common.CharacterDataUpdateTrigger.DataBaseType">
             <summary>
             数据库类型
             </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.IDataTrigger">
-            <summary>
-                数据更新触发器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTrigger.InitType``1">
-            <summary>
-                初始化类型
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.Common.IDataUpdateTrigger">
             <summary>
@@ -485,6 +514,17 @@
             <param name="condition">执行条件</param>
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDataTrigger">
+            <summary>
+                数据更新触发器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataTrigger.InitType``1">
+            <summary>
+                初始化类型
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.Common.ParameterItem">
             <summary>
@@ -1243,24 +1283,39 @@
                 表示这条数据支持逻辑删除
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.ILogicDeleteData.IsDelete">
-            <summary>
-                是否已逻辑删除
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.IOrganizationData`1">
+        <member name="T:Agebull.EntityModel.Common.IOrganizationData">
             <summary>
             组织边界对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IOrganizationData`1.OrganizationId">
+        <member name="P:Agebull.EntityModel.Common.IOrganizationData.OrganizationId">
             <summary>
             组织标识
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IOrganizationData">
+        <member name="T:Agebull.EntityModel.Common.IDepartmentData">
             <summary>
-            组织边界对象
+            部门边界对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IDepartmentData.DepartmentId">
+            <summary>
+            部门标识
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IDepartmentData.DepartmentCode">
+            <summary>
+            部门标识
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDepartmentScopeData">
+            <summary>
+            部门数据范围对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IDepartmentScopeData.DataScope">
+            <summary>
+            数据范围
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.ISqlCondition">
@@ -3343,7 +3398,7 @@
             名称
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Vue.TreeNode.Name">
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Label">
             <summary>
             名称
             </summary>
@@ -3351,6 +3406,11 @@
         <member name="P:Agebull.EntityModel.Vue.TreeNode.Type">
             <summary>
             类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Tag">
+            <summary>
+            扩展标签
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.Vue.TreeNode.Icon">
@@ -3393,6 +3453,11 @@
             表示
             </summary>
         </member>
+        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIDepartmentData">
+            <summary>
+            表示
+            </summary>
+        </member>
         <member name="F:Agebull.EntityModel.Events.DataUpdateHandler.TypeofIVersionData">
             <summary>
             表示
@@ -3412,15 +3477,20 @@
             <param name="type"></param>
             <returns></returns>
         </member>
-        <member name="P:Agebull.EntityModel.Events.DataUpdateHandler.EventProxy">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnStatusChanged(System.String,System.String,Agebull.EntityModel.Common.DataOperatorType,Agebull.EntityModel.Events.EntityEventValueType,System.String)">
             <summary>
-            事件代理
+            状态修改事件
             </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Events.DataUpdateHandler._generalTriggers">
-            <summary>
-            通用处理器
-            </summary>
+            <param name="database">数据库</param>
+            <param name="entity">实体</param>
+            <param name="oType">操作</param>
+            <param name="valueType">值类型</param>
+            <param name="value">内容</param>
+            <remarks>
+            如果内容为实体,使用JSON序列化,
+            如果使用主键内容为#:[key](如:#:123)样式,
+            如果为批量操作,内容为QueryCondition的JSON序列化
+            </remarks>
         </member>
         <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnPrepareSave``1(``0,Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
@@ -3522,7 +3592,7 @@
         </member>
         <member name="F:Agebull.EntityModel.Events.EntityEventValueType.None">
             <summary>
-                未知
+                无
             </summary>
         </member>
         <member name="F:Agebull.EntityModel.Events.EntityEventValueType.EntityJson">
@@ -3640,12 +3710,6 @@
             </summary>
             <value>int</value>
         </member>
-        <member name="P:Agebull.EntityModel.Interfaces.IAuthorData.Author">
-            <summary>
-                作者
-            </summary>
-            <value>int</value>
-        </member>
         <member name="P:Agebull.EntityModel.Interfaces.IAuthorData.AddDate">
             <summary>
                 新增日期
@@ -3658,12 +3722,6 @@
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.Interfaces.IHistoryData.LastReviserId">
-            <summary>
-                最后修改者
-            </summary>
-            <value>int</value>
-        </member>
-        <member name="P:Agebull.EntityModel.Interfaces.IHistoryData.LastReviser">
             <summary>
                 最后修改者
             </summary>

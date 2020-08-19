@@ -53,7 +53,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected override bool PrepareDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => Equals(p.Id , id) && !p.IsFreeze))
+            if (Access.Any(p => id.Equals(p.Id ) && !p.IsFreeze))
                 return base.PrepareDelete(id);
             GlobalContext.Current.Status.LastMessage = "数据已锁定";
             GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;

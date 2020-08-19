@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.Events
     /// </summary>
     public static class DataUpdateHandler
     {
-        #region MyRegion
+        #region 对象类型检查
 
         /// <summary>
         /// 类型接口实现的数字表示
@@ -43,7 +43,11 @@ namespace Agebull.EntityModel.Events
         /// <summary>
         /// 表示
         /// </summary>
-        public const int TypeofIVersionData = 8;
+        public const int TypeofIDepartmentData = 0x8;
+        /// <summary>
+        /// 表示
+        /// </summary>
+        public const int TypeofIVersionData = 0x10;
 
         /// <summary>
         /// 初始化类型
@@ -67,6 +71,10 @@ namespace Agebull.EntityModel.Events
             {
                 type |= TypeofIOrganizationData;
             }
+            if (entity is IDepartmentData)
+            {
+                type |= TypeofIDepartmentData;
+            }
             if (entity is IVersionData)
             {
                 type |= TypeofIVersionData;
@@ -86,25 +94,33 @@ namespace Agebull.EntityModel.Events
         }
 
         #endregion
-        /// <summary>
-        /// 事件代理
-        /// </summary>
-        public static IEntityEventProxy EventProxy
-        {
-            get;
-        }
 
-        static DataUpdateHandler()
-        {
-            EventProxy = DependencyHelper.GetService<IEntityEventProxy>();
-        }
+        #region 数据事件
 
         /// <summary>
-        /// 通用处理器
+        /// 状态修改事件
         /// </summary>
-        private static readonly List<IDataTrigger> _generalTriggers = new List<IDataTrigger> { new DefaultDataUpdateTrigger() };
+        /// <param name="database">数据库</param>
+        /// <param name="entity">实体</param>
+        /// <param name="oType">操作</param>
+        /// <param name="valueType">值类型</param>
+        /// <param name="value">内容</param>
+        /// <remarks>
+        /// 如果内容为实体,使用JSON序列化,
+        /// 如果使用主键内容为#:[key](如:#:123)样式,
+        /// 如果为批量操作,内容为QueryCondition的JSON序列化
+        /// </remarks>
+        public static void OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
+        {
+            var services = DependencyHelper.GetServices<IEntityEventProxy>();
+            if (services == null)
+                return;
+            foreach (var service in services)
+                service.OnStatusChanged(database, entity, oType, valueType, value);
+        }
+        #endregion
 
-
+        #region 扩展流程
 
         /// <summary>
         ///     保存前处理
@@ -202,5 +218,6 @@ namespace Agebull.EntityModel.Events
                 trigger.AfterUpdateSql(table, condition, code);
             }
         }
+        #endregion
     }
 }

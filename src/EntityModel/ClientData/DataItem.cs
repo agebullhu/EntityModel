@@ -12,7 +12,7 @@ namespace Agebull.EntityModel.Vue
         /// 名称
         /// </summary>
         [JsonProperty("id"), JsonPropertyName("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 名称

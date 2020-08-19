@@ -10,9 +10,7 @@
 
 #endregion
 
-using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -20,6 +18,7 @@ using ZeroTeam.MessageMVC.Context;
 
 namespace Agebull.EntityModel.MySql
 {
+
     /// <summary>
     /// 数据状态基类
     /// </summary>
@@ -29,12 +28,6 @@ namespace Agebull.EntityModel.MySql
         where TData : EditDataObject, IStateData, IIdentityData<long>, new()
         where TMySqlDataBase : MySqlDataBase
     {
-        static DataStateTable()
-        {
-            DependencyHelper.ServiceCollection.TryAddSingleton<IDataTrigger, DataStateTrigger>();
-        }
-
-
         /// <summary>
         ///     删除的SQL语句
         /// </summary>

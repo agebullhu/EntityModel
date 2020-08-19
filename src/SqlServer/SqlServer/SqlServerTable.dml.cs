@@ -928,15 +928,13 @@ namespace Agebull.EntityModel.SqlServer
 
         #region 数据更新事件支持
 
-        private bool _globalEvent;
-
         /// <summary>
         /// 是否允许全局事件(如全局事件器,则永为否)
         /// </summary>
         public virtual bool GlobalEvent
         {
-            get => _globalEvent && DataUpdateHandler.EventProxy != null;
-            set => _globalEvent = value;
+            get;
+            set;
         }
 
         /// <summary>
@@ -947,7 +945,7 @@ namespace Agebull.EntityModel.SqlServer
         private void OnKeyEvent(DataOperatorType operatorType, object key)
         {
             if (GlobalEvent)
-                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
+                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
         }
 
         /// <summary>
@@ -971,7 +969,7 @@ namespace Agebull.EntityModel.SqlServer
                     Type = args[i].DbType
                 };
             }
-            DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
+            DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
         }
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
@@ -981,7 +979,7 @@ namespace Agebull.EntityModel.SqlServer
         private void OnEvent(DataOperatorType operatorType, TData entity)
         {
             if (GlobalEvent)
-                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
+                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
         }
 
         #endregion

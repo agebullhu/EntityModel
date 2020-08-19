@@ -399,8 +399,18 @@ namespace Agebull.EntityModel.SqlServer
             }
             if (expression.Method.Name == "Equals")
             {
-                var left = ConvertExpression(expression.Object);
-                var right = GetArguments(expression);
+                string left, right;
+                if (expression.Method.IsStatic)
+                {
+                    left = ConvertExpression(expression.Arguments[0]);
+                    right = ConvertExpression(expression.Arguments[1]);
+                }
+                else
+                {
+                    left = ConvertExpression(expression.Object);
+                    right = GetArguments(expression);
+                }
+
                 var lnull = left == null;
                 var rnull = right == null;
                 if (lnull && rnull)
@@ -412,6 +422,14 @@ namespace Agebull.EntityModel.SqlServer
                     return $"({left} IS NULL)";
                 return $"({left} = {right})";
             }
+            if (expression.Method.DeclaringType == typeof(StringEx))
+            {
+                return expression.Method.Name switch
+                {
+                    "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like {ConvertExpression(expression.Arguments[1])}+'%')",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
+            }
             if (expression.Method.DeclaringType == typeof(string))
             {
                 return expression.Method.Name switch
@@ -419,7 +437,6 @@ namespace Agebull.EntityModel.SqlServer
                     "ToUpper" => $"upper({ConvertExpression(expression.Object)})",
                     "Equals" => $"({ConvertExpression(expression.Object)} = {GetArguments(expression)})",
                     "Contains" => $"({ConvertExpression(expression.Object)} Like '%'+{GetArguments(expression)}+'%')",
-                    "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like {ConvertExpression(expression.Arguments[1])}+'%')",
                     "ToLower" => $"lower({ConvertExpression(expression.Object)})",
                     "Trim" => $"trim({ConvertExpression(expression.Object)})",
                     "TrimStart" => $"ltrim({ConvertExpression(expression.Object)})",

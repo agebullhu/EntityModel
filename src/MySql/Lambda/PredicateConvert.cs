@@ -411,8 +411,18 @@ namespace Agebull.EntityModel.MySql
             }
             if (expression.Method.Name == "Equals")
             {
-                var left = ConvertExpression(expression.Object);
-                var right = GetArguments(expression);
+                string left, right;
+                if(expression.Method.IsStatic)
+                {
+                    left = ConvertExpression(expression.Arguments[0]);
+                    right = ConvertExpression(expression.Arguments[1]);
+                }
+                else
+                {
+                    left = ConvertExpression(expression.Object);
+                    right = GetArguments(expression);
+                }
+
                 var lnull = left == null;
                 var rnull = right == null;
                 if (lnull && rnull)
@@ -424,11 +434,18 @@ namespace Agebull.EntityModel.MySql
                     return $"({left} IS NULL)";
                 return $"({left} = {right})";
             }
-            if (expression.Method.DeclaringType == typeof(string))
+            if (expression.Method.DeclaringType == typeof(StringEx))
             {
                 return expression.Method.Name switch
                 {
                     "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like concat({ConvertExpression(expression.Arguments[1])}, '%'))",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
+            }
+            if (expression.Method.DeclaringType == typeof(string))
+            {
+                return expression.Method.Name switch
+                {
                     "ToUpper" => $"UPPER({ConvertExpression(expression.Object)})",
                     "Contains" => $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))",
                     "ToLower" => $"LOWER({ConvertExpression(expression.Object)})",

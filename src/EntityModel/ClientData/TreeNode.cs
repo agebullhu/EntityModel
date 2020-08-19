@@ -13,19 +13,25 @@ namespace Agebull.EntityModel.Vue
         /// 名称
         /// </summary>
         [JsonProperty("id"), JsonPropertyName("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 名称
         /// </summary>
         [JsonProperty("label"), JsonPropertyName("label")]
-        public string Name { get; set; }
+        public string Label { get; set; }
 
         /// <summary>
         /// 类型
         /// </summary>
         [JsonProperty("type"), JsonPropertyName("type")]
         public string Type { get; set; }
+
+        /// <summary>
+        /// 扩展标签
+        /// </summary>
+        [JsonProperty("tag"), JsonPropertyName("tag")]
+        public string Tag { get; set; }
 
         /// <summary>
         /// 图标

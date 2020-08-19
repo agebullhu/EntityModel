@@ -310,6 +310,24 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
             return sql.ToString();
         }
 
+
+        /// <summary>
+        ///     连接字段条件SQL
+        /// </summary>
+        /// <param name="isAnd">是否用AND组合</param>
+        /// <param name="fields">生成参数的字段</param>
+        public string FieldConditionSQL(bool isAnd, params (string field, object value)[] fields)
+        {
+            if (fields == null || fields.Length == 0)
+                throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
+            var sql = new StringBuilder();
+            sql.AppendFormat(@"({0})", FieldConditionSQL(fields[0].field));
+            var join = isAnd ? "AND" : "OR";
+            for (var idx = 1; idx < fields.Length; idx++)
+                sql.Append($" {join} ({FieldConditionSQL(fields[idx].field)}) ");
+            return sql.ToString();
+        }
+
         #endregion
     }
 }

@@ -13,9 +13,5 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public interface ILogicDeleteData
     {
-        /// <summary>
-        ///     是否已逻辑删除
-        /// </summary>
-        bool IsDelete { get; set; }
     }
 }

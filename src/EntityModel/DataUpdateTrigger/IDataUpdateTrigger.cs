@@ -7,18 +7,6 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     数据更新触发器
     /// </summary>
-    public interface IDataTrigger : IDataUpdateTrigger
-    {
-        /// <summary>
-        ///     初始化类型
-        /// </summary>
-        /// <returns></returns>
-        void InitType<TEntity>() where TEntity : EditDataObject, new() { }
-    }
-
-    /// <summary>
-    ///     数据更新触发器
-    /// </summary>
     public interface IDataUpdateTrigger
     {
         /// <summary>
@@ -93,5 +81,15 @@ namespace Agebull.EntityModel.Common
     }
 
 
-
+    /// <summary>
+    ///     数据更新触发器
+    /// </summary>
+    public interface IDataTrigger : IDataUpdateTrigger
+    {
+        /// <summary>
+        ///     初始化类型
+        /// </summary>
+        /// <returns></returns>
+        void InitType<TEntity>() where TEntity : EditDataObject, new() { }
+    }
 }

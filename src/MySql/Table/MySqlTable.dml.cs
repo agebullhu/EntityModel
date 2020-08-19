@@ -8,8 +8,10 @@
 
 #region 引用
 
+using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
@@ -26,11 +28,6 @@ namespace Agebull.EntityModel.MySql
     partial class MySqlTable<TData, TMySqlDataBase>
     {
         #region 实体更新
-
-        static MySqlTable()
-        {
-            DataUpdateHandler.InitType<TData>();
-        }
 
         /// <summary>
         ///     插入新数据
@@ -570,6 +567,22 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     条件更新
         /// </summary>
+        /// <param name="field">更新字段</param>
+        /// <param name="conditions">条件包含的值</param>
+        /// <returns>更新行数</returns>
+        /// <remarks>
+        /// 条件中使用AND组合,均为等于
+        /// </remarks>
+        public void SaveValue((string field, object value) field, (string field, object value)[] conditions)
+        {
+            var args = CreateFieldsParameters(conditions);
+            var condition = FieldConditionSQL(true, conditions);
+            SetValueByCondition(field.field, field.value, condition, args);
+        }
+        
+        /// <summary>
+        ///     条件更新
+        /// </summary>
         /// <param name="field">字段</param>
         /// <param name="value">值</param>
         /// <param name="condition">更新条件</param>
@@ -937,15 +950,13 @@ namespace Agebull.EntityModel.MySql
 
         #region 数据更新事件支持
 
-        private bool _globalEvent;
-
         /// <summary>
         /// 是否允许全局事件(如全局事件器,则永为否)
         /// </summary>
-        public virtual bool GlobalEvent
+        public bool GlobalEvent
         {
-            get => _globalEvent && DataUpdateHandler.EventProxy != null;
-            set => _globalEvent = value;
+            get;
+            set;
         }
 
         /// <summary>
@@ -956,7 +967,7 @@ namespace Agebull.EntityModel.MySql
         private void OnKeyEvent(DataOperatorType operatorType, object key)
         {
             if (GlobalEvent)
-                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
+                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
         }
 
         /// <summary>
@@ -980,8 +991,9 @@ namespace Agebull.EntityModel.MySql
                     Type = args[i].DbType
                 };
             }
-            DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
+            DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
         }
+
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
@@ -990,7 +1002,7 @@ namespace Agebull.EntityModel.MySql
         private void OnEvent(DataOperatorType operatorType, TData entity)
         {
             if (GlobalEvent)
-                DataUpdateHandler.EventProxy.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
+                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
         }
 
         #endregion
