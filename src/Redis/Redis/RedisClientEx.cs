@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Agebull.EntityModel.Common;
 using NServiceKit.Redis;
 using NServiceKit.Text;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// NServiceKit.Redis.RedisClient扩展
@@ -58,7 +59,7 @@ namespace Agebull.Common.DataModel.Redis
         {
         }
 
-        #region Set扩展
+#region Set扩展
         /// <summary>
         /// 加入一个数据到Set
         /// </summary>
@@ -177,9 +178,9 @@ namespace Agebull.Common.DataModel.Redis
             }
             return result;
         }
-        #endregion
+#endregion
 
-        #region SortedSet扩展
+#region SortedSet扩展
 
         /// <summary>
         /// 加入高低位组合的分值
@@ -280,9 +281,9 @@ namespace Agebull.Common.DataModel.Redis
             l = int.Parse(sb.ToString());
             return true;
         }
-        #endregion
+#endregion
 
-        #region 读取返回值扩展
+#region 读取返回值扩展
 
         /// <summary>
         /// 读数字
@@ -433,7 +434,7 @@ namespace Agebull.Common.DataModel.Redis
                     return false;
             }
         }
-        #endregion
+#endregion
     }
 }
 #endif

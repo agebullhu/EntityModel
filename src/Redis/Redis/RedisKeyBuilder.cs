@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Agebull.Common.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// Redis的Key生成器

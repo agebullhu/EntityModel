@@ -1,155 +1,25 @@
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Agebull.Common.Ioc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.MySql;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// REDIS代理类
     /// </summary>
-    public class RedisProxy : IDisposable
+    [Obsolete]
+    public class RedisProxy : RedisProxy<IRedis>
     {
-        #region 配置
-
-        /// <summary>
-        /// 系统数据
-        /// </summary>
-        public const int DbSystem = 15;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbWebCache = 14;
-
-        /// <summary>
-        /// 权限数据
-        /// </summary>
-        public const int DbAuthority = 13;
-
-        /// <summary>
-        /// WEB端的缓存
-        /// </summary>
-        public const int DbComboCache = 12;
-        
-        #endregion
-
-        #region 测试支持
-        /// <summary>
-        /// 测试支持
-        /// </summary>
-        public static bool IsTest { get; set; }
-
-        #endregion
-
         #region 构造
-
-
-        /// <summary>
-        /// 使用哪个数据库
-        /// </summary>
-        private int _db;
-
-        /// <summary>
-        /// 当前数据库
-        /// </summary>
-        public long CurrentDb => Redis.CurrentDb;
 
         /// <summary>
         /// 构造
         /// </summary>
         /// <param name="db"></param>
-        public RedisProxy(int db = 0)
+        public RedisProxy(int db = 0) : base(db)
         {
-            _db = db;
-            ChangeDb();
         }
-
-        /*// <summary>
-        /// 使用中的
-        /// </summary>
-        private static readonly Dictionary<int, List<IRedis>> Used = new Dictionary<int, List<IRedis>>();
-        /// <summary>
-        /// 空闲的
-        /// </summary>
-        private static readonly Dictionary<int, List<IRedis>> Idle = new Dictionary<int, List<IRedis>>();*/
-        /// <summary>
-        /// 客户端类
-        /// </summary>
-        internal IRedis _redis;
-        /// <summary>
-        /// 得到一个可用的Redis客户端
-        /// </summary>
-        public IRedis Redis
-        {
-            get
-            {
-                if (_redis != null)
-                    return _redis;
-                return _redis = CreateClient();
-            }
-        }
-        
-        /// <summary>
-        /// 更改
-        /// </summary>
-        internal IRedis ChangeDb(int db)
-        {
-            _db = db;
-            return ChangeDb();
-        }
-
-        /// <summary>
-        /// 更改
-        /// </summary>
-        private IRedis ChangeDb()
-        {
-            if (_redis == null)
-            {
-                var old = _redis;
-                _redis = CreateClient();
-                return old;
-            }
-            if (_db == _redis.CurrentDb)
-            {
-                return _redis;
-            }
-            _redis.ChangeDb(_db);
-            return _redis;
-        }
-
-        /// <summary>
-        /// 更改
-        /// </summary>
-        internal void ResetClient(IRedis client)
-        {
-            _redis = client;
-        }
-
-        private IRedis CreateClient()
-        {
-            _redis= IocHelper.Create<IRedis>();
-            if (_redis == null)
-                throw new Exception("未正确注册Redis对象");
-            ChangeDb();
-            return _redis;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            if (_redis == null || _redis.NoClose )
-                return;
-            _redis.Dispose();
-            _redis = null;
-        }
-
-
         #endregion
 
         #region 文本读写
@@ -179,7 +49,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public string Get(string key)
         {
-            return Redis.Get<string>(key);
+            return Redis.Get(key);
         }
 
 
@@ -362,7 +232,7 @@ namespace Agebull.Common.DataModel.Redis
         /// <returns></returns>
         public TData GetEntity<TData>(long id, TData def = null) where TData : class, new()
         {
-           return Redis.GetEntity(id, def);
+            return Redis.GetEntity(id, def);
         }
 
         /// <summary>
@@ -405,35 +275,32 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         /// <typeparam name="TDataAccess"></typeparam>
         /// <typeparam name="TData"></typeparam>
-        /// <typeparam name="TDatabase"></typeparam>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns></returns>
-        public void CacheData<TData, TDataAccess, TDatabase>(Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void CacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var access = new TDataAccess();
             var datas = access.All();
             CacheData(datas, keyFunc);
         }
+
         /// <summary>
         /// 缓存这些对象
         /// </summary>
         /// <typeparam name="TDataAccess"></typeparam>
         /// <typeparam name="TData"></typeparam>
-        /// <typeparam name="TDatabase"></typeparam>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns></returns>
-        public void TryCacheData<TData, TDataAccess, TDatabase>(Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void TryCacheData<TData, TDataAccess>(Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var key = DataKeyBuilder.DataKey<TData>(0);
             var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
-                CacheData<TData, TDataAccess, TDatabase>(keyFunc);
+                CacheData<TData, TDataAccess>(keyFunc);
         }
 
         /// <summary>
@@ -442,15 +309,14 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="lambda">查询表达式</param>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns>数据</returns>
-        public void TryCacheData<TData, TDataAccess, TDatabase>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void TryCacheData<TData, TDataAccess>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var key = DataKeyBuilder.DataKey<TData>(0);
             var date = GetValue<DateTime>(key);
             if (date == DateTime.MinValue)
-                CacheData<TData, TDataAccess, TDatabase>(lambda, keyFunc);
+                CacheData<TData, TDataAccess>(lambda, keyFunc);
         }
 
         /// <summary>
@@ -459,10 +325,9 @@ namespace Agebull.Common.DataModel.Redis
         /// <param name="lambda">查询表达式</param>
         /// <param name="keyFunc">设置键的方法,可为空</param>
         /// <returns>数据</returns>
-        public void CacheData<TData, TDataAccess, TDatabase>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
-            where TDataAccess : MySqlTable<TData, TDatabase>, new()
+        public void CacheData<TData, TDataAccess>(Expression<Func<TData, bool>> lambda, Func<TData, string> keyFunc = null)
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
-            where TDatabase : MySqlDataBase
         {
             var access = new TDataAccess();
             var datas = access.All(lambda);
@@ -483,7 +348,7 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         /// <returns>数据</returns>
         public void RefreshCache<TData, TDataAccess>(long id, Func<TData, bool> lambda = null)
-            where TDataAccess : MySqlTable<TData, MySqlDataBase>, new()
+            where TDataAccess : IDataTable<TData>, new()
             where TData : EditDataObject, IIdentityData, new()
         {
             if (id <= 0)

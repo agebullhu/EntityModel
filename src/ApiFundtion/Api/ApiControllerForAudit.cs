@@ -8,39 +8,149 @@
 
 #region 引用
 
+using Agebull.EntityModel.BusinessLogic;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Interfaces;
 using System.Collections.Generic;
-using System.Web.Http;
-using Agebull.Common.DataModel;
-using Agebull.Common.DataModel.BusinessLogic;
-using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.Extends;
-using Gboxt.Common.DataModel.MySql;
+using ZeroTeam.MessageMVC.Context;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
-namespace Agebull.Common.WebApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     审核支持API页面的基类
     /// </summary>
-    public abstract class ApiControllerForAudit<TData, TAccess, TDatabase, TBusinessLogic> :
-        ApiControllerForDataState<TData, TAccess, TDatabase, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TBusinessLogic : BusinessLogicByAudit<TData, TAccess, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+    public abstract class ApiControllerForAudit<TData, TPrimaryKey, TBusinessLogic>
+        : ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IBusinessLogicByAudit<TData, TPrimaryKey>, new()
     {
+        #region API
+
+        /// <summary>
+        ///     审核不通过
+        /// </summary>
+        [Route("audit/deny")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult AuditDeny(IdsArguent arg)
+        {
+
+            OnAuditDeny();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     拉回已提交的审核
+        /// </summary>
+        [Route("audit/pullback")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Pullback(IdsArguent arg)
+        {
+
+            OnPullback();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     提交审核
+        /// </summary>
+        [Route("audit/submit")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult SubmitAudit(IdsArguent arg)
+        {
+
+            OnSubmitAudit();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     校验审核数据
+        /// </summary>
+        [Route("audit/validate")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Validate(IdsArguent arg)
+        {
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                return ApiResultHelper.Helper.ArgumentError;
+            }
+
+            DoValidate(ids);
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+
+        /// <summary>
+        ///     审核通过
+        /// </summary>
+        [Route("audit/pass")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult AuditPass(IdsArguent arg)
+        {
+
+            OnAuditPass();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     重新审核
+        /// </summary>
+        [Route("audit/redo")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult UnAudit(IdsArguent arg)
+        {
+            OnUnAudit();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     退回(审核)
+        /// </summary>
+
+        [Route("audit/back")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult BackAudit(IdsArguent arg)
+        {
+
+            OnBackAudit();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        #endregion
+
+        #region 抽象
+
         /// <summary>
         ///     提交审核
         /// </summary>
         protected virtual void OnSubmitAudit()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!DoValidate(ids))
                 return;
             if (!Business.Submit(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+
         }
 
         /// <summary>
@@ -48,9 +158,13 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnBackAudit()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!Business.Back(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -58,9 +172,13 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnUnAudit()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!Business.UnAudit(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -68,25 +186,29 @@ namespace Agebull.Common.WebApi
         /// </summary>
         protected virtual void OnAuditPass()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!DoValidate(ids))
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
                 return;
             }
             var result = Business.AuditPass(ids);
             if (!result)
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
-        private bool DoValidate(IEnumerable<long> ids)
+        private bool DoValidate(IEnumerable<TPrimaryKey> ids)
         {
             var message = new ValidateResultDictionary();
             var succeed = Business.Validate(ids, message.TryAdd);
 
             if (message.Result.Count > 0)
             {
-                GlobalContext.Current.LastMessage = message.ToString();
+                GlobalContext.Current.Status.LastMessage = message.ToString();
             }
             return succeed;
         }
@@ -96,9 +218,13 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnPullback()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!Business.Pullback(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -106,21 +232,27 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnAuditDeny()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
             if (!Business.AuditDeny(ids))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
+        #endregion
 
+        #region 列表数据
 
         /// <summary>
         ///     取得列表数据
         /// </summary>
         protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            var audit = GetIntArg("audit", -1);
-            if (audit == 0x100 || audit < 0)
+            if (!RequestArgumentConvert.TryGet("_audit_", out int audit) || audit == 0x100 || audit < 0)
                 return base.GetListData(lambda);
-            if (audit <= (int) AuditStateType.End)
+
+            if (audit <= (int)AuditStateType.End)
             {
                 lambda.AddRoot(p => p.AuditState == (AuditStateType)audit);
                 return base.GetListData(lambda);
@@ -130,10 +262,10 @@ namespace Agebull.Common.WebApi
             {
                 case 0x10: //废弃
                 case 0xFF: //删除
-                    SetArg("dataState", audit);
+                    RequestArgumentConvert.SetArgument("_state_", audit);
                     break;
                 case 0x13: //停用
-                    SetArg("dataState", (int)DataStateType.Disable);
+                    RequestArgumentConvert.SetArgument("_state_", (int)DataStateType.Disable);
                     break;
                 case 0x11: //未审核
                     lambda.AddRoot(p => p.AuditState <= AuditStateType.Again);
@@ -142,149 +274,18 @@ namespace Agebull.Common.WebApi
                     lambda.AddRoot(p => p.AuditState < AuditStateType.End);
                     break;
             }
-
             return base.GetListData(lambda);
         }
-
-        #region API
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/deny")]
-        public ApiResponseMessage AuditDeny()
-        {
-            
-            OnAuditDeny();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/pullback")]
-        public ApiResponseMessage Pullback()
-        {
-            
-            OnPullback();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/submit")]
-        public ApiResponseMessage SubmitAudit()
-        {
-            
-            OnSubmitAudit();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/validate")]
-        public ApiResponseMessage Validate()
-        {
-            
-            DoValidate(GetLongArrayArg("selects"));
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/pass")]
-        public ApiResponseMessage AuditPass()
-        {
-            
-            OnAuditPass();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/redo")]
-        public ApiResponseMessage UnAudit()
-        {
-            OnUnAudit();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
-        /// </summary>
-        [HttpPost]
-        [Route("audit/back")]
-        public ApiResponseMessage BackAudit()
-        {
-            
-            OnBackAudit();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
         #endregion
     }
 
     /// <summary>
     ///     审核支持API页面的基类
     /// </summary>
-    public abstract class ApiControllerForAudit<TData, TAccess, TDatabase> :
-        ApiControllerForDataState<TData, TAccess, TDatabase, BusinessLogicByAudit<TData, TAccess, TDatabase>>
-        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+    public abstract class ApiControllerForAudit<TData,  TBusinessLogic>
+        : ApiControllerForAudit<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<long>, new()
+        where TBusinessLogic : class, IBusinessLogicByAudit<TData, long>, new()
     {
     }
 }

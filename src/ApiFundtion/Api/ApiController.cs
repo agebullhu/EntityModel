@@ -1,25 +1,22 @@
-﻿using System;
+﻿using Agebull.EntityModel.BusinessLogic;
+using Agebull.EntityModel.Common;
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Web.Http;
-using Agebull.Common.DataModel.BusinessLogic;
-using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.MySql;
-using MySql.Data.MySqlClient;
+using ZeroTeam.MessageMVC.Context;
+using ZeroTeam.MessageMVC.ZeroApis;
 
-namespace Agebull.Common.WebApi
+#pragma warning disable IDE0060 // 删除未使用的参数
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
-    public abstract class ApiController<TData, TAccess, TDatabase, TBusinessLogic> : ApiControlerEx
-        where TData : EditDataObject, IIdentityData, new()
-        where TAccess : MySqlTable<TData, TDatabase>, new()
-        where TBusinessLogic : UiBusinessLogicBase<TData, TAccess, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+    public abstract class ApiController<TData, TPrimaryKey, TBusinessLogic> : ModelApiController
+        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IUiBusinessLogicBase<TData, TPrimaryKey>, new()
     {
         #region 数据校验支持
 
@@ -31,21 +28,20 @@ namespace Agebull.Common.WebApi
         /// <param name="field"></param>
         protected virtual void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            var no = GetArg("No");
-            if (string.IsNullOrEmpty(no))
+            if (!RequestArgumentConvert.TryGet("No", out string no))
             {
                 SetFailed(name + "为空");
                 return;
             }
 
-            var id = GetIntArg("id", 0);
+            var id = RequestArgumentConvert.GetInt("id", 0);
             var result = id == 0
                 ? Business.Access.IsUnique(field, no)
                 : Business.Access.IsUnique(field, no, id);
             if (result)
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
+                GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -59,249 +55,269 @@ namespace Agebull.Common.WebApi
         /// </summary>
         protected TBusinessLogic Business
         {
-            get => _business ?? (_business = new TBusinessLogic());
+            get => _business ??= new TBusinessLogic();
             set => _business = value;
         }
 
         /// <summary>
-        ///     基本查询条件(SQL表述方式)
+        /// 转换方法
         /// </summary>
-        protected virtual string BaseQueryCondition => null;
+        /// <param name="value"></param>
+        /// <returns></returns>
+        abstract protected (bool, TPrimaryKey) Convert(string value);
 
         #endregion
 
         #region API
+
         /// <summary>
-        /// 实体类型
+        ///     列表数据
         /// </summary>
+        /// <param name="args">查询参数</param>
+        /// <remarks>
+        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+        /// </remarks>
         /// <returns></returns>
-        [HttpPost]
-        [Route("edit/eid")]
-        //[ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Anymouse)]
-        public ApiResponseMessage EntityType()
-        {
-            return Request.ToResponse(new EntityInfo
-            {
-                EntityType = Business.EntityType,
-                PageId = PageItem?.Id ?? 0
-            });
-        }
-        /// <summary>
-        /// 列表数据
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
         [Route("edit/list")]
-        //[ApiAccessOptionFilter(ApiAccessOption.Internal | ApiAccessOption.Anymouse)]
-        public ApiResponseMessage List()
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
+        public IApiResult<ApiPageData<TData>> List(QueryArgument args)
         {
-            
-            var data = GetListData();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
+            IDisposable scope = null;
+            try
+            {
+
+                scope = GetFieldFilter();
+
+                GlobalContext.Current.Status.Feature = 1;
+
+                var filter = new LambdaItem<TData>();
+                GetQueryFilter(filter);
+                var data = GetListData(filter);
+                GlobalContext.Current.Status.Feature = 0;
+                return IsFailed
+                    ? ApiResultHelper.State<ApiPageData<TData>>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
+            }
+            finally
+            {
+                scope?.Dispose();
+            }
+        }
+
+
+        /// <summary>
+        ///     单条数据查询
+        /// </summary>
+        [Route("edit/first")]
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
+        public IApiResult<TData> QueryFirst(TData arguent)
+        {
+            IDisposable scope = null;
+            try
+            {
+                scope = GetFieldFilter();
+                GlobalContext.Current.Status.Feature = 1;
+                var filter = new LambdaItem<TData>();
+                GetQueryFilter(filter);
+                var data = Business.Access.FirstOrDefault(filter);
+                if (data != null)
                 {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(data);
+                    OnDetailsLoaded(data, false);
+                }
+                GlobalContext.Current.Status.Feature = 0;
+                return IsFailed
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
+            }
+            finally
+            {
+                scope?.Dispose();
+            }
         }
 
         /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
+        ///     单条详细数据
         /// </summary>
-        [HttpPost]
         [Route("edit/details")]
-        public ApiResponseMessage Details()
+        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
+        public IApiResult<TData> Details(IdArguent arguent)
         {
-            
-            var data = DoDetails();
+            if (!RequestArgumentConvert.TryGetId<TData,TPrimaryKey>(Convert, out TPrimaryKey id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
+            var data = DoDetails(id);
             return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(data);
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
+        ///     新增数据
         /// </summary>
-        [HttpPost]
         [Route("edit/addnew")]
-        public ApiResponseMessage AddNew()
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult<TData> AddNew(TData arg)
         {
-            
             var data = DoAddNew();
             return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(data);
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
+        ///     更新数据
         /// </summary>
-        [HttpPost]
         [Route("edit/update")]
-        public ApiResponseMessage Update()
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult<TData> Update(TData arg)
         {
-            
-            var data = DoUpdate();
+            if (!RequestArgumentConvert.TryGetId<TData, TPrimaryKey>(Convert, out TPrimaryKey id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
+            var data = DoUpdate(id);
             return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(data);
+                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
-        ///     用在界面上的当前用户可以访问的按钮集合
+        ///     删除多条数据
         /// </summary>
-        [HttpPost]
         [Route("edit/delete")]
-        public ApiResponseMessage Delete()
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Delete(IdsArguent arg)
         {
-            
             DoDelete();
             return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
         }
 
-        #endregion
+        /*// <summary>
+        ///     实体类型
+        /// </summary>
+        /// <returns></returns>
+        [Route("edit/eid")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult<EntityInfo> EntityType()
+        {
+            return ApiResultHelper.Succees(new EntityInfo
+            {
+                EntityType = Business.EntityType,
+                //PageId = PageItem?.Id ?? 0
+            });
+        }
+        
+        /// <summary>
+        ///     导出到Excel
+        /// </summary>
+        /// <remarks>
+        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+        /// </remarks>
+        /// <returns></returns>
+        [Route("export/xlsx")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public ApiFileResult Export(TData args)
+        {
+            var data = new TData();
+            GlobalContext.Current.Status.Feature = 1;
+            var filter = new LambdaItem<TData>();
+            GetQueryFilter(filter);
+            var res = Business.Export(data.__Struct.Caption, filter);
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
+        }
 
+        /// <summary>
+        ///     从Excep导入
+        /// </summary>
+        /// <remarks>
+        /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+        /// </remarks>
+        /// <returns></returns>
+        [Obsolete]
+        [Route("import/xlsx")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public ApiFileResult Import(TData args)
+        {
+            var data = new TData();
+            GlobalContext.Current.Status.Feature = 1;
+            var filter = new LambdaItem<TData>();
+            GetQueryFilter(filter);
+            var res = Business.Export(data.__Struct.Caption, filter);
+            GlobalContext.Current.Status.Feature = 0;
+            return ApiResultHelper.Succees(res);
+        }*/
+
+        #endregion
 
         #region 列表读取支持
 
         /// <summary>
-        ///     取得列表数据
+        ///     读取查询条件
         /// </summary>
-        protected virtual ApiPageData<TData> GetListData()
+        /// <param name="filter">筛选器</param>
+        public virtual void GetQueryFilter(LambdaItem<TData> filter)
         {
-            return LoadListData(null, null);
+
         }
 
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        protected ApiPageData<TData> GetListData(Expression<Func<TData, bool>> lambda)
+        IDisposable GetFieldFilter()
         {
-            return GetListData(new[] { lambda });
+            if (RequestArgumentConvert.TryGet("_filter_", out string[] fieldFilter))
+            {
+                var test = new TData();
+                List<PropertySturct> properties = new List<PropertySturct>();
+                foreach (var field in fieldFilter)
+                {
+                    var pro = test.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == field || p.PropertyName == field);
+                    if (pro != null && pro.ColumnName != null)
+                    {
+                        properties.Add(pro);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"字段过渡参数(_filter_)中包含不存在的字段.{field}");
+                    }
+                }
+                if (properties.Count > 0)
+                    return DbReaderScope<TData>.CreateScope(Business.Access, properties.Select(p => p.ColumnName).LinkToString(","), (reader, entity) =>
+                    {
+                        for (var idx = 0; idx < properties.Count; idx++)
+                        {
+                            if (!reader.IsDBNull(idx))
+                                entity.SetValue(properties[idx].Index, reader.GetValue(idx));
+                        }
+                    });
+            }
+            return null;
         }
-
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        protected ApiPageData<TData> GetListData(IEnumerable<Expression<Func<TData, bool>>> lambdas)
-        {
-            var lg = new TAccess();
-            var condition = new ConditionItem();
-            foreach (var lambda in lambdas) PredicateConvert.Convert(lg.FieldDictionary, lambda, condition);
-            return GetListData(condition);
-        }
-
         /// <summary>
         ///     取得列表数据
         /// </summary>
         protected virtual ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            return DoGetListData(lambda);
-        }
-
-
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        protected ApiPageData<TData> DoGetListData(LambdaItem<TData> lambda)
-        {
-            var lg = new TAccess();
-            var condition = PredicateConvert.Convert(lg.FieldDictionary, lambda);
-            return GetListData(condition);
+            var item = Business.Access.Compile(lambda);
+            return LoadListData(item.ConditionSql, item.Parameters);
         }
 
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        protected ApiPageData<TData> GetListData(ConditionItem item)
+        private ApiPageData<TData> LoadListData(string condition, DbParameter[] args)
         {
-            return GetListData(new[] { item });
-        }
-
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        protected ApiPageData<TData> GetListData(IEnumerable<ConditionItem> items)
-        {
-            var parameters = new List<MySqlParameter>();
-            var sb = new StringBuilder();
-            var isFirst = true;
-            foreach (var item in items)
-            {
-                if (!string.IsNullOrEmpty(item.ConditionSql))
-                {
-                    if (isFirst)
-                        isFirst = false;
-                    else
-                        sb.Append(" AND ");
-                    sb.Append("(" + item.ConditionSql + ")");
-                }
-
-                parameters.AddRange(item.Parameters);
-            }
-
-            return LoadListData(sb.ToString(), parameters.ToArray());
-        }
-
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
-        protected ApiPageData<TData> LoadListData(string condition, MySqlParameter[] args)
-        {
-            var page = GetIntArg("page", 1);
-            var rows = GetIntArg("rows", 20);
-            var sort = GetArg("sort");
-            bool desc;
-            var adesc = GetArg("order", "asc").ToLower();
+            var page = RequestArgumentConvert.GetInt("_page_", 1);
+            var size = RequestArgumentConvert.GetInt("_size_", 20);
+            RequestArgumentConvert.TryGet("_sort_", out string sort);
             if (sort == null)
-            {
                 sort = Business.Access.KeyField;
-                desc = true;
-            }
-            else
-            {
-                desc = adesc == "desc";
-            }
+            var desc = RequestArgumentConvert.TryGet("_order_", out string order) && order?.ToLower() == "desc";
 
-            SaveQueryArguments(page, sort, adesc, rows);
+            //SaveQueryArguments(page, sort, adesc, rows);
 
-            if (!string.IsNullOrEmpty(BaseQueryCondition))
-            {
-                if (string.IsNullOrEmpty(condition))
-                    condition = BaseQueryCondition;
-                else if (condition != BaseQueryCondition && !condition.Contains(BaseQueryCondition))
-                    condition = $"({BaseQueryCondition}) AND ({condition})";
-            }
-
-            var data = Business.PageData(page, rows, sort, desc, condition, args);
-            if (OnListLoaded(data.Rows, data.RowCount))
-            {
-                CheckListResult(data, condition, args);
-                return data;
-            }
-
+            var data = Business.PageData(page, size, sort, desc, condition, args);
+            OnListLoaded(data.Rows);
             return data;
         }
-
+        /*
         /// <summary>
         ///     是否保存查询条件
         /// </summary>
@@ -309,42 +325,18 @@ namespace Agebull.Common.WebApi
 
         private void SaveQueryArguments(int page, string sort, string adesc, int rows)
         {
-            //if (BusinessContext.Context?.PowerChecker == null)
-            //    return;
-            ////if (!this.CanSaveQueryArguments)
-            ////{
-            ////    return;
-            ////}
-            //var requestArgs = new Dictionary<string, string>
-            //{
-            //    {"page", page.ToString()},
-            //    {"sort", sort},
-            //    {"order", adesc},
-            //    {"size", rows.ToString()}
-            //};
-            //BusinessContext.Context.PowerChecker.SaveQueryHistory(LoginUser, PageItem, Arguments);
+            if (CanSaveQueryArguments)
+                BusinessContext.Context?.PowerChecker?.SaveQueryHistory(LoginUser, PageItem, Arguments);
         }
-
+        */
         /// <summary>
         ///     数据准备返回的处理
         /// </summary>
         /// <param name="result">当前的查询结果</param>
         /// <param name="condition">当前的查询条件</param>
         /// <param name="args">当前的查询参数</param>
-        protected virtual bool CheckListResult(ApiPageData<TData> result, string condition,
-            params MySqlParameter[] args)
+        protected virtual bool CheckListResult(ApiPageData<TData> result, string condition, params DbParameter[] args)
         {
-            return true;
-        }
-
-        /// <summary>
-        ///     数据载入的处理
-        /// </summary>
-        /// <param name="datas"></param>
-        /// <param name="count"></param>
-        protected virtual bool OnListLoaded(IList<TData> datas, int count)
-        {
-            OnListLoaded(datas);
             return true;
         }
 
@@ -367,32 +359,20 @@ namespace Agebull.Common.WebApi
         /// <param name="convert">转化器</param>
         protected abstract void ReadFormData(TData entity, FormConvert convert);
 
-
-        private long _dataId = -1;
-
-        /// <summary>
-        ///     当前上下文数据ID
-        /// </summary>
-        public long ContextDataId
-        {
-            get => _dataId < 0 ? (_dataId = GetLongArg("id")) : _dataId;
-            protected set => _dataId = value;
-        }
-
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        protected virtual TData DoDetails()
+        protected virtual TData DoDetails(TPrimaryKey id)
         {
             TData data;
-            if (ContextDataId <= 0)
+            if (Equals(id, default))
             {
                 data = CreateData();
                 OnDetailsLoaded(data, true);
             }
             else
             {
-                data = Business.Details(ContextDataId);
+                data = Business.Details(id);
                 if (data == null)
                 {
                     SetFailed("数据不存在");
@@ -425,49 +405,57 @@ namespace Agebull.Common.WebApi
         protected virtual TData DoAddNew()
         {
             var data = new TData();
+            data.__status.IsNew = true;
+            data.__status.IsFromClient = true;
             //数据校验
-            
-            var convert = new FormConvert(Arguments);
+
+            var convert = new FormConvert(data);
             ReadFormData(data, convert);
-            data.__IsFromUser = true;
-            //if (convert.Failed)
-            //{
-            //    SetFailed(/*"数据不正确,保存失败<br/>" +*/
-            //              string.Join("<br/>", convert.Messages.Select(p => string.Format("{0}:{1}", p.Key, p.Value))));
-            //    return;
-            //}
-            if (!Business.AddNew(data))
+            if (convert.Failed)
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = convert.Message;
                 return null;
             }
-
+            if (!Business.AddNew(data))
+            {
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                return null;
+            }
             return data;
         }
 
         /// <summary>
         ///     更新对象
         /// </summary>
-        protected virtual TData DoUpdate()
+        protected virtual TData DoUpdate(TPrimaryKey id)
         {
-            var data = Business.Details(ContextDataId) ?? new TData();
-            //数据校验
-            
-            var convert = new FormConvert(Arguments);
-            ReadFormData(data, convert);
-            data.__IsFromUser = true;
-            //if (convert.Failed)
-            //{
-            //    SetFailed(/*"数据不正确,保存失败<br/>" +*/
-            //              string.Join("<br/>", convert.Messages.Select(p => string.Format("{0}:{1}", p.Key, p.Value))));
-            //    return;
-            //}
-            if (!Business.Update(data))
+            var data = Business.Details(id);
+            if (data == null)
             {
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = "参数错误";
                 return null;
             }
-
+            data.__status.IsExist = true;
+            data.__status.IsFromClient = true;
+            //数据校验
+            var convert = new FormConvert(data)
+            {
+                IsUpdata = true
+            };
+            ReadFormData(data, convert);
+            if (convert.Failed)
+            {
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+                GlobalContext.Current.Status.LastMessage = convert.Message;
+                return null;
+            }
+            if (!Business.Update(data))
+            {
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                return null;
+            }
             return data;
         }
 
@@ -476,25 +464,34 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void DoDelete()
         {
-            
-            var ids = GetArg("selects");
-            if (string.IsNullOrEmpty(ids))
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
                 SetFailed("没有数据");
                 return;
             }
-
-            var lid = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
-            if (lid.Length == 0)
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!Business.Delete(lid))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+            if (!Business.Delete(ids))
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         #endregion
     }
+
+    /// <summary>
+    ///     自动实现基本增删改查API页面的基类
+    /// </summary>
+    public abstract class ApiController<TData,TBusinessLogic> : ApiController<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IIdentityData<long>, new()
+        where TBusinessLogic : class, IUiBusinessLogicBase<TData, long>, new()
+    {
+        ///<inheritdoc/>
+        protected sealed override (bool, long) Convert(string value)
+        {
+            if(value != null && long.TryParse(value,out var id))
+            {
+                return (true, id);
+            }
+            return (false, 0);
+        }
+    }
 }
+#pragma warning restore IDE0060 // 删除未使用的参数

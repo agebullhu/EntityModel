@@ -1,0 +1,1585 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Agebull.EntityModel.ModelApi</name>
+    </assembly>
+    <members>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiController`3">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="name"></param>
+            <param name="field"></param>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ApiController`3.Business">
+            <summary>
+                业务逻辑对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Convert(System.String)">
+            <summary>
+            转换方法
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.List(Agebull.MicroZero.ZeroApis.QueryArgument)">
+            <summary>
+                列表数据
+            </summary>
+            <param name="args">查询参数</param>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.QueryFirst(`0)">
+            <summary>
+                单条数据查询
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Details(Agebull.MicroZero.ZeroApis.IdArguent)">
+            <summary>
+                单条详细数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.AddNew(`0)">
+            <summary>
+                新增数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Update(`0)">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Delete(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                删除多条数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.LoadListData(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CheckListResult(ZeroTeam.MessageMVC.ZeroApis.ApiPageData{`0},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                数据准备返回的处理
+            </summary>
+            <param name="result">当前的查询结果</param>
+            <param name="condition">当前的查询条件</param>
+            <param name="args">当前的查询参数</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.OnListLoaded(System.Collections.Generic.IList{`0})">
+            <summary>
+                数据载入的处理
+            </summary>
+            <param name="datas"></param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.ReadFormData(`0,Agebull.MicroZero.ZeroApis.FormConvert)">
+            <summary>
+                读取Form传过来的数据
+            </summary>
+            <param name="entity">实体</param>
+            <param name="convert">转化器</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoDetails(`1)">
+            <summary>
+                载入当前操作的数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.OnDetailsLoaded(`0,System.Boolean)">
+            <summary>
+                详细数据载入
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CreateData">
+            <summary>
+                新增一条带默认值的数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoAddNew">
+            <summary>
+                新增
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoUpdate(`1)">
+            <summary>
+                更新对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoDelete">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiController`2">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`2.Convert(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditDeny(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                审核不通过
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Pullback(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                拉回已提交的审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.SubmitAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Validate(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                校验审核数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditPass(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                审核通过
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.UnAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                重新审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.BackAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                退回(审核)
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnSubmitAudit">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnBackAudit">
+            <summary>
+                退回审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnUnAudit">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnAuditPass">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnPullback">
+            <summary>
+                拉回
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.OnAuditDeny">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`2">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3">
+            <summary>
+                支持数据状态的启用禁用方法的页面的基类
+            </summary>
+            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
+            <typeparam name="TBusinessLogic">业务对象</typeparam>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Reset(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                重置数据状态
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Discard(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                废弃数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Disable(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                禁用数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Enable(Agebull.MicroZero.ZeroApis.IdsArguent)">
+            <summary>
+                启用数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="name"></param>
+            <param name="field"></param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.OnReset">
+            <summary>
+                恢复对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.OnDiscard">
+            <summary>
+                废弃对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.OnEnable">
+            <summary>
+                启用对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.OnDisable">
+            <summary>
+                禁用对象
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.Convert(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.IDataExtendChecker">
+            <summary>
+                数据扩展检查器
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareAddnew``1(``0)">
+            <summary>
+            新增前检查
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareUpdate``1(``0)">
+            <summary>
+            更新前检查
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareDelete``1(System.Collections.Generic.IEnumerable{System.Int64})">
+            <summary>
+            删除前检查
+            </summary>
+            <param name="ids"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareQuery(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
+            <summary>
+            查询前检查
+            </summary>
+            <param name="dataTable"></param>
+            <param name="condition"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.DataExtendChecker">
+            <summary>
+                数据扩展检查器
+            </summary>
+        </member>
+        <member name="F:Agebull.MicroZero.ZeroApis.DataExtendChecker.ExtendCheckers.Dictionary">
+            <summary>
+            检查器集合
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.DataExtendChecker.ExtendCheckers.Convert">
+            <summary>
+            转换器
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.Regist``2">
+            <summary>
+            注册检查器
+            </summary>
+            <typeparam name="TDataExtendChecker">检查器本身</typeparam>
+            <typeparam name="TTargetType">检查的目标类型</typeparam>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareAddnew``1(``0)">
+            <summary>
+            新增前检查
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareUpdate``1(``0)">
+            <summary>
+            更新前检查
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareDelete``1(System.Int64[])">
+            <summary>
+            删除前检查
+            </summary>
+            <param name="ids"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareQuery``1(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
+            <summary>
+            查询前检查
+            </summary>
+            <param name="dataTable"></param>
+            <param name="condition"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.HttpPostAttribute">
+            <summary>
+            兼容性
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.HttpGetAttribute">
+            <summary>
+            兼容性
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.FormConvert">
+            <summary>
+                FORM对象转化辅助类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.#ctor(Agebull.EntityModel.Common.EditDataObject)">
+            <summary>
+            构造
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.Data">
+            <summary>
+                读取过程的错误消息记录
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.IsUpdata">
+            <summary>
+                是否更新状态
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.Failed">
+            <summary>
+                是否发生解析错误
+            </summary>
+        </member>
+        <member name="F:Agebull.MicroZero.ZeroApis.FormConvert._messages">
+            <summary>
+                字段
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.AddMessage(System.String,System.String)">
+            <summary>
+            设置错误字段
+            </summary>
+            <param name="field"></param>
+            <param name="msg"></param>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.Message">
+            <summary>
+                是否发生解析错误
+            </summary>
+        </member>
+        <member name="F:Agebull.MicroZero.ZeroApis.FormConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},System.Nullable{``0}@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.String@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetEnum``1(System.String,``0@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetEnum``1(System.String,System.Nullable{``0}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Byte@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Byte}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.SByte@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.SByte}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Int16@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Int16}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.UInt16@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt16}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Boolean@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Boolean}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Int32@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Int32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.UInt32@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Int64@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.UInt64@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Single@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Single}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Double@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Double}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.DateTime@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.DateTime}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Decimal@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Decimal}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Guid@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Nullable{System.Guid}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetValue(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.TryGetIDs(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.ModelApiController">
+            <summary>
+            ZeroApi控制器基类
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.UserInfo">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.Message">
+            <summary>
+            原始调用帧消息
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ModelApiController.SetFailed(System.String)">
+            <summary>
+                设置当前操作失败
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.ModelApiController.UserIsLogin">
+            <summary>
+                当前用户是否已登录成功
+            </summary>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.RequestArgumentConvert">
+            <summary>
+                参数解析器
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.ContainsArgument(System.String)">
+            <summary>
+                当前请求是否包含这个参数
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>是否包含这个参数</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.SetArgument(System.String,System.String)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.SetArgument``1(System.String,``0)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.SetArgument(System.String,System.Object)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetArgValue(System.String)">
+            <summary>
+                获取参数
+            </summary>
+            <param name="name">参数名</param>
+            <returns>参数值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.Get(System.String)">
+            <summary>
+                获取参数
+            </summary>
+            <param name="name">参数名</param>
+            <returns>参数值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetString(System.String)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetNullable``1(System.String,System.Func{System.String,``0},System.Nullable{``0})">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="def">默认值</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetArg``1(System.String,System.Func{System.String,``0},``0)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="def">默认值</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetBool(System.String)">
+            <summary>
+                读参数(泛型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>参数为空或不存在,返回不成功,其它情况视convert返回值自行控制</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetInt(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetDouble(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetSingle(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetGuid(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetByte(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetIntArray(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetInt(System.String,System.Int32)">
+            <summary>
+                获取参数(int类型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>int类型,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetIntAny(System.String[])">
+            <summary>
+                获取参数(数字),模糊名称读取
+            </summary>
+            <param name="names">多个名称</param>
+            <returns>名称解析到的第一个不为0的数字,如果有名称存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetNullableDate(System.String)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetDate(System.String)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>日期类型,为空则为DateTime.MinValue,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetDate(System.String,System.DateTime)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def"></param>
+            <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetBool(System.String,System.Boolean)">
+            <summary>
+                获取参数bool类型
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetDecimal(System.String)">
+            <summary>
+                获取参数(decimal型数据)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>decimal型数据,如果未读取值则为-1,如果存在且不能转为decimal类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetDecimal(System.String,System.Decimal)">
+            <summary>
+                获取参数(decimal型数据),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>decimal型数据,如果存在且不能转为decimal类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetLong(System.String,System.Int64)">
+            <summary>
+                获取参数(long型数据),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>long型数据,如果存在且不能转为long类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetLongArray(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.GetLongAny(System.String[])">
+            <summary>
+                获取参数(数字),模糊名称读取
+            </summary>
+            <param name="names">多个名称</param>
+            <returns>名称解析到的第一个不为0的数字,如果有名称存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetValue(System.String,System.String@)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="val"></param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.String@,System.Boolean)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="val">结果值</param>
+            <param name="trim">是否清除首尾空白</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},System.Nullable{``0}@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@,System.Boolean@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <param name="hase">参数是否存在</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``0}},``0@,System.Boolean@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <param name="hase">参数是否存在</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Nullable{System.Boolean}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Boolean@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Guid@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.DateTime@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetEnum``1(System.String,``0@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Int32@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Decimal@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Single@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Double@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Int16@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId``1(System.Int64@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId``2(System.Func{System.String,System.ValueTuple{System.Boolean,``1}},``1@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="value">参数值</param>
+            <param name="convert">转换器</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Int64@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.String[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Int32[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Int64[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGet(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetIDs(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetIDs``1(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``0}},System.Collections.Generic.List{``0}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert"></param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="T:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware">
+            <summary>
+            日志处理中间件
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.Processor">
+            <summary>
+            当前处理器
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Level">
+            <summary>
+            层级
+            </summary>
+        </member>
+        <member name="P:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Scope">
+            <summary>
+            消息中间件的处理范围
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#OnGlobalException(ZeroTeam.MessageMVC.Services.IService,ZeroTeam.MessageMVC.Messages.IInlineMessage,System.Exception,System.Object)">
+            <summary>
+            异常处理
+            </summary>
+            <param name="service">当前服务</param>
+            <param name="message">当前消息</param>
+            <param name="exception"></param>
+            <param name="tag">扩展信息</param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.EasyComboValues">
+            <summary>
+            支持Easy combobox的键值对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyComboValues.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyComboValues.#ctor(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            构造
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="extend"></param>
+            <param name="tag"></param>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.EasyComboValues.Empty">
+            <summary>
+            空内容
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Key">
+            <summary>
+                键
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Value">
+            <summary>
+                值
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Extend">
+            <summary>
+                值
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Tag">
+            <summary>
+                值
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.EasyUiGridData`1">
+            <summary>
+            支持EasyUi表格列表数据的对象
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Data">
+            <summary>
+                返回的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Total">
+            <summary>
+                总行数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Footer">
+            <summary>
+                页脚
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase">
+            <summary>
+                EasyUi树数据的格式
+            </summary>
+            <remarks>仅调用ToJson时符合格式</remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.ID">
+            <summary>
+                节点的 id，它对于加载远程数据很重要。
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsChecked">
+            <summary>
+                是否已选择
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsSelect">
+            <summary>
+                是否已选择
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.TreeState">
+            <summary>
+                表格树关闭状态
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Icon">
+            <summary>
+                图标
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsOpen">
+            <summary>
+                是否展开
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsFolder">
+            <summary>
+            是否文件夹
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Text">
+            <summary>
+                显示的节点文字。
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Title">
+            <summary>
+                对象的原始标题
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Attributes">
+            <summary>
+                给一个节点追加的自定义属性。
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Tag">
+            <summary>
+                标签文本
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Memo">
+            <summary>
+                备注文本
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Json">
+            <summary>
+                还有其它的
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Extend">
+            <summary>
+                其它文本
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.ToString">
+            <inheritdoc />
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Empty">
+            <summary>
+            空对象
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNode">
+            <summary>
+                EasyUi树数据的格式
+            </summary>
+            <remarks>仅调用ToJson时符合格式</remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.#ctor(System.Collections.Generic.List{Agebull.EntityModel.EasyUI.EasyUiTreeNode})">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.HaseChildren">
+            <summary>
+            有否子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.Children">
+            <summary>
+                表格树的下级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.TreeState">
+            <summary>
+                表格树关闭状态
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.EasyUiTreeNode.EmptyNode">
+            <summary>
+            空内容
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1">
+            <summary>
+                EasyUi树数据的格式
+            </summary>
+            <remarks>仅调用ToJson时符合格式</remarks>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.HaseChildren">
+            <summary>
+            有否子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.Data">
+            <summary>
+                数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.Children">
+            <summary>
+                表格树的下级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.TreeState">
+            <summary>
+                表格树关闭状态
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.FamilyData`2">
+            <summary>
+                两层树形数据
+            </summary>
+            <typeparam name="TParent">上级类型</typeparam>
+            <typeparam name="TChild">子级类型</typeparam>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.FamilyData`2.Data">
+            <summary>
+                本级数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.FamilyData`2.Children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.TreeData`1">
+            <summary>
+                树形数据
+            </summary>
+            <typeparam name="TData">数据类型</typeparam>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.TreeData`1._children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`1.Data">
+            <summary>
+                本级数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`1.Children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.TreeData`2">
+            <summary>
+                树形数据(带关联节点)
+            </summary>
+            <typeparam name="TData">本级数据</typeparam>
+            <typeparam name="TItem">其它关联节点</typeparam>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.TreeData`2._children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.TreeData`2._items">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Data">
+            <summary>
+                本级数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Items">
+            <summary>
+                其它关联节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.TreeData`3">
+            <summary>
+                树形数据(带关联节点)
+            </summary>
+            <typeparam name="TData">本级数据</typeparam>
+            <typeparam name="TItem">其它关联节点</typeparam>
+            <typeparam name="TFriend">本级关联数据</typeparam>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.TreeData`3._children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.EasyUI.TreeData`3._items">
+            <summary>
+                其它关联节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Data">
+            <summary>
+                本级数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Friend">
+            <summary>
+                本级关联数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Items">
+            <summary>
+                其它关联节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Children">
+            <summary>
+                子级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.EasyUI.PageData`1">
+            <summary>
+                分页类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.EasyUI.PageData`1.#ctor">
+            <summary>
+                分页类
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.WhereStr">
+            <summary>
+                查询条件
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageIndex">
+            <summary>
+                当前页码
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageSize">
+            <summary>
+                每页显示条数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.Count">
+            <summary>
+                总记录数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageCount">
+            <summary>
+                总页码数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.DataSoure">
+            <summary>
+                数据集
+            </summary>
+        </member>
+    </members>
+</doc>

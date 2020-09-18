@@ -1,0 +1,2 @@
+﻿cd C:\Projects\Agebull\EntityModel\src
+dotnet pack Agebull.EntityModel.Core.sln -c:"Release" -o:"C:\Projects\Agebull\nuget"

@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.SQLite.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Description>数据实体SQLite版本</Description>
+    <AssemblyTitle>Agebull.EntityModel.SQLite</AssemblyTitle>
+    <Version>4.0.1.5</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Agebull.EntityModel.SQLite</AssemblyName>
+    <PackageId>Agebull.EntityModel.SQLite</PackageId>
+    <PackageTags>Agebull.EntityModel.SQLite</PackageTags>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <Product>Agebull.EntityModel</Product>
+    <PackageReleaseNotes>Agebull.EntityModel.SQLite</PackageReleaseNotes>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Agebull.EntityModel.SQLite.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
+  </ItemGroup>
+
+</Project>

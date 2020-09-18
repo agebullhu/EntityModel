@@ -4,69 +4,55 @@
     
   </PropertyGroup>
   <PropertyGroup>
-    <Version>2.3.3</Version>
-    <!--monoandroid60;xamarinios10-->
-    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
+    <Version>4.0.0.70</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageIconUrl>https://github.com/agebullhu/EntityModel/blob/master/doc/icon.ico</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    
+    
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/agebullhu/EntityModel/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
     <Description>数据实体Redis版本</Description>
     <PackageReleaseNotes>Agebull.EntityModel.Redis</PackageReleaseNotes>
     <AssemblyName>Agebull.EntityModel.Redis</AssemblyName>
     <PackageId>Agebull.EntityModel.Redis</PackageId>
-    <Product>Agebull.EntityModel.Redis</Product>
+    <Product>Agebull.EntityModel</Product>
     <PackageTags>Agebull.EntityModel.Redis</PackageTags>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Redis.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>Agebull.EntityModel.Redis.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+  <ItemGroup>
+    <Compile Remove="Redis\NServiceKitRedis.cs" />
+    <Compile Remove="Redis\RedisClientEx.cs" />
+    <Compile Remove="Redis\RedisDbScope.cs" />
+    <Compile Remove="Redis\RedisProxy.Core.cs" />
+    <Compile Remove="Redis\StackExchangeRedis.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+
+  <ItemGroup>
+    <PackageReference Include="CSRedisCore" Version="3.6.2" />
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
-    <PackageReference Include="NServiceKit.Text" Version="1.0.10" />
-    <PackageReference Include="NServiceKit.Redis" Version="1.0.20" />
-  </ItemGroup>
-
   <ItemGroup>
-    <Compile Remove="Redis\CsRedisEx.cs" />
-    <Compile Remove="Redis\RedisDbScope.cs" />
-    <Compile Remove="Redis\RedisProxy.Core.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.MySql.csproj" />
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 
 

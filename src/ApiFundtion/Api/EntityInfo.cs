@@ -1,20 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 
-namespace Agebull.Common.WebApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
-    ///     实体信息
+    /// 兼容性
     /// </summary>
-    [JsonObject]
-    public class EntityInfo
+    [Obsolete]
+    public class HttpPostAttribute : Attribute
     {
-        /// <summary>
-        /// 类型标识
-        /// </summary>
-        [JsonProperty("entityType")] public int EntityType { get; set; }
-        /// <summary>
-        /// 页面标识
-        /// </summary>
-        [JsonProperty("pageId")] public long PageId { get; set; }
+
+    }
+    /// <summary>
+    /// 兼容性
+    /// </summary>
+    [Obsolete]
+    public class HttpGetAttribute : Attribute
+    {
+
     }
 }

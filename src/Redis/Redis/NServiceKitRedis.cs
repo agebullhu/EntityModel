@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Agebull.Common.Configuration;
-using Gboxt.Common.DataModel;
+using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 using NServiceKit.Redis;
 using NServiceKit.Text;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// REDIS¥˙¿Ì¿‡

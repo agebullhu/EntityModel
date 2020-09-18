@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Agebull.EntityModel.Common;
+using System.Collections.Generic;
 using System.Linq;
-using Gboxt.Common.DataModel;
 
-namespace Agebull.Common.DataModel
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// 统一构建RedisKey的格式

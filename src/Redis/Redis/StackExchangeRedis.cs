@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Agebull.Common.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Agebull.Common.Logging;
-using Gboxt.Common.DataModel;
+using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Agebull.Common.DataModel.Redis
+namespace Agebull.EntityModel.Redis
 {
     /// <summary>
     /// REDIS代理类
@@ -63,29 +64,39 @@ namespace Agebull.Common.DataModel.Redis
         /// </summary>
         public StackExchangeRedis()
         {
-            if (connect == null)
-                connect = ConnectionMultiplexer.Connect(ConnectString);
-            else
+            lock (LockObj)
             {
-                try
-                {
-                    connect.GetDatabase().Ping();
-                }
-                catch (Exception e1)
-                {
-                    LogRecorder.Exception(e1, "StackExchangeRedis.ctor");
-                    try
-                    {
-                        connect.Close();
-                        connect.Dispose();
-                    }
-                    catch (Exception e)
-                    {
-                        LogRecorder.Exception(e, "StackExchangeRedis.ctor");
-                    }
-                    connect = ConnectionMultiplexer.Connect(ConnectString);
-                }
+                CheckConnect();
             }
+        }
+
+        async void CheckConnect()
+        {
+            if (_connect == null)
+            {
+                Connect = _connect = await ConnectionMultiplexer.ConnectAsync(ConnectString);
+                return;
+            }
+
+            Connect = _connect;
+            //try
+            //{
+            //    await Client.PingAsync();
+            //}
+            //catch (Exception e1)
+            //{
+            //    LogRecorderX.Exception(e1, "StackExchangeRedis.CheckConnect");
+            //    try
+            //    {
+            //       await _connect.CloseAsync();
+            //        _connect.Dispose();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        LogRecorderX.Exception(e, "StackExchangeRedis.Dispose");
+            //    }
+            //    Connect = _connect = await ConnectionMultiplexer.ConnectAsync(ConnectString);
+            //}
         }
 
         /// <summary>
@@ -104,7 +115,15 @@ namespace Agebull.Common.DataModel.Redis
         /// 空闲的
         /// </summary>
         private static readonly Dictionary<int, List<RedisClient>> Idle = new Dictionary<int, List<RedisClient>>();*/
-        private static ConnectionMultiplexer connect;
+
+
+        private static ConnectionMultiplexer _connect;
+
+        /// <summary>
+        /// 得到一个可用的Redis客户端
+        /// </summary>
+        public ConnectionMultiplexer Connect { get; set; }
+
 
         /// <summary>
         /// 客户端类
@@ -141,19 +160,14 @@ namespace Agebull.Common.DataModel.Redis
             Monitor.Enter(LockObj);
             try
             {
-                if (_client == null)
-                    return _client = connect.GetDatabase(db);
-
-                if (_db == db)
-                    return _client;
-
-                _client = connect.GetDatabase(db);
-                _db = db;
+                if (_client == null || db != _client.Database)
+                    _client = _connect.GetDatabase(db);
+                _db = _client.Database;
                 return _client;
             }
             catch (Exception ex)
             {
-                LogRecorder.Exception(ex, ConnectString);
+                LogRecorderX.Exception(ex, ConnectString);
                 throw;
             }
             finally
@@ -195,12 +209,34 @@ namespace Agebull.Common.DataModel.Redis
         }
 
         /// <summary>
-        /// 删除KEY,未实现
+        /// 删除KEY
         /// </summary>
         /// <param name="pattern"></param>
         public void FindAndRemoveKey(string pattern)
         {
-            throw new NotImplementedException();
+            if (CurrentDb == 0)
+                throw new Exception("StackExchange.Redis在使用DB0时,server.Keys会不正确的发生死循环");
+            var keys = new List<string>();
+            var server = Connect.GetServer(Connect.GetEndPoints().First());
+            if (server.DatabaseSize((int)CurrentDb) == 0)
+                return;
+            long cursor = 0;
+            do
+            {
+                var res = server.Keys((int)CurrentDb, pattern, 10, cursor, 0);
+                foreach (var key in res)
+                    keys.Add(key);
+                var scaninfo = (IScanningCursor)res;
+                cursor = scaninfo.Cursor;
+            } while (cursor > 0);
+
+            var cnt = 0;
+            foreach (var key in keys)
+            {
+                Client.KeyDelete(key);
+                if (++cnt % 10 == 0)
+                    Thread.Sleep(1);
+            }
         }
 
 

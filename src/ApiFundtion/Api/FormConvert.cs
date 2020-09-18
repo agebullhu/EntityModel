@@ -8,23 +8,42 @@
 
 #region 引用
 
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
-namespace Agebull.Common.WebApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     FORM对象转化辅助类
     /// </summary>
     public class FormConvert
     {
+        #region 基本属性
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="data"></param>
+        public FormConvert(EditDataObject data)
+        {
+            Data = data;
+        }
+
         /// <summary>
         ///     读取过程的错误消息记录
         /// </summary>
-        public readonly Dictionary<string, string> Messages = new Dictionary<string, string>();
+        public EditDataObject Data { get; }
+
+        /// <summary>
+        ///     是否更新状态
+        /// </summary>
+        public bool IsUpdata { get; set; }
 
         /// <summary>
         ///     是否发生解析错误
@@ -32,734 +51,578 @@ namespace Agebull.Common.WebApi
         public bool Failed { get; set; }
 
         /// <summary>
+        ///     字段
+        /// </summary>
+        private readonly Dictionary<string, string> _messages = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 设置错误字段
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="msg"></param>
+        private void AddMessage(string field, string msg)
+        {
+            if (_messages.TryGetValue(field, out var val))
+                _messages[field] = $"{val};{msg}";
+            else
+                _messages.Add(field, msg);
+        }
+
+
+        /// <summary>
+        ///     是否发生解析错误
+        /// </summary>
+        public string Message
+        {
+            get
+            {
+                StringBuilder msg = new StringBuilder();
+                foreach (var kv in _messages)
+                {
+                    var field = Data.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == kv.Key)?.Caption ?? kv.Key;
+                    msg.AppendLine($"{field} : {kv.Value}");
+                }
+                return msg.ToString();
+            }
+        }
+
+        #endregion
+
+        #region 基本操作
+
+
+        /// <summary>
         ///     参数
         /// </summary>
-        private readonly Dictionary<string, string> _arguments;
-        /// <summary>
-        /// 构造
-        /// </summary>
-        /// <param name="arguments"></param>
-        public FormConvert(Dictionary<string, string> arguments)
-        {
-            _arguments = arguments;
-        }
-
-        private string GetValue(string name)
-        {
-            return !_arguments.TryGetValue(name, out var val) ? null : val?.Trim();
-        }
+        private readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
 
         /// <summary>
-        /// 到文本
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="canNull"></param>
-        /// <returns></returns>
-        public string ToString(string name, bool canNull)
-        {
-            if (!string.IsNullOrWhiteSpace(GetValue(name))) return GetValue(name).Trim();
-            //if (!canNull)
-            //{
-            //    AddMessage(name, "值不能为空");
-            //    this.Failed = true;
-            //}
-            return null;
-        }
-        /// <summary>
-        /// 设置错误参数
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="msg"></param>
-        private void AddMessage(string name, string msg)
-        {
-            if (Messages.ContainsKey(name))
-                Messages[name] = msg;
-            else
-                Messages.Add(name, msg);
-        }
-
-        /// <summary>
-        /// 参数值转换
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <param name="def">找不到或为空时的默认值</param>
-        /// <returns>值</returns>
-        public string ToString(string name, string def = null)
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        bool TryGet<T>(string name, Func<string, T> convert, out T value)
         {
-            return string.IsNullOrWhiteSpace(GetValue(name)) ? def : GetValue(name).Trim();
-        }
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-
-        public byte ToByte(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
             {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return 0;
+                value = default;
+                return false;
             }
-
-            if (byte.TryParse(GetValue(name), out var vl)) return vl;
-            AddMessage(name, "值无法转为数字");
-            Failed = true;
-            return 0;
-
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public byte? ToNullByte(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
+            if (string.IsNullOrWhiteSpace(str))
             {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return null;
+                value = default;
+                return true;
             }
-
-            if (!byte.TryParse(GetValue(name), out var vl))
+            try
             {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return null;
+                value = convert(str.Trim());
+                return true;
             }
-
-            return vl;
+            catch
+            {
+                AddMessage(name, $"转换为{typeof(T).Name}出错");
+                Failed = true;
+                value = default;
+                return false;
+            }
         }
 
+
         /// <summary>
-        /// 参数值转换
+        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
         /// </summary>
         /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public sbyte ToSByte(string name)
+        /// <param name="convert">转换方法</param>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        bool TryGet<T>(string name, Func<string, T> convert, out T? value)
+            where T : struct
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
             {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return 0;
+                value = null;
+                return false;
             }
-
-            if (!sbyte.TryParse(GetValue(name), out var vl))
+            if (string.IsNullOrWhiteSpace(str))
             {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
+                value = null;
+                return true;
             }
-
-            return vl;
+            try
+            {
+                value = convert(str.Trim());
+                return true;
+            }
+            catch
+            {
+                AddMessage(name, $"转换为{typeof(T).Name}出错");
+                Failed = true;
+                value = default;
+                return false;
+            }
         }
 
+        #endregion
+
+        #region 字段值转换 
+
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public sbyte? ToNullSByte(string name)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out string value)
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
+            if (!Arguments.TryGetValue(field, out var str))
             {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return null;
+                value = default;
+                return false;
             }
-
-            if (!sbyte.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public long ToLong(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return 0;
-            }
-
-            if (!long.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
+            value = str;
+            return true;
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的默认值</param>
-        /// <returns>值</returns>
-        public long ToLong(string name, long def)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetEnum<TEnum>(string field, out TEnum value)
+            where TEnum : struct
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!long.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
+            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public long? ToNullLong(string name)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetEnum<TEnum>(string field, out TEnum? value)
+            where TEnum : struct
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!long.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
+            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="canNull">能否为空</param>
-        /// <returns>值</returns>
-        public uint ToUInteger(string name, bool canNull = true)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out byte value)
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
+            return TryGet(field, byte.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out byte? value)
+        {
+            return TryGet(field, byte.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out sbyte value)
+        {
+            return TryGet(field, sbyte.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out sbyte? value)
+        {
+            return TryGet(field, sbyte.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out short value)
+        {
+            return TryGet(field, short.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out short? value)
+        {
+            return TryGet(field, short.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out ushort value)
+        {
+            return TryGet(field, ushort.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out ushort? value)
+        {
+            return TryGet(field, ushort.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out bool value)
+        {
+            return TryGet(field, str =>
             {
-                if (!canNull)
+                switch (str.ToLower())
                 {
-                    AddMessage(name, "值不能为空");
-                    Failed = true;
+                    default:
+                        return bool.Parse(str);
+                    case "off":
+                    case "no":
+                    case "0":
+                        return false;
+                    case "on":
+                    case "yes":
+                    case "1":
+                        return true;
                 }
-
-                return 0;
-            }
-
-            if (!uint.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
+            }, out value);
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="canNull">能否为空</param>
-        /// <returns>值</returns>
-        public int ToInteger(string name, bool canNull = true)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out bool? value)
         {
-            var val = GetValue(name);
-            if (string.IsNullOrWhiteSpace(val))
+            return TryGet(field, str =>
             {
-                if (!canNull)
+                switch (str.ToLower())
                 {
-                    AddMessage(name, "值不能为空");
-                    Failed = true;
+                    default:
+                        return bool.Parse(str);
+                    case "off":
+                    case "no":
+                    case "0":
+                        return false;
+                    case "on":
+                    case "yes":
+                    case "1":
+                        return true;
                 }
-
-                return 0;
-            }
-
-            if (!int.TryParse(val, out var vl))
-            {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
+            }, out value);
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="procFunc">转换方法</param>
-        /// <returns>值</returns>
-        public int ToInteger(string name, Func<string, string> procFunc)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out int value)
         {
-            var str = GetValue(name);
-            if (string.IsNullOrWhiteSpace(str)) return 0;
-            str = procFunc(str);
-            if (!int.TryParse(str, out var vl))
+            return TryGet(field, int.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out int? value)
+        {
+            return TryGet(field, int.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out uint value)
+        {
+            return TryGet(field, uint.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out uint? value)
+        {
+            return TryGet(field, uint.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out long value)
+        {
+            return TryGet(field, long.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out long? value)
+        {
+            return TryGet(field, long.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out ulong value)
+        {
+            return TryGet(field, ulong.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out ulong? value)
+        {
+            return TryGet(field, ulong.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out float value)
+        {
+            return TryGet(field, float.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out float? value)
+        {
+            return TryGet(field, float.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out double value)
+        {
+            return TryGet(field, double.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out double? value)
+        {
+            return TryGet(field, double.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out DateTime value)
+        {
+            return TryGet(field, DateTime.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out DateTime? value)
+        {
+            return TryGet(field, DateTime.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out decimal value)
+        {
+            return TryGet(field, decimal.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out decimal? value)
+        {
+            return TryGet(field, decimal.Parse, out value);
+        }
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out Guid value)
+        {
+            return TryGet(field, Guid.Parse, out value);
+        }
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out Guid? value)
+        {
+            return TryGet(field, Guid.Parse, out value);
+        }
+
+
+        /// <summary>
+        /// 字段值转换
+        /// </summary>
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out List<int> value)
+        {
+            if (!Arguments.TryGetValue(field, out var str))
             {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
+                value = default;
+                return false;
             }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public int ToInteger(string name, int def)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!int.TryParse(GetValue(name), out var vl))
+            value = new List<int>();
+            if (string.IsNullOrWhiteSpace(str))
             {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return 0;
+                return true;
             }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public int? ToNullInteger(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!int.TryParse(GetValue(name), out var vl))
+            var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var word in words)
             {
-                AddMessage(name, "值无法转为数字");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public bool ToBoolean(string name)
-        {
-            var str = GetValue(name);
-            if (string.IsNullOrWhiteSpace(str)) return false;
-            switch (str.ToLower())
-            {
-                case "0":
-                case "off":
-                case "no":
-                case "false":
-                    return false;
-                case "1":
-                case "on":
-                case "yes":
-                case "true":
-                    return true;
-            }
-
-            Failed = true;
-            return false;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public bool ToBoolean(string name, bool def)
-        {
-            var str = GetValue(name);
-            if (string.IsNullOrWhiteSpace(str)) return def;
-            switch (str.ToLower())
-            {
-                case "0":
-                case "off":
-                case "no":
-                case "false":
-                    return false;
-                case "1":
-                case "on":
-                case "yes":
-                case "true":
-                    return true;
-            }
-
-            Failed = true;
-            return false;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public bool? ToNullBoolean(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            return ToBoolean(name);
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="canNull">是否可为空时</param>
-        /// <returns>值</returns>
-        public decimal ToDecimal(string name, bool canNull = true)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                if (!canNull)
+                if (int.TryParse(word, out var num))
                 {
-                    AddMessage(name, "值不能为空");
-                    Failed = true;
+                    value.Add(num);
+                    continue;
                 }
-
-                return 0;
-            }
-
-            if (!decimal.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
+                AddMessage(field, "参数值转换出错");
                 Failed = true;
-                return 0;
+                return false;
             }
-
-            return vl;
+            return true;
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public decimal ToDecimal(string name, decimal def)
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetValue(string field, out List<long> value)
         {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!decimal.TryParse(GetValue(name), out var vl))
+            if (!Arguments.TryGetValue(field, out var str))
             {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return 0;
+                value = default;
+                return false;
             }
-
-            return vl;
+            value = new List<long>();
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return true;
+            }
+            var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var word in words)
+            {
+                if (long.TryParse(word, out var num))
+                {
+                    value.Add(num);
+                    continue;
+                }
+                AddMessage(field, "参数值转换出错");
+                Failed = true;
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
-        /// 参数值转换
+        /// 字段值转换
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public decimal? ToNullDecimal(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!decimal.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return null;
-            }
+        /// <param name="field">名称</param>
+        /// <param name="value">字段名称</param>
+        /// <returns>是否接收值</returns>
+        public bool TryGetIDs(string field, out List<long> value) => TryGetValue(field, out value);
 
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public Guid ToGuid(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return Guid.Empty;
-            }
-
-            if (!Guid.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为GUID");
-                Failed = true;
-                return Guid.Empty;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public Guid ToGuid(string name, Guid def)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!Guid.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为GUID");
-                Failed = true;
-                return Guid.Empty;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public Guid? ToNullGuid(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!Guid.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为GUID");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public double ToDouble(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return 0;
-            }
-
-            if (!double.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public double ToDouble(string name, double def)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!double.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public double? ToNullDouble(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!double.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public float ToSingle(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return 0;
-            }
-
-            if (!float.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public float ToSingle(string name, float def)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!float.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return 0;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public float? ToNullSingle(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!float.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为小数");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public DateTime ToDateTime(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name)))
-            {
-                AddMessage(name, "值不能为空");
-                Failed = true;
-                return DateTime.MinValue;
-            }
-
-            if (!DateTime.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为日期");
-                Failed = true;
-                return DateTime.MinValue;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="def">为空时的缺省值</param>
-        /// <returns>值</returns>
-        public DateTime ToDateTime(string name, DateTime def)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return def;
-            if (!DateTime.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为日期");
-                Failed = true;
-                return def;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public DateTime? ToNullDateTime(string name)
-        {
-            if (string.IsNullOrWhiteSpace(GetValue(name))) return null;
-            if (!DateTime.TryParse(GetValue(name), out var vl))
-            {
-                AddMessage(name, "值无法转为日期");
-                Failed = true;
-                return null;
-            }
-
-            return vl;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>值</returns>
-        public List<int> ToArray(string name)
-        {
-            var cs = GetValue(name);
-            if (string.IsNullOrWhiteSpace(cs)) return null;
-            var css = cs.Trim('[', ']').Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-            return css.Length > 0 ? css.Select(int.Parse).ToList() : null;
-        }
-
-        /// <summary>
-        /// 参数值转换
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="parse">转换方法</param>
-        /// <returns>值</returns>
-        public List<T> ToArray<T>(string name, Func<string, T> parse)
-        {
-            var cs = GetValue(name);
-            if (string.IsNullOrWhiteSpace(cs)) return null;
-            var css = cs.Trim('[', ']').Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-            return css.Length > 0 ? css.Select(parse).ToList() : null;
-        }
+        #endregion
     }
 }

@@ -8,28 +8,85 @@
 
 #region 引用
 
+using Agebull.EntityModel.BusinessLogic;
+using Agebull.EntityModel.Common;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Web.Http;
-using Agebull.Common.DataModel.BusinessLogic;
-using Agebull.Common.Rpc;
-using Gboxt.Common.DataModel;
-using Gboxt.Common.DataModel.MySql;
+using ZeroTeam.MessageMVC.Context;
+using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
-namespace Agebull.Common.WebApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     支持数据状态的启用禁用方法的页面的基类
     /// </summary>
-    public abstract class ApiControllerForDataState<TData, TAccess, TDatabase, TBusinessLogic> :
-        ApiController<TData, TAccess, TDatabase, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IIdentityData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TBusinessLogic : BusinessLogicByStateData<TData, TAccess, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TPrimaryKey">主键类型</typeparam>
+    /// <typeparam name="TBusinessLogic">业务对象</typeparam>
+    public abstract class ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic> :
+        ApiController<TData, TPrimaryKey, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IIdentityData<TPrimaryKey>, new()
+        where TBusinessLogic : class, IBusinessLogicByStateData<TData, TPrimaryKey>, new()
     {
+        #region API
+
+        /// <summary>
+        ///     重置数据状态
+        /// </summary>
+        [Route("state/reset")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Reset(IdsArguent arg)
+        {
+            OnReset();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     废弃数据
+        /// </summary>
+        [Route("state/discard")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Discard(IdsArguent arg)
+        {
+            OnDiscard();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     禁用数据
+        /// </summary>
+        [Route("state/disable")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Disable(IdsArguent arg)
+        {
+            OnDisable();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        /// <summary>
+        ///     启用数据
+        /// </summary>
+        [Route("state/enable")]
+        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
+        public IApiResult Enable(IdsArguent arg)
+        {
+            OnEnable();
+            return IsFailed
+                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    : ApiResultHelper.Succees();
+        }
+
+        #endregion
+
         #region 数据校验支持
 
         /// <summary>
@@ -40,117 +97,22 @@ namespace Agebull.Common.WebApi
         /// <param name="field"></param>
         protected override void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
         {
-            var no = GetArg("No");
-            if (string.IsNullOrEmpty(no))
+            if (!RequestArgumentConvert.TryGet(name, out string no))
             {
                 SetFailed(name + "为空");
                 return;
             }
 
-            var id = GetIntArg("id", 0);
+            var id = RequestArgumentConvert.GetInt("id", 0);
             Expression<Func<TData, bool>> condition;
             if (id == 0)
                 condition = p => p.DataState < DataStateType.Delete;
             else
-                condition = p => p.Id != id && p.DataState < DataStateType.Delete;
+                condition = p => !Equals(p.Id , id) && p.DataState < DataStateType.Delete;
             if (Business.Access.IsUnique(field, no, condition))
                 SetFailed(name + "[" + no + "]不唯一");
             else
-                GlobalContext.Current.LastMessage = name + "[" + no + "]唯一";
-        }
-
-        #endregion
-
-        #region API
-
-        /// <summary>
-        ///      修改数据状态
-        /// </summary>
-        [HttpPost]
-        [Route("state/reset")]
-        public ApiResponseMessage Reset()
-        {
-            
-            OnReset();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///      修改数据状态
-        /// </summary>
-        [HttpPost]
-        [Route("state/lock")]
-        public ApiResponseMessage Lock()
-        {
-            
-            OnLock();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///      修改数据状态
-        /// </summary>
-        [HttpPost]
-        [Route("state/discard")]
-        public ApiResponseMessage Discard()
-        {
-            
-            OnDiscard();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///      修改数据状态
-        /// </summary>
-        [HttpPost]
-        [Route("state/disable")]
-        public ApiResponseMessage Disable()
-        {
-            
-            OnDisable();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
-        }
-
-        /// <summary>
-        ///      修改数据状态
-        /// </summary>
-        [HttpPost]
-        [Route("state/enable")]
-        public ApiResponseMessage Enable()
-        {
-            
-            OnEnable();
-            return IsFailed
-                ? Request.ToResponse(new ApiResult
-                {
-                    Success = false,
-                    Status = GlobalContext.Current.LastStatus
-                })
-                : Request.ToResponse(ApiResult.Succees());
+                GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -158,23 +120,18 @@ namespace Agebull.Common.WebApi
         #region 操作
 
         /// <summary>
-        ///     锁定对象
-        /// </summary>
-        protected virtual void OnLock()
-        {
-            var ids = GetLongArrayArg("selects");
-            if (!Business.LoopIds(ids, Business.Lock))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
-        }
-
-        /// <summary>
         ///     恢复对象
         /// </summary>
         private void OnReset()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
+
             if (!Business.LoopIds(ids, Business.Reset))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -182,9 +139,14 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnDiscard()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
+
             if (!Business.LoopIds(ids, Business.Discard))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -192,9 +154,14 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnEnable()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
+
             if (!Business.LoopIds(ids, Business.Enable))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -202,53 +169,51 @@ namespace Agebull.Common.WebApi
         /// </summary>
         private void OnDisable()
         {
-            var ids = GetLongArrayArg("selects");
+            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
+            {
+                SetFailed("没有数据");
+                return;
+            }
+
             if (!Business.LoopIds(ids, Business.Disable))
-                GlobalContext.Current.LastState = ErrorCode.LogicalError;
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         #endregion
-
 
         #region 列表数据
 
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        protected override ApiPageData<TData> GetListData()
-        {
-            var root = new LambdaItem<TData>();
-            return GetListData(root);
-        }
-
-        /// <summary>
-        ///     取得列表数据
-        /// </summary>
         protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            var state = GetIntArg("dataState", 0x100);
-            if (state >= 0)
+            if (!RequestArgumentConvert.TryGet("_state_", out int state) || state < 0 || state >= 0x100)
+                return base.GetListData(lambda);
+            //BUG:using (ManageModeScope.CreateScope())
             {
-                if (state < 0x100)
-                    lambda.AddRoot(p => p.DataState == (DataStateType)state);
-                else
-                    lambda.AddRoot(p => p.DataState < DataStateType.Delete);
+                lambda.AddRoot(p => p.DataState == (DataStateType)state);
+                return base.GetListData(lambda);
             }
-
-            return DoGetListData(lambda);
         }
 
         #endregion
     }
-
     /// <summary>
-    ///     支持数据状态的启用禁用方法的页面的基类
+    ///     自动实现基本增删改查API页面的基类
     /// </summary>
-    public abstract class ApiControllerForDataState<TData, TAccess, TDatabase> :
-        ApiController<TData, TAccess, TDatabase, BusinessLogicByStateData<TData, TAccess, TDatabase>>
-        where TData : EditDataObject, IStateData, IIdentityData, new()
-        where TAccess : DataStateTable<TData, TDatabase>, new()
-        where TDatabase : MySqlDataBase
+    public abstract class ApiControllerForDataState<TData, TBusinessLogic> : ApiControllerForDataState<TData, long, TBusinessLogic>
+        where TData : EditDataObject, IStateData, IIdentityData<long>, new()
+        where TBusinessLogic : class, IBusinessLogicByStateData<TData, long>, new()
     {
+        ///<inheritdoc/>
+        protected sealed override (bool, long) Convert(string value)
+        {
+            if (value != null && long.TryParse(value, out var id))
+            {
+                return (true, id);
+            }
+            return (false, 0);
+        }
     }
 }
