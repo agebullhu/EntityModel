@@ -79,6 +79,11 @@ namespace Agebull.EntityModel.MySql
         public bool UpdateByMidified { get; set; }
 
         /// <summary>
+        /// 不做代码注入
+        /// </summary>
+        public bool NoInjection { get; set; }
+        
+        /// <summary>
         ///     表的唯一标识
         /// </summary>
         public abstract int TableId { get; }

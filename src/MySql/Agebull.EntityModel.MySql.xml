@@ -44,19 +44,9 @@
             连接管理
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.MySql.MySqlConnectionsManager.IsManagement">
-            <summary>
-            是否在控制中
-            </summary>
-        </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlConnectionsManager.Instance">
             <summary>
             是否在控制中
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#ILifeFlow#Destory">
-            <summary>
-                初始化
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.ZeroTeam#MessageMVC#ILifeFlow#Initialize">
@@ -74,11 +64,6 @@
                 内部初始化
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.MySql.MySqlConnectionsManager.Connections">
-            <summary>
-                连接对象
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.GetConnection(System.String)">
             <summary>
             取得一个空闲连接对象
@@ -90,36 +75,6 @@
             关闭连接对象
             </summary>
             <returns></returns>
-        </member>
-        <member name="F:Agebull.EntityModel.MySql.MySqlConnectionsManager.FreeConnections">
-            <summary>
-                空闲连接对象
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.MySql.MySqlConnectionsManager.UsingConnections">
-            <summary>
-                使用中连接对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.GetManagement(System.String)">
-            <summary>
-            从连接池中获取
-            </summary>
-            <param name="name"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.AddUsing(MySql.Data.MySqlClient.MySqlConnection,System.String)">
-            <summary>
-            加入使用池中
-            </summary>
-            <param name="connection"></param>
-            <param name="name"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.AddFree(MySql.Data.MySqlClient.MySqlConnection,System.String)">
-            <summary>
-            加入空闲池中
-            </summary>
-            <param name="connection"></param>
-            <param name="name"></param>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.InitConnection(System.String)">
             <summary>
@@ -858,6 +813,11 @@
             按修改更新
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.MySql.MySqlTable`2.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlTable`2.TableId">
             <summary>
                 表的唯一标识
@@ -1581,6 +1541,11 @@
             取得仅更新的SQL语句
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.GetSqlCode(`0)">
+            <summary>
+            取得仅更新的SQL语句
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.UpdateInner(`0)">
             <summary>
                 插入数据
@@ -1922,7 +1887,7 @@
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlTable`2.OnEvent(Agebull.EntityModel.Common.DataOperatorType,`0)">
             <summary>
-                更新语句后处理(单个实体操作不引发)
+                更新语句后处理(单个实体操作)
             </summary>
             <param name="operatorType">操作类型</param>
             <param name="entity">其它参数</param>

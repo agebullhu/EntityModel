@@ -2070,6 +2070,11 @@
                 无懒构造数据库对象
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Common.IDataTable.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Common.IDataTable.TableId">
             <summary>
                 表的唯一标识
@@ -3659,24 +3664,6 @@
             <summary>
             状态修改事件
             </summary>
-            <param name="database">数据库</param>
-            <param name="entity">实体</param>
-            <param name="oType">操作</param>
-            <param name="valueType">值类型</param>
-            <param name="value">内容</param>
-            <remarks>
-            如果内容为实体,使用JSON序列化,
-            如果使用主键内容为#:[key](如:#:123)样式,
-            如果为批量操作,内容为QueryCondition的JSON序列化
-            </remarks>
-        </member>
-        <member name="T:Agebull.EntityModel.Events.EntityEventProxy">
-            <summary>
-            默认的数据事件代理 
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Events.EntityEventProxy.Agebull#EntityModel#Events#IEntityEventProxy#OnStatusChanged(System.String,System.String,Agebull.EntityModel.Common.DataOperatorType,Agebull.EntityModel.Events.EntityEventValueType,System.String)">
-            <summary>状态修改事件</summary>
             <param name="database">数据库</param>
             <param name="entity">实体</param>
             <param name="oType">操作</param>

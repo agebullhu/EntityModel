@@ -67,7 +67,8 @@ namespace Agebull.EntityModel.Sqlite
         /// <returns>更新的SQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
-            CheckUpdateContition(ref condition);
+            if (!NoInjection)
+                CheckUpdateContition(ref condition);
             return $@"{BeforeUpdateSql(condition)}
 UPDATE [{ContextWriteTable}]
    SET {valueExpression} 
@@ -117,7 +118,7 @@ UPDATE [{ContextWriteTable}]
         private string CreateLoadValueSql(string field, string condition)
         {
             var sql = new StringBuilder();
-            CreateLoadSql(sql, FieldMap[field], condition, null, false,1);
+            CreateLoadSql(sql, FieldMap[field], condition, null, false, 1);
             return sql.ToString();
         }
 
@@ -130,7 +131,7 @@ UPDATE [{ContextWriteTable}]
         private string CreateLoadValuesSql(string field, ConditionItem convert)
         {
             var sql = new StringBuilder();
-            CreateLoadSql(sql, FieldMap[field], convert.ConditionSql, null, false,1);
+            CreateLoadSql(sql, FieldMap[field], convert.ConditionSql, null, false, 1);
             return sql.ToString();
         }
 
@@ -144,7 +145,7 @@ UPDATE [{ContextWriteTable}]
         private string CreateOnceSql(string condition, string order, bool desc)
         {
             var sql = new StringBuilder();
-            CreateLoadSql(sql, ContextLoadFields, condition, order, desc,1);
+            CreateLoadSql(sql, ContextLoadFields, condition, order, desc, 1);
             return sql.ToString();
         }
 
@@ -177,7 +178,7 @@ UPDATE [{ContextWriteTable}]
                 : FieldDictionary[order];
 
             var sql = new StringBuilder();
-            CreateLoadSql(sql, ContextLoadFields, condition, orderField, desc,pageSize,page);
+            CreateLoadSql(sql, ContextLoadFields, condition, orderField, desc, pageSize, page);
             return sql.ToString();
         }
 
@@ -192,7 +193,7 @@ UPDATE [{ContextWriteTable}]
         /// <param name="page">从1开始的页号</param>
         /// <param name="pageSize">每页几行(强制大于0,小于500行)</param>
         /// <returns>载入的SQL语句</returns>
-        private void CreateLoadSql(StringBuilder sql, string fields, string condition, string order, bool desc, int pageSize = 0, int page=-1)
+        private void CreateLoadSql(StringBuilder sql, string fields, string condition, string order, bool desc, int pageSize = 0, int page = -1)
         {
             sql.AppendLine(@"SELECT");
             sql.AppendLine(fields);
@@ -205,7 +206,7 @@ UPDATE [{ContextWriteTable}]
                     sql.Append(" DESC");
                 sql.AppendLine();
             }
-            if (pageSize > 0 )
+            if (pageSize > 0)
             {
                 sql.Append($"Limit {pageSize}");
                 if (page > 1)
@@ -307,6 +308,15 @@ WHERE {condition};
         /// <returns></returns>
         private void ConditionSqlCode(StringBuilder code, string condition)
         {
+            if (NoInjection)
+            {
+                if (!string.IsNullOrEmpty(condition))
+                {
+                    code.Append("WHERE ");
+                    code.Append(condition);
+                }
+                return;
+            }
             List<string> conditions = new List<string>();
             if (!_baseConditionInited)
             {

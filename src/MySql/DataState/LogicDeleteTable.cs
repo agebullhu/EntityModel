@@ -12,7 +12,6 @@
 
 using Agebull.EntityModel.Common;
 using System.Collections.Generic;
-using ZeroTeam.MessageMVC.Context;
 
 namespace Agebull.EntityModel.MySql
 {
@@ -37,8 +36,6 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         protected override void ConditionSqlCode(List<string> conditions)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
-                return;
             conditions.Add($"`{FieldDictionary["IsDeleted"]}` = 0");
         }
 
@@ -49,8 +46,6 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         protected override void CheckUpdateContition(ref string condition)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
-                return;
             if (condition == null)
                 condition = $"`{FieldDictionary["IsDeleted"]}` = 0";
             else

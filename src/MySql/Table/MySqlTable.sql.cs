@@ -58,7 +58,8 @@ namespace Agebull.EntityModel.MySql
         /// <returns>¸üÐÂµÄSQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
-            CheckUpdateContition(ref condition);
+            if (!NoInjection)
+                CheckUpdateContition(ref condition);
             return $@"{BeforeUpdateSql(condition)}
 UPDATE `{ContextWriteTable}` 
    SET {valueExpression} 
@@ -99,6 +100,11 @@ UPDATE `{ContextWriteTable}`
         /// <returns></returns>
         private string ConditionSqlCode(string condition)
         {
+            if (NoInjection)
+            {
+                return string.IsNullOrEmpty(condition) ? null : $"WHERE {condition}";
+            }
+
             List<string> conditions = new List<string>();
             if (!_baseConditionInited)
             {
@@ -109,8 +115,11 @@ UPDATE `{ContextWriteTable}`
                 conditions.Add(BaseCondition);
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
-            ConditionSqlCode(conditions);
-            DataUpdateHandler.ConditionSqlCode(this, conditions);
+            if (!NoInjection)
+            {
+                ConditionSqlCode(conditions);
+                DataUpdateHandler.ConditionSqlCode(this, conditions);
+            }
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();

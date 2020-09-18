@@ -20,11 +20,11 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         Task<bool> IAutoRegister.AutoRegist(IServiceCollection services)
         {
-            services.AddTransient<IEntityEventProxy, EntityEventProxy>();
+            //services.AddTransient<IEntityEventProxy, EntityEventProxy>();
             services.AddTransient<IDataTrigger, DataStateTrigger>();
             services.AddTransient<IDataTrigger, CharacterDataUpdateTrigger>();
             MySqlConnectionsManager.Instance = new MySqlConnectionsManager();
-            MySqlConnectionsManager.IsManagement = true;
+            //MySqlConnectionsManager.IsManagement = true;
             services.AddSingleton<IHealthCheck, MySqlConnectionsManager>(provider => MySqlConnectionsManager.Instance);
             services.AddSingleton<IFlowMiddleware, MySqlConnectionsManager>(provider => MySqlConnectionsManager.Instance);
             return Task.FromResult(false);

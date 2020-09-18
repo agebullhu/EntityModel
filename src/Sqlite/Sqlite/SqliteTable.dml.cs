@@ -20,6 +20,7 @@ using System.Linq.Expressions;
 using System.Text;
 using DataUpdateHandler = Agebull.EntityModel.Events.DataUpdateHandler;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<Microsoft.Data.Sqlite.SqliteCommand>;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -339,7 +340,7 @@ namespace Agebull.EntityModel.Sqlite
         /// <remarks>
         ///     对当前对象的属性的更改,请自行保存,否则将丢失
         /// </remarks>
-        private void EndSaved(TData entity, DataOperatorType operatorType)
+        private Task EndSaved(TData entity, DataOperatorType operatorType)
         {
             if (!IsBaseClass)
             {
@@ -358,7 +359,7 @@ namespace Agebull.EntityModel.Sqlite
                 entity.__status.AcceptChanged();
             }
             OnDataSaved(entity, operatorType);
-            OnEvent(operatorType, entity);
+            return OnEvent(operatorType, entity);
         }
         #endregion
 
@@ -789,6 +790,8 @@ namespace Agebull.EntityModel.Sqlite
         /// <returns></returns>
         private string BeforeUpdateSql(string condition)
         {
+            if (NoInjection)
+                return null;
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
             DataUpdateHandler.BeforeUpdateSql(this, code, condition);
@@ -802,6 +805,8 @@ namespace Agebull.EntityModel.Sqlite
         /// <returns></returns>
         private string AfterUpdateSql(string condition)
         {
+            if (NoInjection)
+                return null;
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
             DataUpdateHandler.AfterUpdateSql(this, code, condition);
@@ -942,19 +947,20 @@ namespace Agebull.EntityModel.Sqlite
         /// </summary>
         /// <param name="operatorType">操作类型</param>
         /// <param name="key">其它参数</param>
-        private void OnKeyEvent(DataOperatorType operatorType, object key)
+        private Task OnKeyEvent(DataOperatorType operatorType, object key)
         {
-            if (GlobalEvent)
-                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
+            if (!GlobalEvent)
+                return Task.CompletedTask;
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
         }
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
-        private void OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
+        private Task OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
         {
             if (!GlobalEvent)
-                return;
+                return Task.CompletedTask;
             var queryCondition = new MulitCondition
             {
                 Condition = condition,
@@ -969,17 +975,18 @@ namespace Agebull.EntityModel.Sqlite
                     Type = args[i].DbType
                 };
             }
-            DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
         }
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
         /// <param name="operatorType">操作类型</param>
         /// <param name="entity">其它参数</param>
-        private void OnEvent(DataOperatorType operatorType, TData entity)
+        private Task OnEvent(DataOperatorType operatorType, TData entity)
         {
-            if (GlobalEvent)
-                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
+            if (!GlobalEvent)
+                return Task.CompletedTask;
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
         }
 
         #endregion

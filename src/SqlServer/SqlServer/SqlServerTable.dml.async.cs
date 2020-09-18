@@ -98,7 +98,7 @@ namespace Agebull.EntityModel.SqlServer
                 }
             }
 
-            EndSaved(entity, DataOperatorType.Insert);
+            await EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
 
@@ -218,7 +218,7 @@ namespace Agebull.EntityModel.SqlServer
             var result = await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(entity));
             if (result == 0)
                 return false;
-            EndSaved(entity, DataOperatorType.Delete);
+            await EndSaved(entity, DataOperatorType.Delete);
             return true;
         }
 
@@ -305,7 +305,7 @@ namespace Agebull.EntityModel.SqlServer
                 return false;
             }
 
-            EndSaved(entity, DataOperatorType.Update);
+            await EndSaved(entity, DataOperatorType.Update);
             return true;
         }
 
@@ -321,7 +321,7 @@ namespace Agebull.EntityModel.SqlServer
             var cnt = await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (cnt == 0)
                 return false;
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -357,7 +357,7 @@ namespace Agebull.EntityModel.SqlServer
                 //scope.Succeed();
             }
 
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -381,7 +381,7 @@ namespace Agebull.EntityModel.SqlServer
                 //scope.Succeed();
             }
 
-            OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
+            await OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
             return cnt;
         }
 
@@ -413,7 +413,7 @@ namespace Agebull.EntityModel.SqlServer
                 //scope.Succeed();
             }
 
-            OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
+            await OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
             return cnt;
         }
 
@@ -444,7 +444,7 @@ namespace Agebull.EntityModel.SqlServer
         {
             int re = await SetValueInnerAsync(field, value, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnKeyEvent(DataOperatorType.Update, key);
+                await OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -461,7 +461,7 @@ namespace Agebull.EntityModel.SqlServer
             int re = await SetValueInnerAsync(GetPropertyName(fieldExpression), value, PrimaryKeyConditionSQL,
                 CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnKeyEvent(DataOperatorType.Update, key);
+                await OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -490,7 +490,7 @@ namespace Agebull.EntityModel.SqlServer
                 //scope.Succeed();
             }
 
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
 
@@ -631,7 +631,7 @@ namespace Agebull.EntityModel.SqlServer
             params DbParameter[] args)
         {
             int result = await DoUpdateValueAsync(field, value, condition, args);
-            OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
+            await OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
             return result;
         }
 
@@ -770,7 +770,7 @@ namespace Agebull.EntityModel.SqlServer
                 await DataBase.ExecuteAsync(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
-            EndSaved(entity, DataOperatorType.Insert);
+            await EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
 
@@ -810,7 +810,7 @@ namespace Agebull.EntityModel.SqlServer
                 DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
-            EndSaved(entity, DataOperatorType.Update);
+            await EndSaved(entity, DataOperatorType.Update);
             return true;
         }
 

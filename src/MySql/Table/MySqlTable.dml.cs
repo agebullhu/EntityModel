@@ -8,10 +8,8 @@
 
 #region 引用
 
-using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
@@ -20,6 +18,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<MySql.Data.MySqlClient.MySqlCommand>;
 #endregion
 
@@ -262,9 +261,29 @@ namespace Agebull.EntityModel.MySql
                 return null;
             StringBuilder sql = new StringBuilder();
             bool first = true;
-            foreach (var pro in data.__Struct.Properties)
+            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
             {
                 if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
+                    continue;
+                if (first)
+                    first = false;
+                else
+                    sql.Append(',');
+                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
+            }
+            return first ? null : sql.ToString();
+        }
+
+        /// <summary>
+        /// 取得仅更新的SQL语句
+        /// </summary>
+        protected virtual string GetSqlCode(TData data)
+        {
+            StringBuilder sql = new StringBuilder();
+            bool first = true;
+            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
+            {
+                if (!FieldMap.ContainsKey(pro.Value.Name))
                     continue;
                 if (first)
                     first = false;
@@ -281,25 +300,30 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entity">插入数据的实体</param>
         private bool UpdateInner(TData entity)
         {
-            if (UpdateByMidified && !entity.__status.IsModified)
-                return false;
-            int result;
-            PrepareSave(entity, DataOperatorType.Update);
-            string sql = GetModifiedSqlCode(entity);
+            string sql;
+            if (UpdateByMidified)
+            {
+                if (UpdateByMidified && !entity.__status.IsModified)
+                    return false;
+                PrepareSave(entity, DataOperatorType.Update);
+                sql = GetModifiedSqlCode(entity);
+            }
+            else
+            {
+                PrepareSave(entity, DataOperatorType.Update);
+                sql = GetSqlCode(entity);
+            }
             if (sql == null)
                 return false;
-            //using (TransactionScope.CreateScope(DataBase))
-            {
-                using var scope = new ConnectionScope(DataBase);
-                using var cmd = DataBase.CreateCommand(scope);
-                SetUpdateCommand(entity, cmd);
-                cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
 
-                MySqlDataBase.TraceSql(cmd);
+            using var scope = new ConnectionScope(DataBase);
+            using var cmd = DataBase.CreateCommand(scope);
+            SetUpdateCommand(entity, cmd);
+            cmd.CommandText = CreateUpdateSql(sql, PrimaryKeyConditionSQL);
 
-                result = cmd.ExecuteNonQuery();
-            }
+            MySqlDataBase.TraceSql(cmd);
 
+            var result = cmd.ExecuteNonQuery();
             if (result <= 0)
             {
                 return false;
@@ -340,7 +364,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     对当前对象的属性的更改,请自行保存,否则将丢失
         /// </remarks>
-        private void EndSaved(TData entity, DataOperatorType operatorType)
+        private Task EndSaved(TData entity, DataOperatorType operatorType)
         {
             if (!IsBaseClass)
             {
@@ -359,7 +383,7 @@ namespace Agebull.EntityModel.MySql
                 entity.__status.AcceptChanged();
             }
             OnDataSaved(entity, operatorType);
-            OnEvent(operatorType, entity);
+            return OnEvent(operatorType, entity);
         }
         #endregion
 
@@ -579,7 +603,7 @@ namespace Agebull.EntityModel.MySql
             var condition = FieldConditionSQL(true, conditions);
             SetValueByCondition(field.field, field.value, condition, args);
         }
-        
+
         /// <summary>
         ///     条件更新
         /// </summary>
@@ -811,6 +835,8 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         private string BeforeUpdateSql(string condition)
         {
+            if (NoInjection)
+                return "";
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
             DataUpdateHandler.BeforeUpdateSql(this, code, condition);
@@ -824,6 +850,8 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         private string AfterUpdateSql(string condition)
         {
+            if (NoInjection)
+                return "";
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
             DataUpdateHandler.AfterUpdateSql(this, code, condition);
@@ -964,19 +992,20 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="operatorType">操作类型</param>
         /// <param name="key">其它参数</param>
-        private void OnKeyEvent(DataOperatorType operatorType, object key)
+        private Task OnKeyEvent(DataOperatorType operatorType, object key)
         {
-            if (GlobalEvent)
-                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
+            if (!GlobalEvent)
+                return Task.CompletedTask;
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.Key, key?.ToString());
         }
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
-        private void OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
+        private Task OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
         {
             if (!GlobalEvent)
-                return;
+                return Task.CompletedTask;
             var queryCondition = new MulitCondition
             {
                 Condition = condition,
@@ -991,18 +1020,19 @@ namespace Agebull.EntityModel.MySql
                     Type = args[i].DbType
                 };
             }
-            DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
         }
 
         /// <summary>
-        ///     更新语句后处理(单个实体操作不引发)
+        ///     更新语句后处理(单个实体操作)
         /// </summary>
         /// <param name="operatorType">操作类型</param>
         /// <param name="entity">其它参数</param>
-        private void OnEvent(DataOperatorType operatorType, TData entity)
+        private Task OnEvent(DataOperatorType operatorType, TData entity)
         {
-            if (GlobalEvent)
-                DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
+            if (!GlobalEvent)
+                return Task.CompletedTask;
+            return DataUpdateHandler.OnStatusChanged(DataBase.Name, Name, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
         }
 
         #endregion

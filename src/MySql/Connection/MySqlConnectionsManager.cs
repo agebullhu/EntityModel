@@ -28,25 +28,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 是否在控制中
         /// </summary>
-        internal static bool IsManagement;
-
-        /// <summary>
-        /// 是否在控制中
-        /// </summary>
         internal static MySqlConnectionsManager Instance { get; set; }
-
-        /// <summary>
-        ///     初始化
-        /// </summary>
-        Task ILifeFlow.Destory()
-        {
-            foreach (var group in Connections)
-            {
-                foreach (var conn in group.Value.ActiveConnections.Values)
-                    CloseConnection(conn.Connection, group.Key);
-            }
-            return Task.CompletedTask;
-        }
 
         /// <summary>
         ///     初始化
@@ -63,18 +45,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         void CheckOption()
         {
-            foreach (var group in Connections.ToArray())
-            {
-                var str = ConfigurationHelper.GetConnectionString(group.Key);
-                if (str == group.Value.ConnectionString)
-                    continue;
-                Connections.TryRemove(group.Key, out var info);
-                info ??= group.Value;
-                foreach (var conn in info.ActiveConnections.Values.ToArray())
-                {
-                    Close(conn.Connection, group.Key);
-                }
-            }
         }
 
         /// <summary>
@@ -82,8 +52,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         internal static void InternalInitialize()
         {
-            if (IsManagement)
-                return;
             logger ??= DependencyHelper.LoggerFactory.CreateLogger<MySqlConnectionsManager>();
             logger.LogInformation("[MySqlConnectionsManager.InternalInitialize]");
         }
@@ -92,19 +60,12 @@ namespace Agebull.EntityModel.MySql
         #region 连接对象
 
         /// <summary>
-        ///     连接对象
-        /// </summary>
-        internal static readonly ConcurrentDictionary<string, DataBaseInfo> Connections = new ConcurrentDictionary<string, DataBaseInfo>();
-
-        /// <summary>
         /// 取得一个空闲连接对象
         /// </summary>
         /// <returns></returns>
         internal static MySqlConnection GetConnection(string name)
         {
-            if (!IsManagement)
-                return InitConnection(name);
-            return GetManagement(name);
+            return InitConnection(name);
         }
 
         /// <summary>
@@ -113,88 +74,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         internal static void Close(MySqlConnection connection, string name)
         {
-            if (!IsManagement)
-                CloseConnection(connection, name);
-            else
-                AddFree(connection, name);
-        }
-        #endregion
-
-        #region 连接池
-
-        /// <summary>
-        ///     空闲连接对象
-        /// </summary>
-        internal static readonly ConcurrentDictionary<string, ConcurrentQueue<MySqlConnection>> FreeConnections = new ConcurrentDictionary<string, ConcurrentQueue<MySqlConnection>>();
-
-        /// <summary>
-        ///     使用中连接对象
-        /// </summary>
-        internal static readonly ConcurrentDictionary<string, ConcurrentQueue<MySqlConnection>> UsingConnections = new ConcurrentDictionary<string, ConcurrentQueue<MySqlConnection>>();
-
-        /// <summary>
-        /// 从连接池中获取
-        /// </summary>
-        /// <param name="name"></param>
-        static MySqlConnection GetManagement(string name)
-        {
-            if (!FreeConnections.TryGetValue(name, out var useQueue))
-            {
-                FreeConnections.TryAdd(name, new ConcurrentQueue<MySqlConnection>());
-                FreeConnections.TryGetValue(name, out useQueue);
-            }
-            while (useQueue.TryDequeue(out var con))
-            {
-                if (con.State != ConnectionState.Open)
-                {
-                    Close(con, name);
-                    continue;
-                }
-                AddUsing(con, name);
-                return con;
-            }
-            return InitConnection(name);
-        }
-        /// <summary>
-        /// 加入使用池中
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="name"></param>
-        static void AddUsing(MySqlConnection connection, string name)
-        {
-            if (!IsManagement)
-                return;
-            if (!UsingConnections.TryGetValue(name, out var queue))
-            {
-                UsingConnections.TryAdd(name, new ConcurrentQueue<MySqlConnection>());
-                UsingConnections.TryGetValue(name, out queue);
-            }
-            queue.Enqueue(connection);
-        }
-        /// <summary>
-        /// 加入空闲池中
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="name"></param>
-        static void AddFree(MySqlConnection connection, string name)
-        {
-            if (connection == null)
-                return;
-            if (!IsManagement || connection.State != ConnectionState.Open)
-            {
-                Close(connection, name);
-                return;
-            }
-            if (!FreeConnections.TryGetValue(name, out var queue))
-            {
-                FreeConnections.TryAdd(name, new ConcurrentQueue<MySqlConnection>());
-                FreeConnections.TryGetValue(name, out queue);
-            }
-            if (queue.Count > 100 && queue.TryDequeue(out var old))
-            {
-                Close(old, name);
-            }
-            queue.Enqueue(connection);
+            CloseConnection(connection, name);
         }
         #endregion
 
@@ -218,26 +98,8 @@ namespace Agebull.EntityModel.MySql
             }
             try
             {
-                //var b = new MySqlConnectionStringBuilder(connectionString);
                 var connection = new MySqlConnection(constr);
-                //int id = connection.ConnectionString.GetHashCode();
-                //DependencyScope.DisposeFunc.Add(() => CloseByFree(connection, name));
-                if (!Connections.TryGetValue(name, out var dataBaseInfo))
-                {
-                    Connections.TryAdd(name, new DataBaseInfo
-                    {
-                        ConnectionString = constr
-                    });
-                    Connections.TryGetValue(name, out dataBaseInfo);
-                }
-                dataBaseInfo.ActiveConnections.TryAdd(connection.GetHashCode(), new ConnectionInfo
-                {
-                    DateTime = DateTime.Now,
-                    Connection = connection
-                });
-                AddUsing(connection, name);
                 connection.Open();
-                DependencyScope.Logger.Trace("打开连接数：{0}", dataBaseInfo.ActiveConnections.Count);
                 return connection;
             }
             catch (Exception exception)
@@ -257,9 +119,6 @@ namespace Agebull.EntityModel.MySql
             {
                 return;
             }
-            if (Connections.TryGetValue(name, out var list))
-                list.ActiveConnections.TryRemove(connection.GetHashCode(), out _);
-
             if (connection.State == ConnectionState.Open)
             {
                 try
@@ -280,7 +139,6 @@ namespace Agebull.EntityModel.MySql
             {
                 logger.Exception(exception, nameof(Close));
             }
-            logger.Trace("未关闭总数：{0}", list.ActiveConnections.Count);
         }
 
         #endregion

@@ -48,6 +48,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         IDataBase OriDataBase { get; }
 
+        /// <summary>
+        /// 不做代码注入
+        /// </summary>
+        bool NoInjection { get; set; }
+
         #endregion
 
         #region 数据结构

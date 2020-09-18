@@ -911,6 +911,11 @@
             按修改更新
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Sqlite.SqliteTable`2.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Sqlite.SqliteTable`2.Agebull#EntityModel#Common#IDataTable#TableId">
             <summary>
                 表的唯一标识

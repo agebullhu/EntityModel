@@ -14,7 +14,6 @@ using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ZeroTeam.MessageMVC.Context;
 
 namespace Agebull.EntityModel.MySql
 {
@@ -46,8 +45,6 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         protected override void ConditionSqlCode(List<string> conditions)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
-                return;
             conditions.Add($"`{FieldDictionary[nameof(IStateData.DataState)]}` < 255");
         }
 
@@ -58,7 +55,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         protected override void CheckUpdateContition(ref string condition)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
+            if (NoInjection)
                 return;
             if (condition == null)
                 condition = $"`{FieldDictionary[nameof(IStateData.IsFreeze)]}` = 0";

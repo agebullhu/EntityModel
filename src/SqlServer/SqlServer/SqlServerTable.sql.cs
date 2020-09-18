@@ -67,7 +67,8 @@ namespace Agebull.EntityModel.SqlServer
         /// <returns>¸üÐÂµÄSQL</returns>
         private string CreateUpdateSql(string valueExpression, string condition)
         {
-            CheckUpdateContition(ref condition);
+            if (!NoInjection)
+                CheckUpdateContition(ref condition);
             return $@"{BeforeUpdateSql(condition)}
 UPDATE [{ContextWriteTable}]
    SET {valueExpression} 
@@ -112,6 +113,10 @@ UPDATE [{ContextWriteTable}]
         /// <returns></returns>
         private string ConditionSqlCode(string condition)
         {
+            if (NoInjection)
+            {
+                return string.IsNullOrEmpty(condition) ? null : $"WHERE {condition}";
+            }
             List<string> conditions = new List<string>();
             if (!_baseConditionInited)
             {

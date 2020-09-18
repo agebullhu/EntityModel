@@ -109,8 +109,8 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!unityStateChanged)
                 return;
-            var old = GlobalContext.Current.Status.IsManageMode;
-            GlobalContext.Current.Status.IsManageMode = true;
+            var old = Access.NoInjection;
+            Access.NoInjection = true;
             try
             {
                 DoStateChanged(data);
@@ -118,7 +118,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             finally
             {
-                GlobalContext.Current.Status.IsManageMode = old;
+                Access.NoInjection = old;
             }
         }
 

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Events
 {
@@ -110,13 +111,13 @@ namespace Agebull.EntityModel.Events
         /// 如果使用主键内容为#:[key](如:#:123)样式,
         /// 如果为批量操作,内容为QueryCondition的JSON序列化
         /// </remarks>
-        public static void OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
+        public static async Task OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
         {
             var services = DependencyHelper.GetServices<IEntityEventProxy>();
             if (services == null)
                 return;
             foreach (var service in services)
-                service.OnStatusChanged(database, entity, oType, valueType, value);
+                await service.OnStatusChanged(database, entity, oType, valueType, value);
         }
         #endregion
 

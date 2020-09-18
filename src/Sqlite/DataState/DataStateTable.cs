@@ -16,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ZeroTeam.MessageMVC.Context;
 
 namespace Agebull.EntityModel.Sqlite
 {
@@ -55,8 +54,6 @@ SET [{FieldDictionary[nameof(IStateData.DataState)]}]=255";
         /// <returns></returns>
         protected override void ConditionSqlCode(List<string> conditions)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
-                return;
             conditions.Add($"[{FieldDictionary[nameof(IStateData.DataState)]}] < 255");
         }
 
@@ -67,8 +64,6 @@ SET [{FieldDictionary[nameof(IStateData.DataState)]}]=255";
         /// <returns></returns>
         protected override void CheckUpdateContition(ref string condition)
         {
-            if (GlobalContext.Current.Status.IsManageMode)
-                return;
             if (condition == null)
                 condition = $"[{FieldDictionary[nameof(IStateData.IsFreeze)]}] = 0";
             else

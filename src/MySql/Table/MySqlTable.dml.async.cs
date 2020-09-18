@@ -104,7 +104,7 @@ namespace Agebull.EntityModel.MySql
             {
                 await DataBase.ExecuteAsync(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
-            EndSaved(entity, DataOperatorType.Insert);
+            await EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
 
@@ -238,7 +238,7 @@ namespace Agebull.EntityModel.MySql
                 if (result == 0)
                     return false;
                 //scope.Succeed();
-                EndSaved(entity, DataOperatorType.Delete);
+                await EndSaved(entity, DataOperatorType.Delete);
             }
             return true;
         }
@@ -311,12 +311,22 @@ namespace Agebull.EntityModel.MySql
         /// <param name="entity">插入数据的实体</param>
         private async Task<bool> UpdateInnerAsync(TData entity)
         {
-            if (UpdateByMidified && !entity.__status.IsModified)
-                return false;
-            PrepareSave(entity, DataOperatorType.Update);
-            string sql = GetModifiedSqlCode(entity);
+            string sql;
+            if (UpdateByMidified)
+            {
+                if (UpdateByMidified && !entity.__status.IsModified)
+                    return false;
+                PrepareSave(entity, DataOperatorType.Update);
+                sql = GetModifiedSqlCode(entity);
+            }
+            else
+            {
+                PrepareSave(entity, DataOperatorType.Update);
+                sql = GetSqlCode(entity);
+            }
             if (sql == null)
                 return false;
+
             await using var connectionScope = new ConnectionScope(DataBase);
             await using var cmd = DataBase.CreateCommand(connectionScope);
             SetUpdateCommand(entity, cmd);
@@ -329,7 +339,7 @@ namespace Agebull.EntityModel.MySql
                 return false;
             }
 
-            EndSaved(entity, DataOperatorType.Update);
+            await EndSaved(entity, DataOperatorType.Update);
             return true;
         }
 
@@ -343,7 +353,7 @@ namespace Agebull.EntityModel.MySql
         public async Task<bool> DeletePrimaryKeyAsync(object key)
         {
             await DeleteInnerAsync(PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -373,7 +383,7 @@ namespace Agebull.EntityModel.MySql
             if (result == 0)
                 return false;
             OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -392,7 +402,7 @@ namespace Agebull.EntityModel.MySql
             if (cnt == 0)
                 return 0;
             OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-            OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
+            await OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
             return cnt;
         }
 
@@ -419,7 +429,7 @@ namespace Agebull.EntityModel.MySql
             if (cnt == 0)
                 return 0;
             OnOperatorExecuted(condition, args, DataOperatorType.Delete);
-            OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
+            await OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
             return cnt;
         }
 
@@ -450,7 +460,7 @@ namespace Agebull.EntityModel.MySql
         {
             int re = await SetValueInnerAsync(field, value, PrimaryKeyConditionSQL, CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnKeyEvent(DataOperatorType.Update, key);
+                await OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -467,7 +477,7 @@ namespace Agebull.EntityModel.MySql
             int re = await SetValueInnerAsync(GetPropertyName(fieldExpression), value, PrimaryKeyConditionSQL,
                 CreatePimaryKeyParameter(key));
             if (re > 0)
-                OnKeyEvent(DataOperatorType.Update, key);
+                await OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -491,7 +501,7 @@ namespace Agebull.EntityModel.MySql
             if (result == 0)
                 return 0;
             OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
-            OnKeyEvent(DataOperatorType.Delete, key);
+            await OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
 
@@ -633,7 +643,7 @@ namespace Agebull.EntityModel.MySql
             params DbParameter[] args)
         {
             int result = await DoUpdateValueAsync(field, value, condition, args);
-            OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
+            await OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
             return result;
         }
 
@@ -819,7 +829,7 @@ namespace Agebull.EntityModel.MySql
                 await DataBase.ExecuteAsync(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
-            EndSaved(entity, DataOperatorType.Insert);
+            await EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
 
@@ -859,7 +869,7 @@ namespace Agebull.EntityModel.MySql
                 DataBase.Execute(sql, CreatePimaryKeyParameter(entity.GetValue(KeyField)));
             }
 
-            EndSaved(entity, DataOperatorType.Update);
+            await EndSaved(entity, DataOperatorType.Update);
             return true;
         }
 

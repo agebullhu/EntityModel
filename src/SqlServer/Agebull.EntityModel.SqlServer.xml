@@ -3380,6 +3380,11 @@
             按修改更新
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.SqlServer.SqlServerTable`2.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.SqlServer.SqlServerTable`2.TableId">
             <summary>
                 表的唯一标识

@@ -297,15 +297,15 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected bool SaveAuditData(TData data)
         {
-            var old = GlobalContext.Current.Status.IsManageMode;
-            GlobalContext.Current.Status.IsManageMode = true;
+            var old = Access.NoInjection;
+            Access.NoInjection = true;
             try
             {
                 return Access.Update(data);
             }
             finally
             {
-                GlobalContext.Current.Status.IsManageMode = old;
+                Access.NoInjection = old;
             }
         }
         /// <summary>
