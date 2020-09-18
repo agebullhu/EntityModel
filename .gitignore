@@ -21,3 +21,7 @@ Debug
 /src/Lib
 /nuget
 /src/ModelBase/docs
+old/
+src/Extend/
+src/LogRecorder/
+src/MicroZero/
