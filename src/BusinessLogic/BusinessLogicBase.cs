@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicBase<TData,TPrimaryKey, TAccess> : IBusinessLogicBase<TData, TPrimaryKey>
         where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : class, IDataAccess<TData>, new()
     {
         #region 基础支持对象
 
@@ -40,12 +40,12 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        IDataTable<TData> IBusinessLogicBase<TData, TPrimaryKey>.Access => Access;
+        IDataAccess<TData> IBusinessLogicBase<TData, TPrimaryKey>.Access => Access;
 
         /// <summary>
         ///     数据访问对象
         /// </summary>
-        public TAccess Access => _access ?? (_access = CreateAccess());
+        public TAccess Access => _access ??= CreateAccess();
 
         /// <summary>
         ///     数据访问对象
@@ -200,7 +200,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TAccess">数据访问对象</typeparam>
     public class BusinessLogicBase<TData, TAccess> : BusinessLogicBase<TData, long, TAccess>
         where TData : EditDataObject, IIdentityData<long>, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : class, IDataAccess<TData>, new()
     {
     }
 }

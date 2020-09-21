@@ -19,17 +19,17 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <summary>
     /// 业务逻辑对象基类
     /// </summary>
-    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TEntity">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public interface IBusinessLogicBase<TData,TPrimaryKey>
-        where TData : EditDataObject, new()
+    public interface IBusinessLogicBase<TEntity,TPrimaryKey>
+        where TEntity : EditDataObject, new()
     {
         #region 基础属性
 
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        IDataTable<TData> Access { get; }
+        IDataAccess<TEntity> Access { get; }
 
         /// <summary>
         /// 实体类型
@@ -53,12 +53,12 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null);
+        bool DoByIds(IEnumerable<TPrimaryKey> ids, Func<TEntity, bool> func, Action onEnd = null);
 
         /// <summary>
         ///     执行ID组合字串的操作（来自页面的,号组合的ID）
         /// </summary>
-        bool LoopIdsToData(IEnumerable<TPrimaryKey> ids, Func<TData, bool> func, Action onEnd = null);
+        bool LoopIdsToData(IEnumerable<TPrimaryKey> ids, Func<TEntity, bool> func, Action onEnd = null);
         #endregion
 
         #region 读数据
@@ -66,7 +66,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        TData Details(TPrimaryKey id);
+        TEntity Details(TPrimaryKey id);
 
         #endregion
 

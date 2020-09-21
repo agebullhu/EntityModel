@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     表示MySql数据库对象
     /// </summary>
-    public abstract partial class MySqlDataBase : MySqlDataBase_, IDataBase
+    public abstract partial class MySqlDataBase : MySqlDataBase_, IDataBase,ICommandCreater
     {
         #region 构造
 
@@ -297,19 +297,6 @@ namespace Agebull.EntityModel.MySql
             Execute($@"TRUNCATE TABLE `{table}`;");
         }
 
-        /// <summary>
-        ///     清除所有数据
-        /// </summary>
-        public void ClearAll()
-        {
-            var sql = new StringBuilder();
-            foreach (var table in TableSql.Values)
-            {
-                sql.AppendLine($@"TRUNCATE TABLE `{table}`;");
-            }
-            Execute(sql.ToString());
-        }
-
         #endregion
 
         #region 内部方法
@@ -385,9 +372,16 @@ namespace Agebull.EntityModel.MySql
         #region 生成命令对象
 
         /// <summary>
+        /// 构造连接范围对象
+        /// </summary>
+        /// <returns></returns>
+
+        IConnectionScope IDataBase.CreateConnectionScope() => new ConnectionScope(this);
+
+        /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(ConnectionScope scope, params DbParameter[] args)
+        public DbCommand CreateCommand(IConnectionScope scope, params DbParameter[] args)
         {
             return CreateCommand(scope, null, args);
         }
@@ -395,7 +389,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(ConnectionScope scope, string sql, DbParameter arg)
+        public DbCommand CreateCommand(IConnectionScope scope, string sql, DbParameter arg)
         {
             return CreateCommand(scope, sql, new[] { arg });
         }
@@ -403,7 +397,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(ConnectionScope scope)
+        public DbCommand CreateCommand(IConnectionScope scope)
         {
             var cmd = scope.Connection.CreateCommand();
 
@@ -417,7 +411,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public MySqlCommand CreateCommand(ConnectionScope scope, string sql, IEnumerable<DbParameter> args = null)
+        public DbCommand CreateCommand(IConnectionScope scope, string sql, IEnumerable<DbParameter> args = null)
         {
             var cmd = scope.Connection.CreateCommand();
 
@@ -443,22 +437,9 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-        #region 创建表的SQL字典
-
-        /// <summary>
-        ///     表的常用SQL
-        /// </summary>
-        protected Dictionary<string, TableSql> _tableSql;
-
-        /// <summary>
-        ///     表的常用SQL
-        /// </summary>
-        /// <remarks>请设置为键大小写不敏感字典,因为Sql没有强制表名的大小写区别</remarks>
-        public Dictionary<string, TableSql> TableSql => _tableSql ??= new Dictionary<string, TableSql>(StringComparer.OrdinalIgnoreCase);
-
-        #endregion
 
         #region 接口
+
 
         int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
         {
@@ -506,7 +487,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        public static void TraceSql(MySqlCommand cmd)
+        public void TraceSql(DbCommand cmd)
         {
             TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
@@ -520,7 +501,7 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        public static void TraceSql(string sql, IEnumerable<MySqlParameter> args)
+        public void TraceSql(string sql, IEnumerable<DbParameter> args)
         {
             if (!LoggerExtend.LogDataSql)
                 return;
@@ -529,7 +510,7 @@ namespace Agebull.EntityModel.MySql
             var parameters = args as MySqlParameter[] ?? args.ToArray();
             foreach (var par in parameters)
             {
-                code.AppendLine($"declare ?{par.ParameterName} {par.MySqlDbType};");
+                code.AppendLine($"declare ?{par.ParameterName} {par.DbType};");
             }
             foreach (var par in parameters)
             {

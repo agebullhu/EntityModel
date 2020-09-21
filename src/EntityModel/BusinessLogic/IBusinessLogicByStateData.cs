@@ -17,10 +17,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <summary>
     /// 基于数据状态的业务逻辑基类
     /// </summary>
-    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TEntity">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public interface IBusinessLogicByStateData<TData, TPrimaryKey> : IUiBusinessLogicBase<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
+    public interface IBusinessLogicByStateData<TEntity, TPrimaryKey> : IUiBusinessLogicBase<TEntity, TPrimaryKey>
+        where TEntity : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
     {
         #region 状态处理
 

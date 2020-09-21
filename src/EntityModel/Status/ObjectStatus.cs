@@ -50,7 +50,7 @@ namespace Agebull.EntityModel.Common
         ///     ×´Ì¬¶ÔÏó
         /// </summary>
         [Browsable(false), IgnoreDataMember, JsonIgnore]
-        public IndexEditStatus Status => IsReadOnly ? null : (_status ?? (_status = new IndexEditStatus(Entity)));
+        public IndexEditStatus Status => IsReadOnly ? null : (_status ??= new IndexEditStatus(Entity));
 
 
         /// <summary>

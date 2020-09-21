@@ -272,6 +272,2443 @@
                 说明
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Common.DataAccess`1">
+            <summary>
+                Sql实体访问类
+            </summary>
+            <typeparam name="TEntity">实体</typeparam>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.CommandCreater">
+            <summary>
+            命令构造
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.ParameterCreater">
+            <summary>
+            参数构造
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.SqlBuilder">
+            <summary>
+            Sql语句构造器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateDataBase">
+            <summary>
+            自动构建数据库对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataAccess`1._dataBase">
+            <summary>
+                自动数据连接对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.DataBase">
+            <summary>
+                自动数据连接对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.OriDataBase">
+            <summary>
+                无懒构造数据库对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.UpdateByMidified">
+            <summary>
+            按修改更新
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.IsBaseClass">
+            <summary>
+                是否作为基类存在的
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateLoadCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateLoadCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateLoadCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                生成载入命令
+            </summary>
+            <param name="scope">连接使用范围</param>
+            <param name="order">排序字段</param>
+            <param name="desc">是否倒序</param>
+            <param name="condition">数据条件</param>
+            <param name="args">条件中的参数</param>
+            <returns>载入命令</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateFieldsParameters(System.String[])">
+            <summary>
+                生成多个字段的参数
+            </summary>
+            <param name="fields">生成参数的字段</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateFieldsParameters(System.String[],System.Object[])">
+            <summary>
+                生成多个字段的参数
+            </summary>
+            <param name="fields">生成参数的字段</param>
+            <param name="values">生成参数的值(长度和字段长度必须一致)</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateFieldsParameters(System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                生成多个字段的参数
+            </summary>
+            <param name="parameters">生成参数的字段</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateConditionItem(System.Boolean,System.String[])">
+            <summary>
+                连接字段条件
+            </summary>
+            <param name="isAnd">是否用AND组合</param>
+            <param name="fields">生成参数的字段</param>
+            <returns>ConditionItem</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CreateConditionItem(System.Boolean,System.String[],System.Object[])">
+            <summary>
+                连接字段条件
+            </summary>
+            <param name="isAnd">是否用AND组合</param>
+            <param name="fields">生成参数的字段</param>
+            <param name="values">生成参数的值(长度和字段长度必须一致)</param>
+            <returns>ConditionItem</returns>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.DynamicLoadAction">
+            <summary>
+            当前上下文的读取器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertAsync(`0)">
+            <summary>
+                插入新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                插入新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertInnerAsync(`0)">
+            <summary>
+                更新数据
+            </summary>
+            <param name="entity">更新数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateAsync(`0)">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReLoadInnerAsync(`0)">
+            <summary>
+                重新载入
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteAsync(`0)">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteInnerAsync(`0)">
+            <summary>
+                删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                保存数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveAsync(`0)">
+            <summary>
+                保存数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveInnerAsync(`0)">
+            <summary>
+                保存
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateInnerAsync(`0)">
+            <summary>
+                插入数据
+            </summary>
+            <param name="entity">插入数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeletePrimaryKeyAsync(System.Object)">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件删除
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PhysicalDeleteAsync(System.Object)">
+            <summary>
+                物理删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PhysicalDeleteAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                强制物理删除
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否删除成功</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteByConditionAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteInnerAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.String,System.Object,System.Object)">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,``1)">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="value">值</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetCoustomValueAsync``1(System.String,``0)">
+            <summary>
+                设计字段按自定义表达式更新值
+            </summary>
+            <param name="valueExpression">值的SQL方式</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveValueAsync(System.String,System.Object,System.String[],System.Object[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">更新字段</param>
+            <param name="value">更新值</param>
+            <param name="conditionFiles">条件包含的字段</param>
+            <param name="conditionValues">条件包含的值</param>
+            <returns>更新行数</returns>
+            <remarks>
+            条件中使用AND组合,均为等于
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Enum}},System.Enum,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(`0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件更新实体中已记录更新部分
+            </summary>
+            <param name="entity">实体</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0)">
+            <summary>
+                全量更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueByConditionAsync(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueInnerAsync(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DoUpdateValueAsync(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetMulitValueAsync(System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Data.Common.DbParameter[])">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <param name="args">参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetMulitValueAsync(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <param name="args">参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段与值组合</param>
+            <param name="condition">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段与值组合</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueAsync(System.String,System.Data.Common.DbParameter[],System.Collections.Generic.IEnumerable{System.ValueTuple{System.String,System.Object}})">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fields">字段</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertAsync(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},`0)">
+            <summary>
+            异步插入
+            </summary>
+            <param name="context"></param>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertAsync(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            异步插入
+            </summary>
+            <param name="context"></param>
+            <param name="entities"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateAsync(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},`0)">
+            <summary>
+            异步更新
+            </summary>
+            <param name="context"></param>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateAsync(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            异步更新
+            </summary>
+            <param name="context"></param>
+            <param name="entities"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Insert(`0)">
+            <summary>
+                插入新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Insert(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                插入新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.InsertInner(`0)">
+            <summary>
+                更新数据
+            </summary>
+            <param name="entity">更新数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Update(`0)">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Update(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Delete(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Delete(`0)">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteInner(`0)">
+            <summary>
+                删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Save(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                保存数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Save(`0)">
+            <summary>
+                保存数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveInner(`0)">
+            <summary>
+                保存
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.UpdateInner(`0)">
+            <summary>
+                更新数据
+            </summary>
+            <param name="entity">插入数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PrepareSave(`0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存前处理(Insert/Update/Delete)
+            </summary>
+            <param name="entity">实体</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.EndSaved(`0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存完成后期处理(Insert/Update/Delete)
+            </summary>
+            <param name="entity">实体</param>
+            <param name="operatorType">操作类型</param>
+            <remarks>
+                对当前对象的属性的更改,请自行保存,否则将丢失
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeletePrimaryKey(System.Object)">
+            <summary>
+                删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Delete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件删除
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PhysicalDelete(System.Object)">
+            <summary>
+                物理删除数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PhysicalDelete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                强制物理删除
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否删除成功</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Delete(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteByCondition(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DeleteInner(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                删除
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(System.String,System.Object,System.Object)">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,``1)">
+            <summary>
+                条件更新
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="value">值</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetCoustomValue``1(System.String,``0)">
+            <summary>
+                设计字段按自定义表达式更新值
+            </summary>
+            <param name="valueExpression">值的SQL方式</param>
+            <param name="key">主键</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveValue(System.String,System.Object,System.String[],System.Object[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">更新字段</param>
+            <param name="value">更新值</param>
+            <param name="conditionFiles">条件包含的字段</param>
+            <param name="conditionValues">条件包含的值</param>
+            <returns>更新行数</returns>
+            <remarks>
+            条件中使用AND组合,均为等于
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SaveValue(System.ValueTuple{System.String,System.Object},System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">更新字段</param>
+            <param name="conditions">条件包含的值</param>
+            <returns>更新行数</returns>
+            <remarks>
+            条件中使用AND组合,均为等于
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(System.Linq.Expressions.Expression{System.Func{`0,System.Enum}},System.Enum,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(`0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件更新实体中已记录更新部分
+            </summary>
+            <param name="entity">实体</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0)">
+            <summary>
+                全量更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="lambda">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueByCondition(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValueInner(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.DoUpdateValue(System.String,System.Object,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件更新
+            </summary>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+            <param name="condition">更新条件</param>
+            <param name="args">条件参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetValue(System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetMulitValue(System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Data.Common.DbParameter[])">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <param name="args">参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetMulitValue(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                自定义更新（更新表达式自写）
+            </summary>
+            <param name="expression">更新SQL表达式</param>
+            <param name="condition">条件</param>
+            <param name="args">参数</param>
+            <returns>更新行数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnPrepareSave(Agebull.EntityModel.Common.DataOperatorType,`0)">
+            <summary>
+                保存前处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnDataSaved(Agebull.EntityModel.Common.DataOperatorType,`0)">
+            <summary>
+                保存完成后期处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnOperatorExecuting(Agebull.EntityModel.Common.DataOperatorType,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
+            <summary>
+               更新语句前处理(单个实体操作不引发)
+            </summary>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnOperatorExecuted(Agebull.EntityModel.Common.DataOperatorType,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
+            <summary>
+                更新语句后处理(单个实体操作不引发)
+            </summary>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnPrepareSave(`0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存前处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnDataSaved(`0,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                保存完成后期处理
+            </summary>
+            <param name="entity">保存的对象</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnOperatorExecuting(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                更新语句前处理(单个实体操作不引发)
+            </summary>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnOperatorExecuted(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                更新语句后处理(单个实体操作不引发)
+            </summary>
+            <param name="condition">执行条件</param>
+            <param name="args">参数值</param>
+            <param name="operatorType">操作类型</param>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccess`1.GlobalEvent">
+            <summary>
+            是否允许全局事件(如全局事件器,则永为否)
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnKeyEvent(Agebull.EntityModel.Common.DataOperatorType,System.Object)">
+            <summary>
+                更新语句后处理(单个实体操作不引发)
+            </summary>
+            <param name="operatorType">操作类型</param>
+            <param name="key">其它参数</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnMulitUpdateEvent(Agebull.EntityModel.Common.DataOperatorType,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                更新语句后处理(单个实体操作不引发)
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnEvent(Agebull.EntityModel.Common.DataOperatorType,`0)">
+            <summary>
+                更新语句后处理(单个实体操作)
+            </summary>
+            <param name="operatorType">操作类型</param>
+            <param name="entity">其它参数</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SetParameterValue(`0,System.Data.Common.DbCommand)">
+            <summary>
+            设置插入数据的命令
+            </summary>
+            <param name="data">实体对象</param>
+            <param name="cmd">命令</param>
+            <returns>返回真说明要取主键</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.BeginInsert">
+            <summary>
+            开始插入
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Insert(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},`0)">
+            <summary>
+            批量插入
+            </summary>
+            <param name="context"></param>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Insert(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            批量插入
+            </summary>
+            <param name="context"></param>
+            <param name="entities"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.BeginUpdate">
+            <summary>
+            开始插入
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Update(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},`0)">
+            <summary>
+            批量更新
+            </summary>
+            <param name="context"></param>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Update(Agebull.EntityModel.Common.DbOperatorContext{System.Data.Common.DbCommand},System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            批量更新
+            </summary>
+            <param name="context"></param>
+            <param name="entities"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Group``1(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Action{System.Data.Common.DbDataReader,``0})">
+            <summary>
+            分组
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="group"></param>
+            <param name="colls"></param>
+            <param name="lambda"></param>
+            <param name="readAction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstAsync">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefaultAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefaultAsync">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefaultAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                载入首行
+            </summary>
+            <param name="condition">查询条件</param>
+            <param name="args">参数</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastAsync">
+            <summary>
+                载入尾行
+            </summary>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefaultAsync">
+            <summary>
+                载入尾行
+            </summary>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefaultAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="condition">查询条件</param>
+            <param name="args">参数</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync(Agebull.EntityModel.Common.LambdaItem{`0},System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <param name="orderBys">排序</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <param name="orderBys">排序</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectAsync(System.String,System.String)">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectAsync``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectAsync(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectAsync(System.String,System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistAsync">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistPrimaryKeyAsync``1(``0)">
+            <summary>
+                是否存在此主键的数据
+            </summary>
+            <param name="id">id</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync">
+            <summary>
+                总数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                总数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                计数
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                计数
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                计数
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                计数
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AnyAsync">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AnyAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                是否存在数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MinAsyn(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MinAsyn(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MinAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MaxAsyn(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MaxAsyn(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.MaxAsyn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SumAsync(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SumAsync(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SumAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SumAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.SumAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistInnerAsync(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistInnerAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountInnerAsync(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                总数据量
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectInnerAsync(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                总数据量
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+            <param name="page">页号(从1开始)</param>
+            <param name="limit">每页行数(小于不分页）</param>
+            <param name="order">排序字段</param>
+            <param name="desc">是否反序</param>
+            <param name="condition">查询条件</param>
+            <param name="args">查询参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageDataAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+            <param name="page">页号(从1开始)</param>
+            <param name="limit">每页行数(小于不分页）</param>
+            <param name="order">排序字段</param>
+            <param name="desc">是否反序</param>
+            <param name="condition">查询条件</param>
+            <param name="args">查询参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReadAsync``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="key">主键</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValueAsync``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="key">主键</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="condition">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取一个字段
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Func{System.Object,``0},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="parse">转换数据类型方法</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValueAsync(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValueInnerAsync(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取值
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesInnerAsync(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取多个值
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync(Agebull.EntityModel.Events.MulitCondition)">
+            <summary>
+                载入条件数据
+            </summary>
+            <param name="condition">条件</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync(System.Object)">
+            <summary>
+                载入首行
+            </summary>
+            <param name="id">主键</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync">
+            <summary>
+                全表读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByPrimaryKeyAsync(System.Object)">
+            <summary>
+                主键读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByPrimaryKeiesAsync(System.Collections.IEnumerable)">
+            <summary>
+                主键读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstAsync(System.String)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstAsync(System.String,System.Object)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastAsync(System.String)">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastAsync(System.String,System.Object)">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByForeignKeyAsync(System.String,System.Object)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReLoadAsync(`0)">
+            <summary>
+                重新读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstInnerAsync(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstInnerAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastInnerAsync(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastInnerAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInnerAsync(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInnerAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInnerAsync(System.String,System.Data.Common.DbParameter[],System.String)">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataBySqlAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取全部(SQL语句是重写的,字段名称和顺序与设计时相同)
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataByProcedureAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取存储过程
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUniqueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+            <param name="condition"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUniqueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Object)">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+            <param name="key"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUniqueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object)">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FeachAll(System.Action{`0},System.Action{System.Collections.Generic.List{`0}})">
+            <summary>
+                遍历所有
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Compile(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                编译查询条件
+            </summary>
+            <param name="lambda">条件</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Compile(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                编译查询条件
+            </summary>
+            <param name="lambda">查询表达式</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.GetPropertyName``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                取属性名称
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.First">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.First(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefault(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefault">
+            <summary>
+                载入首行
+            </summary>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.First(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.FirstOrDefault(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                载入首行
+            </summary>
+            <param name="condition">查询条件</param>
+            <param name="args">参数</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Last">
+            <summary>
+                载入尾行
+            </summary>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefault">
+            <summary>
+                载入尾行
+            </summary>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Last(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LastOrDefault(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                载入尾行
+            </summary>
+            <param name="condition">查询条件</param>
+            <param name="args">参数</param>
+            <returns>如果有载入尾行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Select">
+            <summary>
+                读取数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取数据
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取数据
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All(Agebull.EntityModel.Common.LambdaItem{`0},System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <param name="orderBys">排序</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <param name="orderBys">排序</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                是否存在数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                是否存在数据
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Collect(System.String,System.String)">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Collect``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Collect(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Collect(System.String,System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                汇总方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Exist">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Exist(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistPrimaryKey``1(``0)">
+            <summary>
+                是否存在此主键的数据
+            </summary>
+            <param name="id">id</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count">
+            <summary>
+                总数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                总数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                计数
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                计数
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                计数
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Count``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                计数
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Any">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Any(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                是否存在数据
+            </summary>
+            <param name="lambda">查询表达式</param>
+            <returns>是否存在数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                载入首行
+            </summary>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Min(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Min(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Min``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Max(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Max(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Max``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Sum(System.String)">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Sum(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                汇总
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="lambda">查询表达式</param>
+            <param name="condition2">条件2，默认为空</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="a">查询表达式</param>
+            <param name="b"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                合计
+            </summary>
+            <param name="field"></param>
+            <param name="condition">查询表达式</param>
+            <param name="args"></param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistInner(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ExistInner(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                是否存在数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CountInner(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                总数据量
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.CollectInner(System.String,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                总数据量
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+            <param name="page">页号(从1开始)</param>
+            <param name="limit">每页行数(小于不分页）</param>
+            <param name="order">排序字段</param>
+            <param name="desc">是否反序</param>
+            <param name="condition">查询条件</param>
+            <param name="args">查询参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32)">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32,System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Page(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                分页读取
+            </summary>
+            <param name="page">页号(从1开始)</param>
+            <param name="limit">每页行数(小于不分页）</param>
+            <param name="order">排序字段</param>
+            <param name="desc">是否反序</param>
+            <param name="condition">查询条件</param>
+            <param name="args">查询参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.Read``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="key">主键</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="key">主键</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取一个字段
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="condition">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Func{System.Object,``0},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="parse">转换数据类型方法</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValue(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValueInner(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取值
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadValuesInner(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取多个值
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData(Agebull.EntityModel.Events.MulitCondition)">
+            <summary>
+                载入条件数据
+            </summary>
+            <param name="condition">条件</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData(System.Object)">
+            <summary>
+                载入首行
+            </summary>
+            <param name="id">主键</param>
+            <returns>如果有载入首行,否则返回空</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData">
+            <summary>
+                全表读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadData(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                条件读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByPrimaryKey(System.Object)">
+            <summary>
+                主键读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByPrimaryKeies(System.Collections.IEnumerable)">
+            <summary>
+                主键读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirst(System.String)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirst(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirst(System.String,System.Object)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLast(System.String)">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLast(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLast(System.String,System.Object)">
+            <summary>
+                如果存在的话读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadByForeignKey(System.String,System.Object)">
+            <summary>
+                如果存在的话读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReLoad(`0)">
+            <summary>
+                重新读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReLoad(`0@)">
+            <summary>
+                重新读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.EntityLoaded(`0)">
+            <summary>
+                载入数据
+            </summary>
+            <param name="entity">读取数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.OnEntityLoaded(`0)">
+            <summary>
+                载入后的同步处理
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataAccess`1.OnLoadAction">
+            <summary>
+                数据载入时给外部的处理方法
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadEntity(System.Data.Common.DbDataReader)">
+            <summary>
+                载入数据
+            </summary>
+            <param name="reader">数据读取器</param>
+            <returns>读取数据的实体</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.ReLoadInner(`0)">
+            <summary>
+                重新载入
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstInner(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadFirstInner(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取首行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastInner(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadLastInner(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取尾行
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInner(System.String,System.Data.Common.DbParameter)">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInner(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataInner(System.String,System.Data.Common.DbParameter[],System.String)">
+            <summary>
+                读取全部
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataBySql(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取全部(SQL语句是重写的,字段名称和顺序与设计时相同)
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.LoadDataByProcedure(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取存储过程
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+            <param name="condition"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Object)">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+            <param name="key"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object)">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="field"></param>
+            <param name="val"></param>
+        </member>
         <member name="T:Agebull.EntityModel.Common.EntitySturct">
             <summary>
                 表示实体结构
@@ -471,7 +2908,7 @@
             <param name="entity">保存的对象</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.BeforeUpdateSql``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.String,System.Text.StringBuilder)">
             <summary>
                 与更新同时执行的SQL(更新之前立即执行)
             </summary>
@@ -480,7 +2917,7 @@
             <param name="code">写入SQL的文本构造器</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Text.StringBuilder)">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.AfterUpdateSql``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.String,System.Text.StringBuilder)">
             <summary>
                 与更新同时执行的SQL(更新之后立即执行)
             </summary>
@@ -489,7 +2926,7 @@
             <param name="code">写入SQL的文本构造器</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ConditionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.ConditionSqlCode``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
@@ -497,7 +2934,7 @@
             <param name="conditions">附加的条件集合</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataAccess{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句前处理(单个实体操作不引发)
             </summary>
@@ -506,7 +2943,7 @@
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Common.IDataUpdateTrigger.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataAccess{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句后处理(单个实体操作不引发)
             </summary>
@@ -1713,6 +4150,410 @@
                 4 由于需要尽量减少不必要的保存,它不调用新增方法(OnAdd)
             </remarks>
         </member>
+        <member name="T:Agebull.EntityModel.Common.DataAccessSqlOption`1">
+            <summary>
+            数据载入配置
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.IsIdentity">
+            <summary>
+            是否自增主键
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.TableOption">
+            <summary>
+            表配置
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataAccessSqlOption`1._keyField">
+            <summary>
+                主键字段(可动态覆盖PrimaryKey)
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataAccessSqlOption`1._fieldMap">
+            <summary>
+                字段字典
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.Fields">
+            <summary>
+                所有字段(设计时)
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.KeyField">
+            <summary>
+                主键字段(可动态覆盖PrimaryKey)
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.FieldMap">
+            <summary>
+                主键字段(可动态覆盖PrimaryKey)
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.LoadFields">
+            <summary>
+                全表读取的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.ReadTableName">
+            <summary>
+                读表名
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.WriteTableName">
+            <summary>
+                写表名
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.InsertSqlCode">
+            <summary>
+                插入的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.UpdateSqlCode">
+            <summary>
+                全部更新的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessSqlOption`1.BaseCondition">
+            <summary>
+                基本查询条件
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccessSqlOption`1.LoadEntity(System.Data.Common.DbDataReader,`0)">
+            <summary>
+            载入数据
+            </summary>
+            <param name="reader">数据读取器</param>
+            <param name="entity">读取数据的实体</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataAccessSqlOption`1.SetEntityParameter(System.Data.Common.DbCommand,`0)">
+            <summary>
+            设置插入数据的命令
+            </summary>
+            <param name="entity">实体对象</param>
+            <param name="cmd">命令</param>
+            <returns>返回真说明要取主键</returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ICommandCreater">
+            <summary>
+            参数生成器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ICommandCreater.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.Data.Common.DbParameter[])">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ICommandCreater.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Data.Common.DbParameter)">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ICommandCreater.CreateCommand(Agebull.EntityModel.Common.IConnectionScope)">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ICommandCreater.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
+            <summary>
+                生成命令
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IConnectionScope">
+            <summary>
+            数据库连接范围
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IConnectionScope.Transaction">
+            <summary>
+                事务对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IConnectionScope.Connection">
+            <summary>
+            连接对象
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IParameterCreater">
+            <summary>
+            参数生成器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateFieldParameter(System.String,System.Int32,System.Object)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="field">字段</param>
+            <param name="dbType">参数类型</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateDbParameter(System.String,System.String,System.Object)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="typeFile">参照字段</param>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.String,System.Object)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="csharpType">C#的类型</param>
+            <param name="parameterName">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.Object,System.Int32)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="dbType">对应数据库的DbType，如MysqlDbType</param>
+            <param name="parameterName">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.Object)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="parameterName">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.String)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="parameterName">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter``1(System.String,``0)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="parameterName">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>参数</returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ISqlBuilder`1">
+            <summary>
+            表示Sql生成器
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.ISqlBuilder`1.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.ISqlBuilder`1.NoInjection">
+            <summary>
+            不做代码注入
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.ISqlBuilder`1.PrimaryKeyConditionSQL">
+            <summary>
+                主键的条件部分SQL
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.ISqlBuilder`1.SqlOption">
+            <summary>
+            Sql配置信息
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.GetDbType(System.String)">
+            <summary>
+                得到字段的MySqlDbType类型
+            </summary>
+            <param name="field">字段名称</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.Compile(System.Collections.Generic.Dictionary{System.String,System.String},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                编译查询条件
+            </summary>
+            <param name="map">字段映射表</param>
+            <param name="lambda">条件</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.Compile(System.Collections.Generic.Dictionary{System.String,System.String},Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                编译查询条件
+            </summary>
+            <param name="map">字段映射表</param>
+            <param name="lambda">查询表达式</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.Condition(System.String,System.String)">
+            <summary>
+            条件SQL
+            </summary>
+            <param name="fieldName"></param>
+            <param name="paraName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.Condition(System.String,System.String,System.String)">
+            <summary>
+            条件SQL
+            </summary>
+            <param name="fieldName"></param>
+            <param name="paraName"></param>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.GetModifiedUpdateSql(Agebull.EntityModel.Common.EditDataObject)">
+            <summary>
+            取得仅更新的SQL语句
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.GetFullUpdateSql(Agebull.EntityModel.Common.EditDataObject)">
+            <summary>
+            取得仅更新的SQL语句
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.InjectionCondition(System.String)">
+            <summary>
+            注入查询与更新条件
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.AfterUpdateSql(System.String)">
+            <summary>
+            构建Update后期执行的SQL
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.BeforeUpdateSql(System.String)">
+            <summary>
+            构建Update前期执行的SQL
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateCollectSql(System.String,System.String,System.String)">
+            <summary>
+            汇总SQL
+            </summary>
+            <param name="fun"></param>
+            <param name="field"></param>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateDeleteSql(Agebull.EntityModel.Common.ConditionItem)">
+            <summary>
+             删除SQL
+            </summary>
+            <param name="convert"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateDeleteSql(System.String)">
+            <summary>
+            删除SQL
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateLoadSql(System.String,System.String)">
+            <summary>
+            读取SQL
+            </summary>
+            <param name="condition"></param>
+            <param name="order"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateLoadValueSql(System.String,System.String)">
+            <summary>
+            单值读取SQL
+            </summary>
+            <param name="field"></param>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateLoadValuesSql(System.String,Agebull.EntityModel.Common.ConditionItem)">
+            <summary>
+            单值读取SQL
+            </summary>
+            <param name="field"></param>
+            <param name="convert"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreatePageSql(System.Int32,System.Int32,System.String,System.Boolean,System.String)">
+            <summary>
+            分页SQL
+            </summary>
+            <param name="page"></param>
+            <param name="pageSize"></param>
+            <param name="order"></param>
+            <param name="desc"></param>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateUpdateSql(System.String,System.String)">
+            <summary>
+            更新SQL
+            </summary>
+            <param name="valueExpression"></param>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.FieldConditionSQL(System.Boolean,System.ValueTuple{System.String,System.Object}[])">
+            <summary>
+            字段条件
+            </summary>
+            <param name="isAnd"></param>
+            <param name="fields"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.FieldConditionSQL(System.Boolean,System.String[])">
+            <summary>
+            字段条件
+            </summary>
+            <param name="isAnd"></param>
+            <param name="fields"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.FieldConditionSQL(System.String,System.String)">
+            <summary>
+            字段条件
+            </summary>
+            <param name="field"></param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.FileUpdateSql(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
+            <summary>
+            字段更新
+            </summary>
+            <param name="field"></param>
+            <param name="value"></param>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.JoinConditionSQL(System.Boolean,System.String[])">
+            <summary>
+            条件组合
+            </summary>
+            <param name="isAnd"></param>
+            <param name="conditions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.OrderSql(System.Boolean,System.String)">
+            <summary>
+            构建排序SQL片断
+            </summary>
+            <param name="desc"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.PhysicalDeleteSql(System.String)">
+            <summary>
+                物理删除数据
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.DbOperatorContext`1">
             <summary>
             操作上下文
@@ -1748,12 +4589,7 @@
                 表示访问条件和参数
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.ConditionItem.#ctor(Agebull.EntityModel.Common.IParameterCreater)">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.ConditionItem._dataBase">
+        <member name="P:Agebull.EntityModel.Common.ConditionItem.ParameterCreater">
             <summary>
             具体数据库对象
             </summary>
@@ -1871,11 +4707,6 @@
         <member name="T:Agebull.EntityModel.Common.IDataBase">
             <summary>
                 表示数据库对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataBase.DataBaseType">
-            <summary>
-            数据库类型
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.Common.IDataBase.IsLockConnection">
@@ -2012,190 +4843,145 @@
                 注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
             </remarks>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IParameterCreater">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.CreateConnectionScope">
             <summary>
-            参数生成器
+            构造连接范围对象
             </summary>
+            <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.String,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.TraceSql(System.Data.Common.DbCommand)">
             <summary>
-                生成Sql参数
+                记录SQL日志
             </summary>
-            <param name="csharpType">C#的类型</param>
-            <param name="parameterName">参数名称</param>
-            <param name="value">参数值</param>
-            <returns>参数</returns>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.TraceSql(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
             <summary>
-                生成Sql参数
+                记录SQL日志
             </summary>
-            <param name="parameterName">参数名称</param>
-            <param name="value">参数值</param>
-            <returns>参数</returns>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter(System.String,System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.ExecuteAsync(System.String,System.Data.Common.DbParameter[])">
             <summary>
-                生成Sql参数
+                对连接执行 Transact-SQL 语句并返回受影响的行数。
             </summary>
-            <param name="parameterName">参数名称</param>
-            <param name="value">参数值</param>
-            <returns>参数</returns>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>被影响的行数</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+            </remarks>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IParameterCreater.CreateParameter``1(System.String,``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.ExecuteAsync(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
             <summary>
-                生成Sql参数
+                执行SQL
             </summary>
-            <param name="parameterName">参数名称</param>
-            <param name="value">参数值</param>
-            <returns>参数</returns>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>被影响的行数</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+            </remarks>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IDataTable">
+        <member name="M:Agebull.EntityModel.Common.IDataBase.ExecuteScalarAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
+            </summary>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataBase.ExecuteScalarAsync``1(System.String)">
+            <summary>
+                执行SQL
+            </summary>
+            <param name="sql">SQL语句</param>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataBase.ExecuteScalarAsync``1(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                执行SQL
+            </summary>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDataAccess">
             <summary>
                 Sql实体访问类
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.DataBaseType">
+        <member name="P:Agebull.EntityModel.Common.IDataAccess.DataBaseType">
             <summary>
             数据库类型
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.DataBase">
+        <member name="P:Agebull.EntityModel.Common.IDataAccess.DataBase">
             <summary>
                 自动数据连接对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.OriDataBase">
+        <member name="P:Agebull.EntityModel.Common.IDataAccess.OriDataBase">
             <summary>
                 无懒构造数据库对象
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.NoInjection">
+        <member name="P:Agebull.EntityModel.Common.IDataAccess.NoInjection">
             <summary>
             不做代码注入
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.TableId">
-            <summary>
-                表的唯一标识
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.PrimaryKey">
-            <summary>
-                设计时的主键字段
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.FieldMap">
-            <summary>
-                字段字典(设计时)
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.Fields">
-            <summary>
-                所有字段(设计时)
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.ReadTableName">
-            <summary>
-                读表名
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.WriteTableName">
-            <summary>
-                写表名
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.ContextWriteTable">
-            <summary>
-                当前上下文写入的表名
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.ContextReadTable">
-            <summary>
-                当前上下文读取的表名
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.FieldDictionary">
-            <summary>
-                字段字典(运行时)
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.KeyField">
-            <summary>
-                主键字段(可动态覆盖PrimaryKey)
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.DeleteSql">
-            <summary>
-                删除的SQL语句
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.InsertSql">
-            <summary>
-                插入的SQL语句
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.UpdateSql">
-            <summary>
-                全部更新的SQL语句
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.FullLoadSql">
-            <summary>
-                全表读取的SQL语句
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable.DynamicReadFields">
-            <summary>
-                动态读取的字段
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.SetDynamicReadTable(System.String)">
-            <summary>
-                切换读取的表
-            </summary>
-            <returns>之前的动态读取的表名</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.SetDynamicWriteTable(System.String)">
-            <summary>
-                切换写入的表
-            </summary>
-            <returns>之前的动态读取的表名</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.Exist">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.Exist">
             <summary>
                 是否存在数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.Any">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.Any">
             <summary>
                 是否存在数据
             </summary>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.ExistPrimaryKey``1(``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.ExistPrimaryKey``1(``0)">
             <summary>
                 是否存在此主键的数据
             </summary>
             <param name="id">id</param>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.Sum(System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.Sum(System.String)">
             <summary>
                 汇总
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.Count">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.Count">
             <summary>
                 总数
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.Count(System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.Count(System.String,System.Data.Common.DbParameter[])">
             <summary>
                 总数
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.SaveValue(System.String,System.Object,System.String[],System.Object[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.SaveValue(System.String,System.Object,System.String[],System.Object[])">
             <summary>
                 条件更新
             </summary>
@@ -2208,7 +4994,7 @@
             条件中使用AND组合,均为等于
             </remarks>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.SetValue(System.String,System.Object,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.SetValue(System.String,System.Object,System.Object)">
             <summary>
                 条件更新
             </summary>
@@ -2217,7 +5003,7 @@
             <param name="key">条件主键</param>
             <returns>更新行数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable.SetCoustomValue``1(System.String,``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess.SetCoustomValue``1(System.String,``0)">
             <summary>
                 设计字段按自定义表达式更新值
             </summary>
@@ -2225,53 +5011,58 @@
             <param name="key">主键</param>
             <returns>更新行数</returns>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IDataTable`1">
+        <member name="T:Agebull.EntityModel.Common.IDataAccess`1">
             <summary>
                 Sql实体访问类
             </summary>
-            <typeparam name="TData">实体</typeparam>
+            <typeparam name="TEntity">实体</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IDataTable`1.DynamicLoadAction">
+        <member name="P:Agebull.EntityModel.Common.IDataAccess`1.SqlBuilder">
+            <summary>
+            Sql语句构造器
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IDataAccess`1.DynamicLoadAction">
             <summary>
             当前上下文的读取器
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Compile(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Compile(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 编译查询条件
             </summary>
             <param name="lambda">条件</param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Compile(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Compile(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 编译查询条件
             </summary>
             <param name="lambda">查询表达式</param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FeachAll(System.Action{`0},System.Action{System.Collections.Generic.List{`0}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FeachAll(System.Action{`0},System.Action{System.Collections.Generic.List{`0}})">
             <summary>
                 遍历所有
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.First">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.First">
             <summary>
                 载入首行
             </summary>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.First(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.First(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 载入首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.First(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
@@ -2279,25 +5070,25 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefault">
             <summary>
                 载入首行
             </summary>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefault(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 载入首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
@@ -2305,25 +5096,25 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefaultAsync">
             <summary>
                 载入首行
             </summary>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefaultAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 载入首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
@@ -2331,26 +5122,26 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Last">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Last">
             <summary>
                 载入尾行
             </summary>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LastOrDefault">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LastOrDefault">
             <summary>
                 载入尾行
             </summary>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入尾行
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Last(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入尾行
             </summary>
@@ -2358,14 +5149,14 @@
             <param name="b"></param>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入尾行
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LastOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入尾行
             </summary>
@@ -2373,20 +5164,20 @@
             <param name="b"></param>
             <returns>如果有载入尾行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Select">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Select">
             <summary>
                 读取数据
             </summary>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取数据
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Select(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取数据
             </summary>
@@ -2394,23 +5185,23 @@
             <param name="b"></param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.All">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.All">
             <summary>
                 读取数据
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.All(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.All(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 读取数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.All``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.All``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
             <summary>
                 读取数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取数据
             </summary>
@@ -2418,7 +5209,7 @@
             <param name="b"></param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.All(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
             <summary>
                 读取数据
             </summary>
@@ -2426,30 +5217,30 @@
             <param name="orderBys">排序</param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.AllAsync">
             <summary>
                 读取数据
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.AllAsync(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 读取数据
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.AllAsync``1(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
             <summary>
                 读取数据
             </summary>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取数据
             </summary>
@@ -2457,7 +5248,7 @@
             <param name="b"></param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.AllAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String[])">
             <summary>
                 读取数据
             </summary>
@@ -2465,19 +5256,19 @@
             <param name="orderBys">排序</param>
             <returns>数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 是否存在数据
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 是否存在数据
             </summary>
@@ -2485,19 +5276,19 @@
             <param name="b"></param>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Collect(System.String,System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Collect(System.String,System.String,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 汇总方法
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 是否存在数据
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Any(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 载入首行
             </summary>
@@ -2505,14 +5296,14 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 计数
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>是否存在数据</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Count(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 计数
             </summary>
@@ -2520,7 +5311,7 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
             <summary>
                 合计
             </summary>
@@ -2528,7 +5319,7 @@
             <param name="lambda">查询表达式</param>
             <param name="condition2">条件2，默认为空</param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Sum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 合计
             </summary>
@@ -2537,42 +5328,42 @@
             <param name="b"></param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageData(System.Int32,System.Int32)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageData(System.Int32,System.Int32)">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageData``1(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Page(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Page(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PageAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PageAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
             <summary>
                 分页读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取一个字段
             </summary>
@@ -2580,7 +5371,7 @@
             <param name="lambda">条件</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
             <summary>
                 读取一个字段
             </summary>
@@ -2588,7 +5379,7 @@
             <param name="key">主键</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取一个字段
             </summary>
@@ -2596,7 +5387,7 @@
             <param name="lambda">条件</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
             <summary>
                 读取一个字段
             </summary>
@@ -2604,7 +5395,7 @@
             <param name="condition">条件</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Func{System.Object,``0},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Func{System.Object,``0},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 读取一个字段
             </summary>
@@ -2613,7 +5404,7 @@
             <param name="lambda">条件</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadValues``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,System.Data.Common.DbParameter[])">
             <summary>
                 读取一个字段
             </summary>
@@ -2622,133 +5413,133 @@
             <param name="args">参数</param>
             <returns>内容</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadData(Agebull.EntityModel.Events.MulitCondition)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadData(Agebull.EntityModel.Events.MulitCondition)">
             <summary>
                 载入条件数据
             </summary>
             <param name="condition">条件</param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadByPrimaryKey(System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadByPrimaryKey(System.Object)">
             <summary>
                 主键读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadByPrimaryKeyAsync(System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadByPrimaryKeyAsync(System.Object)">
             <summary>
                 主键读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadByPrimaryKeies(System.Collections.IEnumerable)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadByPrimaryKeies(System.Collections.IEnumerable)">
             <summary>
                 主键读取
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadFirst(System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadFirst(System.String)">
             <summary>
                 如果存在的话读取首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadFirst(System.String,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadFirst(System.String,System.Object)">
             <summary>
                 如果存在的话读取首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadLast(System.String)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadLast(System.String)">
             <summary>
                 如果存在的话读取尾行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadLast(System.String,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadLast(System.String,System.Object)">
             <summary>
                 如果存在的话读取尾行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.LoadByForeignKey(System.String,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.LoadByForeignKey(System.String,System.Object)">
             <summary>
                 如果存在的话读取首行
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Save(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Save(`0)">
             <summary>
                 保存数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Update(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Update(`0)">
             <summary>
                 更新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.UpdateAsync(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.UpdateAsync(`0)">
             <summary>
                 更新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Insert(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Insert(`0)">
             <summary>
                 插入新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.InsertAsync(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.InsertAsync(`0)">
             <summary>
                 插入新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Delete(`0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Delete(`0)">
             <summary>
                 删除数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.DeletePrimaryKey(System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.DeletePrimaryKey(System.Object)">
             <summary>
                 删除数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.DeletePrimaryKeyAsync(System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.DeletePrimaryKeyAsync(System.Object)">
             <summary>
                 删除数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Delete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Delete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 条件删除
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>如果有载入首行,否则返回空</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PhysicalDelete(System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PhysicalDelete(System.Object)">
             <summary>
                 物理删除数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.PhysicalDelete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.PhysicalDelete(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 强制物理删除
             </summary>
             <param name="lambda">查询表达式</param>
             <returns>是否删除成功</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Save(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Save(System.Collections.Generic.IEnumerable{`0})">
             <summary>
                 保存数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Update(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Update(System.Collections.Generic.IEnumerable{`0})">
             <summary>
                 更新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Insert(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Insert(System.Collections.Generic.IEnumerable{`0})">
             <summary>
                 插入新数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Delete(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.Delete(System.Collections.Generic.IEnumerable{`0})">
             <summary>
                 删除数据
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0)">
             <summary>
                 全量更新
             </summary>
@@ -2756,7 +5547,7 @@
             <param name="value">值</param>
             <returns>更新行数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetValue(`0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.SetValue(`0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 条件更新实体中已记录更新部分
             </summary>
@@ -2764,7 +5555,7 @@
             <param name="lambda">条件</param>
             <returns>更新行数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.SetValue``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 条件更新
             </summary>
@@ -2773,7 +5564,7 @@
             <param name="lambda">条件</param>
             <returns>更新行数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,``1)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.SetValue``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``0,``1)">
             <summary>
                 条件更新
             </summary>
@@ -2782,24 +5573,7 @@
             <param name="key">主键</param>
             <returns>更新行数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetUpdateCommandPara(`0,System.Data.Common.DbCommand)">
-            <summary>
-                设置更新数据的命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.SetInsertCommandPara(`0,System.Data.Common.DbCommand)">
-            <summary>
-                设置插入数据的命令
-            </summary>
-            <returns>返回真说明要取主键</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.Load(System.Data.Common.DbDataReader)">
-            <summary>
-                载入数据
-            </summary>
-            <param name="reader">数据读取器</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
                 检查值的唯一性
             </summary>
@@ -2808,7 +5582,7 @@
             <param name="val"></param>
             <param name="condition"></param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object,System.Object)">
             <summary>
                 检查值的唯一性
             </summary>
@@ -2817,7 +5591,7 @@
             <param name="val"></param>
             <param name="key"></param>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IDataTable`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccess`1.IsUnique``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Object)">
             <summary>
                 检查值的唯一性
             </summary>
@@ -2825,23 +5599,23 @@
             <param name="field"></param>
             <param name="val"></param>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IStateDataTable`1">
+        <member name="T:Agebull.EntityModel.Common.IDataAccessByStateData`1">
             <summary>
             数据状态表
             </summary>
-            <typeparam name="TData"></typeparam>
+            <typeparam name="TEntity"></typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.ResetState``1(``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccessByStateData`1.ResetState``1(``0)">
             <summary>
             重置状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.ResetState(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+        <member name="M:Agebull.EntityModel.Common.IDataAccessByStateData`1.ResetState(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
             重置状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IStateDataTable`1.SetState``1(Agebull.EntityModel.Common.DataStateType,System.Boolean,``0)">
+        <member name="M:Agebull.EntityModel.Common.IDataAccessByStateData`1.SetState``1(Agebull.EntityModel.Common.DataStateType,System.Boolean,``0)">
             <summary>
             修改状态
             </summary>
@@ -2861,7 +5635,7 @@
             <summary>
                 烂姆达条件节点
             </summary>
-            <typeparam name="TData">数据类型</typeparam>
+            <typeparam name="TEntity">数据类型</typeparam>
         </member>
         <member name="F:Agebull.EntityModel.Common.LambdaItem`1.Ands">
             <summary>
@@ -2901,24 +5675,59 @@
             </summary>
             <param name="lambda"></param>
         </member>
-        <member name="T:Agebull.EntityModel.Common.TableSql">
+        <member name="T:Agebull.EntityModel.Common.DataTableInfomation">
             <summary>
-                表关联的SQL诗句
+            数据表信息
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.TableSql.TableName">
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.ReadTableName">
             <summary>
-                表名
+                读表名
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.TableSql.PimaryKey">
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.WriteTableName">
             <summary>
-                主键
+                写表名
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.TableSql.CreateSql">
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.InsertSqlCode">
             <summary>
-                创建表的SQL
+                插入的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.UpdateSqlCode">
+            <summary>
+                全部更新的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.FullLoadFields">
+            <summary>
+                全表读取的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.BaseCondition">
+            <summary>
+                基本查询条件
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.PrimaryKey">
+            <summary>
+                设计时的主键字段
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.Fields">
+            <summary>
+                所有字段(设计时)
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataTableInfomation._fieldMap">
+            <summary>
+                字段字典
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableInfomation.FieldMap">
+            <summary>
+                字段字典(设计时)
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.EntityModelDbException">
@@ -2944,72 +5753,6 @@
             <param name="str"></param>
             <param name="des"></param>
             <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.DbReaderScope`1">
-            <summary>
-                修改读取字段范围
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DbReaderScope`1.CreateScope(Agebull.EntityModel.Common.IDataTable{`0},System.String,System.Action{System.Data.Common.DbDataReader,`0})">
-            <summary>
-            构造
-            </summary>
-            <param name="table">数据访问对象</param>
-            <param name="fields">字段</param>
-            <param name="loadAction">载入方法</param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DbReaderScope`1.OnDispose">
-            <summary>
-            析构
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.ReadTableScope`1">
-            <summary>
-                修改读取对象范围
-            </summary>
-            <typeparam name="TEntity">实体对象</typeparam>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ReadTableScope`1.CreateScope(Agebull.EntityModel.Common.IDataTable{`0},System.String)">
-            <summary>
-            生成读取对象范围
-            </summary>
-            <param name="table">作用的表对象</param>
-            <param name="name">表名</param>
-            <returns>读取对象范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ReadTableScope`1.OnDispose">
-            <summary>
-            析构
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.TableSwitchScope">
-            <summary>
-                修改读写对象范围
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.TableSwitchScope.CreateScope(Agebull.EntityModel.Common.IDataTable,System.String)">
-            <summary>
-            生成读取对象范围
-            </summary>
-            <param name="table">作用的表对象</param>
-            <param name="read">读表名</param>
-            <returns>读取对象范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.TableSwitchScope.CreateScope(Agebull.EntityModel.Common.IDataTable,System.String,System.String)">
-            <summary>
-            生成读取对象范围
-            </summary>
-            <param name="table">作用的表对象</param>
-            <param name="read">读表名</param>
-            <param name="write">写表名</param>
-            <returns>读取对象范围</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.TableSwitchScope.OnDispose">
-            <inheritdoc />
-            <summary>
-            析构
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.DataBaseScope">
             <summary>
@@ -3144,7 +5887,7 @@
             <summary>
             业务逻辑对象基类
             </summary>
-            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TEntity">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
         <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicBase`2.Access">
@@ -3186,7 +5929,7 @@
             <summary>
                 基于审核扩展的业务逻辑基类
             </summary>
-            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TEntity">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
         <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessLogicByAudit`2.CancelValidate">
@@ -3269,7 +6012,7 @@
             <summary>
             基于数据状态的业务逻辑基类
             </summary>
-            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TEntity">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IBusinessLogicByStateData`2.Reset(`1)">
@@ -3297,7 +6040,7 @@
             <summary>
             支持界面操作的业务逻辑对象基类
             </summary>
-            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TEntity">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.IUiBusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
@@ -3511,7 +6254,7 @@
             <param name="data">保存的对象</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuting``1(Agebull.EntityModel.Common.IDataAccess{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句前处理(单个实体操作不引发)
             </summary>
@@ -3520,7 +6263,7 @@
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataTable{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.OnOperatorExecuted``1(Agebull.EntityModel.Common.IDataAccess{``0},System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter},Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 更新语句后处理(单个实体操作不引发)
             </summary>
@@ -3529,7 +6272,7 @@
             <param name="args">参数值</param>
             <param name="operatorType">操作类型</param>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ConditionSqlCode``1(Agebull.EntityModel.Common.IDataTable{``0},System.Collections.Generic.List{System.String})">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.ConditionSqlCode``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.Collections.Generic.List{System.String})">
             <summary>
                 得到可正确拼接的SQL条件语句（可能是没有）
             </summary>
@@ -3537,7 +6280,7 @@
             <param name="conditions">附加的条件集合</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.BeforeUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.String)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.BeforeUpdateSql``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.Text.StringBuilder,System.String)">
             <summary>
                 与更新同时执行的SQL(更新之前立即执行)
             </summary>
@@ -3546,7 +6289,7 @@
             <param name="condition">当前场景的执行条件</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.AfterUpdateSql``1(Agebull.EntityModel.Common.IDataTable{``0},System.Text.StringBuilder,System.String)">
+        <member name="M:Agebull.EntityModel.Events.DataUpdateHandler.AfterUpdateSql``1(Agebull.EntityModel.Common.ISqlBuilder{``0},System.Text.StringBuilder,System.String)">
             <summary>
                 与更新同时执行的SQL(更新之后立即执行)
             </summary>
@@ -4538,7 +7281,7 @@
             <summary>
             TSON操作器
             </summary>
-            <typeparam name="TData">操作的数据类型</typeparam>
+            <typeparam name="TEntity">操作的数据类型</typeparam>
         </member>
         <member name="M:Agebull.Common.Tson.ITsonOperator`1.ToTson(Agebull.Common.Tson.ITsonSerializer,`0)">
             <summary>

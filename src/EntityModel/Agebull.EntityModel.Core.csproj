@@ -72,11 +72,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="DataBase\Interface\DataAccessSqlOption.cs" />
+    <Compile Include="DataBase\Interface\ICommandCreater.cs" />
+    <Compile Include="DataBase\Interface\IConnectionScope.cs" />
+    <Compile Include="DataBase\Interface\IParameterCreater.cs" />
+    <Compile Include="DataBase\Interface\ISqlBuilder.cs" />
     <Compile Include="DataBase\Interface\OperatorContext.cs" />
     <Compile Include="DataBase\Lambda\ConditionItem.cs" />
     <Compile Include="DataBase\Interface\DataBaseType.cs" />
     <Compile Include="DataBase\Interface\IDataBase.cs" />
-    <Compile Include="DataBase\Interface\IDataTable.cs" />
+    <Compile Include="DataBase\Interface\IDataAccess.cs" />
     <Compile Include="DataBase\Interface\ITransactionScope.cs" />
     <Compile Include="DataBase\Lambda\LambdaItem.cs" />
     <Compile Include="DataBase\Interface\TableSql.cs" />

@@ -118,12 +118,12 @@ namespace ZeroTeam.MessageMVC.ZeroApis
     ///     API返回分布页数据
     /// </summary>
     [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class ApiPageData<TData> : ApiPage
+    public class ApiPageData<TEntity> : ApiPage
     {
         /// <summary>
         ///     返回值
         /// </summary>
         [JsonProperty("rows")]
-        public List<TData> Rows { get; set; }
+        public List<TEntity> Rows { get; set; }
     }
 }

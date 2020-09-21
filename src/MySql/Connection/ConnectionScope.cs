@@ -1,5 +1,7 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Agebull.EntityModel.Common;
+using MySql.Data.MySqlClient;
 using System;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.MySql
@@ -7,7 +9,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     /// 数据库连接范围
     /// </summary>
-    public class ConnectionScope : IAsyncDisposable, IDisposable
+    public class ConnectionScope : IAsyncDisposable, IDisposable, IConnectionScope
     {
         MySqlDataBase DataBase;
         bool IsLockConnection;
@@ -28,6 +30,10 @@ namespace Agebull.EntityModel.MySql
         internal MySqlTransaction Transaction { get; private set; }
 
         internal MySqlConnection Connection { get; private set; }
+
+        DbTransaction IConnectionScope.Transaction => Transaction;
+
+        DbConnection IConnectionScope.Connection => Connection;
 
 
         /// <summary>

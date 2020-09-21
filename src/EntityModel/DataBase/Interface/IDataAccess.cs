@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
-    public interface IDataTable
+    public interface IDataAccess
     {
         #region 数据库
 
@@ -34,6 +34,7 @@ namespace Agebull.EntityModel.Common
         {
             get;
         }
+
         /// <summary>
         ///     自动数据连接对象
         /// </summary>
@@ -51,102 +52,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 不做代码注入
         /// </summary>
-        bool NoInjection { get; set; }
-
-        #endregion
-
-        #region 数据结构
-
-        /// <summary>
-        ///     表的唯一标识
-        /// </summary>
-        int TableId { get; }
-
-        /// <summary>
-        ///     设计时的主键字段
-        /// </summary>
-        string PrimaryKey { get; }
-
-        /// <summary>
-        ///     字段字典(设计时)
-        /// </summary>
-        Dictionary<string, string> FieldMap { get; }
-
-        /// <summary>
-        ///     所有字段(设计时)
-        /// </summary>
-        string[] Fields { get; }
-
-        /// <summary>
-        ///     读表名
-        /// </summary>
-        string ReadTableName { get; }
-
-        /// <summary>
-        ///     写表名
-        /// </summary>
-        string WriteTableName { get; }
-
-        /// <summary>
-        ///     当前上下文写入的表名
-        /// </summary>
-        string ContextWriteTable { get; }
-
-        /// <summary>
-        ///     当前上下文读取的表名
-        /// </summary>
-        string ContextReadTable { get; }
-
-        /// <summary>
-        ///     字段字典(运行时)
-        /// </summary>
-        Dictionary<string, string> FieldDictionary { get; }
-
-        /// <summary>
-        ///     主键字段(可动态覆盖PrimaryKey)
-        /// </summary>
-        string KeyField { get; }
-
-        /// <summary>
-        ///     删除的SQL语句
-        /// </summary>
-        string DeleteSql { get; }
-
-        /// <summary>
-        ///     插入的SQL语句
-        /// </summary>
-        string InsertSql { get; }
-
-        /// <summary>
-        ///     全部更新的SQL语句
-        /// </summary>
-        string UpdateSql { get; }
-
-        /// <summary>
-        ///     全表读取的SQL语句
-        /// </summary>
-        string FullLoadSql { get; }
-
-        #endregion
-
-        #region 动态虚化
-
-        /// <summary>
-        ///     动态读取的字段
-        /// </summary>
-        string DynamicReadFields { get; set; }
-
-        /// <summary>
-        ///     切换读取的表
-        /// </summary>
-        /// <returns>之前的动态读取的表名</returns>
-        string SetDynamicReadTable(string table);
-
-        /// <summary>
-        ///     切换写入的表
-        /// </summary>
-        /// <returns>之前的动态读取的表名</returns>
-        string SetDynamicWriteTable(string table);
+        bool NoInjection { get;}
 
         #endregion
 
@@ -227,14 +133,23 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
-    /// <typeparam name="TData">实体</typeparam>
-    public interface IDataTable<TData> : IDataTable, IConfig
-        where TData : EditDataObject, new()
+    /// <typeparam name="TEntity">实体</typeparam>
+    public interface IDataAccess<TEntity> : IDataAccess, IConfig
+        where TEntity : EditDataObject, new()
     {
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        ISqlBuilder<TEntity> SqlBuilder
+        {
+            get;
+        }
+
         /// <summary>
         /// 当前上下文的读取器
         /// </summary>
-        Action<DbDataReader, TData> DynamicLoadAction { get; set; }
+        Action<DbDataReader, TEntity> DynamicLoadAction { get; set; }
 
 
         #region 查询条件相关(包含lambda编译)
@@ -243,13 +158,13 @@ namespace Agebull.EntityModel.Common
         ///     编译查询条件
         /// </summary>
         /// <param name="lambda">条件</param>
-        ConditionItem Compile(Expression<Func<TData, bool>> lambda);
+        ConditionItem Compile(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     编译查询条件
         /// </summary>
         /// <param name="lambda">查询表达式</param>
-        ConditionItem Compile(LambdaItem<TData> lambda);
+        ConditionItem Compile(LambdaItem<TEntity> lambda);
 
         #endregion
 
@@ -261,7 +176,7 @@ namespace Agebull.EntityModel.Common
         ///     遍历所有
         /// </summary>
 
-        void FeachAll(Action<TData> action, Action<List<TData>> end);
+        void FeachAll(Action<TEntity> action, Action<List<TEntity>> end);
 
         #endregion
 
@@ -273,13 +188,13 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns>如果有载入首行,否则返回空</returns>
         [Obsolete]
-        TData First();
+        TEntity First();
 
         /// <summary>
         ///     载入首行
         /// </summary>
         [Obsolete]
-        TData First(LambdaItem<TData> lambda);
+        TEntity First(LambdaItem<TEntity> lambda);
 
         /// <summary>
         ///     载入首行
@@ -287,7 +202,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
         [Obsolete]
-        TData First(Expression<Func<TData, bool>> lambda);
+        TEntity First(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     载入首行
@@ -296,26 +211,26 @@ namespace Agebull.EntityModel.Common
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
         [Obsolete]
-        TData First(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        TEntity First(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
 
         /// <summary>
         ///     载入首行
         /// </summary>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData FirstOrDefault();
+        TEntity FirstOrDefault();
 
         /// <summary>
         ///     载入首行
         /// </summary>
-        TData FirstOrDefault(LambdaItem<TData> lambda);
+        TEntity FirstOrDefault(LambdaItem<TEntity> lambda);
 
         /// <summary>
         ///     载入首行
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData FirstOrDefault(Expression<Func<TData, bool>> lambda);
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     载入首行
@@ -323,19 +238,19 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        TData FirstOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
 
         /// <summary>
         ///     载入首行
         /// </summary>
         /// <returns>如果有载入首行,否则返回空</returns>
-        Task<TData> FirstOrDefaultAsync();
+        Task<TEntity> FirstOrDefaultAsync();
 
         /// <summary>
         ///     载入首行
         /// </summary>
-        Task<TData> FirstOrDefaultAsync(LambdaItem<TData> lambda);
+        Task<TEntity> FirstOrDefaultAsync(LambdaItem<TEntity> lambda);
 
 
         /// <summary>
@@ -343,7 +258,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        Task<TData> FirstOrDefaultAsync(Expression<Func<TData, bool>> lambda);
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> lambda);
 
 
         /// <summary>
@@ -352,7 +267,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        Task<TData> FirstOrDefaultAsync(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -362,20 +277,20 @@ namespace Agebull.EntityModel.Common
         ///     载入尾行
         /// </summary>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData Last();
+        TEntity Last();
 
         /// <summary>
         ///     载入尾行
         /// </summary>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData LastOrDefault();
+        TEntity LastOrDefault();
 
         /// <summary>
         ///     载入尾行
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData Last(Expression<Func<TData, bool>> lambda);
+        TEntity Last(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     载入尾行
@@ -383,7 +298,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData Last(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        TEntity Last(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
 
         /// <summary>
@@ -391,7 +306,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData LastOrDefault(Expression<Func<TData, bool>> lambda);
+        TEntity LastOrDefault(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     载入尾行
@@ -399,7 +314,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        TData LastOrDefault(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        TEntity LastOrDefault(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -410,7 +325,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns>是否存在数据</returns>
         [Obsolete]
-        List<TData> Select();
+        List<TEntity> Select();
 
         /// <summary>
         ///     读取数据
@@ -418,7 +333,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <returns>数据</returns>
         [Obsolete]
-        List<TData> Select(Expression<Func<TData, bool>> lambda);
+        List<TEntity> Select(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     读取数据
@@ -427,7 +342,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="b"></param>
         /// <returns>数据</returns>
         [Obsolete]
-        List<TData> Select(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        List<TEntity> Select(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -437,57 +352,18 @@ namespace Agebull.EntityModel.Common
         ///     读取数据
         /// </summary>
         /// <returns>数据</returns>
-        List<TData> All();
+        List<TEntity> All();
 
 
         /// <summary>
         ///     读取数据
         /// </summary>
-        List<TData> All(LambdaItem<TData> lambda);
+        List<TEntity> All(LambdaItem<TEntity> lambda);
 
         /// <summary>
         ///     读取数据
         /// </summary>
-        List<TData> All<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy, bool desc);
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="a">查询表达式</param>
-        /// <param name="b"></param>
-        /// <returns>数据</returns>
-        List<TData> All(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <param name="orderBys">排序</param>
-        /// <returns>数据</returns>
-        List<TData> All(Expression<Func<TData, bool>> lambda, params string[] orderBys);
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        List<TData> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <returns>数据</returns>
-        Task<List<TData>> AllAsync();
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <returns>数据</returns>
-        Task<List<TData>> AllAsync(LambdaItem<TData> lambda);
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <returns>数据</returns>
-        Task<List<TData>> AllAsync<TField>(Expression<Func<TData, bool>> lambda, Expression<Func<TData, TField>> orderBy, bool desc);
+        List<TEntity> All<TField>(Expression<Func<TEntity, bool>> lambda, Expression<Func<TEntity, TField>> orderBy, bool desc);
 
         /// <summary>
         ///     读取数据
@@ -495,7 +371,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>数据</returns>
-        Task<List<TData>> AllAsync(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        List<TEntity> All(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         /// <summary>
         ///     读取数据
@@ -503,12 +379,51 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <param name="orderBys">排序</param>
         /// <returns>数据</returns>
-        Task<List<TData>> AllAsync(Expression<Func<TData, bool>> lambda, params string[] orderBys);
+        List<TEntity> All(Expression<Func<TEntity, bool>> lambda, params string[] orderBys);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        Task<List<TData>> LoadDataAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        List<TEntity> LoadData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TEntity>> AllAsync();
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <returns>数据</returns>
+        Task<List<TEntity>> AllAsync<TField>(Expression<Func<TEntity, bool>> lambda, Expression<Func<TEntity, TField>> orderBy, bool desc);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <param name="a">查询表达式</param>
+        /// <param name="b"></param>
+        /// <returns>数据</returns>
+        Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <param name="orderBys">排序</param>
+        /// <returns>数据</returns>
+        Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> lambda, params string[] orderBys);
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        Task<List<TEntity>> LoadDataAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         #endregion
 
@@ -520,7 +435,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
         [Obsolete]
-        List<TData> Where(Expression<Func<TData, bool>> lambda);
+        List<TEntity> Where(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     是否存在数据
@@ -529,7 +444,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="b"></param>
         /// <returns>是否存在数据</returns>
         [Obsolete]
-        List<TData> Where(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        List<TEntity> Where(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -541,7 +456,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     汇总方法
         /// </summary>
-        object Collect(string fun, string field, Expression<Func<TData, bool>> lambda);
+        object Collect(string fun, string field, Expression<Func<TEntity, bool>> lambda);
 
         #endregion
 
@@ -553,7 +468,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
-        bool Any(Expression<Func<TData, bool>> lambda);
+        bool Any(Expression<Func<TEntity, bool>> lambda);
 
 
         /// <summary>
@@ -562,7 +477,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        bool Any(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        bool Any(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -573,7 +488,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否存在数据</returns>
-        long Count(Expression<Func<TData, bool>> lambda);
+        long Count(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     计数
@@ -581,7 +496,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        long Count(Expression<Func<TData, bool>> a, Expression<Func<TData, bool>> b);
+        long Count(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b);
 
         #endregion
 
@@ -593,7 +508,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="lambda">查询表达式</param>
         /// <param name="condition2">条件2，默认为空</param>
-        decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> lambda,
+        decimal Sum<TValue>(Expression<Func<TEntity, TValue>> field, Expression<Func<TEntity, bool>> lambda,
             string condition2 = null);
 
         /// <summary>
@@ -603,8 +518,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        decimal Sum<TValue>(Expression<Func<TData, TValue>> field, Expression<Func<TData, bool>> a,
-            Expression<Func<TData, bool>> b);
+        decimal Sum<TValue>(Expression<Func<TEntity, TValue>> field, Expression<Func<TEntity, bool>> a,
+            Expression<Func<TEntity, bool>> b);
 
 
         #endregion
@@ -617,39 +532,39 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     分页读取
         /// </summary>
-        List<TData> PageData(int page, int limit);
+        List<TEntity> PageData(int page, int limit);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        List<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda);
+        List<TEntity> PageData(int page, int limit, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field,
-            Expression<Func<TData, bool>> lambda);
+        List<TEntity> PageData<TField>(int page, int limit, Expression<Func<TEntity, TField>> field,
+            Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        List<TData> PageData<TField>(int page, int limit, Expression<Func<TData, TField>> field, bool desc,
-            Expression<Func<TData, bool>> lambda);
+        List<TEntity> PageData<TField>(int page, int limit, Expression<Func<TEntity, TField>> field, bool desc,
+            Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        List<TData> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        List<TEntity> PageData(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        ApiPageData<TData> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        ApiPageData<TEntity> Page(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        Task<ApiPageData<TData>> PageAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
+        Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string order, bool desc, string condition, params DbParameter[] args);
 
         #endregion
 
@@ -662,7 +577,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="lambda">条件</param>
         /// <returns>内容</returns>
-        TField LoadValue<TField>(Expression<Func<TData, TField>> field, Expression<Func<TData, bool>> lambda);
+        TField LoadValue<TField>(Expression<Func<TEntity, TField>> field, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     读取一个字段
@@ -670,7 +585,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="key">主键</param>
         /// <returns>内容</returns>
-        TField LoadValue<TField, TKey>(Expression<Func<TData, TField>> field, TKey key);
+        TField LoadValue<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key);
 
         /// <summary>
         ///     读取一个字段
@@ -678,8 +593,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="fieldExpression">字段</param>
         /// <param name="lambda">条件</param>
         /// <returns>内容</returns>
-        List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
-            Expression<Func<TData, bool>> lambda);
+        List<TField> LoadValues<TField>(Expression<Func<TEntity, TField>> fieldExpression,
+            Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     读取一个字段
@@ -687,7 +602,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="fieldExpression">字段</param>
         /// <param name="condition">条件</param>
         /// <returns>内容</returns>
-        List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition);
+        List<TField> LoadValues<TField>(Expression<Func<TEntity, TField>> fieldExpression, string condition);
 
         /// <summary>
         ///     读取一个字段
@@ -696,8 +611,8 @@ namespace Agebull.EntityModel.Common
         /// <param name="parse">转换数据类型方法</param>
         /// <param name="lambda">条件</param>
         /// <returns>内容</returns>
-        List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression,
-            Func<object, TField> parse, Expression<Func<TData, bool>> lambda);
+        List<TField> LoadValues<TField>(Expression<Func<TEntity, TField>> fieldExpression,
+            Func<object, TField> parse, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     读取一个字段
@@ -706,7 +621,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>内容</returns>
-        List<TField> LoadValues<TField>(Expression<Func<TData, TField>> fieldExpression, string condition, DbParameter[] args);
+        List<TField> LoadValues<TField>(Expression<Func<TEntity, TField>> fieldExpression, string condition, DbParameter[] args);
         #endregion
 
         #region 数据读取
@@ -715,48 +630,48 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        List<TData> LoadData(MulitCondition condition);
+        List<TEntity> LoadData(MulitCondition condition);
 
         /// <summary>
         ///     主键读取
         /// </summary>
-        TData LoadByPrimaryKey(object key);
+        TEntity LoadByPrimaryKey(object key);
 
         /// <summary>
         ///     主键读取
         /// </summary>
-        Task<TData> LoadByPrimaryKeyAsync(object key);
+        Task<TEntity> LoadByPrimaryKeyAsync(object key);
 
         /// <summary>
         ///     主键读取
         /// </summary>
-        List<TData> LoadByPrimaryKeies(IEnumerable keies);
+        List<TEntity> LoadByPrimaryKeies(IEnumerable keies);
 
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        TData LoadFirst(string condition = null);
+        TEntity LoadFirst(string condition = null);
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        TData LoadFirst(string foreignKey, object key);
+        TEntity LoadFirst(string foreignKey, object key);
 
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        TData LoadLast(string condition = null);
+        TEntity LoadLast(string condition = null);
 
         /// <summary>
         ///     如果存在的话读取尾行
         /// </summary>
-        TData LoadLast(string foreignKey, object key);
+        TEntity LoadLast(string foreignKey, object key);
 
         /// <summary>
         ///     如果存在的话读取首行
         /// </summary>
-        List<TData> LoadByForeignKey(string foreignKey, object key);
+        List<TEntity> LoadByForeignKey(string foreignKey, object key);
 
 
         #endregion
@@ -771,31 +686,31 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     保存数据
         /// </summary>
-        bool Save(TData entity);
+        bool Save(TEntity entity);
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        bool Update(TData entity);
+        bool Update(TEntity entity);
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        Task<bool> UpdateAsync(TData entity);
+        Task<bool> UpdateAsync(TEntity entity);
 
         /// <summary>
         ///     插入新数据
         /// </summary>
-        bool Insert(TData entity);
+        bool Insert(TEntity entity);
         /// <summary>
         ///     插入新数据
         /// </summary>
-        Task<bool> InsertAsync(TData entity);
+        Task<bool> InsertAsync(TEntity entity);
 
         /// <summary>
         ///     删除数据
         /// </summary>
-        bool Delete(TData entity);
+        bool Delete(TEntity entity);
 
 
         /// <summary>
@@ -814,7 +729,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        int Delete(Expression<Func<TData, bool>> lambda);
+        int Delete(Expression<Func<TEntity, bool>> lambda);
         /// <summary>
         ///     物理删除数据
         /// </summary>
@@ -825,25 +740,25 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否删除成功</returns>
-        int PhysicalDelete(Expression<Func<TData, bool>> lambda);
+        int PhysicalDelete(Expression<Func<TEntity, bool>> lambda);
         /// <summary>
         ///     保存数据
         /// </summary>
-        int Save(IEnumerable<TData> entities);
+        int Save(IEnumerable<TEntity> entities);
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        int Update(IEnumerable<TData> entities);
+        int Update(IEnumerable<TEntity> entities);
         /// <summary>
         ///     插入新数据
         /// </summary>
-        int Insert(IEnumerable<TData> entities);
+        int Insert(IEnumerable<TEntity> entities);
 
         /// <summary>
         ///     删除数据
         /// </summary>
-        int Delete(IEnumerable<TData> entities);
+        int Delete(IEnumerable<TEntity> entities);
         #endregion
 
         #region 条件更新
@@ -854,7 +769,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="value">值</param>
         /// <returns>更新行数</returns>
-        int SetValue<TField>(Expression<Func<TData, TField>> field, TField value);
+        int SetValue<TField>(Expression<Func<TEntity, TField>> field, TField value);
 
         /// <summary>
         ///     条件更新实体中已记录更新部分
@@ -862,7 +777,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="data">实体</param>
         /// <param name="lambda">条件</param>
         /// <returns>更新行数</returns>
-        int SetValue(TData data, Expression<Func<TData, bool>> lambda);
+        int SetValue(TEntity data, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     条件更新
@@ -871,7 +786,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="value">值</param>
         /// <param name="lambda">条件</param>
         /// <returns>更新行数</returns>
-        int SetValue<TField>(Expression<Func<TData, TField>> field, TField value, Expression<Func<TData, bool>> lambda);
+        int SetValue<TField>(Expression<Func<TEntity, TField>> field, TField value, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     条件更新
@@ -880,31 +795,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="value">值</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        int SetValue<TField, TKey>(Expression<Func<TData, TField>> fieldExpression, TField value, TKey key);
+        int SetValue<TField, TKey>(Expression<Func<TEntity, TField>> fieldExpression, TField value, TKey key);
 
         #endregion
 
-
-        #endregion
-
-        #region 扩展剥离
-
-        /// <summary>
-        ///     设置更新数据的命令
-        /// </summary>
-        void SetUpdateCommandPara(TData entity, DbCommand cmd);
-
-        /// <summary>
-        ///     设置插入数据的命令
-        /// </summary>
-        /// <returns>返回真说明要取主键</returns>
-        void SetInsertCommandPara(TData entity, DbCommand cmd);
-
-        /// <summary>
-        ///     载入数据
-        /// </summary>
-        /// <param name="reader">数据读取器</param>
-        TData Load(DbDataReader reader);
 
         #endregion
 
@@ -917,7 +811,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="condition"></param>
-        bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val, Expression<Func<TData, bool>> condition);
+        bool IsUnique<TValue>(Expression<Func<TEntity, TValue>> field, object val, Expression<Func<TEntity, bool>> condition);
 
         /// <summary>
         ///     检查值的唯一性
@@ -926,7 +820,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="key"></param>
-        bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val, object key);
+        bool IsUnique<TValue>(Expression<Func<TEntity, TValue>> field, object val, object key);
 
         /// <summary>
         ///     检查值的唯一性
@@ -934,7 +828,7 @@ namespace Agebull.EntityModel.Common
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
         /// <param name="val"></param>
-        bool IsUnique<TValue>(Expression<Func<TData, TValue>> field, object val);
+        bool IsUnique<TValue>(Expression<Func<TEntity, TValue>> field, object val);
 
         #endregion
     }
@@ -942,9 +836,9 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 数据状态表
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
-    public interface IStateDataTable<TData> : IDataTable<TData>
-        where TData : EditDataObject, new()
+    /// <typeparam name="TEntity"></typeparam>
+    public interface IDataAccessByStateData<TEntity> : IDataAccess<TEntity>
+        where TEntity : EditDataObject, new()
     {
         /// <summary>
         /// 重置状态
@@ -954,7 +848,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 重置状态
         /// </summary>
-        bool ResetState(Expression<Func<TData, bool>> lambda);
+        bool ResetState(Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         /// 修改状态

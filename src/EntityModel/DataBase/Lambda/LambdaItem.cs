@@ -19,38 +19,38 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     烂姆达条件节点
     /// </summary>
-    /// <typeparam name="TData">数据类型</typeparam>
-    public sealed class LambdaItem<TData>
+    /// <typeparam name="TEntity">数据类型</typeparam>
+    public sealed class LambdaItem<TEntity>
     {
         /// <summary>
         ///     与关联的其它表达式
         /// </summary>
-        public List<LambdaItem<TData>> Ands = new List<LambdaItem<TData>>();
+        public List<LambdaItem<TEntity>> Ands = new List<LambdaItem<TEntity>>();
 
         /// <summary>
         ///     或关联的其它表达式
         /// </summary>
-        public List<LambdaItem<TData>> Ors = new List<LambdaItem<TData>>();
+        public List<LambdaItem<TEntity>> Ors = new List<LambdaItem<TEntity>>();
 
 
         /// <summary>
         ///     主条件
         /// </summary>
-        public Expression<Func<TData, bool>> Root { get; set; }
+        public Expression<Func<TEntity, bool>> Root { get; set; }
 
 
         /// <summary>
         ///     根条件
         /// </summary>
-        public List<LambdaItem<TData>> Roots = new List<LambdaItem<TData>>();
+        public List<LambdaItem<TEntity>> Roots = new List<LambdaItem<TEntity>>();
 
         /// <summary>
         ///     加入与关系的条件
         /// </summary>
         /// <param name="lambda"></param>
-        public void AddRoot(Expression<Func<TData, bool>> lambda)
+        public void AddRoot(Expression<Func<TEntity, bool>> lambda)
         {
-            Roots.Add(new LambdaItem<TData>
+            Roots.Add(new LambdaItem<TEntity>
             {
                 Root = lambda
             });
@@ -60,9 +60,9 @@ namespace Agebull.EntityModel.Common
         ///     加入与关系的条件
         /// </summary>
         /// <param name="lambda"></param>
-        public void AddAnd(Expression<Func<TData, bool>> lambda)
+        public void AddAnd(Expression<Func<TEntity, bool>> lambda)
         {
-            Ands.Add(new LambdaItem<TData>
+            Ands.Add(new LambdaItem<TEntity>
             {
                 Root = lambda
             });
@@ -72,9 +72,9 @@ namespace Agebull.EntityModel.Common
         ///     加入或关系的条件
         /// </summary>
         /// <param name="lambda"></param>
-        public void AddOr(Expression<Func<TData, bool>> lambda)
+        public void AddOr(Expression<Func<TEntity, bool>> lambda)
         {
-            Ors.Add(new LambdaItem<TData>
+            Ors.Add(new LambdaItem<TEntity>
             {
                 Root = lambda
             });

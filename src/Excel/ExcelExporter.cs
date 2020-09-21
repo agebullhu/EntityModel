@@ -20,7 +20,7 @@ namespace Agebull.EntityModel.Excel
     /// <typeparam name="TAccess">数据类型对应的数据访问类</typeparam>
     public class ExcelExporter<TData,TPrimaryKey, TAccess> : ScopeBase
         where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
-        where TAccess : class, IDataTable<TData>, new()
+        where TAccess : class, IDataAccess<TData>, new()
     {
 
 
@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.Excel
         /// <summary>
         ///     数据访问对象
         /// </summary>
-        public TAccess Access => _access ?? (_access = CreateAccess());
+        public TAccess Access => _access ??= CreateAccess();
 
         /// <summary>
         ///     数据访问对象

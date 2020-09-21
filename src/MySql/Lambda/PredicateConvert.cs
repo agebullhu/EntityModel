@@ -43,18 +43,18 @@ namespace Agebull.EntityModel.MySql
         private bool _mergeByAnd;
 
         /// <summary>
-        ///     构造
+        /// 具体数据库对象
         /// </summary>
-        public PredicateConvert()
-        {
-        }
+        public IParameterCreater ParameterCreater { get; set; }
 
         /// <summary>
         ///     构造
         /// </summary>
         /// <param name="map">关联字段</param>
-        public PredicateConvert(Dictionary<string, string> map)
+        /// <param name="parameter">关联字段</param>
+        PredicateConvert(IParameterCreater parameter, Dictionary<string, string> map)
         {
+            ParameterCreater = parameter;
             _columnMap = map;
         }
 
@@ -92,24 +92,26 @@ namespace Agebull.EntityModel.MySql
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="columns">关联字段</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(string[] columns, Expression<T> predicate)
+        public static ConditionItem Convert<T>(IParameterCreater parameter, string[] columns, Expression<T> predicate)
         {
-            return Convert(columns.ToDictionary(p => p, p => p), predicate);
+            return Convert(parameter, columns.ToDictionary(p => p, p => p), predicate);
         }
 
         /// <summary>
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="map">关联字段</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(Dictionary<string, string> map, Expression<T> predicate)
+        public static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, Expression<T> predicate)
         {
-            var convert = new PredicateConvert(map);
+            var convert = new PredicateConvert(parameter, map);
             return convert.Convert(predicate);
         }
 
@@ -117,14 +119,15 @@ namespace Agebull.EntityModel.MySql
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="map">关联字段</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static void Convert<T>(Dictionary<string, string> map, Expression<T> predicate, ConditionItem condition, bool mergeByAnd = true)
+        public static void Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, Expression<T> predicate, ConditionItem condition, bool mergeByAnd = true)
         {
-            var convert = new PredicateConvert(map)
+            var convert = new PredicateConvert(parameter, map)
             {
                 _condition = condition,
                 _mergeByAnd = mergeByAnd
@@ -136,14 +139,15 @@ namespace Agebull.EntityModel.MySql
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="columns">关联字段</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert2<T>(string[] columns, Expression<Func<T, bool>> predicate, ConditionItem condition = null, bool mergeByAnd = true)
+        public static ConditionItem Convert2<T>(IParameterCreater parameter, string[] columns, Expression<Func<T, bool>> predicate, ConditionItem condition = null, bool mergeByAnd = true)
         {
-            var convert = new PredicateConvert(columns.ToDictionary(p => p, p => p))
+            var convert = new PredicateConvert(parameter, columns.ToDictionary(p => p, p => p))
             {
                 _condition = condition,
                 _mergeByAnd = mergeByAnd
@@ -155,13 +159,14 @@ namespace Agebull.EntityModel.MySql
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="map">关联字段</param>
         /// <param name="filter">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> filter)
+        public static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, LambdaItem<T> filter)
         {
-            var condition = new ConditionItem(new MySqlDataBase_());
-            Convert(map, filter, condition, true);
+            var condition = new ConditionItem { ParameterCreater = parameter };
+            Convert(parameter, map, filter, condition, true);
             return condition;
         }
 
@@ -169,15 +174,17 @@ namespace Agebull.EntityModel.MySql
         ///     分析Lambda表达式
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
+        /// <param name="parameter"></param>
         /// <param name="map">关联字段</param>
         /// <param name="filter">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(Dictionary<string, string> map, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
+        static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
         {
-            var root = new PredicateConvert(map)
+            var root = new PredicateConvert(parameter, map)
             {
+                ParameterCreater = parameter,
                 _condition = condition,
                 _mergeByAnd = mergeByAnd
             };
@@ -187,20 +194,21 @@ namespace Agebull.EntityModel.MySql
             }
             foreach (var ch in filter.Roots)
             {
-                Convert(map, ch, condition, true);
+                Convert(parameter, map, ch, condition, true);
             }
 
-            ConditionItem item = new ConditionItem(new MySqlDataBase_())
+            ConditionItem item = new ConditionItem
             {
+                ParameterCreater = parameter,
                 ParaIndex = root._condition.ParaIndex
             };
             foreach (var ch in filter.Ands)
             {
-                Convert(map, ch, item, true);
+                Convert(parameter, map, ch, item, true);
             }
             foreach (var ch in filter.Ors)
             {
-                Convert(map, ch, item, false);
+                Convert(parameter, map, ch, item, false);
             }
             root._condition.ParaIndex = item.ParaIndex;
             root._condition.AddAndCondition(item.ConditionSql, item.Parameters);
@@ -217,7 +225,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (_condition == null)
             {
-                _condition = new ConditionItem(new MySqlDataBase_());
+                _condition = new ConditionItem { ParameterCreater = ParameterCreater };
             }
             var old = _condition.ConditionSql;
             var sql = ConvertExpression(predicate.Body);
@@ -412,7 +420,7 @@ namespace Agebull.EntityModel.MySql
             if (expression.Method.Name == "Equals")
             {
                 string left, right;
-                if(expression.Method.IsStatic)
+                if (expression.Method.IsStatic)
                 {
                     left = ConvertExpression(expression.Arguments[0]);
                     right = ConvertExpression(expression.Arguments[1]);

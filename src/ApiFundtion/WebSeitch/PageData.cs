@@ -33,7 +33,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TChild> Children
         {
-            get => _children ?? (_children = new List<TChild>());
+            get => _children ??= new List<TChild>();
             set => _children = value;
         }
     }
@@ -59,7 +59,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TData> Children
         {
-            get => _children ?? (_children = new List<TData>());
+            get => _children ??= new List<TData>();
             set => _children = value;
         }
     }
@@ -91,7 +91,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TItem> Items
         {
-            get => _items ?? (_items = new List<TItem>());
+            get => _items ??= new List<TItem>();
             set => _items = value;
         }
 
@@ -100,7 +100,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TData> Children
         {
-            get => _children ?? (_children = new List<TData>());
+            get => _children ??= new List<TData>();
             set => _children = value;
         }
     }
@@ -138,7 +138,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TItem> Items
         {
-            get => _items ?? (_items = new List<TItem>());
+            get => _items ??= new List<TItem>();
             set => _items = value;
         }
 
@@ -147,7 +147,7 @@ namespace Agebull.EntityModel.EasyUI
         /// </summary>
         public List<TData> Children
         {
-            get => _children ?? (_children = new List<TData>());
+            get => _children ??= new List<TData>();
             set => _children = value;
         }
     }

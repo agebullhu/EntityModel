@@ -19,10 +19,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <summary>
     ///     基于审核扩展的业务逻辑基类
     /// </summary>
-    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TEntity">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public interface IBusinessLogicByAudit<TData, TPrimaryKey> : IBusinessLogicByStateData<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, IAuditData, new()
+    public interface IBusinessLogicByAudit<TEntity, TPrimaryKey> : IBusinessLogicByStateData<TEntity, TPrimaryKey>
+        where TEntity : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, IAuditData, new()
     {
         #region 消息
 

@@ -22,17 +22,9 @@ namespace Agebull.EntityModel.Common
     public sealed class ConditionItem
     {
         /// <summary>
-        /// 构造
-        /// </summary>
-        public ConditionItem(IParameterCreater db)
-        {
-            _dataBase = db;
-        }
-
-        /// <summary>
         /// 具体数据库对象
         /// </summary>
-        private IParameterCreater _dataBase;
+        public IParameterCreater ParameterCreater { get; set; }
 
         private readonly Dictionary<string, DbParameter> _parameters = new Dictionary<string, DbParameter>();
 
@@ -184,7 +176,7 @@ namespace Agebull.EntityModel.Common
         public string AddParameter(object value)
         {
             var name = NewParameterName;
-            _parameters.Add(name, _dataBase.CreateParameter(name, value));
+            _parameters.Add(name, ParameterCreater.CreateParameter(name, value));
             return name;
         }
 
@@ -199,7 +191,7 @@ namespace Agebull.EntityModel.Common
             if (name == null)
             {
                 name = NewParameterName;
-                _parameters.Add(name, _dataBase.CreateParameter(name, value));
+                _parameters.Add(name, ParameterCreater.CreateParameter(name, value));
                 return false;
             }
             DbParameter parameter;
@@ -208,7 +200,7 @@ namespace Agebull.EntityModel.Common
                 parameter.Value = value;
                 return true;
             }
-            _parameters.Add(name, _dataBase.CreateParameter(name, value));
+            _parameters.Add(name, ParameterCreater.CreateParameter(name, value));
             return false;
         }
     }

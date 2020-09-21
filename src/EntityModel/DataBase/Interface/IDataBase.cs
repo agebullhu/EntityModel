@@ -20,16 +20,8 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示数据库对象
     /// </summary>
-    public interface IDataBase : IConfig, IDisposable
+    public interface IDataBase : ICommandCreater, IConfig, IDisposable
     {
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        DataBaseType DataBaseType
-        {
-            get;
-        }
-
         #region 事务及连接范围
 
         /// <summary>
@@ -197,46 +189,87 @@ namespace Agebull.EntityModel.Common
 
         #endregion
 
-    }
-    /// <summary>
-    /// 参数生成器
-    /// </summary>
-    public interface IParameterCreater
-    {
 
         /// <summary>
-        ///     生成Sql参数
+        /// 构造连接范围对象
         /// </summary>
-        /// <param name="csharpType">C#的类型</param>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        DbParameter CreateParameter(string csharpType, string parameterName, object value);
+        /// <returns></returns>
+
+        IConnectionScope CreateConnectionScope();
+
+        /// <summary>
+        ///     记录SQL日志
+        /// </summary>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        void TraceSql(DbCommand cmd);
+
+        /// <summary>
+        ///     记录SQL日志
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        void TraceSql(string sql, IEnumerable<DbParameter> args);
 
 
         /// <summary>
-        ///     生成Sql参数
+        ///     对连接执行 Transact-SQL 语句并返回受影响的行数。
         /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        DbParameter CreateParameter(string parameterName, object value);
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>被影响的行数</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+        /// </remarks>
+        Task<int> ExecuteAsync(string sql, params DbParameter[] args);
 
         /// <summary>
-        ///     生成Sql参数
+        ///     执行SQL
         /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        DbParameter CreateParameter(string parameterName, string value);
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>被影响的行数</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+        /// </remarks>
+        Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args);
 
         /// <summary>
-        ///     生成Sql参数
+        ///     执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
         /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        DbParameter CreateParameter<T>(string parameterName, T value)
-            where T : struct;
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        Task<object> ExecuteScalarAsync(string sql, params DbParameter[] args);
+
+        /// <summary>
+        ///     执行SQL
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        Task<T> ExecuteScalarAsync<T>(string sql);
+
+        /// <summary>
+        ///     执行SQL
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>操作的第一行第一列或空</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+        /// </remarks>
+        Task<T> ExecuteScalarAsync<T>(string sql, params DbParameter[] args);
     }
 }

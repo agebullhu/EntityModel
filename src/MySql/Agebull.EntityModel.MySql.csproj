@@ -36,23 +36,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
+    <Compile Remove="DataState\**" />
     <Compile Remove="Excel\**" />
     <Compile Remove="Interface\**" />
     <Compile Remove="SQLite\**" />
+    <Compile Remove="Table\**" />
     <EmbeddedResource Remove="BusinessLogic\**" />
+    <EmbeddedResource Remove="DataState\**" />
     <EmbeddedResource Remove="Excel\**" />
     <EmbeddedResource Remove="Interface\**" />
     <EmbeddedResource Remove="SQLite\**" />
+    <EmbeddedResource Remove="Table\**" />
     <None Remove="BusinessLogic\**" />
+    <None Remove="DataState\**" />
     <None Remove="Excel\**" />
     <None Remove="Interface\**" />
     <None Remove="SQLite\**" />
+    <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DataState\HitoryTable.cs" />
     <Compile Remove="DataStateTable.cs" />
-    <Compile Remove="Table\CacheTable.cs" />
-    <Compile Remove="Table\MySqlTable.Extend.cs" />
   </ItemGroup>
 
   <ItemGroup>

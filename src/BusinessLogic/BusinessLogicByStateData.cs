@@ -27,7 +27,7 @@ namespace Agebull.EntityModel.BusinessLogic
     public class BusinessLogicByStateData<TData, TPrimaryKey, TAccess>
         : UiBusinessLogicBase<TData, TPrimaryKey, TAccess>, IBusinessLogicByStateData<TData, TPrimaryKey>
         where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
-        where TAccess : class, IStateDataTable<TData>, new()
+        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
         #region Êý¾Ý×´Ì¬Âß¼­
 
@@ -216,7 +216,7 @@ namespace Agebull.EntityModel.BusinessLogic
     public class BusinessLogicByStateData<TData, TAccess>
         : BusinessLogicByStateData<TData,long, TAccess>
         where TData : EditDataObject, IIdentityData<long>, IStateData, new()
-        where TAccess : class, IStateDataTable<TData>, new()
+        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
     }
 }

@@ -53,7 +53,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Dictionary<string, string> ColumnMap
         {
-            get { return _nameProperties ?? (_nameProperties = Properties.Values.ToDictionary(p => p.PropertyName, p => p.ColumnName)); }
+            get { return _nameProperties ??= Properties.Values.ToDictionary(p => p.PropertyName, p => p.ColumnName); }
         }
 
         /// <summary>

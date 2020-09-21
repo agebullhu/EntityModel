@@ -70,30 +70,6 @@ namespace Agebull.EntityModel.MySql
 
         #endregion
 
-        #region 数据库特殊操作
-
-        /// <summary>
-        ///     清除所有数据
-        /// </summary>
-        public async Task ClearAsync(string table)
-        {
-            await ExecuteAsync($@"TRUNCATE TABLE `{table}`;");
-        }
-
-        /// <summary>
-        ///     清除所有数据
-        /// </summary>
-        public async Task ClearAllAsync()
-        {
-            var sql = new StringBuilder();
-            foreach (var table in TableSql.Values)
-            {
-                await ClearAsync(table.TableName);
-            }
-            await ExecuteAsync(sql.ToString());
-        }
-
-        #endregion
 
         #region 内部方法
 

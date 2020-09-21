@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Connection\**" />
+    <Compile Remove="DataBase\**" />
+    <Compile Remove="DataState\**" />
+    <Compile Remove="DataTrigger\**" />
+    <Compile Remove="Lambda\**" />
+    <Compile Remove="MySql\**" />
+    <Compile Remove="Sql\**" />
+    <EmbeddedResource Remove="Connection\**" />
+    <EmbeddedResource Remove="DataBase\**" />
+    <EmbeddedResource Remove="DataState\**" />
+    <EmbeddedResource Remove="DataTrigger\**" />
+    <EmbeddedResource Remove="Lambda\**" />
+    <EmbeddedResource Remove="MySql\**" />
+    <EmbeddedResource Remove="Sql\**" />
+    <None Remove="Connection\**" />
+    <None Remove="DataBase\**" />
+    <None Remove="DataState\**" />
+    <None Remove="DataTrigger\**" />
+    <None Remove="Lambda\**" />
+    <None Remove="MySql\**" />
+    <None Remove="Sql\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="MySql\MySqlSqlBuilder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.21" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataAccessBase\" />
+  </ItemGroup>
+</Project>

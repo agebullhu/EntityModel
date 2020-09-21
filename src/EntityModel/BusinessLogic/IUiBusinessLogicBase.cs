@@ -11,10 +11,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <summary>
     /// 支持界面操作的业务逻辑对象基类
     /// </summary>
-    /// <typeparam name="TData">数据对象</typeparam>
+    /// <typeparam name="TEntity">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public interface IUiBusinessLogicBase<TData,TPrimaryKey> : IBusinessLogicBase<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
+    public interface IUiBusinessLogicBase<TEntity,TPrimaryKey> : IBusinessLogicBase<TEntity, TPrimaryKey>
+        where TEntity : EditDataObject, IIdentityData<TPrimaryKey>, new()
     {
         #region 读数据
 
@@ -22,24 +22,24 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     取得列表数据
         /// </summary>
         [Obsolete]
-        ApiPageData<TData> PageData(int page, int limit, string condition, params DbParameter[] args);
+        ApiPageData<TEntity> PageData(int page, int limit, string condition, params DbParameter[] args);
 
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, string condition, params DbParameter[] args);
+        ApiPageData<TEntity> PageData(int page, int limit, string sort, bool desc, string condition, params DbParameter[] args);
 
         /// <summary>
         ///     分页读取
         /// </summary>
         [Obsolete]
-        ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda);
+        ApiPageData<TEntity> PageData(int page, int limit, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     分页读取
         /// </summary>
         [Obsolete]
-        ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda);
+        ApiPageData<TEntity> PageData(int page, int limit, LambdaItem<TEntity> lambda);
         #endregion
 
         #region 导出到Excel
@@ -50,7 +50,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="sheetName"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        (string name, string mime, byte[] bytes) Export(string sheetName, LambdaItem<TData> filter);
+        (string name, string mime, byte[] bytes) Export(string sheetName, LambdaItem<TEntity> filter);
 
         #endregion
 
@@ -59,32 +59,32 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     新增
         /// </summary>
-        bool Save(TData data);
+        bool Save(TEntity data);
 
         /// <summary>
         ///     新增
         /// </summary>
-        Task<bool> SaveAsync(TData data);
+        Task<bool> SaveAsync(TEntity data);
 
         /// <summary>
         ///     新增
         /// </summary>
-        bool AddNew(TData data);
+        bool AddNew(TEntity data);
 
         /// <summary>
         ///     新增
         /// </summary>
-        Task<bool> AddNewAsync(TData data);
+        Task<bool> AddNewAsync(TEntity data);
 
         /// <summary>
         ///     更新对象
         /// </summary>
-        bool Update(TData data);
+        bool Update(TEntity data);
 
         /// <summary>
         ///     更新对象
         /// </summary>
-        Task<bool> UpdateAsync(TData data);
+        Task<bool> UpdateAsync(TEntity data);
 
         #endregion
 

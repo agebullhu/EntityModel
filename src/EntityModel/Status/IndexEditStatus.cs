@@ -52,7 +52,7 @@ namespace Agebull.EntityModel.Common
         ///     修改的属性列表
         /// </summary>
         [ReadOnly(true), DisplayName("修改的属性列表"), Category("运行时")]
-        public byte[] ModifiedProperties => modifiedProperties ?? (modifiedProperties = new byte[Entity.__Struct.Count + 1]);
+        public byte[] ModifiedProperties => modifiedProperties ??= new byte[Entity.__Struct.Count + 1];
 
         /// <summary>
         ///     是否修改

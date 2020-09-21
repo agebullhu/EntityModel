@@ -155,7 +155,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecuting<TEntity>(IDataTable<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        public static void OnOperatorExecuting<TEntity>(IDataAccess<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
                      where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
@@ -169,7 +169,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public static void OnOperatorExecuted<TEntity>(IDataTable<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        public static void OnOperatorExecuted<TEntity>(IDataAccess<TEntity> table, string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
              where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
@@ -182,7 +182,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="table">当前数据操作对象</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        public static void ConditionSqlCode<TEntity>(IDataTable<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new()
+        public static void ConditionSqlCode<TEntity>(ISqlBuilder<TEntity> table, List<string> conditions) where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
                 trigger.ConditionSqlCode(table, conditions);
@@ -195,7 +195,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="code">写入SQL的文本构造器</param>
         /// <param name="condition">当前场景的执行条件</param>
         /// <returns></returns>
-        public static void BeforeUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, string condition)
+        public static void BeforeUpdateSql<TEntity>(ISqlBuilder<TEntity> table, StringBuilder code, string condition)
             where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>().Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))
@@ -211,7 +211,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="condition">当前场景的执行条件</param>
         /// <param name="code">写入SQL的文本构造器</param>
         /// <returns></returns>
-        public static void AfterUpdateSql<TEntity>(IDataTable<TEntity> table, StringBuilder code, string condition)
+        public static void AfterUpdateSql<TEntity>(ISqlBuilder<TEntity> table, StringBuilder code, string condition)
             where TEntity : EditDataObject, new()
         {
             foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>().Where(p => p.DataBaseType.HasFlag(table.DataBaseType)))

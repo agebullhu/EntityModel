@@ -27,7 +27,7 @@ namespace Agebull.EntityModel.BusinessLogic
     public class BusinessLogicByAudit<TData, TPrimaryKey, TAccess>
         : BusinessLogicByStateData<TData, TPrimaryKey, TAccess>, IBusinessLogicByAudit<TData, TPrimaryKey>
         where TData : EditDataObject, IIdentityData<TPrimaryKey>, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : class, IStateDataTable<TData>, new()
+        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
         #region ÏûÏ¢
 
@@ -741,7 +741,7 @@ namespace Agebull.EntityModel.BusinessLogic
     public class BusinessLogicByAudit<TData, TAccess>
         : BusinessLogicByAudit<TData,long, TAccess>
         where TData : EditDataObject, IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
-        where TAccess : class, IStateDataTable<TData>, new()
+        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
     }
 }

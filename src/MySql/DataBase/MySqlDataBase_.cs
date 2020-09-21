@@ -9,7 +9,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     表示MySql数据库对象
     /// </summary>
-    public class MySqlDataBase_ : SimpleConfig, IParameterCreater
+    public class MySqlDataBase_ : SimpleConfig
     {
         /// <summary>
         ///     生成Sql参数
@@ -18,7 +18,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
         /// <returns>参数</returns>
-        public static MySqlParameter CreateParameter(string csharpType, string parameterName, object value)
+        public static DbParameter CreateParameter(string csharpType, string parameterName, object value)
         {
             if (value is Enum)
             {
@@ -37,20 +37,6 @@ namespace Agebull.EntityModel.MySql
             return CreateParameter(parameterName, value, ToSqlDbType(csharpType));
         }
 
-        DbParameter IParameterCreater.CreateParameter(string parameterName, object value)
-        {
-            return CreateParameter(parameterName, value);
-        }
-
-        DbParameter IParameterCreater.CreateParameter(string parameterName, string value)
-        {
-            return CreateParameter(parameterName, value);
-        }
-
-        DbParameter IParameterCreater.CreateParameter<T>(string parameterName, T value)
-        {
-            return CreateParameter(parameterName, value);
-        }
 
 
         /// <summary>
@@ -88,10 +74,6 @@ namespace Agebull.EntityModel.MySql
             };
         }
 
-        DbParameter IParameterCreater.CreateParameter(string csharpType, string parameterName, object value)
-        {
-            return CreateParameter(csharpType, parameterName, value);
-        }
 
         /// <summary>
         ///     生成Sql参数
