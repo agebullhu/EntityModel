@@ -21,7 +21,7 @@ namespace Agebull.EntityModel.Common
     ///     编辑支持的实体对象
     /// </summary>
     [DataContract, Serializable]
-    public abstract class EditDataObject : DataObjectBase//, IEditObject
+    public abstract class EditDataObject : DataObjectBase, IEditObject
     {
         #region 构造
 
@@ -43,6 +43,7 @@ namespace Agebull.EntityModel.Common
         }
 
         #endregion
+
         #region 复制支持
 
         /// <summary>
@@ -93,6 +94,22 @@ namespace Agebull.EntityModel.Common
         #endregion
 
         #region 修改状态
+
+        /// <summary>
+        /// 设置为未修改
+        /// </summary>
+        public void RejectChanged()
+        {
+            __status.RejectChanged();
+        }
+
+        /// <summary>
+        /// 设置为未修改
+        /// </summary>
+        public void AcceptChanged()
+        {
+            __status.AcceptChanged();
+        }
 
         /// <summary>
         ///     记录属性修改
@@ -218,7 +235,29 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public virtual void Reset()
         {
+            __status.Reset();
         }
+
+        bool IEditObject.FieldIsModified(int propertyIndex)
+        {
+           return __status.FieldIsModified(propertyIndex);
+        }
+
+        void IEditObject.SetUnModify(int propertyIndex)
+        {
+            __status.SetUnModify(propertyIndex);
+        }
+
+        void IEditObject.SetModify(int propertyIndex)
+        {
+            __status.SetModify(propertyIndex);
+        }
+
+        bool IEditObject.IsModified => __status.IsModified;
+
+        bool IEditObject.IsDelete => __status.IsDelete;
+
+        bool IEditObject.IsNew => __status.IsNew;
 
         #endregion
 

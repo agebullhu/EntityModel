@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>4.0.1.5</Version>
+    <Version>5.0.0.1-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
@@ -55,10 +55,14 @@
     <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Connection\ConnectionInfo.cs" />
+    <Compile Remove="Connection\DataBaseInfo.cs" />
+    <Compile Remove="DataBase\MySqlDataBase_.cs" />
     <Compile Remove="DataStateTable.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 

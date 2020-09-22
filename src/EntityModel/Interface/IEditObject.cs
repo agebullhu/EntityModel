@@ -14,6 +14,16 @@ namespace Agebull.EntityModel.Common
     public interface IEditObject : IDataObject
     {
         /// <summary>
+        ///     接受修改
+        /// </summary>
+        void AcceptChanged();
+
+        /// <summary>
+        /// 设置为未修改
+        /// </summary>
+        void RejectChanged();
+
+        /// <summary>
         ///     是否修改
         /// </summary>
         bool IsModified { get; }
@@ -26,7 +36,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     是否新增
         /// </summary>
-        bool IsAdd { get; }
+        bool IsNew { get; }
 
         /// <summary>
         ///     是否修改
@@ -45,16 +55,6 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="propertyIndex"> 字段的序号 </param>
         void SetModify(int propertyIndex);
-
-        /// <summary>
-        ///     接受修改
-        /// </summary>
-        void AcceptChanged();
-
-        /// <summary>
-        ///     回退修改
-        /// </summary>
-        void RejectChanged();
 
         /// <summary>
         ///     属性修改的后期处理(保存后)

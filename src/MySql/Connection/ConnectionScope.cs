@@ -11,19 +11,27 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     public class ConnectionScope : IAsyncDisposable, IDisposable, IConnectionScope
     {
-        MySqlDataBase DataBase;
-        bool IsLockConnection;
-        internal ConnectionScope(MySqlDataBase dataBase)
+        readonly MySqlDataBase DataBase;
+        readonly bool IsLockConnection;
+
+        ConnectionScope(MySqlDataBase dataBase)
         {
             IsLockConnection = dataBase.IsLockConnection;
             DataBase = dataBase;
             Transaction = dataBase.Transaction;
-            if (IsLockConnection)
-                Connection = dataBase._connection;
-            else
-                Connection = MySqlConnectionsManager.GetConnection(dataBase.ConnectionStringName);
         }
 
+        internal static async Task<IConnectionScope> CreateScope(MySqlDataBase dataBase)
+        {
+            var scope = new ConnectionScope(dataBase);
+
+            if (dataBase.IsLockConnection)
+                scope.Connection = dataBase._connection;
+            else
+                scope.Connection = await MySqlConnectionsManager.GetConnection(dataBase.ConnectionStringName);
+
+            return scope;
+        }
         /// <summary>
         ///     事务对象
         /// </summary>

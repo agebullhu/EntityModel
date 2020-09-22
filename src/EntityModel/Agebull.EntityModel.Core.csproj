@@ -40,20 +40,16 @@
     <DocumentationFile>Agebull.EntityModel.Core.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="DataBase\**" />
     <Compile Remove="DEncrypt\**" />
     <Compile Remove="Redis\**" />
-    <EmbeddedResource Remove="DataBase\**" />
     <EmbeddedResource Remove="DEncrypt\**" />
     <EmbeddedResource Remove="Redis\**" />
-    <None Remove="DataBase\**" />
     <None Remove="DEncrypt\**" />
     <None Remove="Redis\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Base\TableSql.cs" />
-    <Compile Remove="BusinessLogic\IDataExtendChecker.cs" />
     <Compile Remove="Entity\ApiArrayResult.cs" />
     <Compile Remove="Entity\ApiFileResult.cs" />
     <Compile Remove="Entity\ApiValueResult.cs" />
@@ -69,28 +65,6 @@
     <None Remove="Agebull.Common.DataEntity.csproj.vspscc" />
     <None Remove="app.config" />
     <None Remove="packages.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="DataBase\Interface\DataAccessSqlOption.cs" />
-    <Compile Include="DataBase\Interface\ICommandCreater.cs" />
-    <Compile Include="DataBase\Interface\IConnectionScope.cs" />
-    <Compile Include="DataBase\Interface\IParameterCreater.cs" />
-    <Compile Include="DataBase\Interface\ISqlBuilder.cs" />
-    <Compile Include="DataBase\Interface\OperatorContext.cs" />
-    <Compile Include="DataBase\Lambda\ConditionItem.cs" />
-    <Compile Include="DataBase\Interface\DataBaseType.cs" />
-    <Compile Include="DataBase\Interface\IDataBase.cs" />
-    <Compile Include="DataBase\Interface\IDataAccess.cs" />
-    <Compile Include="DataBase\Interface\ITransactionScope.cs" />
-    <Compile Include="DataBase\Lambda\LambdaItem.cs" />
-    <Compile Include="DataBase\Interface\TableSql.cs" />
-    <Compile Include="DataBase\EntityModelDbException.cs" />
-    <Compile Include="DataBase\Lambda\StringEx.cs" />
-    <Compile Include="DataBase\Scope\DbReaderScope.cs" />
-    <Compile Include="DataBase\Scope\ReadTableScope.cs" />
-    <Compile Include="DataBase\Scope\DataBaseScope.cs" />
-    <Compile Include="DataBase\Scope\TransactionScope.cs" />
   </ItemGroup>
 
   <ItemGroup>

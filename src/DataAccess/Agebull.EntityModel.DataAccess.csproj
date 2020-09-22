@@ -2,45 +2,39 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>5.0.0.1-bate</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Connection\**" />
-    <Compile Remove="DataBase\**" />
-    <Compile Remove="DataState\**" />
-    <Compile Remove="DataTrigger\**" />
-    <Compile Remove="Lambda\**" />
-    <Compile Remove="MySql\**" />
-    <Compile Remove="Sql\**" />
-    <EmbeddedResource Remove="Connection\**" />
-    <EmbeddedResource Remove="DataBase\**" />
-    <EmbeddedResource Remove="DataState\**" />
-    <EmbeddedResource Remove="DataTrigger\**" />
-    <EmbeddedResource Remove="Lambda\**" />
-    <EmbeddedResource Remove="MySql\**" />
-    <EmbeddedResource Remove="Sql\**" />
-    <None Remove="Connection\**" />
-    <None Remove="DataBase\**" />
-    <None Remove="DataState\**" />
-    <None Remove="DataTrigger\**" />
-    <None Remove="Lambda\**" />
-    <None Remove="MySql\**" />
-    <None Remove="Sql\**" />
+    <Compile Remove="DataBase\MySql\**" />
+    <Compile Remove="DataBase\SQLite\**" />
+    <Compile Remove="DataBase\SqlServer\**" />
+    <Compile Remove="Option\**" />
+    <EmbeddedResource Remove="DataBase\MySql\**" />
+    <EmbeddedResource Remove="DataBase\SQLite\**" />
+    <EmbeddedResource Remove="DataBase\SqlServer\**" />
+    <EmbeddedResource Remove="Option\**" />
+    <None Remove="DataBase\MySql\**" />
+    <None Remove="DataBase\SQLite\**" />
+    <None Remove="DataBase\SqlServer\**" />
+    <None Remove="Option\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="MySql\MySqlSqlBuilder.cs" />
+    <Compile Remove="DataAccess\DataAccessBase.dml.cs" />
+    <Compile Remove="DataAccess\DataAccessBase.load.cs" />
+    <Compile Remove="DataBase\Scope\DataTableScope.cs" />
+    <Compile Remove="DataBase\Scope\DbReaderScope.cs" />
+    <Compile Remove="DataBase\Scope\ReadTableScope.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <Compile Include="Option\DataAccessOption.cs" />
+    <Compile Include="Option\DataTableSturct.cs" />
+    <Compile Include="Option\EntityLoadScope.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DataAccessBase\" />
   </ItemGroup>
 </Project>

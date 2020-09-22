@@ -8,6 +8,7 @@
 
 #region 引用
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,12 +19,17 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示实体结构
     /// </summary>
-    public sealed class EntitySturct : SimpleConfig
+    public class EntitySturct : SimpleConfig
     {
         /// <summary>
         ///     导出的名称
         /// </summary>
         public string ImportName { get; set; }
+
+        /// <summary>
+        ///     项目名称
+        /// </summary>
+        public string ProjectName { get; set; }
 
         /// <summary>
         ///     实体名称
@@ -45,21 +51,29 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Dictionary<int, PropertySturct> Properties { get; set; }
 
-
-        private Dictionary<string, string> _nameProperties;
-
-        /// <summary>
-        ///     属性字典
-        /// </summary>
-        public Dictionary<string, string> ColumnMap
-        {
-            get { return _nameProperties ??= Properties.Values.ToDictionary(p => p.PropertyName, p => p.ColumnName); }
-        }
-
         /// <summary>
         ///     属性总量
         /// </summary>
         public int Count => Properties.Count;
 
+        /// <summary>
+        ///     属性字典
+        /// </summary>
+        public Dictionary<string, PropertySturct> PropertyMap { get; private set; }
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        public virtual void  Init()
+        {
+            PropertyMap = new Dictionary<string, PropertySturct>(StringComparer.OrdinalIgnoreCase);
+            foreach (var pro in Properties.Values)
+            {
+                if (!pro.Featrue.HasFlag(PropertyFeatrue.DbCloumn))
+                    continue;
+                PropertyMap[pro.ColumnName] = pro;
+                PropertyMap[pro.PropertyName] = pro;
+            }
+        }
     }
 }

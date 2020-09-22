@@ -262,7 +262,8 @@ namespace Agebull.MicroZero.ZeroApis
 
         IDisposable GetFieldFilter()
         {
-            if (RequestArgumentConvert.TryGet("_filter_", out string[] fieldFilter))
+            throw new Exception("未完成");
+            /*if (RequestArgumentConvert.TryGet("_filter_", out string[] fieldFilter))
             {
                 var test = new TData();
                 List<PropertySturct> properties = new List<PropertySturct>();
@@ -288,14 +289,14 @@ namespace Agebull.MicroZero.ZeroApis
                         }
                     });
             }
-            return null;
+            return null;*/
         }
         /// <summary>
         ///     取得列表数据
         /// </summary>
         protected virtual ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
         {
-            var item = Business.Access.Compile(lambda);
+            var item = Business.Access.SqlBuilder.Compile(lambda);
             return LoadListData(item.ConditionSql, item.Parameters);
         }
 
@@ -308,7 +309,7 @@ namespace Agebull.MicroZero.ZeroApis
             var size = RequestArgumentConvert.GetInt("_size_", 20);
             RequestArgumentConvert.TryGet("_sort_", out string sort);
             if (sort == null)
-                sort = Business.Access.KeyField;
+                sort = Business.Access.SqlBuilder.Option.PrimaryKey;
             var desc = RequestArgumentConvert.TryGet("_order_", out string order) && order?.ToLower() == "desc";
 
             //SaveQueryArguments(page, sort, adesc, rows);

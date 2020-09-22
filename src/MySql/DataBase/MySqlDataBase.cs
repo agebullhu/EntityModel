@@ -18,6 +18,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -26,7 +27,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     表示MySql数据库对象
     /// </summary>
-    public abstract partial class MySqlDataBase : MySqlDataBase_, IDataBase,ICommandCreater
+    public abstract partial class MySqlDataBase : ParameterCreater, IDataBase
     {
         #region 构造
 
@@ -36,14 +37,13 @@ namespace Agebull.EntityModel.MySql
         protected MySqlDataBase()
         {
             MySqlConnectionsManager.InternalInitialize();
-            DependencyScope.DisposeFunc.Add(Dispose);
+            DependencyScope.DisposeFunc.Add(() => _ = DisposeAsync());
         }
 
         /// <summary>
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => DataBaseType.MySql;
-
 
         /// <summary>
         /// 数据库名称
@@ -69,33 +69,32 @@ namespace Agebull.EntityModel.MySql
         /// 开始一个事务
         /// </summary>
         /// <returns></returns>
-        public bool BeginTransaction()
+        public async Task<bool> BeginTransaction()
         {
             if (Transaction != null)
                 return false;
-            Open();
-            Transaction = _connection.BeginTransaction();
-
+            await OpenAsync();
+            Transaction = await _connection.BeginTransactionAsync();
             return true;
         }
 
         /// <summary>
         /// 回滚事务
         /// </summary>
-        void IDataBase.Rollback()
+        async Task IDataBase.Rollback()
         {
-            Transaction?.Rollback();
-            Transaction?.Dispose();
+            await Transaction?.RollbackAsync();
+            await Transaction?.DisposeAsync().AsTask();
             Transaction = null;
         }
 
         /// <summary>
         /// 提交事务
         /// </summary>
-        void IDataBase.Commit()
+        async Task IDataBase.Commit()
         {
-            Transaction?.Commit();
-            Transaction?.Dispose();
+            await Transaction?.CommitAsync();
+            await Transaction?.DisposeAsync().AsTask();
             Transaction = null;
         }
         #endregion
@@ -114,18 +113,6 @@ namespace Agebull.EntityModel.MySql
 
         internal MySqlConnection _connection;
 
-        /// <summary>
-        ///     打开连接
-        /// </summary>
-        /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        public bool Open()
-        {
-            if (_connection != null/* && _connection.State == ConnectionState.Open*/)
-                return false;
-            _connection = MySqlConnectionsManager.InitConnection(ConnectionStringName);
-            IsLockConnection = true;
-            return true;
-        }
         #endregion
 
         #region 析构
@@ -134,24 +121,25 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             if (_isDisposed)
                 return;
             _isDisposed = true;
-            DoDispose();
+            await DoDispose();
 
-            if (_connection != null)
+            if (_connection == null)
             {
-                _connection = null;
-                IsLockConnection = false;
-                if (Transaction != null)
-                {
-                    Transaction.Rollback();
-                    Transaction = null;
-                }
-                MySqlConnectionsManager.Close(_connection, ConnectionStringName);
+                return;
             }
+            _connection = null;
+            IsLockConnection = false;
+            if (Transaction != null)
+            {
+                await Transaction.RollbackAsync();
+                Transaction = null;
+            }
+            await MySqlConnectionsManager.Close(_connection, ConnectionStringName);
         }
 
         /// <summary>
@@ -159,145 +147,36 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         ~MySqlDataBase()
         {
-            Dispose();
+            _ = DisposeAsync();
         }
 
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
-        protected virtual void DoDispose()
+        protected virtual Task DoDispose()
         {
+            return Task.CompletedTask;
         }
 
         #endregion
 
-        #region 数据库特殊操作
+        #region 连接
 
         /// <summary>
-        ///     执行SQL
+        ///     打开连接
         /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <returns>被影响的行数</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public int Execute(string sql)
+        /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
+        public async Task<bool> OpenAsync()
         {
-            return ExecuteInner(sql);
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>被影响的行数</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public int Execute(string sql, IEnumerable<DbParameter> args)
-        {
-            return ExecuteInner(sql, args.ToArray());
-        }
-
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>被影响的行数</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public int Execute(string sql, params DbParameter[] args)
-        {
-            return args.Length == 0
-                ? ExecuteInner(sql)
-                : ExecuteInner(sql, args);
-        }
-
-        /// <summary>
-        ///     执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public object ExecuteScalar(string sql, IEnumerable<DbParameter> args)
-        {
-            return ExecuteScalarInner(sql, args.ToArray());
-        }
-
-        /// <summary>
-        ///     执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public object ExecuteScalar(string sql, params DbParameter[] args)
-        {
-            return args == null || args.Length == 0
-                   ? ExecuteScalarInner(sql)
-                   : ExecuteScalarInner(sql, args);
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public T ExecuteScalar<T>(string sql)
-        {
-            return ExecuteScalarInner<T>(sql);
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public object ExecuteScalar(string sql)
-        {
-            return ExecuteScalarInner(sql);
-        }
-
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public T ExecuteScalar<T>(string sql, params DbParameter[] args)
-        {
-            return ExecuteScalarInner<T>(sql, args);
-        }
-
-
-        /// <summary>
-        ///     清除所有数据
-        /// </summary>
-        public void Clear(string table)
-        {
-            Execute($@"TRUNCATE TABLE `{table}`;");
+            if (_connection != null/* && _connection.State == ConnectionState.Open*/)
+                return false;
+            _connection = await MySqlConnectionsManager.InitConnection(ConnectionStringName);
+            IsLockConnection = true;
+            return IsLockConnection;
         }
 
         #endregion
+
 
         #region 内部方法
 
@@ -310,11 +189,27 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        protected int ExecuteInner(string sql, params DbParameter[] args)
+        public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            using var scope = new ConnectionScope(this);
+            using var scope = await ConnectionScope.CreateScope(this);
             using var cmd = CreateCommand(scope, sql, args);
-            return cmd.ExecuteNonQuery();
+            return await cmd.ExecuteNonQueryAsync();
+        }
+
+        /// <summary>
+        ///     执行SQL
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="args">参数</param>
+        /// <returns>被影响的行数</returns>
+        /// <remarks>
+        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+        /// </remarks>
+        public async Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args)
+        {
+            using var scope = await ConnectionScope.CreateScope(this);
+            await using var cmd = CreateCommand(scope, sql, args);
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -326,14 +221,11 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        protected object ExecuteScalarInner(string sql, params DbParameter[] args)
+        public async Task<object> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
-            using var scope = new ConnectionScope(this);
-            object result;
-            using (var cmd = CreateCommand(scope, sql, args))
-            {
-                result = cmd.ExecuteScalar();
-            }
+            using var scope = await ConnectionScope.CreateScope(this);
+            using var cmd = CreateCommand(scope, sql, args);
+            var result = await cmd.ExecuteScalarAsync();
             return result == DBNull.Value ? null : result;
         }
 
@@ -345,9 +237,10 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        protected T ExecuteScalarInner<T>(string sql)
+        public async Task<T> ExecuteScalarAsync<T>(string sql)
         {
-            return (T)ExecuteScalarInner(sql);
+            var result = await ExecuteScalarAsync(sql);
+            return (T)result;
         }
 
         /// <summary>
@@ -359,14 +252,13 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        protected T ExecuteScalarInner<T>(string sql, params DbParameter[] args)
+        public async Task<T> ExecuteScalarAsync<T>(string sql, params DbParameter[] args)
         {
             var result = args.Length == 0
-                ? ExecuteScalarInner(sql)
-                : ExecuteScalarInner(sql, args);
+                ? await ExecuteScalarAsync(sql)
+                : await ExecuteScalarAsync(sql, args);
             return (T)result;
         }
-
         #endregion
 
         #region 生成命令对象
@@ -376,7 +268,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <returns></returns>
 
-        IConnectionScope IDataBase.CreateConnectionScope() => new ConnectionScope(this);
+        Task<IConnectionScope> IDataBase.CreateConnectionScope() => ConnectionScope.CreateScope(this);
 
         /// <summary>
         ///     生成命令
@@ -438,46 +330,6 @@ namespace Agebull.EntityModel.MySql
         #endregion
 
 
-        #region 接口
-
-
-        int IDataBase.Execute(string sql, IEnumerable<DbParameter> args)
-        {
-            return Execute(sql, args);
-        }
-
-        int IDataBase.Execute(string sql, params DbParameter[] args)
-        {
-            return Execute(sql, args);
-        }
-
-        object IDataBase.ExecuteScalar(string sql, IEnumerable<DbParameter> args)
-        {
-            return ExecuteScalar(sql, args);
-        }
-
-        object IDataBase.ExecuteScalar(string sql, params DbParameter[] args)
-        {
-            return ExecuteScalar(sql, args.ToArray());
-        }
-
-        T IDataBase.ExecuteScalar<T>(string sql)
-        {
-            return ExecuteScalar<T>(sql);
-        }
-
-        object IDataBase.ExecuteScalar(string sql)
-        {
-            return ExecuteScalar(sql);
-        }
-
-        T IDataBase.ExecuteScalar<T>(string sql, params DbParameter[] args)
-        {
-            return ExecuteScalar<T>(sql, args.ToArray());
-        }
-
-        #endregion
-
         #region SQL日志
 
         /// <summary>
@@ -520,9 +372,9 @@ namespace Agebull.EntityModel.MySql
                     code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
             code.AppendLine(sql);
-            DependencyScope.Logger.RecordDataLog(code.ToString());
-        }
 
+            Console.WriteLine(code.ToString());
+        }
 
         #endregion
     }

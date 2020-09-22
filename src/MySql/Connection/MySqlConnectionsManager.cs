@@ -5,10 +5,8 @@ using Agebull.EntityModel.Common;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC;
 
@@ -17,18 +15,13 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     /// 连接管理
     /// </summary>
-    internal class MySqlConnectionsManager : IFlowMiddleware, IHealthCheck
+    internal class MySqlConnectionsManager : IHealthCheck//IFlowMiddleware, 
     {
         #region IFlowMiddleware
-        static ILogger logger;
-        string IZeroDependency.Name => nameof(MySqlConnectionsManager);
+
+        /*
 
         int IZeroMiddleware.Level => 0xFFFF;
-
-        /// <summary>
-        /// 是否在控制中
-        /// </summary>
-        internal static MySqlConnectionsManager Instance { get; set; }
 
         /// <summary>
         ///     初始化
@@ -46,6 +39,15 @@ namespace Agebull.EntityModel.MySql
         void CheckOption()
         {
         }
+        
+        */
+
+        /// <summary>
+        /// 单例
+        /// </summary>
+        internal static MySqlConnectionsManager Instance { get; set; }
+
+        static ILogger logger;
 
         /// <summary>
         ///     内部初始化
@@ -63,7 +65,7 @@ namespace Agebull.EntityModel.MySql
         /// 取得一个空闲连接对象
         /// </summary>
         /// <returns></returns>
-        internal static MySqlConnection GetConnection(string name)
+        internal static Task<MySqlConnection> GetConnection(string name)
         {
             return InitConnection(name);
         }
@@ -72,9 +74,9 @@ namespace Agebull.EntityModel.MySql
         /// 关闭连接对象
         /// </summary>
         /// <returns></returns>
-        internal static void Close(MySqlConnection connection, string name)
+        internal static Task Close(MySqlConnection connection, string name)
         {
-            CloseConnection(connection, name);
+            return CloseConnection(connection, name);
         }
         #endregion
 
@@ -84,7 +86,7 @@ namespace Agebull.EntityModel.MySql
         /// 初始化连接对象
         /// </summary>
         /// <returns></returns>
-        internal static MySqlConnection InitConnection(string name)
+        internal static async Task<MySqlConnection> InitConnection(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -99,7 +101,7 @@ namespace Agebull.EntityModel.MySql
             try
             {
                 var connection = new MySqlConnection(constr);
-                connection.Open();
+                await connection.OpenAsync();
                 return connection;
             }
             catch (Exception exception)
@@ -113,7 +115,7 @@ namespace Agebull.EntityModel.MySql
         /// 关闭连接对象
         /// </summary>
         /// <returns></returns>
-        internal static void CloseConnection(MySqlConnection connection, string name)
+        internal static async Task CloseConnection(MySqlConnection connection, string name)
         {
             if (connection == null)
             {
@@ -123,7 +125,7 @@ namespace Agebull.EntityModel.MySql
             {
                 try
                 {
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
                 catch (Exception exception)
                 {
@@ -133,7 +135,7 @@ namespace Agebull.EntityModel.MySql
 
             try
             {
-                connection.Dispose();
+                await connection.DisposeAsync();
             }
             catch (Exception exception)
             {
@@ -144,6 +146,8 @@ namespace Agebull.EntityModel.MySql
         #endregion
 
         #region IHealthCheck
+
+        string IZeroDependency.Name => nameof(MySqlConnectionsManager);
 
         async Task<HealthInfo> IHealthCheck.Check()
         {

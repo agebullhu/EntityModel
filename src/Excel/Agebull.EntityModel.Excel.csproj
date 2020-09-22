@@ -34,9 +34,8 @@
   <ItemGroup>
     <PackageReference Include="NPOI" Version="2.5.1" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

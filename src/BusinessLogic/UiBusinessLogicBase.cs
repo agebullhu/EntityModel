@@ -31,7 +31,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public ApiPageData<TData> PageData(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return PageData(page, limit, null, false, item.ConditionSql, item.Parameters);
         }
 
@@ -40,7 +40,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public ApiPageData<TData> PageData(int page, int limit, LambdaItem<TData> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return PageData(page, limit, null, false, item.ConditionSql, item.Parameters);
         }
 
@@ -51,7 +51,7 @@ namespace Agebull.EntityModel.BusinessLogic
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc,
             Expression<Func<TData, bool>> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
         }
 
@@ -61,7 +61,7 @@ namespace Agebull.EntityModel.BusinessLogic
         [Obsolete]
         public ApiPageData<TData> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
         }
 
@@ -116,7 +116,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public async Task<ApiPageData<TData>> PageDataAsync(int page, int limit, Expression<Func<TData, bool>> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return await PageDataAsync(page, limit, null, false, item.ConditionSql, item.Parameters);
         }
 
@@ -125,7 +125,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public async Task<ApiPageData<TData>> PageDataAsync(int page, int limit, LambdaItem<TData> lambda)
         {
-            var item = Access.Compile(lambda);
+            var item = Access.SqlBuilder.Compile(lambda);
             return await PageDataAsync(page, limit, null, false, item.ConditionSql, item.Parameters);
         }
 

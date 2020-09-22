@@ -641,7 +641,7 @@
             <param name="ids"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareQuery(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareQuery(Agebull.EntityModel.Common.IDataAccess,System.String@,System.Data.Common.DbParameter[]@)">
             <summary>
             查询前检查
             </summary>
@@ -695,7 +695,7 @@
             <param name="ids"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareQuery``1(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareQuery``1(Agebull.EntityModel.Common.IDataAccess,System.String@,System.Data.Common.DbParameter[]@)">
             <summary>
             查询前检查
             </summary>
