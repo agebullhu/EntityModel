@@ -37,36 +37,40 @@
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
     <Compile Remove="DataState\**" />
+    <Compile Remove="DataTrigger\**" />
+    <Compile Remove="DataUpdateTrigger\**" />
     <Compile Remove="Excel\**" />
     <Compile Remove="Interface\**" />
     <Compile Remove="SQLite\**" />
     <Compile Remove="Table\**" />
     <EmbeddedResource Remove="BusinessLogic\**" />
     <EmbeddedResource Remove="DataState\**" />
+    <EmbeddedResource Remove="DataTrigger\**" />
+    <EmbeddedResource Remove="DataUpdateTrigger\**" />
     <EmbeddedResource Remove="Excel\**" />
     <EmbeddedResource Remove="Interface\**" />
     <EmbeddedResource Remove="SQLite\**" />
     <EmbeddedResource Remove="Table\**" />
     <None Remove="BusinessLogic\**" />
     <None Remove="DataState\**" />
+    <None Remove="DataTrigger\**" />
+    <None Remove="DataUpdateTrigger\**" />
     <None Remove="Excel\**" />
     <None Remove="Interface\**" />
     <None Remove="SQLite\**" />
     <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Connection\ConnectionInfo.cs" />
-    <Compile Remove="Connection\DataBaseInfo.cs" />
-    <Compile Remove="DataBase\MySqlDataBase_.cs" />
+    <Compile Remove="DataAccess\MySqlDataAccess.cs" />
     <Compile Remove="DataStateTable.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.43" />
     <PackageReference Include="MySql.Data" Version="8.0.21" />
   </ItemGroup>
 

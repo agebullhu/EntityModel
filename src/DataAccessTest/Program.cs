@@ -1,12 +1,14 @@
 ﻿using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
+using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 using Zeroteam.MessageMVC.EventBus;
 using Zeroteam.MessageMVC.EventBus.DataAccess;
-using ZeroTeam.MessageMVC.Messages;
+using Zeroteam.MessageMVC.EventBus.Zeroteam.MessageMVC.EventBus;
 
 namespace DataAccessTest
 {
@@ -16,57 +18,60 @@ namespace DataAccessTest
         {
             ConfigurationHelper.Flush();
             DependencyHelper.AddScoped<EventBusDb>();
-            DependencyHelper.AddSingleton<IJsonSerializeProxy,NewtonJsonSerializeProxy>();
             DependencyHelper.Reload();
             LoggerExtend.LogDataSql = true;
             await Test();
-            Console.ReadKey();
         }
 
         static async Task Test()
         {
             using var scope = DependencyScope.CreateScope();
-
-            var access = new MySqlDataAccess<EventSubscribeData, EventBusDb>
+            try
             {
-                Option = new EventSubscribeDataAccessOption()
-            };
-            Console.WriteLine("【ExistAsync】");
-            var ex = await access.ExistAsync();
-            Console.WriteLine(ex);
+                var access = new DataAccess<EventSubscribeData>(new EventSubscribeDataAccessOption());
 
-            Console.WriteLine("【CountAsync】");
-            var cn = await access.CountAsync();
-            Console.WriteLine(cn);
+                Console.WriteLine("【ExistAsync】");
+                var ex = await access.ExistAsync();
+                Console.WriteLine(ex);
 
-            Console.WriteLine("【FirstOrDefaultAsync】");
-            var data = await access.FirstOrDefaultAsync();
-            Console.WriteLine(data.ToJson());
+                Console.WriteLine("【CountAsync】");
+                var cn = await access.CountAsync();
+                Console.WriteLine(cn);
 
-            Console.WriteLine("【AllAsync】");
-            var datas = await access.AllAsync(p=>p.Id > 0);
-            Console.WriteLine(datas.ToJson());
+                Console.WriteLine("【FirstOrDefaultAsync】");
+                var data = await access.FirstOrDefaultAsync();
+                Console.WriteLine(JsonConvert.SerializeObject(data));
 
-            Console.WriteLine("【InsertAsync】");
-            foreach (var da in datas)
-            {
-                bool su = await access.InsertAsync(da);
-                Console.WriteLine($"{da.Id}:{su}");
+                Console.WriteLine("【AllAsync】");
+                var datas = await access.AllAsync(p => p.Id > 0);
+                Console.WriteLine(JsonConvert.SerializeObject(datas));
+
+                Console.WriteLine("【InsertAsync】");
+                foreach (var da in datas)
+                {
+                    bool su = await access.InsertAsync(da);
+                    Console.WriteLine($"{da.Id}:{su}");
+                }
+
+                Console.WriteLine("【UpdateAsync】");
+                foreach (var da in datas)
+                {
+                    bool su = await access.UpdateAsync(da);
+                    Console.WriteLine($"{da.Id}:{su}");
+                }
+
+                Console.WriteLine("【DeleteAsync】");
+                foreach (var da in datas)
+                {
+                    bool su = await access.DeleteAsync(da);
+                    Console.WriteLine($"{da.Id}:{su}");
+                }
             }
-
-            Console.WriteLine("【UpdateAsync】");
-            foreach (var da in datas)
+            catch (Exception ex)
             {
-                bool su = await access.UpdateAsync(da);
-                Console.WriteLine($"{da.Id}:{su}");
+                Console.WriteLine(ex);
             }
-
-            Console.WriteLine("【DeleteAsync】");
-            foreach (var da in datas)
-            {
-                bool su = await access.DeleteAsync(da);
-                Console.WriteLine($"{da.Id}:{su}");
-            }
+            Console.ReadKey();
         }
     }
 }

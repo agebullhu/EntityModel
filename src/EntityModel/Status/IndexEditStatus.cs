@@ -52,14 +52,14 @@ namespace Agebull.EntityModel.Common
         ///     修改的属性列表
         /// </summary>
         [ReadOnly(true), DisplayName("修改的属性列表"), Category("运行时")]
-        public byte[] ModifiedProperties => modifiedProperties ??= new byte[Entity.__Struct.Count + 1];
+        public byte[] ModifiedProperties => modifiedProperties ??= new byte[byte.MaxValue];//Entity.__Struct.Count + 1
 
         /// <summary>
         ///     是否修改
         /// </summary>
         internal bool FieldIsModified(int propertyIndex)
         {
-            return modifiedProperties != null && propertyIndex < Entity.__Struct.Count && modifiedProperties[propertyIndex] == 1;
+            return true;// modifiedProperties != null && propertyIndex < Entity.__Struct.Count && modifiedProperties[propertyIndex] == 1;
         }
 
         /// <summary>
@@ -75,11 +75,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         internal void SetModified()
         {
-            for (var index = 0; index < ModifiedProperties.Length - 1; index++)
-            {
-                ModifiedProperties[index] = 1;
-            }
-            ModifiedProperties[Entity.__Struct.Count] = (byte)Entity.__Struct.Count;
+            //for (var index = 0; index < ModifiedProperties.Length - 1; index++)
+            //{
+            //    ModifiedProperties[index] = 1;
+            //}
+            //ModifiedProperties[Entity.__Struct.Count] = (byte)Entity.__Struct.Count;
         }
 
         /// <summary>
@@ -89,16 +89,17 @@ namespace Agebull.EntityModel.Common
         /// <returns>总体是否修改</returns>
         internal bool SetUnModify(int propertyIndex)
         {
-            if (modifiedProperties == null || propertyIndex >= Entity.__Struct.Count)
-            {
-                return false;
-            }
-            if (ModifiedProperties[propertyIndex] > 0)
-            {
-                ModifiedProperties[propertyIndex] = 0;
-                ModifiedProperties[Entity.__Struct.Count] -= 1;
-            }
-            return ModifiedProperties[Entity.__Struct.Count] > 0;
+            return true;
+            //if (modifiedProperties == null || propertyIndex >= Entity.__Struct.Count)
+            //{
+            //    return false;
+            //}
+            //if (ModifiedProperties[propertyIndex] > 0)
+            //{
+            //    ModifiedProperties[propertyIndex] = 0;
+            //    ModifiedProperties[Entity.__Struct.Count] -= 1;
+            //}
+            //return ModifiedProperties[Entity.__Struct.Count] > 0;
         }
 
         /// <summary>
@@ -107,10 +108,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="propertyIndex">属性</param>
         internal void RecordModified(int propertyIndex)
         {
-            if (propertyIndex >= Entity.__Struct.Count || ModifiedProperties[propertyIndex] > 0)
-                return;
-            ModifiedProperties[propertyIndex] = 1;
-            ModifiedProperties[Entity.__Struct.Count] += 1;
+            //if (propertyIndex >= Entity.__Struct.Count || ModifiedProperties[propertyIndex] > 0)
+            //    return;
+            //ModifiedProperties[propertyIndex] = 1;
+            //ModifiedProperties[Entity.__Struct.Count] += 1;
         }
 
         #endregion

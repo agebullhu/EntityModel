@@ -6,35 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DataBase\MySql\**" />
-    <Compile Remove="DataBase\SQLite\**" />
-    <Compile Remove="DataBase\SqlServer\**" />
-    <Compile Remove="Option\**" />
-    <EmbeddedResource Remove="DataBase\MySql\**" />
-    <EmbeddedResource Remove="DataBase\SQLite\**" />
-    <EmbeddedResource Remove="DataBase\SqlServer\**" />
-    <EmbeddedResource Remove="Option\**" />
-    <None Remove="DataBase\MySql\**" />
-    <None Remove="DataBase\SQLite\**" />
-    <None Remove="DataBase\SqlServer\**" />
-    <None Remove="Option\**" />
+    <Compile Remove="BusinessLogic\**" />
+    <EmbeddedResource Remove="BusinessLogic\**" />
+    <None Remove="BusinessLogic\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DataAccess\DataAccessBase.dml.cs" />
-    <Compile Remove="DataAccess\DataAccessBase.load.cs" />
-    <Compile Remove="DataBase\Scope\DataTableScope.cs" />
-    <Compile Remove="DataBase\Scope\DbReaderScope.cs" />
-    <Compile Remove="DataBase\Scope\ReadTableScope.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="Option\DataAccessOption.cs" />
-    <Compile Include="Option\DataTableSturct.cs" />
-    <Compile Include="Option\EntityLoadScope.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
-  </ItemGroup>
 </Project>

@@ -34,16 +34,16 @@ namespace Agebull.EntityModel.Common
         public async Task<List<T>> Group<T>(string group, Dictionary<string, string> colls, Expression<Func<TEntity, bool>> lambda, Action<DbDataReader, T> readAction)
             where T : class, new()
         {
-            var groupF = _option.FieldMap[group];
+            var groupF = Option.FieldMap[group];
             var code = new StringBuilder();
             code.Append($"SELECT {groupF} as {group}");
 
             foreach (var field in colls)
             {
-                code.Append($",{field.Value}({_option.FieldMap[field.Key]}) AS {field.Key}");
+                code.Append($",{field.Value}({Option.FieldMap[field.Key]}) AS {field.Key}");
             }
             var convert = SqlBuilder.Compile(lambda);
-            code.AppendLine($" FROM {_option.ReadTableName} ");
+            code.AppendLine($" FROM {Option.ReadTableName} ");
             code.AppendLine(SqlBuilder.InjectionCondition(convert.ConditionSql));
             code.Append($" GROUP BY {groupF};");
 

@@ -154,11 +154,11 @@ namespace Agebull.EntityModel.Common
         {
             if (__status.IsReadOnly || __status._status == null)
                 return;
-            OnLaterPeriodBySignleModified(__status.Subsist, __status._status.modifiedProperties);
-            OnLaterPeriodByModified(__status.Subsist, __status._status.modifiedProperties);
+            //OnLaterPeriodBySignleModified(__status.Subsist, __status._status.modifiedProperties);
+            //OnLaterPeriodByModified(__status.Subsist, __status._status.modifiedProperties);
         }
 
-        /// <summary>
+        /*// <summary>
         ///     以全部数据被修改的状态,执行后期操作
         /// </summary>
         /// <remarks>
@@ -207,7 +207,7 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         protected virtual void OnLaterPeriodByModified(EntitySubsist subsist, byte[] modifieds)
         {
-        }
+        }*/
 
         #endregion
 
@@ -263,11 +263,11 @@ namespace Agebull.EntityModel.Common
 
         #region 属性
 
-        /// <summary>
+        /*// <summary>
         ///     实体结构
         /// </summary>
         [IgnoreDataMember, Browsable(false), JsonIgnore]
-        public abstract EntitySturct __Struct { get; }
+        public abstract EntitySturct __Struct { get; }*/
 
         #endregion
 

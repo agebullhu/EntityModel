@@ -8,15 +8,11 @@
 
 #region 引用
 
-using Agebull.Common.Ioc;
-using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -28,8 +24,8 @@ namespace Agebull.EntityModel.Common
     ///     Sql实体访问类
     /// </summary>
     /// <typeparam name="TEntity">实体</typeparam>
-    public abstract partial class DataAccess<TEntity> : SimpleConfig, IDataAccess<TEntity>
-         where TEntity : class, IDataObject, new()
+    public partial class DataAccess<TEntity> : SimpleConfig, IDataAccess<TEntity>
+         where TEntity : class,  new()
     {
         #region 构造
 
@@ -46,39 +42,35 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// Sql语句构造器
         /// </summary>
-        public virtual ISqlBuilder<TEntity> SqlBuilder { get; }
+        public ISqlBuilder<TEntity> SqlBuilder { get; set; }
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        ISqlBuilder IDataAccess.SqlBuilder => SqlBuilder;
 
         /// <summary>
         /// 表配置
         /// </summary>
-        public DataTableSturct DataSturct { get; set; }
+        public EntitySturct DataSturct { get; set; }
 
         /// <summary>
         /// Sql配置信息
         /// </summary>
-        DataAccessOption IDataAccess<TEntity>.Option => Option;
-
-        private DataAccessOption<TEntity> _option;
+        DataAccessOption IDataAccess.Option => Option;
 
         /// <summary>
         /// Sql配置信息
         /// </summary>
-        public DataAccessOption<TEntity> Option
-        {
-            get => _option;
-            set
-            {
-                _option = value;
-                _option.DataAccess = this;
-                SqlBuilder.Option = value;
-                DataSturct = _option.DataSturct;
-            }
-        }
+        public DataAccessOption<TEntity> Option { get; }
 
-
-        static DataAccess()
+        public DataAccess(DataAccessOption<TEntity> option)
         {
-            DataUpdateHandler.InitType<TEntity>();
+            Option = option;
+            Option.DataAccess = this;
+            SqlBuilder = option.SqlBuilder;
+            DataSturct = option.DataSturct;
+            CreateDataBase = option.CreateDataBase;
         }
 
         #endregion
@@ -89,13 +81,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 自动构建数据库对象
         /// </summary>
-        protected abstract IDataBase CreateDataBase();
-
-
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        public abstract DataBaseType DataBaseType { get; }
+        public Func<IDataBase> CreateDataBase { get; set; }
 
         /// <summary>
         ///     自动数据连接对象
@@ -117,17 +103,12 @@ namespace Agebull.EntityModel.Common
         public IDataBase OriDataBase => _dataBase;
 
         /// <summary>
-        /// 按修改更新
-        /// </summary>
-        public bool UpdateByMidified { get; set; }
-
-        /// <summary>
         /// 不做代码注入
         /// </summary>
         public bool NoInjection
         {
-            get => _option.NoInjection;
-            set => _option.NoInjection = value;
+            get => Option.NoInjection;
+            set => Option.NoInjection = value;
         }
 
         #endregion
@@ -164,7 +145,7 @@ namespace Agebull.EntityModel.Common
         protected DbCommand CreateLoadCommand(IConnectionScope scope, string order, bool desc, string condition,
             params DbParameter[] args)
         {
-            var field = !string.IsNullOrEmpty(order) ? order : _option.PrimaryKey;
+            var field = !string.IsNullOrEmpty(order) ? order : Option.PrimaryKey;
 
             string orderSql = SqlBuilder.OrderSql(desc, field);
             return CreateLoadCommand(scope, condition: condition, orderSql, args);

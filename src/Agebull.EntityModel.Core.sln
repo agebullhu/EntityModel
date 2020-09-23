@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.ModelAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.MySql", "MySql\Agebull.EntityModel.MySql.csproj", "{8890CF25-068B-40A2-BC08-9C91AD9554A1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.DataAccess", "DataAccess\Agebull.EntityModel.DataAccess.csproj", "{BAA623D6-43ED-49EA-B312-6B36D8562E81}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessTest", "DataAccessTest\DataAccessTest.csproj", "{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agebull.EntityModel.DataAccess", "DataAccess\Agebull.EntityModel.DataAccess.csproj", "{305E373D-AAD9-4203-8914-B638418C3323}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,14 +63,6 @@ Global
 		{8890CF25-068B-40A2-BC08-9C91AD9554A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8890CF25-068B-40A2-BC08-9C91AD9554A1}.Release|x64.ActiveCfg = Release|Any CPU
 		{8890CF25-068B-40A2-BC08-9C91AD9554A1}.Release|x64.Build.0 = Release|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Debug|x64.Build.0 = Debug|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Release|x64.ActiveCfg = Release|Any CPU
-		{BAA623D6-43ED-49EA-B312-6B36D8562E81}.Release|x64.Build.0 = Release|Any CPU
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -79,6 +71,14 @@ Global
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Release|x64.ActiveCfg = Release|Any CPU
 		{4F6E16A1-0B6A-4EBF-9B04-F21677BBEB7C}.Release|x64.Build.0 = Release|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Debug|x64.Build.0 = Debug|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Release|x64.ActiveCfg = Release|Any CPU
+		{305E373D-AAD9-4203-8914-B638418C3323}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

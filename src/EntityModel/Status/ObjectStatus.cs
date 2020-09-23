@@ -137,7 +137,7 @@ namespace Agebull.EntityModel.Common
 
         private sbyte _state;
 
-        /// <summary>
+        /*// <summary>
         ///     对象生态状态
         /// </summary>
         [ReadOnly(true), DisplayName("对象生态状态"), Category("运行时")]
@@ -163,7 +163,7 @@ namespace Agebull.EntityModel.Common
                         return EntitySubsist.None;
                 }
             }
-        }
+        }*/
 
         /// <summary>
         ///     是否已修改

@@ -1,23 +1,7 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/9/16 10:40:07*/
-#region
+﻿#region
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Runtime.Serialization;
-using System.IO;
-using Newtonsoft.Json;
-
-
-using Agebull.Common;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Interfaces;
 
 
 #endregion
@@ -34,6 +18,10 @@ namespace Zeroteam.MessageMVC.EventBus
         /// 实体名称
         /// </summary>
         public const string EntityName = @"EventSubscribe";
+        /// <summary>
+        /// 数据表名称
+        /// </summary>
+        public const string TableName = @"tb_event_subscribe";
         /// <summary>
         /// 实体标题
         /// </summary>
@@ -226,7 +214,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <summary>
         /// 实体结构
         /// </summary>
-        public static readonly DataTableSturct Struct = new DataTableSturct
+        public static readonly EntitySturct Struct = new EntitySturct
         {
             EntityName = EntityName,
             Caption = EntityCaption,
@@ -234,352 +222,335 @@ namespace Zeroteam.MessageMVC.EventBus
             PrimaryKey = EntityPrimaryKey,
             EntityType = EntityIdentity,
             IsIdentity = true,
-            Properties = new Dictionary<int, PropertySturct>
+            ReadTableName = TableName,
+            WriteTableName = TableName,
+            Properties = new List<EntitiyProperty>
+            {
+                new EntitiyProperty
                 {
-                    {
-                        Real_Id,
-                        new PropertySturct
-                        {
-                            Index        = Id,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "Id",
-                            Caption      = @"主键",
-                            JsonName     = "Id",
-                            ColumnName   = "id",
-                            PropertyType = typeof(long),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 8,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"主键"
-                        }
-                    },
-                    {
-                        Real_EventId,
-                        new PropertySturct
-                        {
-                            Index        = EventId,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "EventId",
-                            Caption      = @"事件标识",
-                            JsonName     = "EventId",
-                            ColumnName   = "event_id",
-                            PropertyType = typeof(long),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 8,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"事件标识"
-                        }
-                    },
-                    {
-                        Real_Service,
-                        new PropertySturct
-                        {
-                            Index        = Service,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "Service",
-                            Caption      = @"所属服务",
-                            JsonName     = "Service",
-                            ColumnName   = "service",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"所属服务"
-                        }
-                    },
-                    {
-                        Real_IsLookUp,
-                        new PropertySturct
-                        {
-                            Index        = IsLookUp,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "IsLookUp",
-                            Caption      = @"是否查阅服务",
-                            JsonName     = "IsLookUp",
-                            ColumnName   = "is_look_up",
-                            PropertyType = typeof(bool),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 1,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"如为查阅服务，则发送后不处理与等待结果"
-                        }
-                    },
-                    {
-                        Real_ApiName,
-                        new PropertySturct
-                        {
-                            Index        = ApiName,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "ApiName",
-                            Caption      = @"接口名称",
-                            JsonName     = "ApiName",
-                            ColumnName   = "api_name",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"接口名称"
-                        }
-                    },
-                    {
-                        Real_TargetDescription,
-                        new PropertySturct
-                        {
-                            Index        = TargetDescription,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "TargetDescription",
-                            Caption      = @"目标说明",
-                            JsonName     = "TargetDescription",
-                            ColumnName   = "target_description",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"目标说明"
-                        }
-                    },
-                    {
-                        Real_TargetName,
-                        new PropertySturct
-                        {
-                            Index        = TargetName,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "TargetName",
-                            Caption      = @"目标名称",
-                            JsonName     = "TargetName",
-                            ColumnName   = "target_name",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"*表示所有目标"
-                        }
-                    },
-                    {
-                        Real_TargetType,
-                        new PropertySturct
-                        {
-                            Index        = TargetType,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "TargetType",
-                            Caption      = @"目标类型",
-                            JsonName     = "TargetType",
-                            ColumnName   = "target_type",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"*表示所有类型"
-                        }
-                    },
-                    {
-                        Real_Memo,
-                        new PropertySturct
-                        {
-                            Index        = Memo,
-                            Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "Memo",
-                            Caption      = @"备注",
-                            JsonName     = "Memo",
-                            ColumnName   = "memo",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 752,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"备注"
-                        }
-                    },
-                    {
-                        Real_IsFreeze,
-                        new PropertySturct
-                        {
-                            Index        = IsFreeze,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "DataIsFreeze",
-                            Name         = "IsFreeze",
-                            Caption      = @"冻结更新",
-                            JsonName     = "isFreeze",
-                            ColumnName   = "is_freeze",
-                            PropertyType = typeof(bool),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 1,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"无论在什么数据状态,一旦设置且保存后,数据将不再允许执行Update的操作,作为Update的统一开关.取消的方法是单独设置这个字段的值"
-                        }
-                    },
-                    {
-                        Real_DataState,
-                        new PropertySturct
-                        {
-                            Index        = DataState,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "DataState",
-                            Name         = "DataState",
-                            Caption      = @"数据状态",
-                            JsonName     = "dataState",
-                            ColumnName   = "data_state",
-                            PropertyType = typeof(DataStateType),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 3,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"数据状态"
-                        }
-                    },
-                    {
-                        Real_AddDate,
-                        new PropertySturct
-                        {
-                            Index        = AddDate,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "AddDate",
-                            Name         = "AddDate",
-                            Caption      = @"制作时间",
-                            JsonName     = "addDate",
-                            ColumnName   = "created_date",
-                            PropertyType = typeof(DateTime),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 12,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"制作时间"
-                        }
-                    },
-                    {
-                        Real_AuthorId,
-                        new PropertySturct
-                        {
-                            Index        = AuthorId,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "AddUserId",
-                            Name         = "AuthorId",
-                            Caption      = @"制作人标识",
-                            JsonName     = "authorId",
-                            ColumnName   = "created_user_id",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"制作人标识"
-                        }
-                    },
-                    {
-                        Real_Author,
-                        new PropertySturct
-                        {
-                            Index        = Author,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "Author",
-                            Caption      = @"制作人",
-                            JsonName     = "author",
-                            ColumnName   = "created_user",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"制作人"
-                        }
-                    },
-                    {
-                        Real_LastModifyDate,
-                        new PropertySturct
-                        {
-                            Index        = LastModifyDate,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "LastModifyDate",
-                            Name         = "LastModifyDate",
-                            Caption      = @"最后修改日期",
-                            JsonName     = "lastModifyDate",
-                            ColumnName   = "latest_updated_date",
-                            PropertyType = typeof(DateTime),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.Value,
-                            DbType       = 12,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"最后修改日期"
-                        }
-                    },
-                    {
-                        Real_LastReviserId,
-                        new PropertySturct
-                        {
-                            Index        = LastReviserId,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "LastModifyUserId",
-                            Name         = "LastReviserId",
-                            Caption      = @"最后修改者标识",
-                            JsonName     = "lastReviserId",
-                            ColumnName   = "latest_updated_user_id",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"最后修改者标识"
-                        }
-                    },
-                    {
-                        Real_LastReviser,
-                        new PropertySturct
-                        {
-                            Index        = LastReviser,
-                            Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
-                            Link         = "",
-                            Name         = "LastReviser",
-                            Caption      = @"最后修改者",
-                            JsonName     = "lastReviser",
-                            ColumnName   = "latest_updated_user",
-                            PropertyType = typeof(string),
-                            CanNull      = false,
-                            ValueType    = PropertyValueType.String,
-                            DbType       = 15,
-                            CanImport    = false,
-                            CanExport    = false,
-                            Description  = @"最后修改者"
-                        }
-                    }
+                    Index        = Id,
+                    PropertyIndex= Real_Id,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "",
+                    Name         = "Id",
+                    Caption      = @"主键",
+                    JsonName     = "Id",
+                    ColumnName   = "id",
+                    PropertyType = typeof(long),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 8,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"主键"
                 },
-            ReadTableName = @"tb_event_subscribe",
-            WriteTableName = @"tb_event_subscribe",
-            FullLoadFields = @"
+                new EntitiyProperty
+                {
+                    Index        = EventId,
+                    PropertyIndex= Real_EventId,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "EventId",
+                    Caption      = @"事件标识",
+                    JsonName     = "EventId",
+                    ColumnName   = "event_id",
+                    PropertyType = typeof(long),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 8,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"事件标识"
+                },
+                new EntitiyProperty
+                {
+                    Index        = Service,
+                    PropertyIndex= Real_Service,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "Service",
+                    Caption      = @"所属服务",
+                    JsonName     = "Service",
+                    ColumnName   = "service",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"所属服务"
+                },
+                new EntitiyProperty
+                {
+                    Index        = IsLookUp,
+                    PropertyIndex= Real_IsLookUp,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "IsLookUp",
+                    Caption      = @"是否查阅服务",
+                    JsonName     = "IsLookUp",
+                    ColumnName   = "is_look_up",
+                    PropertyType = typeof(bool),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 1,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"如为查阅服务，则发送后不处理与等待结果"
+                },
+                new EntitiyProperty
+                {
+                    Index        = ApiName,
+                    PropertyIndex= Real_ApiName,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "ApiName",
+                    Caption      = @"接口名称",
+                    JsonName     = "ApiName",
+                    ColumnName   = "api_name",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"接口名称"
+                },
+                new EntitiyProperty
+                {
+                    Index        = TargetDescription,
+                    PropertyIndex= Real_TargetDescription,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "TargetDescription",
+                    Caption      = @"目标说明",
+                    JsonName     = "TargetDescription",
+                    ColumnName   = "target_description",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"目标说明"
+                },
+                new EntitiyProperty
+                {
+                    Index        = TargetName,
+                    PropertyIndex= Real_TargetName,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "TargetName",
+                    Caption      = @"目标名称",
+                    JsonName     = "TargetName",
+                    ColumnName   = "target_name",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"*表示所有目标"
+                },
+                new EntitiyProperty
+                {
+                    Index        = TargetType,
+                    PropertyIndex= Real_TargetType,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "TargetType",
+                    Caption      = @"目标类型",
+                    JsonName     = "TargetType",
+                    ColumnName   = "target_type",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"*表示所有类型"
+                },
+                new EntitiyProperty
+                {
+                    Index        = Memo,
+                    PropertyIndex= Real_Memo,
+                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
+                    Link         = "",
+                    Name         = "Memo",
+                    Caption      = @"备注",
+                    JsonName     = "Memo",
+                    ColumnName   = "memo",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 752,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"备注"
+                },
+                new EntitiyProperty
+                {
+                    Index        = IsFreeze,
+                    PropertyIndex= Real_IsFreeze,
+                    Featrue      = PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.None,
+                    Link         = "DataIsFreeze",
+                    Name         = "IsFreeze",
+                    Caption      = @"冻结更新",
+                    JsonName     = "isFreeze",
+                    ColumnName   = "is_freeze",
+                    PropertyType = typeof(bool),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 1,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"无论在什么数据状态,一旦设置且保存后,数据将不再允许执行Update的操作,作为Update的统一开关.取消的方法是单独设置这个字段的值"
+                },
+                new EntitiyProperty
+                {
+                    Index        = DataState,
+                    PropertyIndex= Real_DataState,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "DataState",
+                    Name         = "DataState",
+                    Caption      = @"数据状态",
+                    JsonName     = "dataState",
+                    ColumnName   = "data_state",
+                    PropertyType = typeof(DataStateType),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 3,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"数据状态"
+                },
+                new EntitiyProperty
+                {
+                    Index        = AddDate,
+                    PropertyIndex= Real_AddDate,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read| ReadWriteFeatrue.Insert,
+                    Link         = "AddDate",
+                    Name         = "AddDate",
+                    Caption      = @"制作时间",
+                    JsonName     = "addDate",
+                    ColumnName   = "created_date",
+                    PropertyType = typeof(DateTime),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 12,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"制作时间"
+                },
+                new EntitiyProperty
+                {
+                    Index        = AuthorId,
+                    PropertyIndex= Real_AuthorId,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read| ReadWriteFeatrue.Insert,
+                    Link         = "AddUserId",
+                    Name         = "AuthorId",
+                    Caption      = @"制作人标识",
+                    JsonName     = "authorId",
+                    ColumnName   = "created_user_id",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"制作人标识"
+                },
+                new EntitiyProperty
+                {
+                    Index        = Author,
+                    PropertyIndex= Real_Author,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "",
+                    Name         = "Author",
+                    Caption      = @"制作人",
+                    JsonName     = "author",
+                    ColumnName   = "created_user",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"制作人"
+                },
+                new EntitiyProperty
+                {
+                    Index        = LastModifyDate,
+                    PropertyIndex= Real_LastModifyDate,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "LastModifyDate",
+                    Name         = "LastModifyDate",
+                    Caption      = @"最后修改日期",
+                    JsonName     = "lastModifyDate",
+                    ColumnName   = "latest_updated_date",
+                    PropertyType = typeof(DateTime),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.Value,
+                    DbType       = 12,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"最后修改日期"
+                },
+                new EntitiyProperty
+                {
+                    Index        = LastReviserId,
+                    PropertyIndex= Real_LastReviserId,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "LastModifyUserId",
+                    Name         = "LastReviserId",
+                    Caption      = @"最后修改者标识",
+                    JsonName     = "lastReviserId",
+                    ColumnName   = "latest_updated_user_id",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"最后修改者标识"
+                },
+                new EntitiyProperty
+                {
+                    Index        = LastReviser,
+                    PropertyIndex= Real_LastReviser,
+                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    DbReadWrite  = ReadWriteFeatrue.Read,
+                    Link         = "",
+                    Name         = "LastReviser",
+                    Caption      = @"最后修改者",
+                    JsonName     = "lastReviser",
+                    ColumnName   = "latest_updated_user",
+                    PropertyType = typeof(string),
+                    CanNull      = false,
+                    ValueType    = PropertyValueType.String,
+                    DbType       = 15,
+                    CanImport    = false,
+                    CanExport    = false,
+                    Description  = @"最后修改者"
+                }
+            }
+            /*LoadFields = @"
     `id` AS `Id`,
     `event_id` AS `EventId`,
     `service` AS `Service`,
@@ -639,7 +610,7 @@ VALUES
 );
 SELECT @@IDENTITY;",
 
-            UpdateSqlCode = $@"
+            UpdateFields = $@"
        `event_id` = ?EventId,
        `service` = ?Service,
        `is_look_up` = ?IsLookUp,
@@ -647,7 +618,7 @@ SELECT @@IDENTITY;",
        `target_description` = ?TargetDescription,
        `target_name` = ?TargetName,
        `target_type` = ?TargetType,
-       `memo` = ?Memo"
+       `memo` = ?Memo"*/
         };
     }
 }

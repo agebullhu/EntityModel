@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.MySql
     ///     Sql实体访问类
     /// </summary>
     public sealed class MySqlSqlBuilder<TEntity> : ParameterCreater, ISqlBuilder<TEntity>
-        where TEntity : EditDataObject, new()
+        where TEntity : class, new()
     {
         /// <summary>
         /// 数据库类型
@@ -40,7 +40,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// Sql对应的配置信息
         /// </summary>
-        DataAccessOption ISqlBuilder<TEntity>.Option
+        DataAccessOption ISqlBuilder.Option
         {
             get => Option;
             set => Option = (DataAccessOption<TEntity>)value;
@@ -51,53 +51,126 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public DataAccessOption<TEntity> Option { get; set; }
 
+        #region 数据结构支持
+
+        /// <summary>
+        /// 读取的字段
+        /// </summary>
+        /// <returns></returns>
+        public string BuilderLoadFields()
+        {
+            var code = new StringBuilder();
+            bool first = true;
+            Option.FroeachDbProperties(ReadWriteFeatrue.Read, pro =>
+            {
+                if (first)
+                    first = false;
+                else
+                    code.Append(',');
+                code.Append('`');
+                code.Append(pro.ColumnName);
+                code.Append('`');
+            });
+            return code.ToString();
+        }
+        /// <summary>
+        /// 全量更新的字段
+        /// </summary>
+        /// <returns></returns>
+        public string BuilderUpdateFields()
+        {
+            var fields = new StringBuilder();
+            bool first = true;
+            Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
+           {
+               if (first)
+                   first = false;
+               else
+                   fields.Append(',');
+
+               fields.Append('`');
+               fields.Append(pro.ColumnName);
+               fields.Append("`=?");
+               fields.Append(pro.PropertyName);
+           });
+            return fields.ToString();
+        }
+
+        /// <summary>
+        /// 插入的代码
+        /// </summary>
+        /// <returns></returns>
+        public string BuilderInsertSqlCode()
+        {
+            var fields = new StringBuilder();
+            var paras = new StringBuilder();
+            bool first = true;
+            Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
+             {
+                 if (first)
+                     first = false;
+                 else
+                 {
+                     paras.Append(',');
+                     fields.Append(',');
+                 }
+                 fields.Append('`');
+                 fields.Append(pro.ColumnName);
+                 fields.Append('`');
+
+                 paras.Append('?');
+                 paras.Append(pro.PropertyName);
+             });
+            paras.Append(");");
+            if (Option.DataSturct.IsIdentity)
+            {
+                paras.Append("\nSELECT @@IDENTITY;");
+            }
+            return $"INSERT INTO `{Option.DataSturct.WriteTableName}`({fields})\nVALUES({paras}";
+        }
+
+        /// <summary>
+        /// 删除的代码
+        /// </summary>
+        /// <returns></returns>
+        public string BuilderDeleteSqlCode() => $"DELETE FROM `{Option.DataSturct.WriteTableName}`";
+
+        #endregion
+
         #region 更新
 
         /// <summary>
         /// 取得仅更新的SQL语句
         /// </summary>
-        public string GetModifiedUpdateSql(EditDataObject data)
+        public string GetModifiedUpdateSql(TEntity entity)
         {
-            if (data.__status.IsReadOnly)
-            {
-                return Option.UpdateSqlCode;
-            }
-            if (!data.__status.IsModified)
-                return null;
-            StringBuilder sql = new StringBuilder();
-            bool first = true;
-            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
-            {
-                if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !Option.FieldMap.ContainsKey(pro.Value.Name))
-                    continue;
-                if (first)
-                    first = false;
-                else
-                    sql.Append(',');
-                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
-            }
-            return first ? null : sql.ToString();
+            return Option.UpdateFields;
+            //if (!(entity is EditDataObject data))
+            //{
+            //    return Option.UpdateFields;
+            //}
+            //if (data.__status.IsReadOnly)
+            //{
+            //    return Option.UpdateFields;
+            //}
+            //if (!data.__status.IsModified)
+            //    return null;
+            //StringBuilder sql = new StringBuilder();
+            //bool first = true;
+            //foreach (var pro in Option.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property)))
+            //{
+            //    if (data.__status.Status.ModifiedProperties[pro.PropertyIndex] <= 0 || !Option.FieldMap.ContainsKey(pro.Name))
+            //        continue;
+            //    if (first)
+            //        first = false;
+            //    else
+            //        sql.Append(',');
+            //    sql.AppendLine($"       `{pro.ColumnName}` = ?{pro.Name}");
+            //}
+            //return first ? null : sql.ToString();
         }
 
-        /// <summary>
-        /// 取得仅更新的SQL语句
-        /// </summary>
-        public string GetFullUpdateSql(EditDataObject data)
-        {
-            StringBuilder sql = new StringBuilder();
-            bool first = true;
-            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
-            {
-                if (!Option.FieldMap.ContainsKey(pro.Value.Name))
-                    continue;
-                if (first)
-                    first = false;
-                else
-                    sql.Append(',');
-                sql.AppendLine($"       `{pro.Value.ColumnName}` = ?{pro.Value.Name}");
-            }
-            return first ? null : sql.ToString();
-        }
+
         /// <summary>
         ///     生成单个字段更新的SQL
         /// </summary>
@@ -151,7 +224,6 @@ UPDATE `{Option.WriteTableName}`
         public string FullLoadSqlCode => $@"SELECT {Option.LoadFields} FROM `{Option.ReadTableName}`";
 
 
-
         private string _primaryConditionSQL;
 
         /// <summary>
@@ -160,7 +232,7 @@ UPDATE `{Option.WriteTableName}`
         public string PrimaryKeyConditionSQL => _primaryConditionSQL ??= FieldConditionSQL(Option.PrimaryKey);
 
 
-        string ISqlBuilder<TEntity>.OrderSql(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
+        string ISqlBuilder.OrderSql(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
 
         /// <summary>
         ///     得到可正确拼接的SQL条件语句（可能是没有）
@@ -339,16 +411,10 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
         #region 字段条件
 
-        ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda)
-            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
-
-        ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda)
-            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
-
-        string ISqlBuilder<TEntity>.Condition(string fieldName, string paraName)
+        string ISqlBuilder.Condition(string fieldName, string paraName)
             => $"(`{Option.FieldMap[fieldName]}` = ?{paraName})";
 
-        string ISqlBuilder<TEntity>.Condition(string fieldName, string paraName, string condition)
+        string ISqlBuilder.Condition(string fieldName, string paraName, string condition)
             => $"(`{Option.FieldMap[fieldName]}` {condition} ?{paraName})";
 
         /// <summary>
@@ -420,7 +486,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// </summary>
         /// <param name="field">字段名称</param>
         /// <returns>参数</returns>
-        int ISqlBuilder<TEntity>.GetDbType(string field)
+        int ISqlBuilder.GetDbType(string field)
         {
             return Option.GetDbType(field);
         }
@@ -440,9 +506,11 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// </summary>
         /// <param name="field">生成参数的字段</param>
         /// <param name="entity">取值的实体</param>
-        public DbParameter CreateFieldParameter(string field, EditDataObject entity)
+        public DbParameter CreateFieldParameter(string field, TEntity entity)
         {
-            return CreateParameter(field, entity.GetValue(field), (MySqlDbType)Option.GetDbType(field));
+            return CreateParameter(field, 
+                Option.DataOperator.GetValue(entity, field), 
+                (MySqlDbType)Option.GetDbType(field));
         }
 
         /// <summary>
@@ -466,12 +534,22 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         ///     生成主键字段的参数
         /// </summary>
         /// <param name="entity">取值的实体</param>
-        public DbParameter CreatePimaryKeyParameter(EditDataObject entity)
+        public DbParameter CreatePimaryKeyParameter(TEntity entity)
         {
-            return CreateParameter(Option.PrimaryKey, entity.GetValue(Option.PrimaryKey), (MySqlDbType)Option.GetDbType(Option.PrimaryKey));
+            return CreateParameter(Option.PrimaryKey, 
+                Option.DataOperator.GetValue(entity, Option.PrimaryKey), 
+                (MySqlDbType)Option.GetDbType(Option.PrimaryKey));
         }
         #endregion
 
+        #region Expression
 
+        ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda)
+            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
+
+        ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda)
+            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
+
+        #endregion
     }
 }

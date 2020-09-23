@@ -1,31 +1,11 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/9/16 10:40:07*/
-#region
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Runtime.Serialization;
-using System.IO;
-using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
+﻿#region
 
-using MySql.Data.MySqlClient;
 using Agebull.EntityModel.MySql;
-
-using Agebull.Common;
-
+using Agebull.Common.Ioc;
+using Agebull.EntityModel.Events;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Interfaces;
-
-using Zeroteam.MessageMVC.EventBus.DataAccess;
-using System.Data.Common;
-using System.Threading.Tasks;
+using Zeroteam.MessageMVC.EventBus.Zeroteam.MessageMVC.EventBus;
+using System;
 
 #endregion
 
@@ -34,18 +14,26 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     /// <summary>
     /// 事件订阅
     /// </summary>
-    public partial class EventSubscribeDataAccessOption : DataAccessOption<EventSubscribeData>
+    public sealed class EventSubscribeDataAccessOption : DataAccessOption<EventSubscribeData>, IDataOperator<EventSubscribeData>
     {
         public EventSubscribeDataAccessOption()
         {
+            DataOperator = this;
+            DataUpdateHandler = DependencyHelper.GetService<IDataUpdateHandler>();
+            DataUpdateHandler?.InitType<EventSubscribeData>();
+            CreateDataBase = () => DependencyHelper.GetService<EventBusDb>();
+            SqlBuilder = new MySqlSqlBuilder<EventSubscribeData>
+            {
+                Option = this
+            };
             DataSturct = EventSubscribeDataStruct.Struct;
-            DataSturct.Init();
+            Init();
         }
 
         #region 方法实现
 
 
-        /// <summary>
+        /*// <summary>
         /// 载入数据
         /// </summary>
         /// <param name="reader">数据读取器</param>
@@ -269,10 +257,151 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 parameter.Value = entity.LastReviser;
             cmd.Parameters.Add(parameter);
         }
-
+        */
         #endregion
 
 
+        /// <summary>
+        ///     得到可正确更新的条件
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public override void CheckUpdateContition(ref string condition)
+        {
+            condition = string.IsNullOrWhiteSpace(condition)
+                ? "`is_freeze` = 0"
+               : $"({condition}) AND `is_freeze` = 0";
+        }
+
+        object IDataOperator<EventSubscribeData>.GetValue(EventSubscribeData entity, string field)
+        {
+            if (field == null) return null;
+            return (field.Trim().ToLower()) switch
+            {
+                "id" => entity.Id,
+                "eventid" => entity.EventId,
+                "service" => entity.Service,
+                "islookup" => entity.IsLookUp,
+                "apiname" => entity.ApiName,
+                "memo" => entity.Memo,
+                "targetname" => entity.TargetName,
+                "targettype" => entity.TargetType,
+                "targetdescription" => entity.TargetDescription,
+                "isfreeze" => entity.IsFreeze,
+                "datastate" => entity.DataState,
+                "adddate" => entity.AddDate,
+                "authorid" => entity.AuthorId,
+                "author" => entity.Author,
+                "lastmodifydate" => entity.LastModifyDate,
+                "lastreviserid" => entity.LastReviserId,
+                "lastreviser" => entity.LastReviser,
+                _ => null,
+            };
+        }
+
+        void IDataOperator<EventSubscribeData>.SetValue(EventSubscribeData entity, string field, object value)
+        {
+            if (field == null) return;
+            switch (field.Trim().ToLower())
+            {
+                case "id":
+                    entity.Id = (long)Convert.ToDecimal(value);
+                    return;
+                case "eventid":
+                    entity.EventId = (long)Convert.ToDecimal(value);
+                    return;
+                case "service":
+                    entity.Service = value?.ToString();
+                    return;
+                case "islookup":
+                    if (value != null)
+                    {
+                        if (int.TryParse(value.ToString(), out int vl))
+                        {
+                            entity.IsLookUp = vl != 0;
+                        }
+                        else
+                        {
+                            entity.IsLookUp = Convert.ToBoolean(value);
+                        }
+                    }
+                    return;
+                case "apiname":
+                    entity.ApiName = value?.ToString();
+                    return;
+                case "memo":
+                    entity.Memo = value?.ToString();
+                    return;
+                case "targetname":
+                    entity.TargetName = value?.ToString();
+                    return;
+                case "targettype":
+                    entity.TargetType = value?.ToString();
+                    return;
+                case "targetdescription":
+                    entity.TargetDescription = value?.ToString();
+                    return;
+                case "isfreeze":
+                    if (value != null)
+                    {
+                        if (int.TryParse(value.ToString(), out int vl))
+                        {
+                            entity.IsFreeze = vl != 0;
+                        }
+                        else
+                        {
+                            entity.IsFreeze = Convert.ToBoolean(value);
+                        }
+                    }
+                    return;
+                case "datastate":
+                    if (value != null)
+                    {
+                        if (value is int @int)
+                        {
+                            entity.DataState = (DataStateType)@int;
+                        }
+                        else if (value is DataStateType type)
+                        {
+                            entity.DataState = type;
+                        }
+                        else
+                        {
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out DataStateType val))
+                            {
+                                entity.DataState = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.DataState = (DataStateType)vl;
+                                }
+                            }
+                        }
+                    }
+                    return;
+                case "adddate":
+                    entity.AddDate = Convert.ToDateTime(value);
+                    return;
+                case "authorid":
+                    entity.AuthorId = value?.ToString();
+                    return;
+                case "author":
+                    entity.Author = value?.ToString();
+                    return;
+                case "lastmodifydate":
+                    entity.LastModifyDate = Convert.ToDateTime(value);
+                    return;
+                case "lastreviserid":
+                    entity.LastReviserId = value?.ToString();
+                    return;
+                case "lastreviser":
+                    entity.LastReviser = value?.ToString();
+                    return;
+            }
+        }
     }
 
     /*

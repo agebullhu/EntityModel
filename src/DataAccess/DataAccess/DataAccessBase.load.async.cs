@@ -268,7 +268,7 @@ namespace Agebull.EntityModel.Common
         public async Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await LoadPageDataAsync(1, -1, _option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return await LoadPageDataAsync(1, -1, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Agebull.EntityModel.Common
 
         #endregion
 
-        #region 聚合函数支持
+        #region 聚合函数
 
         #region Collect
 
@@ -333,7 +333,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<object> CollectAsync(string fun, string field)
         {
-            return CollectInnerAsync(fun, _option.FieldMap[field], null, null);
+            return CollectInnerAsync(fun, Option.FieldMap[field], null, null);
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Agebull.EntityModel.Common
         public Task<object> CollectAsync<TValue>(string fun, Expression<Func<TEntity, TValue>> field)
         {
             var expression = (MemberExpression)field.Body;
-            return CollectInnerAsync(fun, _option.FieldMap[expression.Member.Name], null, null);
+            return CollectInnerAsync(fun, Option.FieldMap[expression.Member.Name], null, null);
         }
 
         /// <summary>
@@ -350,7 +350,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<object> CollectAsync(string fun, string field, string condition, params DbParameter[] args)
         {
-            return CollectInnerAsync(fun, _option.FieldMap[field], condition, args);
+            return CollectInnerAsync(fun, Option.FieldMap[field], condition, args);
         }
 
 
@@ -390,7 +390,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>是否存在数据</returns>
         public Task<bool> ExistPrimaryKeyAsync<T>(T id)
         {
-            return ExistInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(_option.PrimaryKey, id, SqlBuilder.GetDbType(_option.PrimaryKey)));
+            return ExistInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, id, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         #endregion
@@ -468,6 +468,7 @@ namespace Agebull.EntityModel.Common
             var obj = await CollectInnerAsync("Count", expression.Member.Name, condition, args);
             return obj == DBNull.Value || obj == null ? 0 : Convert.ToInt64(obj);
         }
+
         /// <summary>
         ///     总数据量
         /// </summary>
@@ -536,7 +537,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal?> MinAsyn(string field)
         {
-            var obj = await CollectInnerAsync("Min", _option.FieldMap[field], null, null);
+            var obj = await CollectInnerAsync("Min", Option.FieldMap[field], null, null);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -547,7 +548,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal?> MinAsyn(string field, string condition, params DbParameter[] args)
         {
-            var obj = await CollectInnerAsync("Min", _option.FieldMap[field], condition, args);
+            var obj = await CollectInnerAsync("Min", Option.FieldMap[field], condition, args);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -570,7 +571,7 @@ namespace Agebull.EntityModel.Common
                     ? condition2
                     : $"({convert.ConditionSql}) AND ({condition2})";
 
-            var obj = await CollectInnerAsync("Min", _option.FieldMap[expression.Member.Name], condition, convert.Parameters);
+            var obj = await CollectInnerAsync("Min", Option.FieldMap[expression.Member.Name], condition, convert.Parameters);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -589,7 +590,7 @@ namespace Agebull.EntityModel.Common
             var expression = (MemberExpression)field.Body;
             var convert1 = SqlBuilder.Compile(a);
             var convert2 = SqlBuilder.Compile(b);
-            var obj = await CollectInnerAsync("Min", _option.FieldMap[expression.Member.Name],
+            var obj = await CollectInnerAsync("Min", Option.FieldMap[expression.Member.Name],
                 $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
                 , convert1.Parameters.Union(convert2.Parameters).ToArray());
             if (obj == DBNull.Value || obj == null)
@@ -608,7 +609,7 @@ namespace Agebull.EntityModel.Common
             params DbParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
-            var obj = await CollectInnerAsync("Min", _option.FieldMap[expression.Member.Name], condition, args);
+            var obj = await CollectInnerAsync("Min", Option.FieldMap[expression.Member.Name], condition, args);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -623,7 +624,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal?> MaxAsyn(string field)
         {
-            var obj = await CollectInnerAsync("Max", _option.FieldMap[field], null, null);
+            var obj = await CollectInnerAsync("Max", Option.FieldMap[field], null, null);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -634,7 +635,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal?> MaxAsyn(string field, string condition, params DbParameter[] args)
         {
-            var obj = await CollectInnerAsync("Max", _option.FieldMap[field], condition, args);
+            var obj = await CollectInnerAsync("Max", Option.FieldMap[field], condition, args);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -657,7 +658,7 @@ namespace Agebull.EntityModel.Common
                     ? condition2
                     : $"({convert.ConditionSql}) AND ({condition2})";
 
-            var obj = await CollectInnerAsync("Max", _option.FieldMap[expression.Member.Name], condition, convert.Parameters);
+            var obj = await CollectInnerAsync("Max", Option.FieldMap[expression.Member.Name], condition, convert.Parameters);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -676,7 +677,7 @@ namespace Agebull.EntityModel.Common
             var expression = (MemberExpression)field.Body;
             var convert1 = SqlBuilder.Compile(a);
             var convert2 = SqlBuilder.Compile(b);
-            var obj = await CollectInnerAsync("Max", _option.FieldMap[expression.Member.Name],
+            var obj = await CollectInnerAsync("Max", Option.FieldMap[expression.Member.Name],
                 $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
                 , convert1.Parameters.Union(convert2.Parameters).ToArray());
             if (obj == DBNull.Value || obj == null)
@@ -695,7 +696,7 @@ namespace Agebull.EntityModel.Common
             params DbParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
-            var obj = await CollectInnerAsync("Max", _option.FieldMap[expression.Member.Name], condition, args);
+            var obj = await CollectInnerAsync("Max", Option.FieldMap[expression.Member.Name], condition, args);
             if (obj == DBNull.Value || obj == null)
                 return null;
             return Convert.ToDecimal(obj);
@@ -711,7 +712,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal> SumAsync(string field)
         {
-            var obj = await CollectInnerAsync("Sum", _option.FieldMap[field], null, null);
+            var obj = await CollectInnerAsync("Sum", Option.FieldMap[field], null, null);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
         }
 
@@ -720,7 +721,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal> SumAsync(string field, string condition, params DbParameter[] args)
         {
-            var obj = await CollectInnerAsync("Sum", _option.FieldMap[field], condition, args);
+            var obj = await CollectInnerAsync("Sum", Option.FieldMap[field], condition, args);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
         }
 
@@ -740,7 +741,7 @@ namespace Agebull.EntityModel.Common
                 : convert.ConditionSql == null
                     ? condition2
                     : $"({convert.ConditionSql}) AND ({condition2})";
-            var obj = await CollectInnerAsync("Sum", _option.FieldMap[expression.Member.Name], condition, convert.Parameters);
+            var obj = await CollectInnerAsync("Sum", Option.FieldMap[expression.Member.Name], condition, convert.Parameters);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
         }
 
@@ -757,7 +758,7 @@ namespace Agebull.EntityModel.Common
             var expression = (MemberExpression)field.Body;
             var convert1 = SqlBuilder.Compile(a);
             var convert2 = SqlBuilder.Compile(b);
-            var obj = await CollectInnerAsync("Sum", _option.FieldMap[expression.Member.Name],
+            var obj = await CollectInnerAsync("Sum", Option.FieldMap[expression.Member.Name],
                 $"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
                 , convert1.Parameters.Union(convert2.Parameters).ToArray());
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
@@ -774,7 +775,7 @@ namespace Agebull.EntityModel.Common
             params DbParameter[] args)
         {
             var expression = (MemberExpression)field.Body;
-            var obj = await CollectInnerAsync("Sum", _option.FieldMap[expression.Member.Name], condition, args);
+            var obj = await CollectInnerAsync("Sum", Option.FieldMap[expression.Member.Name], condition, args);
             return obj == DBNull.Value || obj == null ? 0M : Convert.ToDecimal(obj);
         }
 
@@ -822,7 +823,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<List<TEntity>> PageDataAsync(int page, int limit)
         {
-            return await PageDataAsync(page, limit, _option.PrimaryKey, false, null, null);
+            return await PageDataAsync(page, limit, Option.PrimaryKey, false, null, null);
         }
 
         /// <summary>
@@ -830,7 +831,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<List<TEntity>> PageDataAsync(int page, int limit, string condition, params DbParameter[] args)
         {
-            return await PageDataAsync(page, limit, _option.PrimaryKey, false, condition, args);
+            return await PageDataAsync(page, limit, Option.PrimaryKey, false, condition, args);
         }
 
         /// <summary>
@@ -839,7 +840,7 @@ namespace Agebull.EntityModel.Common
         public async Task<List<TEntity>> PageDataAsync(int page, int limit, Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageDataAsync(page, limit, _option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return await PageDataAsync(page, limit, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -848,7 +849,7 @@ namespace Agebull.EntityModel.Common
         public async Task<List<TEntity>> PageDataAsync(int page, int limit, LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageDataAsync(page, limit, _option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return await PageDataAsync(page, limit, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -958,7 +959,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit)
         {
-            return await PageAsync(page, limit, _option.PrimaryKey, false, null, null);
+            return await PageAsync(page, limit, Option.PrimaryKey, false, null, null);
         }
 
         /// <summary>
@@ -967,7 +968,7 @@ namespace Agebull.EntityModel.Common
         public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit, Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageAsync(page, limit, _option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return await PageAsync(page, limit, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -976,7 +977,7 @@ namespace Agebull.EntityModel.Common
         public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit, LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageAsync(page, limit, _option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return await PageAsync(page, limit, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -984,7 +985,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string condition, params DbParameter[] args)
         {
-            return await PageAsync(page, limit, _option.PrimaryKey, false, condition, args);
+            return await PageAsync(page, limit, Option.PrimaryKey, false, condition, args);
         }
 
 
@@ -1091,7 +1092,7 @@ namespace Agebull.EntityModel.Common
         public async Task<object> ReadAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
-            var vl = await LoadValueInnerAsync(fn, SqlBuilder.FieldConditionSQL(_option.PrimaryKey), ParameterCreater.CreateFieldParameter(_option.PrimaryKey, SqlBuilder.GetDbType(_option.PrimaryKey), key));
+            var vl = await LoadValueInnerAsync(fn, SqlBuilder.FieldConditionSQL(Option.PrimaryKey), ParameterCreater.CreateFieldParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey), key));
             return vl == DBNull.Value || vl == null ? default(TField) : vl;
         }
 
@@ -1104,7 +1105,7 @@ namespace Agebull.EntityModel.Common
         public async Task<TField> LoadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key)
         {
             var fn = GetPropertyName(field);
-            var vl = await LoadValueInnerAsync(fn, SqlBuilder.FieldConditionSQL(_option.PrimaryKey), ParameterCreater.CreateFieldParameter(_option.PrimaryKey, SqlBuilder.GetDbType(_option.PrimaryKey), key));
+            var vl = await LoadValueInnerAsync(fn, SqlBuilder.FieldConditionSQL(Option.PrimaryKey), ParameterCreater.CreateFieldParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey), key));
             return vl == DBNull.Value || vl == null ? default : (TField)vl;
         }
 
@@ -1394,7 +1395,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<TEntity> LoadByPrimaryKeyAsync(object key)
         {
-            return LoadFirstInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(_option.PrimaryKey, key, SqlBuilder.GetDbType(_option.PrimaryKey)));
+            return LoadFirstInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -1403,7 +1404,7 @@ namespace Agebull.EntityModel.Common
         public async Task<List<TEntity>> LoadByPrimaryKeiesAsync(IEnumerable keies)
         {
             var list = new List<TEntity>();
-            var par = ParameterCreater.CreateParameter(_option.PrimaryKey, SqlBuilder.GetDbType(_option.PrimaryKey));
+            var par = ParameterCreater.CreateParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey));
             foreach (var key in keies)
             {
                 par.Value = key;
@@ -1531,7 +1532,7 @@ namespace Agebull.EntityModel.Common
             TEntity entity = null;
             using var connectionScope = await DataBase.CreateConnectionScope();
             {
-                using var cmd = CreateLoadCommand(connectionScope, _option.PrimaryKey, true, condition, args);
+                using var cmd = CreateLoadCommand(connectionScope, Option.PrimaryKey, true, condition, args);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                     entity = await LoadEntityAsync(reader);
@@ -1621,7 +1622,7 @@ namespace Agebull.EntityModel.Common
         private async Task<TEntity> LoadEntityAsync(DbDataReader reader)
         {
             var entity = new TEntity();
-            await _option.LoadEntity(reader, entity);
+            await Option.LoadEntity(reader, entity);
             return entity;
         }
 
@@ -1661,10 +1662,10 @@ namespace Agebull.EntityModel.Common
             if (Equals(val, default(TValue)))
                 return false;
             var fieldName = GetPropertyName(field);
-            Debug.Assert(_option.FieldMap.ContainsKey(fieldName));
-            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(_option.PrimaryKey, "<>")}"
+            Debug.Assert(Option.FieldMap.ContainsKey(fieldName));
+            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName))
-                , ParameterCreater.CreateParameter(_option.PrimaryKey, key, SqlBuilder.GetDbType(_option.PrimaryKey)));
+                , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -1706,9 +1707,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="key"></param>
         public async Task<bool> IsUniqueAsync<TValue>(string field, object val, object key)
         {
-            return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(_option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(field))
-                , ParameterCreater.CreateParameter(_option.PrimaryKey, key, SqlBuilder.GetDbType(_option.PrimaryKey)));
+                , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
