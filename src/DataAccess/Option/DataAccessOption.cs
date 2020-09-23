@@ -14,11 +14,6 @@ namespace Agebull.EntityModel.Common
         public bool IsIdentity => DataSturct.IsIdentity;
 
         /// <summary>
-        /// 不做代码注入
-        /// </summary>
-        public bool NoInjection { get; set; }
-
-        /// <summary>
         /// 表配置
         /// </summary>
         public EntitySturct DataSturct { get; set; }

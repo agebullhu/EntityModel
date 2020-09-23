@@ -102,15 +102,6 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public IDataBase OriDataBase => _dataBase;
 
-        /// <summary>
-        /// 不做代码注入
-        /// </summary>
-        public bool NoInjection
-        {
-            get => Option.NoInjection;
-            set => Option.NoInjection = value;
-        }
-
         #endregion
 
         #region 生成命令对象

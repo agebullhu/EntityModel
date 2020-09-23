@@ -247,9 +247,9 @@ namespace Agebull.EntityModel.Common
         ///     读取数据
         /// </summary>
         /// <returns>数据</returns>
-        public async Task<List<TEntity>> AllAsync()
+        public Task<List<TEntity>> AllAsync()
         {
-            return await LoadDataInnerAsync();
+            return LoadDataInnerAsync(null, null, null);
         }
 
 
@@ -257,28 +257,28 @@ namespace Agebull.EntityModel.Common
         ///     读取数据
         /// </summary>
         /// <returns>数据</returns>
-        public async Task<List<TEntity>> AllAsync(string condition, DbParameter[] args)
+        public Task<List<TEntity>> AllAsync(string condition, DbParameter[] args)
         {
-            return await LoadDataInnerAsync(condition, args);
+            return LoadDataInnerAsync(condition, args, null);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda)
+        public Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await LoadPageDataAsync(1, -1, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
+            return LoadPageDataAsync(1, -1, Option.PrimaryKey, false, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> AllAsync<TField>(Expression<Func<TEntity, bool>> lambda, Expression<Func<TEntity, TField>> orderBy,
+        public Task<List<TEntity>> AllAsync<TField>(Expression<Func<TEntity, bool>> lambda, Expression<Func<TEntity, TField>> orderBy,
             bool desc)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await LoadPageDataAsync(1, -1, GetPropertyName(orderBy), desc, convert.ConditionSql, convert.Parameters);
+            return LoadPageDataAsync(1, -1, GetPropertyName(orderBy), desc, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -287,12 +287,12 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>数据</returns>
-        public async Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b)
+        public Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b)
         {
             var convert1 = SqlBuilder.Compile(a);
             var convert2 = SqlBuilder.Compile(b);
-            return await LoadDataInnerAsync($"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
-                , convert1.Parameters.Union(convert2.Parameters).ToArray());
+            return LoadDataInnerAsync($"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+                , convert1.Parameters.Union(convert2.Parameters).ToArray(), null);
         }
 
 
@@ -302,10 +302,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <param name="orderBys">排序</param>
         /// <returns>数据</returns>
-        public async Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda, params string[] orderBys)
+        public Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda, params string[] orderBys)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await LoadDataInnerAsync(convert.ConditionSql, convert.Parameters,
+            return LoadDataInnerAsync(convert.ConditionSql, convert.Parameters,
                 orderBys.Length == 0 ? null : string.Join(",", orderBys));
         }
 
@@ -315,10 +315,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="lambda">查询表达式</param>
         /// <param name="orderBys">排序</param>
         /// <returns>数据</returns>
-        public async Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> lambda, params string[] orderBys)
+        public Task<List<TEntity>> AllAsync(Expression<Func<TEntity, bool>> lambda, params string[] orderBys)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await LoadDataInnerAsync(convert.ConditionSql, convert.Parameters,
+            return LoadDataInnerAsync(convert.ConditionSql, convert.Parameters,
                 orderBys.Length == 0 ? null : string.Join(",", orderBys));
         }
 
@@ -944,9 +944,6 @@ namespace Agebull.EntityModel.Common
                     results.Add(await LoadEntityAsync(reader));
                 }
             }
-
-            for (var index = 0; index < results.Count; index++)
-                results[index] = Option.EntityLoaded(results[index]);
             return results;
         }
 
@@ -1233,7 +1230,8 @@ namespace Agebull.EntityModel.Common
             if (condition == null || string.IsNullOrEmpty(condition.Condition))
                 return Task.FromResult(new List<TEntity>());
             if (condition.Parameters == null)
-                return LoadDataInnerAsync(condition.Condition);
+                return LoadDataInnerAsync(condition.Condition, null, null);
+
             List<DbParameter> args = new List<DbParameter>();
             foreach (var item in condition.Parameters)
             {
@@ -1358,7 +1356,7 @@ namespace Agebull.EntityModel.Common
                     }
                 args.Add(pa);
             }
-            return LoadDataInnerAsync(condition.Condition, args.ToArray());
+            return LoadDataInnerAsync(condition.Condition, args.ToArray(), null);
         }
 
 
@@ -1378,7 +1376,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadDataAsync()
         {
-            return LoadDataInnerAsync();
+            return LoadDataInnerAsync(null, null, null);
         }
 
 
@@ -1387,7 +1385,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadDataAsync(string condition, params DbParameter[] args)
         {
-            return LoadDataInnerAsync(condition, args);
+            return LoadDataInnerAsync(condition, args, null);
         }
 
         /// <summary>
@@ -1444,7 +1442,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<TEntity> LoadLastAsync(string condition = null)
         {
-            return LoadLastInnerAsync(condition);
+            return LoadLastInnerAsync(condition, null);
         }
 
         /// <summary>
@@ -1460,7 +1458,10 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<TEntity> LoadLastAsync(string foreignKey, object key)
         {
-            return LoadLastInnerAsync(SqlBuilder.FieldConditionSQL(foreignKey), ParameterCreater.CreateFieldParameter(foreignKey, SqlBuilder.GetDbType(foreignKey), key));
+            return LoadLastInnerAsync(
+                SqlBuilder.FieldConditionSQL(foreignKey),
+                new[] { ParameterCreater.CreateFieldParameter(foreignKey, SqlBuilder.GetDbType(foreignKey), key) }
+                );
         }
 
         /// <summary>
@@ -1468,7 +1469,13 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadByForeignKeyAsync(string foreignKey, object key)
         {
-            return LoadDataInnerAsync(SqlBuilder.FieldConditionSQL(foreignKey), ParameterCreater.CreateFieldParameter(foreignKey, SqlBuilder.GetDbType(foreignKey), key));
+            return LoadDataInnerAsync(SqlBuilder.FieldConditionSQL(foreignKey),
+                new[]
+                {
+                    ParameterCreater.CreateFieldParameter(foreignKey, SqlBuilder.GetDbType(foreignKey),key)
+                }
+                , null);
+
         }
 
         /// <summary>
@@ -1476,11 +1483,8 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<bool> ReLoadAsync(TEntity entity)
         {
-            bool res;
             using var connectionScope = await DataBase.CreateConnectionScope();
-            res = await ReLoadInnerAsync(entity);
-            //entity.OnStatusChanged(NotificationStatusType.Refresh);
-            return res;
+            return await ReLoadInnerAsync(entity);
         }
 
         #endregion
@@ -1503,60 +1507,25 @@ namespace Agebull.EntityModel.Common
         {
             TEntity entity = null;
             using var connectionScope = await DataBase.CreateConnectionScope();
-            {
-                using var cmd = CreateLoadCommand(connectionScope, condition, args);
-                await using var reader = await cmd.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                    entity = await LoadEntityAsync(reader);
-                if (entity != null)
-                    entity = Option.EntityLoaded(entity);
-            }
-
+            using var cmd = CreateLoadCommand(connectionScope, condition, args);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+                entity = await LoadEntityAsync(reader);
             return entity;
         }
 
-
-        /// <summary>
-        ///     读取尾行
-        /// </summary>
-        protected Task<TEntity> LoadLastInnerAsync(string condition = null, DbParameter args = null)
-        {
-            return LoadLastInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
-        }
 
         /// <summary>
         ///     读取尾行
         /// </summary>
         protected async Task<TEntity> LoadLastInnerAsync(string condition, DbParameter[] args)
         {
-            TEntity entity = null;
             using var connectionScope = await DataBase.CreateConnectionScope();
-            {
-                using var cmd = CreateLoadCommand(connectionScope, Option.PrimaryKey, true, condition, args);
-                await using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                    entity = await LoadEntityAsync(reader);
-
-                if (entity != null)
-                    entity = Option.EntityLoaded(entity);
-            }
-            return entity;
-        }
-
-        /// <summary>
-        ///     读取全部
-        /// </summary>
-        protected Task<List<TEntity>> LoadDataInnerAsync(string condition = null, DbParameter args = null)
-        {
-            return LoadDataInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args }, null);
-        }
-
-        /// <summary>
-        ///     读取全部
-        /// </summary>
-        protected Task<List<TEntity>> LoadDataInnerAsync(string condition, DbParameter[] args)
-        {
-            return LoadDataInnerAsync(condition, args, null);
+            using var cmd = CreateLoadCommand(connectionScope, Option.PrimaryKey, true, condition, args);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+                return await LoadEntityAsync(reader);
+            return null;
         }
 
         /// <summary>
@@ -1566,14 +1535,10 @@ namespace Agebull.EntityModel.Common
         {
             var results = new List<TEntity>();
             using var connectionScope = await DataBase.CreateConnectionScope();
-            await using (var cmd = CreateLoadCommand(connectionScope, condition, orderBy, args))
-            {
-                await using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                    results.Add(await LoadEntityAsync(reader));
-            }
-            for (var index = 0; index < results.Count; index++)
-                results[index] = Option.EntityLoaded(results[index]);
+            await using var cmd = CreateLoadCommand(connectionScope, condition, orderBy, args);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+                results.Add(await LoadEntityAsync(reader));
             return results;
         }
 
@@ -1590,8 +1555,6 @@ namespace Agebull.EntityModel.Common
             {
                 results.Add(await LoadEntityAsync(reader));
             }
-            for (var index = 0; index < results.Count; index++)
-                results[index] = Option.EntityLoaded(results[index]);
             return results;
         }
 
@@ -1609,8 +1572,6 @@ namespace Agebull.EntityModel.Common
             {
                 results.Add(await LoadEntityAsync(reader));
             }
-            for (var index = 0; index < results.Count; index++)
-                results[index] = Option.EntityLoaded(results[index]);
             return results;
         }
 

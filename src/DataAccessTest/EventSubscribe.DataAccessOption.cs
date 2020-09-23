@@ -18,6 +18,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     {
         public EventSubscribeDataAccessOption()
         {
+            NoInjection = true;
             DataOperator = this;
             DataUpdateHandler = DependencyHelper.GetService<IDataUpdateHandler>();
             DataUpdateHandler?.InitType<EventSubscribeData>();

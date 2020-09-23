@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,26 +11,22 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         /// <summary>
         ///     页号
         /// </summary>
-        [JsonProperty("page", NullValueHandling = NullValueHandling.Ignore)]
         public int PageIndex { get; set; }
 
         /// <summary>
         ///     每页行数
         /// </summary>
-        [JsonProperty("pageSize", NullValueHandling = NullValueHandling.Ignore)]
         public int PageSize { get; set; }
 
         /// <summary>
-        ///     每页行数
+        ///     排序
         /// </summary>
-        [JsonProperty("order", NullValueHandling = NullValueHandling.Ignore)]
         public string Order { get; set; }
 
 
         /// <summary>
         ///     反序
         /// </summary>
-        [JsonProperty("desc", NullValueHandling = NullValueHandling.Ignore)]
         public bool Desc { get; set; }
 
 
@@ -63,7 +58,6 @@ namespace ZeroTeam.MessageMVC.ZeroApis
     /// <summary>
     ///     API返回分页信息
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class ApiPage
     {
         /// <summary>
@@ -76,48 +70,36 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     当前页号（从1开始）
         /// </summary>
         /// <example>1</example>
-        [JsonProperty("page")]
         public int PageIndex { get; set; }
 
         /// <summary>
         ///     一页行数
         /// </summary>
         /// <example>16</example>
-        [JsonProperty("pageSize")]
         public int PageSize { get; set; }
 
         /// <summary>
         ///     总页数
         /// </summary>
         /// <example>999</example>
-        [JsonProperty("pageCount")]
         public int PageCount { get; set; }
 
         /// <summary>
         ///     总行数
         /// </summary>
         /// <example>9999</example>
-        [JsonProperty("rowCount")]
         public int RowCount { get; set; }
 
-        /// <summary>
-        ///     总行数
-        /// </summary>
-        /// <example>9999</example>
-        [JsonProperty("total", Required = Required.Always)]
-        public int Total => RowCount;
     }
 
     /// <summary>
     ///     API返回分布页数据
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class ApiPageData<TEntity> : ApiPage
     {
         /// <summary>
         ///     返回值
         /// </summary>
-        [JsonProperty("rows")]
         public List<TEntity> Rows { get; set; }
     }
 }

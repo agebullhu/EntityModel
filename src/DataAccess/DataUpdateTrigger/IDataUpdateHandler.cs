@@ -51,9 +51,12 @@ namespace Agebull.EntityModel.Events
         /// <remarks>
         /// 如果内容为实体,使用JSON序列化,
         /// 如果使用主键内容为#:[key](如:#:123)样式,
-        /// 如果为批量操作,内容为QueryCondition的JSON序列化
+        /// 如果为批量操作,内容为对象，请进行JSON序列化后传播
         /// </remarks>
-        Task OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value);
+        Task OnStatusChanged(string database, string entity, 
+            DataOperatorType oType, 
+            EntityEventValueType valueType, 
+            object value);
         #endregion
 
         #region 扩展流程
@@ -101,7 +104,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="option">当前数据操作配置</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        void ConditionSqlCode<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
+        void InjectionCondition<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
             where TEntity : class, new();
 
         /// <summary>

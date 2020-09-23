@@ -39,11 +39,6 @@ namespace Agebull.EntityModel.Common
         IDataBase OriDataBase { get; }
 
         /// <summary>
-        /// 不做代码注入
-        /// </summary>
-        bool NoInjection { get; set; }
-
-        /// <summary>
         /// 数据结构
         /// </summary>
         EntitySturct DataSturct { get; }

@@ -9,7 +9,6 @@
 #region 引用
 
 using Agebull.EntityModel.Events;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -150,6 +149,20 @@ namespace Agebull.EntityModel.Common
                     action(pro);
             }
         }
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public async Task FroeachDbProperties(ReadWriteFeatrue readWrite, Func<EntitiyProperty, Task> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                    await action(pro);
+            }
+        }
         #endregion
 
 
@@ -172,30 +185,19 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        public async Task LoadEntity(DbDataReader reader, TEntity entity)
+        public virtual Task LoadEntity(DbDataReader reader, TEntity entity)
         {
-            await ReadEntity(reader, entity);
-            EntityLoaded(entity);
-        }
-
-        /// <summary>
-        /// 载入数据
-        /// </summary>
-        /// <param name="reader">数据读取器</param>
-        /// <param name="entity">读取数据的实体</param>
-        protected virtual async Task ReadEntity(DbDataReader reader, TEntity entity)
-        {
-            foreach (var pro in DataSturct.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn)))
-            {
-                if (!pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read))
-                    continue;
-                if (await reader.IsDBNullAsync(pro.ColumnName))
-                {
-                    DataOperator.SetValue(entity, pro.PropertyName, null);
-                    continue;
-                }
-                DataOperator.SetValue(entity, pro.PropertyName, reader.GetValue(pro.ColumnName));
-            }
+            return FroeachDbProperties(ReadWriteFeatrue.Read, async pro =>
+              {
+                  if (await reader.IsDBNullAsync(pro.ColumnName))
+                  {
+                      DataOperator.SetValue(entity, pro.PropertyName, null);
+                  }
+                  else
+                  {
+                      DataOperator.SetValue(entity, pro.PropertyName, reader.GetValue(pro.ColumnName));
+                  }
+              });
         }
 
         /// <summary>
@@ -207,11 +209,12 @@ namespace Agebull.EntityModel.Common
         public virtual void SetEntityParameter(DbCommand cmd, TEntity entity)
         {
             cmd.Parameters.Clear();
-            foreach (var pro in DataSturct.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn)))
-            {
-                cmd.Parameters.Add(SqlBuilder.CreateFieldParameter(pro.PropertyName, pro.DbType,
-                    DataOperator.GetValue(entity, pro.PropertyName)));
-            }
+
+            FroeachDbProperties(ReadWriteFeatrue.Read,
+                pro => cmd.Parameters.Add(SqlBuilder.CreateFieldParameter(pro.PropertyName,
+                            pro.DbType,
+                            DataOperator.GetValue(entity, pro.PropertyName)))
+            );
         }
 
         /// <summary>
@@ -226,12 +229,20 @@ namespace Agebull.EntityModel.Common
                 : 0;
         }
 
+        #endregion
+
+        #region Sql注入
+
         /// <summary>
-        ///     得到可正确更新的条件
+        /// 不做代码注入
         /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public virtual void CheckUpdateContition(ref string condition)
+        public bool NoInjection { get; set; }
+
+        /// <summary>
+        ///     载入数据后处理
+        /// </summary>
+        /// <param name="entity">读取数据的实体</param>
+        public virtual void EntityLoaded(TEntity entity)
         {
         }
 
@@ -250,8 +261,7 @@ namespace Agebull.EntityModel.Common
             if (!string.IsNullOrEmpty(BaseCondition))
                 conditions.Add(BaseCondition);
             InjectionConditionInner(conditions);
-
-            //DataUpdateHandler.ConditionSqlCode(this, conditions);
+            DataUpdateHandler.InjectionCondition(this, conditions);
 
         }
 
@@ -277,9 +287,14 @@ namespace Agebull.EntityModel.Common
         {
         }
 
-        #endregion
-
-        #region Sql注入
+        /// <summary>
+        ///     得到可正确更新的条件
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public virtual void CheckUpdateContition(ref string condition)
+        {
+        }
 
         /// <summary>
         ///     与更新同时执行的SQL(更新之前立即执行)
@@ -288,11 +303,9 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public string BeforeUpdateSql(string condition)
         {
-            if (NoInjection)
-                return "";
             var code = new StringBuilder();
             BeforeUpdateSql(code, condition);
-            //DataUpdateHandler.BeforeUpdateSql(Table, code, condition);
+            DataUpdateHandler.BeforeUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -303,11 +316,9 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public string AfterUpdateSql(string condition)
         {
-            if (NoInjection)
-                return "";
             var code = new StringBuilder();
             AfterUpdateSql(code, condition);
-            //DataUpdateHandler.AfterUpdateSql(Table, code, condition);
+            DataUpdateHandler.AfterUpdateSql(this, code, condition);
             return code.ToString();
         }
 
@@ -379,7 +390,7 @@ namespace Agebull.EntityModel.Common
                     Type = args[i].DbType
                 };
             }
-            return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.QueryCondition, JsonConvert.SerializeObject(queryCondition));
+            return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.QueryCondition, queryCondition);
         }
 
         /// <summary>
@@ -395,7 +406,7 @@ namespace Agebull.EntityModel.Common
             OnDataSaved(entity, operatorType);
             if (!CanRaiseEvent)
                 return Task.CompletedTask;
-            return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.EntityJson, JsonConvert.SerializeObject(entity));
+            return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.EntityJson, entity);
         }
 
         /// <summary>
@@ -506,38 +517,8 @@ namespace Agebull.EntityModel.Common
         /// <returns>返回真说明要取主键</returns>
         public void SetParameterValue(TEntity data, DbCommand cmd)
         {
-            foreach (var pro in PropertyMap.Values)
-            {
-                if (pro.Featrue.HasFlag(PropertyFeatrue.DbCloumn))
-                    continue;
-                cmd.Parameters[pro.PropertyName].Value = DataOperator.GetValue(data, pro.PropertyName);
-            }
+            FroeachDbProperties(pro => cmd.Parameters[pro.PropertyName].Value = DataOperator.GetValue(data, pro.PropertyName));
         }
 
-
-        /// <summary>
-        ///     数据载入时给外部的处理方法
-        /// </summary>
-        public Action<TEntity> OnLoadAction { get; set; }
-
-        /// <summary>
-        ///     载入数据
-        /// </summary>
-        /// <param name="entity">读取数据的实体</param>
-        public TEntity EntityLoaded(TEntity entity)
-        {
-            entity = OnEntityLoaded(entity);
-            OnLoadAction?.Invoke(entity);
-            return entity;
-        }
-
-        /// <summary>
-        ///     载入后的同步处理
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual TEntity OnEntityLoaded(TEntity entity)
-        {
-            return entity;
-        }
     }
 }

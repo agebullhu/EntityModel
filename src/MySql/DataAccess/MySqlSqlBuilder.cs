@@ -205,13 +205,20 @@ namespace Agebull.EntityModel.MySql
         public string CreateUpdateSql(string valueExpression, string condition)
         {
             if (!Option.NoInjection)
+            {
                 Option.CheckUpdateContition(ref condition);
-
-            return $@"{Option.BeforeUpdateSql(condition)}
+                return $@"{Option.BeforeUpdateSql(condition)}
 UPDATE `{Option.WriteTableName}` 
    SET {valueExpression} 
  WHERE {condition};
 {Option.AfterUpdateSql(condition)}";
+            }
+            else
+            {
+                return $@"UPDATE `{Option.WriteTableName}` 
+   SET {valueExpression} 
+ WHERE {condition};";
+            }
         }
 
         #endregion
@@ -243,19 +250,14 @@ UPDATE `{Option.WriteTableName}`
         {
             if (Option.NoInjection)
             {
-                return string.IsNullOrEmpty(condition) ? null : $"WHERE {condition}";
+                return string.IsNullOrEmpty(condition) ? null : $"\nWHERE {condition}";
             }
 
             List<string> conditions = new List<string>();
 
-            if (!string.IsNullOrEmpty(Option.BaseCondition))
-                conditions.Add(Option.BaseCondition);
-
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
-
             Option.InjectionCondition(conditions);
-
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();
@@ -383,9 +385,20 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <returns>删除的SQL语句</returns>
         public string CreateDeleteSql(string condition)
         {
-            return $@"{Option.BeforeUpdateSql(condition)}
+            if (!Option.NoInjection)
+            {
+                Option.CheckUpdateContition(ref condition);
+                return $@"{Option.BeforeUpdateSql(condition)}
 {Option.DeleteSqlCode} WHERE {condition};
 {Option.AfterUpdateSql(condition)}";
+
+            }
+            else if (string.IsNullOrEmpty(condition))
+            {
+                throw new ArgumentException("删除数据必须有一个条件");
+            }
+
+            return $"{Option.DeleteSqlCode} WHERE {condition};";
         }
 
         /// <summary>
@@ -508,8 +521,8 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <param name="entity">取值的实体</param>
         public DbParameter CreateFieldParameter(string field, TEntity entity)
         {
-            return CreateParameter(field, 
-                Option.DataOperator.GetValue(entity, field), 
+            return CreateParameter(field,
+                Option.DataOperator.GetValue(entity, field),
                 (MySqlDbType)Option.GetDbType(field));
         }
 
@@ -536,8 +549,8 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <param name="entity">取值的实体</param>
         public DbParameter CreatePimaryKeyParameter(TEntity entity)
         {
-            return CreateParameter(Option.PrimaryKey, 
-                Option.DataOperator.GetValue(entity, Option.PrimaryKey), 
+            return CreateParameter(Option.PrimaryKey,
+                Option.DataOperator.GetValue(entity, Option.PrimaryKey),
                 (MySqlDbType)Option.GetDbType(Option.PrimaryKey));
         }
         #endregion

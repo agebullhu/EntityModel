@@ -227,9 +227,9 @@ namespace Agebull.EntityModel.Common
 
 
         /// <summary>
-        ///     插入数据
+        ///     更新数据
         /// </summary>
-        /// <param name="entity">插入数据的实体</param>
+        /// <param name="entity">更新数据的实体</param>
         private async Task<bool> UpdateInnerAsync(TEntity entity)
         {
             Option.PrepareSave(entity, DataOperatorType.Update);
