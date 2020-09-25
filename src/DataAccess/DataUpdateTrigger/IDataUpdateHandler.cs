@@ -9,7 +9,6 @@
 using Agebull.EntityModel.Common;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,9 +52,9 @@ namespace Agebull.EntityModel.Events
         /// 如果使用主键内容为#:[key](如:#:123)样式,
         /// 如果为批量操作,内容为对象，请进行JSON序列化后传播
         /// </remarks>
-        Task OnStatusChanged(string database, string entity, 
-            DataOperatorType oType, 
-            EntityEventValueType valueType, 
+        Task OnStatusChanged(string database, string entity,
+            DataOperatorType oType,
+            EntityEventValueType valueType,
             object value);
         #endregion
 

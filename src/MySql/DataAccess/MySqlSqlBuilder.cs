@@ -11,7 +11,7 @@
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -140,38 +140,6 @@ namespace Agebull.EntityModel.MySql
         #region 更新
 
         /// <summary>
-        /// 取得仅更新的SQL语句
-        /// </summary>
-        public string GetModifiedUpdateSql(TEntity entity)
-        {
-            return Option.UpdateFields;
-            //if (!(entity is EditDataObject data))
-            //{
-            //    return Option.UpdateFields;
-            //}
-            //if (data.__status.IsReadOnly)
-            //{
-            //    return Option.UpdateFields;
-            //}
-            //if (!data.__status.IsModified)
-            //    return null;
-            //StringBuilder sql = new StringBuilder();
-            //bool first = true;
-            //foreach (var pro in Option.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property)))
-            //{
-            //    if (data.__status.Status.ModifiedProperties[pro.PropertyIndex] <= 0 || !Option.FieldMap.ContainsKey(pro.Name))
-            //        continue;
-            //    if (first)
-            //        first = false;
-            //    else
-            //        sql.Append(',');
-            //    sql.AppendLine($"       `{pro.ColumnName}` = ?{pro.Name}");
-            //}
-            //return first ? null : sql.ToString();
-        }
-
-
-        /// <summary>
         ///     生成单个字段更新的SQL
         /// </summary>
         /// <param name="field">字段</param>
@@ -204,22 +172,54 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         public string CreateUpdateSql(string valueExpression, string condition)
         {
+            if (Option.NoInjection)
+            {
+                return $@"UPDATE `{Option.WriteTableName}` 
+   SET {valueExpression} 
+ WHERE {condition};";
+            }
+            Option.CheckUpdateContition(ref condition);
+            return $@"{Option.BeforeUpdateSql(condition)}
+UPDATE `{Option.WriteTableName}` 
+   SET {valueExpression} 
+ WHERE {condition};
+{Option.AfterUpdateSql(condition)}";
+        }
+
+        /// <summary>
+        ///     生成更新的SQL
+        /// </summary>
+        /// <param name="entity">实体</param>
+        /// <param name="condition">更新条件</param>
+        /// <returns>更新的SQL</returns>
+        public string GetUpdateSql(TEntity entity, string condition)
+        {
+            if (!Option.UpdateByMidified)
+            {
+                return $@"UPDATE `{Option.WriteTableName}` 
+   SET {Option.UpdateFields} 
+ WHERE {condition};";
+            }
+            var sql = Option.GetModifiedUpdateSql(entity);
+            if (sql == null)
+                return null;
             if (!Option.NoInjection)
             {
                 Option.CheckUpdateContition(ref condition);
                 return $@"{Option.BeforeUpdateSql(condition)}
 UPDATE `{Option.WriteTableName}` 
-   SET {valueExpression} 
+   SET {sql} 
  WHERE {condition};
 {Option.AfterUpdateSql(condition)}";
             }
             else
             {
                 return $@"UPDATE `{Option.WriteTableName}` 
-   SET {valueExpression} 
+   SET {sql} 
  WHERE {condition};";
             }
         }
+
 
         #endregion
 
@@ -302,7 +302,6 @@ UPDATE `{Option.WriteTableName}`
         /// <returns>载入字段值的SQL语句</returns>
         public string CreateLoadValueSql(string field, string condition)
         {
-            Debug.Assert(Option.FieldMap.ContainsKey(field));
             return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{InjectionCondition(condition)};";
         }
 
@@ -323,20 +322,20 @@ FROM {Option.ReadTableName}{InjectionCondition(convert.ConditionSql)};";
         /// </summary>
         /// <param name="condition">数据条件</param>
         /// <param name="order">排序字段</param>
+        /// <param name="limit"></param>
         /// <returns>载入的SQL语句</returns>
-        public StringBuilder CreateLoadSql(string condition, string order)
+        public StringBuilder CreateLoadSql(string condition, string order, string limit)
         {
             var sql = new StringBuilder();
-            sql.AppendLine(@"SELECT");
-            sql.AppendLine(Option.LoadFields);
-            sql.AppendFormat(@"FROM {0}", Option.ReadTableName);
-            sql.AppendLine(InjectionCondition(condition));
-            if (!string.IsNullOrWhiteSpace(order))
+            sql.Append($"SELECT {Option.LoadFields} FROM {Option.ReadTableName}");
+            sql.Append(InjectionCondition(condition));
+            if (order !=null)
             {
-                sql.AppendLine();
-                sql.Append($"ORDER BY {order}");
+                sql.Append($" ORDER BY {order}");
             }
-            sql.Append(";");
+            if (limit != null)
+                sql.Append($" LIMIT {limit}");
+            sql.Append(';');
             return sql;
         }
 
@@ -490,7 +489,6 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         }
 
         #endregion
-
 
         #region 参数
 

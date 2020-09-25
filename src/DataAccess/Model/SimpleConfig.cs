@@ -24,7 +24,7 @@ namespace Agebull.EntityModel.Common
                     return;
                 }
                 _name = now;
-               //OnPropertyChanged(nameof(Name));
+                //OnPropertyChanged(nameof(Name));
             }
         }
 

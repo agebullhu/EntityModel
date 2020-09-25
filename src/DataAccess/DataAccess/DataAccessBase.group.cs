@@ -50,9 +50,9 @@ namespace Agebull.EntityModel.Common
 
 
             var results = new List<T>();
-            using var connectionScope = await DataBase.CreateConnectionScope();
+            await using var connectionScope = await DataBase.CreateConnectionScope();
             {
-                using var cmd = CommandCreater.CreateCommand(connectionScope, code.ToString(), convert.Parameters);
+                using var cmd = connectionScope.CreateCommand( code.ToString(), convert.Parameters);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {

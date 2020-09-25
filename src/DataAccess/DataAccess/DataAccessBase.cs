@@ -8,8 +8,6 @@
 
 #region 引用
 
-using Agebull.EntityModel.Events;
-
 using System;
 using System.Data;
 using System.Data.Common;
@@ -24,15 +22,10 @@ namespace Agebull.EntityModel.Common
     ///     Sql实体访问类
     /// </summary>
     /// <typeparam name="TEntity">实体</typeparam>
-    public partial class DataAccess<TEntity> : SimpleConfig, IDataAccess<TEntity>
-         where TEntity : class,  new()
+    public sealed partial class DataAccess<TEntity> : SimpleConfig, IDataAccess//<TEntity>
+         where TEntity : class, new()
     {
         #region 构造
-
-        /// <summary>
-        /// 命令构造
-        /// </summary>
-        public ICommandCreater CommandCreater => DataBase;
 
         /// <summary>
         /// 参数构造
@@ -109,19 +102,19 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected DbCommand CreateLoadCommand(IConnectionScope scope, string condition, params DbParameter[] args)
+        private DbCommand CreateLoadCommand(IConnectionScope scope, string condition, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadSql(condition, null);
-            return CommandCreater.CreateCommand(scope, sql.ToString(), args);
+            var sql = SqlBuilder.CreateLoadSql(condition, null, null);
+            return scope.CreateCommand(sql.ToString(), args);
         }
 
         /// <summary>
         ///     生成命令
         /// </summary>
-        protected DbCommand CreateLoadCommand(IConnectionScope scope, string condition, string order, params DbParameter[] args)
+        private DbCommand CreateLoadCommand(IConnectionScope scope, string condition, string order, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadSql(condition, order);
-            return CommandCreater.CreateCommand(scope, sql.ToString(), args);
+            var sql = SqlBuilder.CreateLoadSql(condition, order, null);
+            return scope.CreateCommand(sql.ToString(), args);
         }
 
         /// <summary>
@@ -133,7 +126,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">数据条件</param>
         /// <param name="args">条件中的参数</param>
         /// <returns>载入命令</returns>
-        protected DbCommand CreateLoadCommand(IConnectionScope scope, string order, bool desc, string condition,
+        private DbCommand CreateLoadCommand(IConnectionScope scope, string order, bool desc, string condition,
             params DbParameter[] args)
         {
             var field = !string.IsNullOrEmpty(order) ? order : Option.PrimaryKey;
@@ -172,7 +165,7 @@ namespace Agebull.EntityModel.Common
                 throw new ArgumentException(@"值的长度和字段长度必须一致", nameof(values));
             var res = new DbParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
-                res[i] = ParameterCreater.CreateFieldParameter(fields[i], SqlBuilder.GetDbType(fields[i]), values[i]);
+                res[i] = ParameterCreater.CreateParameter(fields[i], values[i], SqlBuilder.GetDbType(fields[i]));
             return res;
         }
 
@@ -187,7 +180,7 @@ namespace Agebull.EntityModel.Common
                 throw new ArgumentException(@"没有字段用于生成参数", nameof(parameters));
             var res = new DbParameter[parameters.Length];
             for (var i = 0; i < parameters.Length; i++)
-                res[i] = ParameterCreater.CreateFieldParameter(parameters[i].field, SqlBuilder.GetDbType(parameters[i].field), parameters[i].value);
+                res[i] = ParameterCreater.CreateParameter(parameters[i].field, parameters[i].value, SqlBuilder.GetDbType(parameters[i].field));
             return res;
         }
 
@@ -242,7 +235,7 @@ namespace Agebull.EntityModel.Common
         /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <returns></returns>
-        protected static string GetPropertyName<T>(Expression<Func<TEntity, T>> action)
+        private static string GetPropertyName<T>(Expression<Func<TEntity, T>> action)
         {
             if (action.Body is MemberExpression expression)
                 return expression.Member.Name;

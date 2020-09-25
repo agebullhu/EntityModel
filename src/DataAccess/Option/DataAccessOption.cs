@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
@@ -95,6 +93,11 @@ namespace Agebull.EntityModel.Common
         ///     全部更新的SQL语句
         /// </summary>
         public string UpdateFields { get; set; }
+
+        /// <summary>
+        ///     全部更新的SQL语句
+        /// </summary>
+        public string UpdateSqlCode { get; set; }
 
         /// <summary>
         ///     删除的SQL语句

@@ -5,10 +5,18 @@
     <Version>5.0.0.1-bate</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;monitor</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
     <EmbeddedResource Remove="BusinessLogic\**" />
     <None Remove="BusinessLogic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.45" />
   </ItemGroup>
 
 </Project>

@@ -22,20 +22,19 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     生成Sql参数
         /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="dbType">参数类型</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
-        DbParameter CreateFieldParameter(string field, int dbType, object value);
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
         /// <param name="csharpType">C#的类型</param>
         /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
         /// <returns>参数</returns>
         DbParameter CreateParameter(string csharpType, string parameterName, object value);
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="parameterName">参数</param>
+        /// <param name="dbType">对应数据库的DbType，如MysqlDbType</param>
+        /// <returns>参数</returns>
+        DbParameter CreateParameter(string parameterName, int dbType);
 
 
         /// <summary>

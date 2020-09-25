@@ -9,7 +9,7 @@
 #region 引用
 
 using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,17 +25,6 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     public class ParameterCreater : SimpleConfig, IParameterCreater
     {
-        /// <summary>
-        ///     生成字段的参数
-        /// </summary>
-        /// <param name="field">生成参数的字段</param>
-        /// <param name="dbType"></param>
-        /// <param name="value">值</param>
-        public DbParameter CreateFieldParameter(string field, int dbType, object value)
-        {
-            return CreateParameter(field, value, (MySqlDbType)dbType);
-        }
-
         /// <summary>
         ///     生成Sql参数
         /// </summary>
@@ -64,17 +53,17 @@ namespace Agebull.EntityModel.MySql
 
         DbParameter IParameterCreater.CreateParameter(string parameterName, object value)
         {
-            return CreateParameter(parameterName, value);
+            return new MySqlParameter(parameterName, value);
         }
 
         DbParameter IParameterCreater.CreateParameter(string parameterName, string value)
         {
-            return CreateParameter(parameterName, value);
+            return new MySqlParameter(parameterName, value);
         }
 
         DbParameter IParameterCreater.CreateParameter<T>(string parameterName, T value)
         {
-            return CreateParameter(parameterName, value);
+            return new MySqlParameter(parameterName, value);
         }
 
 
@@ -87,7 +76,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns>参数</returns>
         DbParameter IParameterCreater.CreateParameter(string parameterName, object value, int dbType)
         {
-            return CreateParameter(parameterName, value, (MySqlDbType)dbType);
+            return new MySqlParameter(parameterName, (MySqlDbType)dbType)
+            {
+                Value = value
+            };
+            //return CreateParameter(parameterName, value, (MySqlDbType)dbType);
         }
 
         /// <summary>
@@ -124,6 +117,18 @@ namespace Agebull.EntityModel.MySql
                 Value = val
             };
         }
+
+        /// <summary>
+        ///     生成Sql参数
+        /// </summary>
+        /// <param name="parameterName">参数</param>
+        /// <param name="dbType">对应数据库的DbType，如MysqlDbType</param>
+        /// <returns>参数</returns>
+        DbParameter IParameterCreater.CreateParameter(string parameterName, int dbType)
+        {
+            return new MySqlParameter(parameterName, (MySqlDbType)dbType);
+        }
+
 
         DbParameter IParameterCreater.CreateParameter(string csharpType, string parameterName, object value)
         {

@@ -9,68 +9,62 @@
             数据库连接范围
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.ConnectionScope.Transaction">
+        <member name="F:Agebull.EntityModel.MySql.ConnectionScope._isHereOpen">
             <summary>
-                事务对象
+                是否此处打开数据库
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.System#IAsyncDisposable#DisposeAsync">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.DisposeAsync">
             <summary>
                 清理资源
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.Dispose">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.CreateCommand(System.String,System.Data.Common.DbParameter[])">
             <summary>
-            析构
+                生成命令
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.MySql.MySqlConnectionsManager">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.BeginTransaction">
             <summary>
-            连接管理
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlConnectionsManager.Instance">
-            <summary>
-            单例
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.InternalInitialize">
-            <summary>
-                内部初始化
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.GetConnection(System.String)">
-            <summary>
-            取得一个空闲连接对象
+            开始一个事务
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.Close(MySql.Data.MySqlClient.MySqlConnection,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.Rollback">
             <summary>
-            关闭连接对象
+            回滚事务
             </summary>
-            <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.InitConnection(System.String)">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.Commit">
             <summary>
-            初始化连接对象
+            提交事务
             </summary>
-            <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlConnectionsManager.CloseConnection(MySql.Data.MySqlClient.MySqlConnection,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.ExecuteAsync(System.String,System.Data.Common.DbParameter[])">
             <summary>
-            关闭连接对象
+                对连接执行SQL 语句并返回受影响的行数。
             </summary>
-            <returns></returns>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>被影响的行数</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
+            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.ExecuteScalarAsync(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
+            </summary>
+            <param name="sql">SQL语句</param>
+            <param name="args">参数</param>
+            <returns>操作的第一行第一列或空</returns>
+            <remarks>
+                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
+            </remarks>
         </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlDataBase">
             <summary>
                 表示MySql数据库对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.#cctor">
-            <summary>
-            构造
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.#ctor">
@@ -86,6 +80,11 @@
         <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.DataBaseName">
             <summary>
             数据库名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.TransactionSuccess">
+            <summary>
+                事务成功
             </summary>
         </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.Transaction">
@@ -115,17 +114,51 @@
             提交事务
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateConnectionScope">
+            <summary>
+            构造连接范围对象
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.ConnectionStringName">
             <summary>
             连接字符串配置节点名称,用于取出
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.IsLockConnection">
+        <member name="F:Agebull.EntityModel.MySql.MySqlDataBase._connection">
             <summary>
-            是否锁定连接对象(更新插入删除发生后自动启用)
+            连接对象
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.OpenAsync">
+            <summary>
+                打开连接
+            </summary>
+            <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CloseAsync">
+            <summary>
+            执行与释放或重置非托管资源相关的应用程序定义的任务。
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.OpenConnection(System.String)">
+            <summary>
+            初始化连接对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CloseConnection(MySqlConnector.MySqlConnection)">
+            <summary>
+            关闭连接对象
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.DisposeAsync">
+            <summary>
+            执行与释放或重置非托管资源相关的应用程序定义的任务。
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.Dispose">
             <summary>
             执行与释放或重置非托管资源相关的应用程序定义的任务。
             </summary>
@@ -135,31 +168,9 @@
             析构
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.DoDispose">
-            <summary>
-            执行与释放或重置非托管资源相关的应用程序定义的任务。
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.OpenAsync">
-            <summary>
-                打开连接
-            </summary>
-            <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.ExecuteAsync(System.String,System.Data.Common.DbParameter[])">
             <summary>
-                对连接执行 Transact-SQL 语句并返回受影响的行数。
-            </summary>
-            <param name="sql">SQL语句</param>
-            <param name="args">参数</param>
-            <returns>被影响的行数</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-            </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.ExecuteAsync(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
-            <summary>
-                执行SQL
+                对连接执行SQL 语句并返回受影响的行数。
             </summary>
             <param name="sql">SQL语句</param>
             <param name="args">参数</param>
@@ -178,53 +189,6 @@
             <remarks>
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.ExecuteScalarAsync``1(System.String)">
-            <summary>
-                执行SQL
-            </summary>
-            <param name="sql">SQL语句</param>
-            <returns>操作的第一行第一列或空</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-            </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.ExecuteScalarAsync``1(System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                执行SQL
-            </summary>
-            <param name="sql">SQL语句</param>
-            <param name="args">参数</param>
-            <returns>操作的第一行第一列或空</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-            </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.Agebull#EntityModel#Common#IDataBase#CreateConnectionScope">
-            <summary>
-            构造连接范围对象
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.Data.Common.DbParameter[])">
-            <summary>
-                生成命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Data.Common.DbParameter)">
-            <summary>
-                生成命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateCommand(Agebull.EntityModel.Common.IConnectionScope)">
-            <summary>
-                生成命令
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateCommand(Agebull.EntityModel.Common.IConnectionScope,System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
-            <summary>
-                生成命令
-            </summary>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.TraceSql(System.Data.Common.DbCommand)">
             <summary>
@@ -290,11 +254,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.GetModifiedUpdateSql(`0)">
-            <summary>
-            取得仅更新的SQL语句
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FileUpdateSql(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
             <summary>
                 生成单个字段更新的SQL
@@ -309,6 +268,14 @@
                 生成更新的SQL
             </summary>
             <param name="valueExpression">更新表达式(SQL)</param>
+            <param name="condition">更新条件</param>
+            <returns>更新的SQL</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.GetUpdateSql(`0,System.String)">
+            <summary>
+                生成更新的SQL
+            </summary>
+            <param name="entity">实体</param>
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
@@ -354,12 +321,13 @@
             <param name="convert">条件</param>
             <returns>载入字段值的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadSql(System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadSql(System.String,System.String,System.String)">
             <summary>
                 生成载入的SQL语句
             </summary>
             <param name="condition">数据条件</param>
             <param name="order">排序字段</param>
+            <param name="limit"></param>
             <returns>载入的SQL语句</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreatePageSql(System.Int32,System.Int32,System.String,System.Boolean,System.String)">
@@ -463,14 +431,6 @@
                 Sql实体访问类
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateFieldParameter(System.String,System.Int32,System.Object)">
-            <summary>
-                生成字段的参数
-            </summary>
-            <param name="field">生成参数的字段</param>
-            <param name="dbType"></param>
-            <param name="value">值</param>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.String,System.Object)">
             <summary>
                 生成Sql参数
@@ -489,13 +449,21 @@
             <param name="value">参数值</param>
             <returns>参数</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.Object,MySql.Data.MySqlClient.MySqlDbType)">
+        <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.Object,MySqlConnector.MySqlDbType)">
             <summary>
                 生成Sql参数
             </summary>
             <param name="parameterName">参数名称</param>
             <param name="value">参数值</param>
             <param name="type">类型</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterCreater.Agebull#EntityModel#Common#IParameterCreater#CreateParameter(System.String,System.Int32)">
+            <summary>
+                生成Sql参数
+            </summary>
+            <param name="parameterName">参数</param>
+            <param name="dbType">对应数据库的DbType，如MysqlDbType</param>
             <returns>参数</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.Object)">

@@ -8,13 +8,12 @@
 
 #region 引用
 
-using Agebull.EntityModel.Common;
+using Agebull.Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Data.Common.DbCommand>;
@@ -30,25 +29,30 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     插入新数据
         /// </summary>
-        public async Task<bool> InsertAsync(TEntity entity)
+        public async Task<bool> InsertAsync(TEntity entity, bool reload = false)
         {
-            await using var connectionScope = await DataBase.CreateConnectionScope();
-
-            if (!await InsertInnerAsync(entity))
-                return false;
-            await ReLoadInnerAsync(entity);
-            return true;
+            FlowTracer.BeginStepMonitor("InsertInnerAsync");
+            try
+            {
+                if (!await InsertInnerAsync(entity))
+                    return false;
+                if (reload)
+                    await ReLoadInnerAsync(entity);
+                return true;
+            }
+            finally
+            {
+                FlowTracer.EndStepMonitor();
+            }
         }
 
         /// <summary>
         ///     插入新数据
         /// </summary>
-        public async Task<int> InsertAsync(IEnumerable<TEntity> entities)
+        public async Task<int> InsertAsync(IEnumerable<TEntity> entities, bool reload = false)
         {
             var datas = entities as TEntity[] ?? entities.ToArray();
             int cnt = 0;
-            await using var connectionScope = await DataBase.CreateConnectionScope();
-
             foreach (var entity in datas)
             {
                 if (await InsertInnerAsync(entity))
@@ -56,6 +60,8 @@ namespace Agebull.EntityModel.Common
                 else
                     return 0;
             }
+            if (!reload)
+                return cnt;
             foreach (var entity in datas)
                 await ReLoadInnerAsync(entity);
             return cnt;
@@ -65,25 +71,26 @@ namespace Agebull.EntityModel.Common
         ///     更新数据
         /// </summary>
         /// <param name="entity">更新数据的实体</param>
-        protected async Task<bool> InsertInnerAsync(TEntity entity)
+        private async Task<bool> InsertInnerAsync(TEntity entity)
         {
             Option.PrepareSave(entity, DataOperatorType.Insert);
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = CommandCreater.CreateCommand(connectionScope);
-            cmd.CommandText = Option.InsertSqlCode;
-            Option.SetEntityParameter(cmd, entity);
+            await using var cmd = connectionScope.CreateCommand(Option.InsertSqlCode);
 
+            Option.SetEntityParameter(cmd, entity);
             DataBase.TraceSql(cmd);
-            if (Option.IsIdentity)
+            if (!Option.IsIdentity)
+            {
+                if (await cmd.ExecuteNonQueryAsync() == 0)
+                    return false;
+            }
+            else
             {
                 var key = await cmd.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-               Option.DataOperator.SetValue(entity,Option.PrimaryKey, key);
+                Option.DataOperator.SetValue(entity, Option.PrimaryKey, key);
             }
-            else if (await cmd.ExecuteNonQueryAsync() == 0)
-                return false;
-
             await Option.EndSaved(entity, DataOperatorType.Insert);
             return true;
         }
@@ -92,19 +99,20 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     更新数据
         /// </summary>
-        public async Task<bool> UpdateAsync(TEntity entity)
+        public async Task<bool> UpdateAsync(TEntity entity, bool reload = false)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             if (!await UpdateInnerAsync(entity))
                 return false;
-            await ReLoadInnerAsync(entity);
+            if (reload)
+                await ReLoadInnerAsync(entity);
             return true;
         }
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        public async Task<int> UpdateAsync(IEnumerable<TEntity> entities)
+        public async Task<int> UpdateAsync(IEnumerable<TEntity> entities, bool reload = false)
         {
             var datas = entities as TEntity[] ?? entities.ToArray();
             int cnt = 0;
@@ -114,8 +122,9 @@ namespace Agebull.EntityModel.Common
                 if (await UpdateInnerAsync(entity))
                     ++cnt;
             }
-            foreach (var entity in datas)
-                await ReLoadInnerAsync(entity);
+            if (reload)
+                foreach (var entity in datas)
+                    await ReLoadInnerAsync(entity);
             return cnt;
         }
 
@@ -149,8 +158,6 @@ namespace Agebull.EntityModel.Common
                 else
                     return 0;
             }
-            foreach (var entity in datas)
-                await ReLoadInnerAsync(entity);
             return cnt;
         }
 
@@ -171,8 +178,8 @@ namespace Agebull.EntityModel.Common
             if (entity == null)
                 return false;
             Option.PrepareSave(entity, DataOperatorType.Delete);
-            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, 
-                Option.DataOperator.GetValue(entity, Option.PrimaryKey), 
+            var para = ParameterCreater.CreateParameter(Option.PrimaryKey,
+                Option.DataOperator.GetValue(entity, Option.PrimaryKey),
                 SqlBuilder.GetDbType(Option.PrimaryKey));
             var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, para);
             if (result == 0)
@@ -185,7 +192,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     保存数据
         /// </summary>
-        public async Task<int> SaveAsync(IEnumerable<TEntity> entities)
+        public async Task<int> SaveAsync(IEnumerable<TEntity> entities, bool reload = false)
         {
             int cnt = 0;
             await using var connectionScope = await DataBase.CreateConnectionScope();
@@ -197,17 +204,22 @@ namespace Agebull.EntityModel.Common
                 else
                     return 0;
             }
-            foreach (var entity in datas)
-                await ReLoadInnerAsync(entity);
+            if (reload)
+                foreach (var entity in datas)
+                    await ReLoadInnerAsync(entity);
             return cnt;
         }
 
         /// <summary>
         ///     保存数据
         /// </summary>
-        public async Task<bool> SaveAsync(TEntity entity)
+        public async Task<bool> SaveAsync(TEntity entity, bool reload = false)
         {
-            return await SaveInnerAsync(entity);
+            if (!await SaveInnerAsync(entity))
+                return false;
+            if (reload)
+                await ReLoadInnerAsync(entity);
+            return true;
         }
 
         /// <summary>
@@ -215,7 +227,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         private async Task<bool> SaveInnerAsync(TEntity entity)
         {
-            if (await ExistPrimaryKeyAsync(Option.DataOperator.GetValue(entity,Option.PrimaryKey)))
+            if (await ExistPrimaryKeyAsync(Option.DataOperator.GetValue(entity, Option.PrimaryKey)))
             {
                 return await UpdateInnerAsync(entity);
             }
@@ -233,17 +245,22 @@ namespace Agebull.EntityModel.Common
         private async Task<bool> UpdateInnerAsync(TEntity entity)
         {
             Option.PrepareSave(entity, DataOperatorType.Update);
-            string sql = Option.GetUpdateSql(entity);
-            if (sql == null)
-                return false;
-
+            string sql;
+            if (Option.UpdateByMidified)
+            {
+                sql = SqlBuilder.GetUpdateSql(entity, SqlBuilder.PrimaryKeyConditionSQL);
+                if (sql == null)
+                    return false;
+            }
+            else
+            {
+                sql = Option.UpdateSqlCode;
+            }
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = CommandCreater.CreateCommand(connectionScope);
+            await using var cmd = connectionScope.CreateCommand(sql);
             Option.SetEntityParameter(cmd, entity);
-            
-            cmd.CommandText = SqlBuilder.CreateUpdateSql(sql, SqlBuilder.PrimaryKeyConditionSQL);
 
-            DataBase.TraceSql(cmd);
+            //DataBase.TraceSql(cmd);
 
             if (await cmd.ExecuteNonQueryAsync() <= 0)
             {
@@ -401,16 +418,16 @@ namespace Agebull.EntityModel.Common
         {
             var condition = SqlBuilder.PrimaryKeyConditionSQL;
             var sql = SqlBuilder.CreateUpdateSql(valueExpression, condition);
-            var arg2 = new List<DbParameter>
+            var parameter = new[]
             {
-                ParameterCreater.CreateFieldParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey), key)
+                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey))
             };
             int result;
-            Option.OnOperatorExecuting(condition, arg2, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, arg2);
+            Option.OnOperatorExecuting(condition, parameter, DataOperatorType.Update);
+            result = await DataBase.ExecuteAsync(sql, parameter);
             if (result == 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, arg2, DataOperatorType.Update);
+            Option.OnOperatorExecuted(condition, parameter, DataOperatorType.Update);
             await Option.OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
@@ -502,14 +519,14 @@ namespace Agebull.EntityModel.Common
         public async Task<int> SetValueAsync(TEntity entity, Expression<Func<TEntity, bool>> lambda)
         {
             Option.PrepareSave(entity, DataOperatorType.Update);
-            string sql = Option.GetUpdateSql(entity);
+            var convert = SqlBuilder.Compile(lambda);
+            string sql = SqlBuilder.GetUpdateSql(entity, convert.ConditionSql);
             if (sql == null)
                 return -1;
-            var convert = SqlBuilder.Compile(lambda);
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = CommandCreater.CreateCommand(connectionScope);
+            await using var cmd = connectionScope.CreateCommand(sql);
             Option.SetEntityParameter(cmd, entity);
-            cmd.CommandText = SqlBuilder.CreateUpdateSql(sql, convert.ConditionSql);
+
             DataBase.TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
         }
@@ -709,6 +726,39 @@ namespace Agebull.EntityModel.Common
         #region 批量操作
 
         /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginInsert()
+        {
+            var scope = await DataBase.CreateConnectionScope();
+            var ctx = new DbOperatorContext
+            {
+                ConnectionScope = scope,
+                Command = scope.CreateCommand(Option.InsertSqlCode)
+            };
+            Option.CreateEntityParameter(ctx.Command);
+            ctx.Command.CommandText = Option.InsertSqlCode;
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginInsert(IConnectionScope scope)
+        {
+            var ctx = new DbOperatorContext
+            {
+                Command = scope.CreateCommand(Option.InsertSqlCode)
+            };
+            Option.CreateEntityParameter(ctx.Command);
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
+
+        /// <summary>
         /// 异步插入
         /// </summary>
         /// <param name="context"></param>
@@ -718,7 +768,7 @@ namespace Agebull.EntityModel.Common
         {
             Option.PrepareSave(entity, DataOperatorType.Insert);
             Option.SetParameterValue(entity, context.Command);
-            if (context.IsIdentitySql)
+            if (Option.IsIdentity)
             {
                 var key = await context.Command.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
@@ -752,6 +802,37 @@ namespace Agebull.EntityModel.Common
             return true;
         }
 
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginUpdate()
+        {
+            var scope = await DataBase.CreateConnectionScope();
+            var ctx = new DbOperatorContext
+            {
+                ConnectionScope = scope,
+                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
+            };
+            Option.CreateEntityParameter(ctx.Command);
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginUpdate(IConnectionScope scope)
+        {
+            var ctx = new DbOperatorContext
+            {
+                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
+            };
+            Option.CreateEntityParameter(ctx.Command);
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
 
         /// <summary>
         /// 异步更新
@@ -783,6 +864,66 @@ namespace Agebull.EntityModel.Common
                 await UpdateAsync(context, entity);
             }
 
+            return true;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginDelete()
+        {
+            var scope = await DataBase.CreateConnectionScope();
+            var ctx = new DbOperatorContext
+            {
+                ConnectionScope = scope,
+                Command = scope.CreateCommand(SqlBuilder.CreateDeleteSql(SqlBuilder.PrimaryKeyConditionSQL))
+            };
+            ctx.Command.Parameters.Add(ParameterCreater.CreateParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
+
+        /// <summary>
+        /// 开始插入
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbOperatorContext> BeginDelete(IConnectionScope scope)
+        {
+            var ctx = new DbOperatorContext
+            {
+                Command = scope.CreateCommand(SqlBuilder.CreateDeleteSql(SqlBuilder.PrimaryKeyConditionSQL))
+            };
+            ctx.Command.Parameters.Add(ParameterCreater.CreateParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            await ctx.Command.PrepareAsync();
+            return ctx;
+        }
+
+        /// <summary>
+        /// 异步更新
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteAsync(DbOperatorContext context, object key)
+        {
+            context.Command.Parameters[Option.PrimaryKey].Value = key;
+            return await context.Command.ExecuteNonQueryAsync() == 1;
+        }
+
+        /// <summary>
+        /// 异步更新
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteAsync(DbOperatorContext context, IEnumerable<object> keys)
+        {
+            foreach (var key in keys)
+            {
+                context.Command.Parameters[Option.PrimaryKey].Value = key;
+                await context.Command.ExecuteNonQueryAsync();
+            }
             return true;
         }
 

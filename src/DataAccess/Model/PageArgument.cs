@@ -50,7 +50,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
                 success = false;
                 msg.Append("行数必须大于0且小于100");
             }
-            message = success ? null :msg.ToString();
+            message = success ? null : msg.ToString();
             return success;
         }
     }
@@ -82,13 +82,13 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     总页数
         /// </summary>
         /// <example>999</example>
-        public int PageCount { get; set; }
+        public long PageCount { get; set; }
 
         /// <summary>
         ///     总行数
         /// </summary>
         /// <example>9999</example>
-        public int RowCount { get; set; }
+        public long RowCount { get; set; }
 
     }
 

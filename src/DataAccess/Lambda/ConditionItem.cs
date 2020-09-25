@@ -194,8 +194,7 @@ namespace Agebull.EntityModel.Common
                 _parameters.Add(name, ParameterCreater.CreateParameter(name, value));
                 return false;
             }
-            DbParameter parameter;
-            if (_parameters.TryGetValue(name, out parameter))
+            if (_parameters.TryGetValue(name, out DbParameter parameter))
             {
                 parameter.Value = value;
                 return true;

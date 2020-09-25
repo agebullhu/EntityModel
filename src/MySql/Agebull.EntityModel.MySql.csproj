@@ -61,6 +61,7 @@
     <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="DataAccess\MySqlConnectionsManager.cs" />
     <Compile Remove="DataAccess\MySqlDataAccess.cs" />
     <Compile Remove="DataStateTable.cs" />
   </ItemGroup>
@@ -70,8 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.43" />
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <PackageReference Include="MySqlConnector" Version="1.0.1" />
   </ItemGroup>
 
 </Project>

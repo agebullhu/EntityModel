@@ -8,10 +8,11 @@
 
 #region 引用
 
+using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
 using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,17 +35,8 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 构造
         /// </summary>
-        static MySqlDataBase()
-        {
-            MySqlConnectionsManager.InternalInitialize();
-        }
-
-        /// <summary>
-        /// 构造
-        /// </summary>
         protected MySqlDataBase()
         {
-            MySqlConnectionsManager.InternalInitialize();
             DependencyScope.DisposeFunc.Add(() => _ = DisposeAsync());
         }
 
@@ -63,9 +55,14 @@ namespace Agebull.EntityModel.MySql
         #region 事务
 
         /// <summary>
+        ///     事务成功
+        /// </summary>
+        internal bool? TransactionSuccess { get; set; }
+
+        /// <summary>
         ///     事务对象
         /// </summary>
-        public MySqlTransaction Transaction { get; internal set; }
+        internal MySqlTransaction Transaction { get; set; }
 
         /// <inheritdoc />
         /// <summary>
@@ -110,60 +107,54 @@ namespace Agebull.EntityModel.MySql
         #region 连接
 
         /// <summary>
+        /// 构造连接范围对象
+        /// </summary>
+        /// <returns></returns>
+
+        public Task<IConnectionScope> CreateConnectionScope() => ConnectionScope.CreateScope(this);
+
+        /// <summary>
         /// 连接字符串配置节点名称,用于取出
         /// </summary>
         public string ConnectionStringName { get; set; }
 
         /// <summary>
-        /// 是否锁定连接对象(更新插入删除发生后自动启用)
+        /// 连接对象
         /// </summary>
-        public bool IsLockConnection { get; set; }
-
         internal MySqlConnection _connection;
 
-        #endregion
-
-        #region 析构
-        private bool _isDisposed;
+        /// <summary>
+        ///     打开连接
+        /// </summary>
+        /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
+        internal async Task<bool> OpenAsync()
+        {
+            if (_connection != null/* && _connection.State == ConnectionState.Open*/)
+                return false;
+            _connection = await OpenConnection(ConnectionStringName);
+            return true;
+        }
 
         /// <summary>
         /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
         /// </summary>
-        public async ValueTask DisposeAsync()
+        internal async Task CloseAsync()
         {
-            if (_isDisposed)
-                return;
-            _isDisposed = true;
-            await DoDispose();
-
             if (_connection == null)
             {
                 return;
             }
+            var con = _connection;
             _connection = null;
-            IsLockConnection = false;
             if (Transaction != null)
             {
-                await Transaction.RollbackAsync();
+                if (TransactionSuccess.Value)
+                    await Transaction.CommitAsync();
+                else
+                    await Transaction.RollbackAsync();
                 Transaction = null;
             }
-            await MySqlConnectionsManager.Close(_connection, ConnectionStringName);
-        }
-
-        /// <summary>
-        /// 析构
-        /// </summary>
-        ~MySqlDataBase()
-        {
-            _ = DisposeAsync();
-        }
-
-        /// <summary>
-        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
-        /// </summary>
-        protected virtual Task DoDispose()
-        {
-            return Task.CompletedTask;
+            await CloseConnection(con);
         }
 
         #endregion
@@ -171,25 +162,100 @@ namespace Agebull.EntityModel.MySql
         #region 连接
 
         /// <summary>
-        ///     打开连接
+        /// 初始化连接对象
         /// </summary>
-        /// <returns>是否打开,是则为此时打开,否则为之前已打开</returns>
-        public async Task<bool> OpenAsync()
+        /// <returns></returns>
+        public static async Task<MySqlConnection> OpenConnection(string name)
         {
-            if (_connection != null/* && _connection.State == ConnectionState.Open*/)
-                return false;
-            _connection = await MySqlConnectionsManager.InitConnection(ConnectionStringName);
-            IsLockConnection = true;
-            return IsLockConnection;
+            //Console.WriteLine($"【MySqlDataBase.InitConnection】{DateTime.Now}");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new EntityModelDbException("连接字符串的配置名称不能为空");
+            }
+            var constr = ConfigurationHelper.GetConnectionString(name, null);
+
+            if (string.IsNullOrEmpty(constr))
+            {
+                throw new EntityModelDbException($"无法找到配置名称为{name}的连接字符串");
+            }
+            try
+            {
+                var connection = new MySqlConnection(constr);
+                await connection.OpenAsync();
+                return connection;
+            }
+            catch (Exception exception)
+            {
+                DependencyScope.Logger.Exception(exception);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 关闭连接对象
+        /// </summary>
+        /// <returns></returns>
+        public static async Task CloseConnection(MySqlConnection connection)
+        {
+            if (connection == null)
+            {
+                //Console.WriteLine($"【MySqlDataBase.CloseConnection】xxx");
+                return;
+            }
+            //Console.WriteLine($"【MySqlDataBase.CloseConnection】{DateTime.Now}");
+            if (connection.State == ConnectionState.Open)
+            {
+                try
+                {
+                    await connection.CloseAsync();
+                }
+                catch (Exception exception)
+                {
+                    DependencyScope.Logger.Exception(exception);
+                }
+            }
+            try
+            {
+                await connection.DisposeAsync();
+            }
+            catch (Exception exception)
+            {
+                DependencyScope.Logger.Exception(exception);
+            }
         }
 
         #endregion
-
-
-        #region 内部方法
+        #region 析构
 
         /// <summary>
-        ///     对连接执行 Transact-SQL 语句并返回受影响的行数。
+        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            await CloseAsync();
+        }
+
+        /// <summary>
+        /// 执行与释放或重置非托管资源相关的应用程序定义的任务。
+        /// </summary>
+        public void Dispose()
+        {
+            _ = CloseAsync();
+        }
+
+        /// <summary>
+        /// 析构
+        /// </summary>
+        ~MySqlDataBase()
+        {
+            _ = CloseAsync();
+        }
+        #endregion
+
+        #region 执行
+
+        /// <summary>
+        ///     对连接执行SQL 语句并返回受影响的行数。
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <param name="args">参数</param>
@@ -199,24 +265,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            using var scope = await ConnectionScope.CreateScope(this);
-            using var cmd = CreateCommand(scope, sql, args);
-            return await cmd.ExecuteNonQueryAsync();
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>被影响的行数</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-        /// </remarks>
-        public async Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args)
-        {
-            using var scope = await ConnectionScope.CreateScope(this);
-            await using var cmd = CreateCommand(scope, sql, args);
+            await using var scope = await ConnectionScope.CreateScope(this);
+            using var cmd = scope.CreateCommand(sql, args);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -229,114 +279,15 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        public async Task<object> ExecuteScalarAsync(string sql, params DbParameter[] args)
+        public async Task<(bool hase, object value)> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
-            using var scope = await ConnectionScope.CreateScope(this);
-            using var cmd = CreateCommand(scope, sql, args);
+            await using var scope = await ConnectionScope.CreateScope(this);
+            await using var cmd = scope.CreateCommand(sql, args);
             var result = await cmd.ExecuteScalarAsync();
-            return result == DBNull.Value ? null : result;
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        public async Task<T> ExecuteScalarAsync<T>(string sql)
-        {
-            var result = await ExecuteScalarAsync(sql);
-            return (T)result;
-        }
-
-        /// <summary>
-        ///     执行SQL
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        public async Task<T> ExecuteScalarAsync<T>(string sql, params DbParameter[] args)
-        {
-            var result = args.Length == 0
-                ? await ExecuteScalarAsync(sql)
-                : await ExecuteScalarAsync(sql, args);
-            return (T)result;
-        }
-        #endregion
-
-        #region 生成命令对象
-
-        /// <summary>
-        /// 构造连接范围对象
-        /// </summary>
-        /// <returns></returns>
-
-        Task<IConnectionScope> IDataBase.CreateConnectionScope() => ConnectionScope.CreateScope(this);
-
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        public DbCommand CreateCommand(IConnectionScope scope, params DbParameter[] args)
-        {
-            return CreateCommand(scope, null, args);
-        }
-
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        public DbCommand CreateCommand(IConnectionScope scope, string sql, DbParameter arg)
-        {
-            return CreateCommand(scope, sql, new[] { arg });
-        }
-
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        public DbCommand CreateCommand(IConnectionScope scope)
-        {
-            var cmd = scope.Connection.CreateCommand();
-
-            if (scope.Transaction != null)
-            {
-                cmd.Transaction = scope.Transaction;
-            }
-            return cmd;
-        }
-
-        /// <summary>
-        ///     生成命令
-        /// </summary>
-        public DbCommand CreateCommand(IConnectionScope scope, string sql, IEnumerable<DbParameter> args = null)
-        {
-            var cmd = scope.Connection.CreateCommand();
-
-            if (scope.Transaction != null)
-            {
-                cmd.Transaction = scope.Transaction;
-            }
-            if (sql != null)
-            {
-                cmd.CommandText = sql;
-            }
-            if (args != null)
-            {
-                var parameters = args.OfType<MySqlParameter>().ToArray();
-                if (parameters.Length > 0)
-                {
-                    cmd.Parameters.AddRange(parameters);
-                }
-            }
-            TraceSql(cmd);
-            return cmd;
+            return (result != null, result == DBNull.Value ? null : result);
         }
 
         #endregion
-
 
         #region SQL日志
 
@@ -349,6 +300,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public void TraceSql(DbCommand cmd)
         {
+            if (!LoggerExtend.LogDataSql)
+                return;
             TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
         }
 

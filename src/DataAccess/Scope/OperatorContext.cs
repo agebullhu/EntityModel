@@ -7,24 +7,18 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 操作上下文
     /// </summary>
-    public class DbOperatorContext<TCommand> : IAsyncDisposable, IDisposable
+    public class DbOperatorContext<TCommand> : IAsyncDisposable
         where TCommand : DbCommand
     {
         /// <summary>
         /// 其它范围
         /// </summary>
-        public IDisposable Scope { get; set; }
+        public IConnectionScope ConnectionScope { get; set; }
 
         /// <summary>
         /// 命令对象
         /// </summary>
         public TCommand Command { get; set; }
-
-        /// <summary>
-        /// 是否自增SQL（需要回读）
-        /// </summary>
-        public bool IsIdentitySql { get; set; }
-
 
         bool IsDisposed;
 
@@ -36,18 +30,23 @@ namespace Agebull.EntityModel.Common
             if (IsDisposed)
                 return;
             IsDisposed = true;
-            Command?.Dispose();
-            Scope?.Dispose();
+            _= Command.DisposeAsync();
+            if (ConnectionScope != null)
+                _ = ConnectionScope.DisposeAsync();
         }
+
         /// <summary>
         ///     清理资源
         /// </summary>
 
-        ValueTask IAsyncDisposable.DisposeAsync()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
-            Dispose();
-            return new ValueTask(Task.CompletedTask);
+            if (IsDisposed)
+                return;
+            IsDisposed = true;
+            await Command.DisposeAsync();
+            if (ConnectionScope != null)
+                await ConnectionScope.DisposeAsync();
         }
-
     }
 }

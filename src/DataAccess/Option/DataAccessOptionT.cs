@@ -9,6 +9,7 @@
 #region 引用
 
 using Agebull.EntityModel.Events;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -68,7 +69,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 构造
         /// </summary>
-        public void Init()
+        public virtual void Initiate()
         {
             FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             PropertyMap = new Dictionary<string, EntitiyProperty>(StringComparer.OrdinalIgnoreCase);
@@ -85,9 +86,11 @@ namespace Agebull.EntityModel.Common
             }
 
             LoadFields ??= SqlBuilder.BuilderLoadFields();
-            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
             InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
             DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+
+            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+
         }
 
         #endregion
@@ -168,55 +171,6 @@ namespace Agebull.EntityModel.Common
 
         #region 方法实现
 
-        public string GetUpdateSql(TEntity entity)
-        {
-            if (UpdateByMidified)
-            {
-                return SqlBuilder.GetModifiedUpdateSql(entity);
-            }
-            else
-            {
-                return UpdateFields;
-            }
-        }
-
-        /// <summary>
-        /// 载入数据
-        /// </summary>
-        /// <param name="reader">数据读取器</param>
-        /// <param name="entity">读取数据的实体</param>
-        public virtual Task LoadEntity(DbDataReader reader, TEntity entity)
-        {
-            return FroeachDbProperties(ReadWriteFeatrue.Read, async pro =>
-              {
-                  if (await reader.IsDBNullAsync(pro.ColumnName))
-                  {
-                      DataOperator.SetValue(entity, pro.PropertyName, null);
-                  }
-                  else
-                  {
-                      DataOperator.SetValue(entity, pro.PropertyName, reader.GetValue(pro.ColumnName));
-                  }
-              });
-        }
-
-        /// <summary>
-        /// 设置插入数据的命令
-        /// </summary>
-        /// <param name="entity">实体对象</param>
-        /// <param name="cmd">命令</param>
-        /// <returns>返回真说明要取主键</returns>
-        public virtual void SetEntityParameter(DbCommand cmd, TEntity entity)
-        {
-            cmd.Parameters.Clear();
-
-            FroeachDbProperties(ReadWriteFeatrue.Read,
-                pro => cmd.Parameters.Add(SqlBuilder.CreateFieldParameter(pro.PropertyName,
-                            pro.DbType,
-                            DataOperator.GetValue(entity, pro.PropertyName)))
-            );
-        }
-
         /// <summary>
         ///     得到字段的MySqlDbType类型
         /// </summary>
@@ -227,6 +181,77 @@ namespace Agebull.EntityModel.Common
             return PropertyMap.TryGetValue(field, out var pro)
                 ? pro.DbType
                 : 0;
+        }
+
+        /// <summary>
+        /// 载入数据
+        /// </summary>
+        /// <param name="reader">数据读取器</param>
+        /// <param name="entity">读取数据的实体</param>
+        public virtual Task LoadEntity(DbDataReader reader, TEntity entity)
+        {
+            readPproperties ??= Properties.Where(pro => pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
+
+            foreach (var pro in readPproperties)
+            {
+                var val = reader.GetValue(pro.ColumnName);
+                if (val == null || val == DBNull.Value)
+                {
+                    DataOperator.SetValue(entity, pro.PropertyName, null);
+                }
+                else
+                {
+                    DataOperator.SetValue(entity, pro.PropertyName, val);
+                }
+            };
+            return Task.CompletedTask;
+        }
+        EntitiyProperty[] readPproperties;
+        /// <summary>
+        /// 设置插入数据的命令
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <param name="cmd">命令</param>
+        /// <returns>返回真说明要取主键</returns>
+        public virtual void SetEntityParameter(DbCommand cmd, TEntity entity)
+        {
+            cmd.Parameters.Clear();
+
+            readPproperties ??= Properties.Where(pro => pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
+
+            foreach (var pro in readPproperties)
+            {
+                cmd.Parameters.Add(SqlBuilder.CreateParameter(pro.PropertyName,
+                            DataOperator.GetValue(entity, pro.PropertyName),
+                            pro.DbType));
+            }
+        }
+
+        /// <summary>
+        /// 设置插入数据的命令
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <param name="cmd">命令</param>
+        /// <returns>返回真说明要取主键</returns>
+        public void CreateEntityParameter(DbCommand cmd)
+        {
+            FroeachDbProperties(ReadWriteFeatrue.Read,
+                pro => cmd.Parameters.Add(SqlBuilder.CreateParameter(pro.PropertyName, pro.DbType))
+            );
+        }
+
+        /// <summary>
+        /// 设置插入数据的命令
+        /// </summary>
+        /// <param name="data">实体对象</param>
+        /// <param name="cmd">命令</param>
+        /// <returns>返回真说明要取主键</returns>
+        public void SetParameterValue(TEntity data, DbCommand cmd)
+        {
+            FroeachDbProperties(pro =>
+            {
+                cmd.Parameters[pro.PropertyName].Value = DataOperator.GetValue(data, pro.PropertyName) ?? DBNull.Value;
+            });
         }
 
         #endregion
@@ -372,22 +397,22 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
-        public Task OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] args)
+        public Task OnMulitUpdateEvent(DataOperatorType operatorType, string condition, DbParameter[] parameter)
         {
             if (!CanRaiseEvent)
                 return Task.CompletedTask;
             var queryCondition = new MulitCondition
             {
                 Condition = condition,
-                Parameters = new ConditionParameter[args.Length]
+                Parameters = new ConditionParameter[parameter.Length]
             };
-            for (int i = 0; i < args.Length; i++)
+            for (int i = 0; i < parameter.Length; i++)
             {
                 queryCondition.Parameters[i] = new ConditionParameter
                 {
-                    Name = args[i].ParameterName,
-                    Value = args[i].Value == DBNull.Value ? null : args[i].Value.ToString(),
-                    Type = args[i].DbType
+                    Name = parameter[i].ParameterName,
+                    Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
+                    Type = parameter[i].DbType
                 };
             }
             return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.QueryCondition, queryCondition);
@@ -403,10 +428,14 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         public Task EndSaved(TEntity entity, DataOperatorType operatorType)
         {
-            OnDataSaved(entity, operatorType);
-            if (!CanRaiseEvent)
-                return Task.CompletedTask;
-            return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.EntityJson, entity);
+            if (!NoInjection)
+            {
+                OnDataSaved(operatorType, entity);
+                DataUpdateHandler.OnDataSaved(entity, operatorType);
+            }
+            if (CanRaiseEvent)
+                return DataUpdateHandler.OnStatusChanged(DataSturct.ProjectName, DataSturct.EntityName, operatorType, EntityEventValueType.EntityJson, entity);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -416,53 +445,38 @@ namespace Agebull.EntityModel.Common
         /// <param name="operatorType">操作类型</param>
         public void PrepareSave(TEntity entity, DataOperatorType operatorType)
         {
-            OnPrepareSave(operatorType, entity);
-            if (!CanRaiseEvent)
-                return;
-            DataUpdateHandler.OnPrepareSave(entity, operatorType);
-        }
-
-        /// <summary>
-        ///     保存完成后期处理
-        /// </summary>
-        /// <param name="entity">保存的对象</param>
-        /// <param name="operatorType">操作类型</param>
-        public void OnDataSaved(TEntity entity, DataOperatorType operatorType)
-        {
-            OnDataSaved(operatorType, entity);
-            if (!CanRaiseEvent)
-                return;
-            DataUpdateHandler.OnDataSaved(entity, operatorType);
+            if (!NoInjection)
+                OnPrepareSave(operatorType, entity);
+            if (CanRaiseEvent)
+                DataUpdateHandler.OnPrepareSave(entity, operatorType);
         }
 
         /// <summary>
         ///     更新语句前处理(单个实体操作不引发)
         /// </summary>
         /// <param name="condition">执行条件</param>
-        /// <param name="args">参数值</param>
+        /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public void OnOperatorExecuting(string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        public void OnOperatorExecuting(string condition, DbParameter[] parameter, DataOperatorType operatorType)
         {
-            var sqlParameters = args as DbParameter[] ?? args.ToArray();
-            OnOperatorExecuting(operatorType, condition, sqlParameters);
-            if (!CanRaiseEvent)
-                return;
-            DataUpdateHandler.OnOperatorExecuting(this, condition, sqlParameters, operatorType);
+            if (!NoInjection)
+                OnOperatorExecuting(operatorType, condition, parameter);
+            if (CanRaiseEvent)
+                DataUpdateHandler.OnOperatorExecuting(this, condition, parameter, operatorType);
         }
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
         /// <param name="condition">执行条件</param>
-        /// <param name="args">参数值</param>
+        /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public void OnOperatorExecuted(string condition, IEnumerable<DbParameter> args, DataOperatorType operatorType)
+        public void OnOperatorExecuted(string condition, DbParameter[] parameter, DataOperatorType operatorType)
         {
-            var mySqlParameters = args as DbParameter[] ?? args.ToArray();
-            OnOperatorExecuted(operatorType, condition, mySqlParameters);
-            if (!CanRaiseEvent)
-                return;
-            DataUpdateHandler.OnOperatorExecuted(this, condition, mySqlParameters, operatorType);
+            if (!NoInjection)
+                OnOperatorExecuted(operatorType, condition, parameter);
+            if (CanRaiseEvent)
+                DataUpdateHandler.OnOperatorExecuted(this, condition, parameter, operatorType);
         }
 
         /// <summary>
@@ -491,9 +505,9 @@ namespace Agebull.EntityModel.Common
         ///    更新语句前处理(单个实体操作不引发)
         /// </summary>
         /// <param name="condition">执行条件</param>
-        /// <param name="args">参数值</param>
+        /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        protected virtual void OnOperatorExecuting(DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
+        protected virtual void OnOperatorExecuting(DataOperatorType operatorType, string condition, DbParameter[] parameter)
         {
         }
 
@@ -501,24 +515,79 @@ namespace Agebull.EntityModel.Common
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
         /// <param name="condition">执行条件</param>
-        /// <param name="args">参数值</param>
+        /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        protected virtual void OnOperatorExecuted(DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
+        protected virtual void OnOperatorExecuted(DataOperatorType operatorType, string condition, DbParameter[] parameter)
         {
         }
 
         #endregion
 
         /// <summary>
-        /// 设置插入数据的命令
+        /// 取得仅更新的SQL语句
         /// </summary>
-        /// <param name="data">实体对象</param>
-        /// <param name="cmd">命令</param>
-        /// <returns>返回真说明要取主键</returns>
-        public void SetParameterValue(TEntity data, DbCommand cmd)
+        public virtual string GetModifiedUpdateSql(TEntity entity)
         {
-            FroeachDbProperties(pro => cmd.Parameters[pro.PropertyName].Value = DataOperator.GetValue(data, pro.PropertyName));
+            return UpdateSqlCode;
+            //if (!(entity is EditDataObject data))
+            //{
+            //    return Option.UpdateFields;
+            //}
+            //if (data.__status.IsReadOnly)
+            //{
+            //    return Option.UpdateFields;
+            //}
+            //if (!data.__status.IsModified)
+            //    return null;
+            //StringBuilder sql = new StringBuilder();
+            //bool first = true;
+            //foreach (var pro in Option.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property)))
+            //{
+            //    if (data.__status.Status.ModifiedProperties[pro.PropertyIndex] <= 0 || !Option.FieldMap.ContainsKey(pro.Name))
+            //        continue;
+            //    if (first)
+            //        first = false;
+            //    else
+            //        sql.Append(',');
+            //    sql.AppendLine($"       `{pro.ColumnName}` = ?{pro.Name}");
+            //}
+            //return first ? null : sql.ToString();
+        }
+    }
+
+    /// <summary>
+    /// 数据载入配置
+    /// </summary>
+    public class DataAccessOption<TEntity, TSqlBuilder, TDataBase> : DataAccessOption<TEntity>
+        where TEntity : class, new()
+        where TDataBase : IDataBase
+        where TSqlBuilder : ISqlBuilder<TEntity>
+    {
+        /// <summary>
+        /// 依赖对象
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        public override void Initiate()
+        {
+            DataUpdateHandler = ServiceProvider.GetService<IDataUpdateHandler>();
+            DataUpdateHandler?.InitType<TEntity>();
+            CreateDataBase = () => ServiceProvider.GetService<TDataBase>();
+            base.Initiate();
         }
 
+        /// <summary>
+        /// 构造数据访问对象
+        /// </summary>
+        /// <returns></returns>
+        public DataAccess<TEntity> CreateDataAccess(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
+            Initiate();
+            return new DataAccess<TEntity>(this);
+        }
     }
 }

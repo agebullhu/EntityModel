@@ -64,15 +64,6 @@ namespace Agebull.EntityModel.MySql
         #region 连接对象
 
         /// <summary>
-        /// 取得一个空闲连接对象
-        /// </summary>
-        /// <returns></returns>
-        internal static Task<MySqlConnection> GetConnection(string name)
-        {
-            return InitConnection(name);
-        }
-
-        /// <summary>
         /// 关闭连接对象
         /// </summary>
         /// <returns></returns>
@@ -90,6 +81,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         internal static async Task<MySqlConnection> InitConnection(string name)
         {
+            Console.WriteLine($"【MySqlConnectionsManager.InitConnection】{DateTime.Now}");
             if (string.IsNullOrEmpty(name))
             {
                 throw new EntityModelDbException("连接字符串的配置名称不能为空");
@@ -108,7 +100,7 @@ namespace Agebull.EntityModel.MySql
             }
             catch (Exception exception)
             {
-                logger.Exception(exception, nameof(InitConnection));
+                logger.Exception(exception, "MySqlConnectionsManager.InitConnection");
             }
             return null;
         }

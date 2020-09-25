@@ -57,7 +57,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns></returns>
         string BuilderDeleteSqlCode();
-        
+
         /// <summary>
         ///     得到字段的MySqlDbType类型
         /// </summary>
@@ -118,7 +118,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        StringBuilder CreateLoadSql(string condition, string order);
+        StringBuilder CreateLoadSql(string condition, string order,string limit);
 
         /// <summary>
         /// 单值读取SQL
@@ -146,6 +146,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <returns></returns>
         string CreatePageSql(int page, int pageSize, string order, bool desc, string condition);
+
 
         /// <summary>
         /// 更新SQL
@@ -217,9 +218,12 @@ namespace Agebull.EntityModel.Common
     public interface ISqlBuilder<TEntity> : ISqlBuilder
     {
         /// <summary>
-        /// 取得仅更新的SQL语句
+        ///     生成更新的SQL
         /// </summary>
-        string GetModifiedUpdateSql(TEntity data);
+        /// <param name="entity">实体</param>
+        /// <param name="condition">更新条件</param>
+        /// <returns>更新的SQL</returns>
+        public string GetUpdateSql(TEntity entity, string condition);
 
         /// <summary>
         ///     编译查询条件

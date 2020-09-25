@@ -133,6 +133,7 @@ namespace Agebull.EntityModel.Common
         Task<int> SetCoustomValueAsync<TKey>(string valueExpression, TKey key);
 
         #endregion
+
         #region 读
 
         #region 首行
@@ -381,7 +382,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="lambda">条件</param>
         /// <returns>内容</returns>
-        Task<TField> LoadValueAsync<TField>(Expression<Func<TEntity, TField>> field, Expression<Func<TEntity, bool>> lambda);
+        Task<(bool hase, TField value)> LoadValueAsync<TField>(Expression<Func<TEntity, TField>> field, Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
         ///     读取一个字段
@@ -389,7 +390,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="key">主键</param>
         /// <returns>内容</returns>
-        Task<TField> LoadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key);
+        Task<(bool hase, TField value)> LoadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key);
 
         /// <summary>
         ///     读取一个字段
@@ -397,7 +398,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="fieldExpression">字段</param>
         /// <param name="lambda">条件</param>
         /// <returns>内容</returns>
-        Task<List<TField>> LoadValuesAsync<TField>(Expression<Func<TEntity, TField>> fieldExpression,
+        Task<List<(bool hase, TField value)>> LoadValuesAsync<TField>(Expression<Func<TEntity, TField>> fieldExpression,
             Expression<Func<TEntity, bool>> lambda);
 
         /// <summary>
@@ -479,17 +480,17 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     保存数据
         /// </summary>
-        Task<bool> SaveAsync(TEntity entity);
+        Task<bool> SaveAsync(TEntity entity, bool reload = false);
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        Task<bool> UpdateAsync(TEntity entity);
+        Task<bool> UpdateAsync(TEntity entity, bool reload = false);
 
         /// <summary>
         ///     插入新数据
         /// </summary>
-        Task<bool> InsertAsync(TEntity entity);
+        Task<bool> InsertAsync(TEntity entity, bool reload = false);
 
         /// <summary>
         ///     删除数据
@@ -522,17 +523,17 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     保存数据
         /// </summary>
-        Task<int> SaveAsync(IEnumerable<TEntity> entities);
+        Task<int> SaveAsync(IEnumerable<TEntity> entities, bool reload = false);
 
         /// <summary>
         ///     更新数据
         /// </summary>
-        Task<int> UpdateAsync(IEnumerable<TEntity> entities);
+        Task<int> UpdateAsync(IEnumerable<TEntity> entities, bool reload = false);
 
         /// <summary>
         ///     插入新数据
         /// </summary>
-        Task<int> InsertAsync(IEnumerable<TEntity> entities);
+        Task<int> InsertAsync(IEnumerable<TEntity> entities, bool reload = false);
 
         /// <summary>
         ///     删除数据
