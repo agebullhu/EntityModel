@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Zeroteam.MessageMVC.EventBus;
 using Zeroteam.MessageMVC.EventBus.DataAccess;
-using Zeroteam.MessageMVC.EventBus.Zeroteam.MessageMVC.EventBus;
 
 namespace DataAccessTest
 {
@@ -83,8 +82,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var option = new EventSubscribeDataAccessOption();
-                var access = option.CreateDataAccess(DependencyHelper.ServiceProvider);
+                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption,new EventSubscribeDataOperator());
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 await access.UpdateAsync(data);
@@ -99,9 +97,8 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var option = new EventSubscribeDataAccessOption();
-                var access = option.CreateDataAccess(DependencyHelper.ServiceProvider);
-                //await using var connectionScope = await access.DataBase.CreateConnectionScope();
+                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption, new EventSubscribeDataOperator());
+                await using var connectionScope = await access.DataBase.CreateConnectionScope();
 
                 //Console.WriteLine("【ExistAsync】");
                 //{
@@ -160,7 +157,7 @@ namespace DataAccessTest
                     //EventSubscribeData data = await access.FirstAsync();
                     //var s = DateTime.Now;
                     //await access.InsertAsync(cxt1, data);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         var data = await access.FirstAsync();
                         //await access.UpdateAsync(data);
@@ -178,9 +175,9 @@ namespace DataAccessTest
                     }
                     //var end = DateTime.Now;
                     //var len = (end - s).TotalSeconds;
-                    Interlocked.Add(ref count, 1000);
+                    Interlocked.Add(ref count, 100);
 
-                    //Console.WriteLine($" ☆ {DateTime.Now}( { 1000 / len}/s = 1000 / {len}s)");
+                    //Console.WriteLine($" ☆ {DateTime.Now}( { 100 / len}/s = 100 / {len}s)");
                 }
                 ////Console.WriteLine($"【UpdateAsync】{DateTime.Now}");
                 //{
@@ -219,38 +216,32 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var option = new EventSubscribeDataAccessOption();
-                var access = option.CreateDataAccess(DependencyHelper.ServiceProvider);
+                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption ,new EventSubscribeDataOperator());
+
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     await access.UpdateAsync(data);
                 }
-                Interlocked.Add(ref count, 1000);
+                Interlocked.Add(ref count, 100);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
         }
+
         static async Task DapperPrepare()
         {
             using var scope = DependencyScope.CreateScope();
-            var option = new EventSubscribeDataAccessOption
-            {
-                ServiceProvider = DependencyHelper.ServiceProvider
-            };
-            option.Initiate();
             try
             {
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
                 {
-                    var sql = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-                    var update = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-                    var data = await connection.QueryFirstAsync<EventSubscribeData>(sql);
-                    await connection.ExecuteAsync(option.UpdateSqlCode, data);
-                    Interlocked.Add(ref count, 1000);
+                    var data = await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
+                    await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
+                    Interlocked.Add(ref count, 100);
                 }
             }
             catch (Exception ex)
@@ -263,14 +254,12 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var sql = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-                var update = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                    await connection.QueryFirstAsync<EventSubscribeData>(sql);
+                    await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
                 }
-                Interlocked.Add(ref count, 1000);
+                Interlocked.Add(ref count, 100);
             }
             catch (Exception ex)
             {
@@ -280,23 +269,15 @@ namespace DataAccessTest
         static async Task DapperTest()
         {
             using var scope = DependencyScope.CreateScope();
-            var option = new EventSubscribeDataAccessOption
-            {
-                ServiceProvider = DependencyHelper.ServiceProvider
-            };
-            option.Initiate();
             try
             {
-                var sql = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-                var update = $"select {EventSubscribeDataAccessOption.loadFields} from `{EventSubscribeDataStruct.TableName}`;";
-
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                var data = await connection.QueryFirstAsync<EventSubscribeData>(sql);
-                for (int i = 0; i < 1000; i++)
+                var data = await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
+                for (int i = 0; i < 100; i++)
                 {
-                    await connection.ExecuteAsync(option.UpdateSqlCode, data);
+                    await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
                 }
-                Interlocked.Add(ref count, 1000);
+                Interlocked.Add(ref count, 100);
             }
             catch (Exception ex)
             {
@@ -374,7 +355,7 @@ namespace DataAccessTest
                     //EventSubscribeData data = await access.FirstAsync();
                     //var s = DateTime.Now;
                     //await access.InsertAsync(cxt1, data);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         var data = await access.FirstAsync();
                         //await access.UpdateAsync(data);
@@ -392,9 +373,9 @@ namespace DataAccessTest
                     }
                     //var end = DateTime.Now;
                     //var len = (end - s).TotalSeconds;
-                    Interlocked.Add(ref count, 1000);
+                    Interlocked.Add(ref count, 100);
 
-                    //Console.WriteLine($" ☆ {DateTime.Now}( { 1000 / len}/s = 1000 / {len}s)");
+                    //Console.WriteLine($" ☆ {DateTime.Now}( { 100 / len}/s = 100 / {len}s)");
                 }
                 ////Console.WriteLine($"【UpdateAsync】{DateTime.Now}");
                 //{

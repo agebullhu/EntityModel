@@ -30,11 +30,6 @@ namespace Agebull.EntityModel.Common
         string PrimaryKeyConditionSQL { get; }
 
         /// <summary>
-        /// Sql配置信息
-        /// </summary>
-        DataAccessOption Option { get; set; }
-
-        /// <summary>
         /// 读取的字段
         /// </summary>
         /// <returns></returns>
@@ -118,7 +113,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        StringBuilder CreateLoadSql(string condition, string order,string limit);
+        string CreateLoadSql(string condition, string order,string limit);
 
         /// <summary>
         /// 单值读取SQL
@@ -216,7 +211,13 @@ namespace Agebull.EntityModel.Common
     /// 表示Sql生成器
     /// </summary>
     public interface ISqlBuilder<TEntity> : ISqlBuilder
+        where TEntity : class, new()
     {
+        /// <summary>
+        /// Sql配置信息
+        /// </summary>
+        DataAccessOption<TEntity> Option { get; set; }
+
         /// <summary>
         ///     生成更新的SQL
         /// </summary>

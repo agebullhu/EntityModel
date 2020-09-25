@@ -73,11 +73,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">更新数据的实体</param>
         private async Task<bool> InsertInnerAsync(TEntity entity)
         {
-            Option.PrepareSave(entity, DataOperatorType.Insert);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Insert);
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(Option.InsertSqlCode);
 
-            Option.SetEntityParameter(cmd, entity);
+            DataOperator.SetEntityParameter(cmd, entity);
             DataBase.TraceSql(cmd);
             if (!Option.IsIdentity)
             {
@@ -89,9 +89,14 @@ namespace Agebull.EntityModel.Common
                 var key = await cmd.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-                Option.DataOperator.SetValue(entity, Option.PrimaryKey, key);
+                Provider.DataOperator.SetValue(entity, Option.PrimaryKey, key);
             }
-            await Option.EndSaved(entity, DataOperatorType.Insert);
+            if(Provider.Injection != null)
+            {
+                Provider.Injection.EndSaved(entity, DataOperatorType.Insert);
+                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Insert);
+            }
+            
             return true;
         }
 
@@ -134,12 +139,13 @@ namespace Agebull.EntityModel.Common
         private async Task<bool> ReLoadInnerAsync(TEntity entity)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Option.DataOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
-            await using var cmd = CreateLoadCommand(connectionScope, SqlBuilder.PrimaryKeyConditionSQL, para);
+            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Provider.DataOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
+            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyConditionSQL, null, null);
+            await using var cmd = connectionScope.CreateCommand(sql, para); 
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
                 return false;
-            await Option.LoadEntity(reader, entity);
+            await DataOperator.LoadEntity(reader, entity);
             return true;
         }
 
@@ -177,14 +183,18 @@ namespace Agebull.EntityModel.Common
         {
             if (entity == null)
                 return false;
-            Option.PrepareSave(entity, DataOperatorType.Delete);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Delete);
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey,
-                Option.DataOperator.GetValue(entity, Option.PrimaryKey),
+                Provider.DataOperator.GetValue(entity, Option.PrimaryKey),
                 SqlBuilder.GetDbType(Option.PrimaryKey));
             var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, para);
             if (result == 0)
                 return false;
-            await Option.EndSaved(entity, DataOperatorType.Delete);
+            if (Provider.Injection != null)
+            {
+                Provider.Injection.EndSaved(entity, DataOperatorType.Delete);
+                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Delete);
+            }
             return true;
         }
 
@@ -227,7 +237,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         private async Task<bool> SaveInnerAsync(TEntity entity)
         {
-            if (await ExistPrimaryKeyAsync(Option.DataOperator.GetValue(entity, Option.PrimaryKey)))
+            if (await ExistPrimaryKeyAsync(Provider.DataOperator.GetValue(entity, Option.PrimaryKey)))
             {
                 return await UpdateInnerAsync(entity);
             }
@@ -244,7 +254,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">更新数据的实体</param>
         private async Task<bool> UpdateInnerAsync(TEntity entity)
         {
-            Option.PrepareSave(entity, DataOperatorType.Update);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
             string sql;
             if (Option.UpdateByMidified)
             {
@@ -258,7 +268,7 @@ namespace Agebull.EntityModel.Common
             }
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql);
-            Option.SetEntityParameter(cmd, entity);
+            DataOperator.SetEntityParameter(cmd, entity);
 
             //DataBase.TraceSql(cmd);
 
@@ -267,7 +277,11 @@ namespace Agebull.EntityModel.Common
                 return false;
             }
 
-            await Option.EndSaved(entity, DataOperatorType.Update);
+            if (Provider.Injection != null)
+            {
+                Provider.Injection.EndSaved(entity, DataOperatorType.Update);
+                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Update);
+            }
             return true;
         }
 
@@ -281,7 +295,7 @@ namespace Agebull.EntityModel.Common
         public async Task<bool> DeletePrimaryKeyAsync(object key)
         {
             await DeleteInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            await Option.OnKeyEvent(DataOperatorType.Delete, key);
+            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -306,12 +320,12 @@ namespace Agebull.EntityModel.Common
             var condition = SqlBuilder.PrimaryKeyConditionSQL;
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey));
             var paras = new[] { para };
-            Option.OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
+            Provider.Injection?.OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
             var result = await DataBase.ExecuteAsync(SqlBuilder.PhysicalDeleteSql(condition), para);
             if (result == 0)
                 return false;
-            Option.OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
-            await Option.OnKeyEvent(DataOperatorType.Delete, key);
+            Provider.Injection?.OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
+            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
             return true;
         }
 
@@ -324,14 +338,14 @@ namespace Agebull.EntityModel.Common
         {
             var convert = SqlBuilder.Compile(lambda);
             int cnt;
-            Option.OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+            Provider.Injection?.OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
 
             cnt = await DataBase.ExecuteAsync(SqlBuilder.PhysicalDeleteSql(convert.ConditionSql), convert.Parameters);
 
             if (cnt == 0)
                 return 0;
-            Option.OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-            await Option.OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
+            Provider.Injection?.OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
+            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
             return cnt;
         }
 
@@ -353,12 +367,12 @@ namespace Agebull.EntityModel.Common
         private async Task<int> DeleteByConditionAsync(string condition, DbParameter[] args)
         {
             int cnt;
-            Option.OnOperatorExecuting(condition, args, DataOperatorType.Delete);
+            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Delete);
             cnt = await DeleteInnerAsync(condition, args);
             if (cnt == 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, args, DataOperatorType.Delete);
-            await Option.OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
+            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.Delete);
+            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
             return cnt;
         }
 
@@ -387,7 +401,7 @@ namespace Agebull.EntityModel.Common
         {
             int re = await SetValueInnerAsync(field, value, SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
             if (re > 0)
-                await Option.OnKeyEvent(DataOperatorType.Update, key);
+                await Provider.Injection?.OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -404,7 +418,7 @@ namespace Agebull.EntityModel.Common
             int re = await SetValueInnerAsync(GetPropertyName(fieldExpression), value, SqlBuilder.PrimaryKeyConditionSQL,
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
             if (re > 0)
-                await Option.OnKeyEvent(DataOperatorType.Update, key);
+                await Provider.Injection?.OnKeyEvent(DataOperatorType.Update, key);
             return re;
         }
 
@@ -423,12 +437,12 @@ namespace Agebull.EntityModel.Common
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey))
             };
             int result;
-            Option.OnOperatorExecuting(condition, parameter, DataOperatorType.Update);
+            Provider.Injection?.OnOperatorExecuting(condition, parameter, DataOperatorType.Update);
             result = await DataBase.ExecuteAsync(sql, parameter);
             if (result == 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, parameter, DataOperatorType.Update);
-            await Option.OnKeyEvent(DataOperatorType.Delete, key);
+            Provider.Injection?.OnOperatorExecuted(condition, parameter, DataOperatorType.Update);
+            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
             return result;
         }
 
@@ -518,14 +532,14 @@ namespace Agebull.EntityModel.Common
         /// <returns>更新行数</returns>
         public async Task<int> SetValueAsync(TEntity entity, Expression<Func<TEntity, bool>> lambda)
         {
-            Option.PrepareSave(entity, DataOperatorType.Update);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
             var convert = SqlBuilder.Compile(lambda);
             string sql = SqlBuilder.GetUpdateSql(entity, convert.ConditionSql);
             if (sql == null)
                 return -1;
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql);
-            Option.SetEntityParameter(cmd, entity);
+            DataOperator.SetEntityParameter(cmd, entity);
 
             DataBase.TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
@@ -569,7 +583,7 @@ namespace Agebull.EntityModel.Common
             params DbParameter[] args)
         {
             int result = await DoUpdateValueAsync(field, value, condition, args);
-            await Option.OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
+            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
             return result;
         }
 
@@ -605,11 +619,11 @@ namespace Agebull.EntityModel.Common
             var sql = SqlBuilder.CreateUpdateSql(SqlBuilder.FileUpdateSql(field, value, parameters), condition);
 
             int result;
-            Option.OnOperatorExecuting(condition, args, DataOperatorType.Update);
+            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Update);
             result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
             if (result <= 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
             return result;
         }
 
@@ -655,12 +669,12 @@ namespace Agebull.EntityModel.Common
         {
             var sql = SqlBuilder.CreateUpdateSql(expression, condition);
             int result;
-            Option.OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
+            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
 
             result = await DataBase.ExecuteAsync(sql, args);
             if (result == 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
             return result;
         }
 
@@ -714,11 +728,11 @@ namespace Agebull.EntityModel.Common
             var sql = SqlBuilder.CreateUpdateSql(code.ToString(), condition);
 
             int result;
-            Option.OnOperatorExecuting(condition, args, DataOperatorType.Update);
+            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Update);
             result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
             if (result <= 0)
                 return 0;
-            Option.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
+            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
             return result;
         }
         #endregion
@@ -737,7 +751,7 @@ namespace Agebull.EntityModel.Common
                 ConnectionScope = scope,
                 Command = scope.CreateCommand(Option.InsertSqlCode)
             };
-            Option.CreateEntityParameter(ctx.Command);
+            DataOperator.CreateEntityParameter(ctx.Command);
             ctx.Command.CommandText = Option.InsertSqlCode;
             await ctx.Command.PrepareAsync();
             return ctx;
@@ -753,7 +767,7 @@ namespace Agebull.EntityModel.Common
             {
                 Command = scope.CreateCommand(Option.InsertSqlCode)
             };
-            Option.CreateEntityParameter(ctx.Command);
+            DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();
             return ctx;
         }
@@ -766,14 +780,14 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<bool> InsertAsync(DbOperatorContext context, TEntity entity)
         {
-            Option.PrepareSave(entity, DataOperatorType.Insert);
-            Option.SetParameterValue(entity, context.Command);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Insert);
+            DataOperator.SetParameterValue(entity, context.Command);
             if (Option.IsIdentity)
             {
                 var key = await context.Command.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-                Option.DataOperator.SetValue(entity, Option.PrimaryKey, key);
+                Provider.DataOperator.SetValue(entity, Option.PrimaryKey, key);
             }
             else
             {
@@ -782,7 +796,11 @@ namespace Agebull.EntityModel.Common
                     return false;
             }
 
-            await Option.EndSaved(entity, DataOperatorType.Insert);
+            if (Provider.Injection != null)
+            {
+                Provider.Injection.EndSaved(entity, DataOperatorType.Insert);
+                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Insert);
+            }
             return true;
         }
 
@@ -814,7 +832,7 @@ namespace Agebull.EntityModel.Common
                 ConnectionScope = scope,
                 Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
             };
-            Option.CreateEntityParameter(ctx.Command);
+            DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();
             return ctx;
         }
@@ -829,7 +847,7 @@ namespace Agebull.EntityModel.Common
             {
                 Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
             };
-            Option.CreateEntityParameter(ctx.Command);
+            DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();
             return ctx;
         }
@@ -842,12 +860,16 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<bool> UpdateAsync(DbOperatorContext context, TEntity entity)
         {
-            Option.PrepareSave(entity, DataOperatorType.Update);
-            Option.SetParameterValue(entity, context.Command);
+            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
+            DataOperator.SetParameterValue(entity, context.Command);
             var res = await context.Command.ExecuteNonQueryAsync();
             if (res == 0)
                 return false;
-            await Option.EndSaved(entity, DataOperatorType.Update);
+            if (Provider.Injection != null)
+            {
+                Provider.Injection.EndSaved(entity, DataOperatorType.Update);
+                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Update);
+            }
             return true;
         }
 

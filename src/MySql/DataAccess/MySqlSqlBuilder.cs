@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.MySql
     ///     Sql实体访问类
     /// </summary>
     public sealed class MySqlSqlBuilder<TEntity> : ParameterCreater, ISqlBuilder<TEntity>
-        where TEntity : class, new()
+    where TEntity : class, new()
     {
         /// <summary>
         /// 数据库类型
@@ -38,18 +38,39 @@ namespace Agebull.EntityModel.MySql
         public DataBaseType DataBaseType => DataBaseType.MySql;
 
         /// <summary>
-        /// Sql对应的配置信息
+        /// 自动构建数据库对象
         /// </summary>
-        DataAccessOption ISqlBuilder.Option
-        {
-            get => Option;
-            set => Option = (DataAccessOption<TEntity>)value;
-        }
+        public IDataOperator<TEntity> DataOperator => Provider.DataOperator;
+
+        /// <summary>
+        /// 参数构造
+        /// </summary>
+        public IParameterCreater ParameterCreater => Provider.ParameterCreater;
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public DataAccessOption<TEntity> Option => Provider.Option;
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public ISqlBuilder<TEntity> SqlBuilder => Provider.SqlBuilder;
+
+        /// <summary>
+        /// 驱动提供者信息
+        /// </summary>
+        public DataAccessProvider<TEntity> Provider { get; set; }
 
         /// <summary>
         /// Sql对应的配置信息
         /// </summary>
-        public DataAccessOption<TEntity> Option { get; set; }
+        DataAccessOption<TEntity> ISqlBuilder<TEntity>.Option
+        {
+            get => Provider.Option;
+            set => Provider.Option = value;
+        }
+
 
         #region 数据结构支持
 
@@ -154,7 +175,7 @@ namespace Agebull.EntityModel.MySql
             if (value is string || value is Guid || value is DateTime || value is byte[])
             {
                 var name = "v_" + field;
-                parameters.Add(CreateParameter(name, value, (MySqlDbType)Option.GetDbType(field)));
+                parameters.Add(CreateParameter(name, value, (MySqlDbType)DataOperator.GetDbType(field)));
                 return $"`{field}` = ?{name}";
             }
             if (value is bool bl)
@@ -178,12 +199,12 @@ namespace Agebull.EntityModel.MySql
    SET {valueExpression} 
  WHERE {condition};";
             }
-            Option.CheckUpdateContition(ref condition);
-            return $@"{Option.BeforeUpdateSql(condition)}
+            Provider.Injection?.CheckUpdateContition(ref condition);
+            return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
 UPDATE `{Option.WriteTableName}` 
    SET {valueExpression} 
  WHERE {condition};
-{Option.AfterUpdateSql(condition)}";
+{Provider.Injection?.AfterUpdateSql(condition)}";
         }
 
         /// <summary>
@@ -200,17 +221,17 @@ UPDATE `{Option.WriteTableName}`
    SET {Option.UpdateFields} 
  WHERE {condition};";
             }
-            var sql = Option.GetModifiedUpdateSql(entity);
+            var sql = DataOperator.GetModifiedUpdateSql(entity);
             if (sql == null)
                 return null;
             if (!Option.NoInjection)
             {
-                Option.CheckUpdateContition(ref condition);
-                return $@"{Option.BeforeUpdateSql(condition)}
+                Provider.Injection?.CheckUpdateContition(ref condition);
+                return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
 UPDATE `{Option.WriteTableName}` 
    SET {sql} 
  WHERE {condition};
-{Option.AfterUpdateSql(condition)}";
+{Provider.Injection?.AfterUpdateSql(condition)}";
             }
             else
             {
@@ -257,7 +278,7 @@ UPDATE `{Option.WriteTableName}`
 
             if (!string.IsNullOrEmpty(condition))
                 conditions.Add(condition);
-            Option.InjectionCondition(conditions);
+            Provider.Injection?.InjectionCondition(conditions);
             if (conditions.Count == 0)
                 return null;
             var code = new StringBuilder();
@@ -324,19 +345,19 @@ FROM {Option.ReadTableName}{InjectionCondition(convert.ConditionSql)};";
         /// <param name="order">排序字段</param>
         /// <param name="limit"></param>
         /// <returns>载入的SQL语句</returns>
-        public StringBuilder CreateLoadSql(string condition, string order, string limit)
+        public string CreateLoadSql(string condition, string order, string limit)
         {
             var sql = new StringBuilder();
             sql.Append($"SELECT {Option.LoadFields} FROM {Option.ReadTableName}");
             sql.Append(InjectionCondition(condition));
-            if (order !=null)
+            if (order != null)
             {
                 sql.Append($" ORDER BY {order}");
             }
             if (limit != null)
                 sql.Append($" LIMIT {limit}");
             sql.Append(';');
-            return sql;
+            return sql.ToString();
         }
 
         /// <summary>
@@ -386,10 +407,10 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         {
             if (!Option.NoInjection)
             {
-                Option.CheckUpdateContition(ref condition);
-                return $@"{Option.BeforeUpdateSql(condition)}
+                Provider.Injection?.CheckUpdateContition(ref condition);
+                return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
 {Option.DeleteSqlCode} WHERE {condition};
-{Option.AfterUpdateSql(condition)}";
+{Provider.Injection?.AfterUpdateSql(condition)}";
 
             }
             else if (string.IsNullOrEmpty(condition))
@@ -499,7 +520,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <returns>参数</returns>
         int ISqlBuilder.GetDbType(string field)
         {
-            return Option.GetDbType(field);
+            return DataOperator.GetDbType(field);
         }
 
 
@@ -509,7 +530,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <param name="field">生成参数的字段</param>
         public MySqlParameter CreateFieldParameter(string field)
         {
-            return new MySqlParameter(field, Option.GetDbType(field));
+            return new MySqlParameter(field, DataOperator.GetDbType(field));
         }
 
         /// <summary>
@@ -521,7 +542,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         {
             return CreateParameter(field,
                 Option.DataOperator.GetValue(entity, field),
-                (MySqlDbType)Option.GetDbType(field));
+                (MySqlDbType)DataOperator.GetDbType(field));
         }
 
         /// <summary>
@@ -529,7 +550,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// </summary>
         public DbParameter CreatePimaryKeyParameter()
         {
-            return new MySqlParameter(Option.PrimaryKey, Option.GetDbType(Option.PrimaryKey));
+            return new MySqlParameter(Option.PrimaryKey, DataOperator.GetDbType(Option.PrimaryKey));
         }
 
         /// <summary>
@@ -538,7 +559,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <param name="value">主键值</param>
         public DbParameter CreatePimaryKeyParameter(object value)
         {
-            return CreateParameter(Option.PrimaryKey, value, (MySqlDbType)Option.GetDbType(Option.PrimaryKey));
+            return CreateParameter(Option.PrimaryKey, value, (MySqlDbType)DataOperator.GetDbType(Option.PrimaryKey));
         }
 
         /// <summary>
@@ -549,7 +570,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         {
             return CreateParameter(Option.PrimaryKey,
                 Option.DataOperator.GetValue(entity, Option.PrimaryKey),
-                (MySqlDbType)Option.GetDbType(Option.PrimaryKey));
+                (MySqlDbType)DataOperator.GetDbType(Option.PrimaryKey));
         }
         #endregion
 

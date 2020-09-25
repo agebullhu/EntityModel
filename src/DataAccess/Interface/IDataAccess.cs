@@ -22,7 +22,8 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
-    public interface IDataAccess : IConfig
+    /// <typeparam name="TEntity">实体</typeparam>
+    public interface IDataAccess<TEntity> : IConfig
     {
         /// <summary>
         ///     自动数据连接对象
@@ -38,30 +39,6 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         IDataBase OriDataBase { get; }
 
-        /// <summary>
-        /// 数据结构
-        /// </summary>
-        EntitySturct DataSturct { get; }
-
-        /// <summary>
-        /// Sql配置信息
-        /// </summary>
-        DataAccessOption Option { get; }
-
-
-        /// <summary>
-        /// Sql语句构造器
-        /// </summary>
-        ISqlBuilder SqlBuilder { get; }
-
-    }
-
-    /// <summary>
-    ///     Sql实体访问类
-    /// </summary>
-    /// <typeparam name="TEntity">实体</typeparam>
-    public interface IDataAccess<TEntity> : IDataAccess
-    {
         #region 聚合函数支持
 
         /// <summary>

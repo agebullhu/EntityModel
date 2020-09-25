@@ -56,6 +56,7 @@ namespace Agebull.EntityModel.Events
             DataOperatorType oType,
             EntityEventValueType valueType,
             object value);
+
         #endregion
 
         #region 扩展流程

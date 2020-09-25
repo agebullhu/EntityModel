@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="DataUpdateTrigger\EntityEventArgument.cs" />
+    <Compile Remove="DataUpdateTrigger\EntitySubsist.cs" />
+    <Compile Remove="DataUpdateTrigger\IDataUpdateHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.45" />
   </ItemGroup>
 

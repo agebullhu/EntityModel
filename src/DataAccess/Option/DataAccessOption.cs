@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
@@ -6,6 +9,21 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public class DataAccessOption
     {
+        /// <summary>
+        /// 按修改更新
+        /// </summary>
+        public bool UpdateByMidified { get; set; }
+
+        /// <summary>
+        /// 是否允许全局事件(如全局事件器,则永为否)
+        /// </summary>
+        public bool CanRaiseEvent { get; set; }
+
+        /// <summary>
+        /// 不做代码注入
+        /// </summary>
+        public bool NoInjection { get; set; }
+
         /// <summary>
         /// 是否自增主键
         /// </summary>
@@ -40,12 +58,17 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     属性字典
         /// </summary>
-        public Dictionary<string, EntitiyProperty> PropertyMap { get; set; }
+        public Dictionary<string, EntitiyProperty> PropertyMap { get; protected set; }
+
+        /// <summary>
+        /// 可读写的属性
+        /// </summary>
+        public EntitiyProperty[] ReadPproperties { get;protected set; }
 
         /// <summary>
         ///     属性字典
         /// </summary>
-        public Dictionary<string, string> FieldMap { get; set; }
+        public Dictionary<string, string> FieldMap { get; protected set; }
 
         /// <summary>
         ///     主键字段
@@ -104,5 +127,78 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public string DeleteSqlCode { get; set; }
 
+
+        #region 迭代
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public void FroeachProperties(PropertyFeatrue propertyFeatrue, Action<EntitiyProperty> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(propertyFeatrue))
+                    action(pro);
+            }
+        }
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public void FroeachProperties(PropertyFeatrue propertyFeatrue, ReadWriteFeatrue readWrite, Action<EntitiyProperty> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(propertyFeatrue) && pro.DbReadWrite.HasFlag(readWrite))
+                    action(pro);
+            }
+        }
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public void FroeachDbProperties(Action<EntitiyProperty> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn))
+                    action(pro);
+            }
+        }
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public void FroeachDbProperties(ReadWriteFeatrue readWrite, Action<EntitiyProperty> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                    action(pro);
+            }
+        }
+
+        /// <summary>
+        /// 迭代循环属性
+        /// </summary>
+        public async Task FroeachDbProperties(ReadWriteFeatrue readWrite, Func<EntitiyProperty, Task> action)
+        {
+            var properties = Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                    await action(pro);
+            }
+        }
+        #endregion
     }
 }
