@@ -8,8 +8,6 @@
 
 #region 引用
 
-using Agebull.EntityModel.Events;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,11 +136,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        public  Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> lambda)
+        public Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
 
-            return  LoadLastInnerAsync(convert.ConditionSql, convert.Parameters);
+            return LoadLastInnerAsync(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -151,11 +149,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="a">查询表达式</param>
         /// <param name="b"></param>
         /// <returns>如果有载入尾行,否则返回空</returns>
-        public  Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b)
+        public Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> a, Expression<Func<TEntity, bool>> b)
         {
             var convert1 = SqlBuilder.Compile(a);
             var convert2 = SqlBuilder.Compile(b);
-            return  LoadLastInnerAsync($"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
+            return LoadLastInnerAsync($"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
                 , convert1.Parameters.Union(convert2.Parameters).ToArray());//SQL
         }
 
@@ -163,9 +161,9 @@ namespace Agebull.EntityModel.Common
         ///     是否存在数据
         /// </summary>
         /// <returns>是否存在数据</returns>
-        public  Task<TEntity> LastAsync(string condition, DbParameter[] args)
+        public Task<TEntity> LastAsync(string condition, DbParameter[] args)
         {
-            return  LoadLastInnerAsync(condition, args);
+            return LoadLastInnerAsync(condition, args);
         }
 
 
@@ -361,7 +359,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>是否存在数据</returns>
         public Task<bool> ExistPrimaryKeyAsync<T>(T id)
         {
-            return ExistInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, id, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            return ExistInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, id, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -1069,7 +1067,7 @@ namespace Agebull.EntityModel.Common
         public Task<(bool hase, TField value)> LoadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key)
         {
             return LoadValueAsync<TField>(GetPropertyName(field),
-                SqlBuilder.FieldConditionSQL(Option.PrimaryKey),
+                SqlBuilder.FieldCondition(Option.PrimaryKey),
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
@@ -1167,146 +1165,6 @@ namespace Agebull.EntityModel.Common
 
         #region 数据读取
 
-        /// <summary>
-        ///     载入条件数据
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns>如果有载入首行,否则返回空</returns>
-        public Task<List<TEntity>> LoadDataAsync(MulitCondition condition)
-        {
-            if (condition == null || string.IsNullOrEmpty(condition.Condition))
-                return Task.FromResult(new List<TEntity>());
-            if (condition.Parameters == null)
-                return LoadDataInnerAsync(condition.Condition, null, null);
-
-            List<DbParameter> args = new List<DbParameter>();
-            foreach (var item in condition.Parameters)
-            {
-                var pa = ParameterCreater.CreateParameter(item.Name, item.Type);
-                if (item.Value == null)
-                    pa.Value = DBNull.Value;
-                else
-                    switch (item.Type)
-                    {
-                        default:
-                            //case DbType.Xml:
-                            //case DbType.String:
-                            //case DbType.StringFixedLength:
-                            //case DbType.AnsiStringFixedLength:
-                            //case DbType.AnsiString:
-                            pa.Size = item.Value.Length * 2;
-                            pa.Value = item.Value;
-                            break;
-                        case DbType.Boolean:
-                            {
-                                pa.Value = bool.TryParse(item.Value, out var vl) && vl;
-                            }
-                            break;
-                        case DbType.Byte:
-                            {
-                                if (byte.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = (byte)0;
-                            }
-                            break;
-                        case DbType.VarNumeric:
-                        case DbType.Decimal:
-                        case DbType.Currency:
-                            {
-                                if (decimal.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = (decimal)0;
-                            }
-                            break;
-                        case DbType.Time:
-                        case DbType.DateTime2:
-                        case DbType.DateTime:
-                        case DbType.Date:
-                            {
-                                if (DateTime.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.DateTimeOffset:
-                            {
-                                if (TimeSpan.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.Double:
-                            {
-                                if (double.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.Guid:
-                            {
-                                if (Guid.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.Int16:
-                            {
-                                if (short.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.Int32:
-                            {
-                                if (int.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.Int64:
-                            {
-                                if (long.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.SByte:
-                            break;
-                        case DbType.Single:
-                            {
-                                if (float.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.UInt16:
-                            {
-                                if (ushort.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.UInt32:
-                            {
-                                if (uint.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                        case DbType.UInt64:
-                            {
-                                if (ulong.TryParse(item.Value, out var vl))
-                                    pa.Value = vl;
-                                else pa.Value = DBNull.Value;
-                            }
-                            break;
-                    }
-                args.Add(pa);
-            }
-            return LoadDataInnerAsync(condition.Condition, null, args.ToArray());
-        }
-
-
         /*// <summary>
         ///     载入首行
         /// </summary>
@@ -1340,7 +1198,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<TEntity> LoadByPrimaryKeyAsync(object key)
         {
-            return LoadFirstInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            return LoadFirstInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -1353,7 +1211,7 @@ namespace Agebull.EntityModel.Common
             foreach (var key in keies)
             {
                 par.Value = key;
-                list.Add(await LoadFirstInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, par));
+                list.Add(await LoadFirstInnerAsync(SqlBuilder.PrimaryKeyCondition, par));
             }
 
             return list;
@@ -1408,7 +1266,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadByForeignKeyAsync(string foreignKey, object key)
         {
-            return LoadDataInnerAsync(SqlBuilder.FieldConditionSQL(foreignKey), null,
+            return LoadDataInnerAsync(SqlBuilder.FieldCondition(foreignKey), null,
                 ParameterCreater.CreateParameter(foreignKey, key, SqlBuilder.GetDbType(foreignKey)));
 
         }
@@ -1447,7 +1305,7 @@ namespace Agebull.EntityModel.Common
         private async Task<TEntity> LoadLastInnerAsync(string condition, params DbParameter[] args)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            var sql = SqlBuilder.CreateLoadSql(condition, SqlBuilder.OrderSql(true, Option.PrimaryKey), "1");
+            var sql = SqlBuilder.CreateLoadSql(condition, SqlBuilder.OrderCode(true, Option.PrimaryKey), "1");
             await using var cmd = connectionScope.CreateCommand(sql, args);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
@@ -1552,7 +1410,7 @@ namespace Agebull.EntityModel.Common
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(Option.FieldMap.ContainsKey(fieldName));
-            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(Option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName))
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
@@ -1596,7 +1454,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="key"></param>
         public async Task<bool> IsUniqueAsync<TValue>(string field, object val, object key)
         {
-            return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldConditionSQL(Option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(field))
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }

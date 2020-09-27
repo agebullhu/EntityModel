@@ -1,5 +1,4 @@
-﻿using Agebull.EntityModel.Events;
-using System;
+﻿using System;
 
 namespace Agebull.EntityModel.Common
 {

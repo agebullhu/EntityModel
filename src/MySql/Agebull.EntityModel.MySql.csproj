@@ -61,17 +61,10 @@
     <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DataAccess\MySqlConnectionsManager.cs" />
-    <Compile Remove="DataAccess\MySqlDataAccess.cs" />
     <Compile Remove="DataStateTable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataUpdateTrigger\EntityEventArgument.cs" />
-    <Compile Include="DataUpdateTrigger\EntitySubsist.cs" />
-    <Compile Include="DataUpdateTrigger\IDataUpdateHandler.cs" />
-    <Compile Include="DataUpdateTrigger\IDataUpdateTrigger.cs" />
-    <Compile Include="DataUpdateTrigger\IEntityEventProxy.cs" />
-    <Compile Include="DataUpdateTrigger\OperatorInjection.cs" />
+    <None Remove="Agebull.EntityModel.MySql.xml" />
   </ItemGroup>
 
   <ItemGroup>

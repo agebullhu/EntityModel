@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Injection\Agebull.EntityModel.Injection.csproj" />
     <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>
 

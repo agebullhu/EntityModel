@@ -20,7 +20,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示数据库对象
     /// </summary>
-    public interface IDataBase :  IConfig, IAsyncDisposable,IDisposable
+    public interface IDataBase : IConfig, IAsyncDisposable, IDisposable
     {
         #region 信息
 

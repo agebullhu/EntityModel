@@ -19,24 +19,6 @@ namespace Agebull.EntityModel.Events
     /// </summary>
     public interface IDataUpdateHandler
     {
-        #region 对象类型检查
-
-        /// <summary>
-        /// 初始化类型
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        void InitType<TEntity>() where TEntity : class, new();
-
-        /// <summary>
-        /// 是否指定类型
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        bool IsType<TEntity>(int type);
-
-        #endregion
-
         #region 数据事件
 
         /// <summary>
@@ -99,33 +81,13 @@ namespace Agebull.EntityModel.Events
               where TEntity : class, new();
 
         /// <summary>
-        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        ///     SQL注入
         /// </summary>
         /// <param name="option">当前数据操作配置</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
         void InjectionCondition<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
             where TEntity : class, new();
-
-        /// <summary>
-        ///     与更新同时执行的SQL(更新之前立即执行)
-        /// </summary>
-        /// <param name="option">当前数据操作配置</param>
-        /// <param name="code">写入SQL的文本构造器</param>
-        /// <param name="condition">当前场景的执行条件</param>
-        /// <returns></returns>
-        void BeforeUpdateSql<TEntity>(DataAccessOption<TEntity> option, StringBuilder code, string condition)
-             where TEntity : class, new();
-
-        /// <summary>
-        ///     与更新同时执行的SQL(更新之后立即执行)
-        /// </summary>
-        /// <param name="option">当前数据操作配置</param>
-        /// <param name="condition">当前场景的执行条件</param>
-        /// <param name="code">写入SQL的文本构造器</param>
-        /// <returns></returns>
-        void AfterUpdateSql<TEntity>(DataAccessOption<TEntity> option, StringBuilder code, string condition)
-             where TEntity : class, new();
 
         #endregion
     }

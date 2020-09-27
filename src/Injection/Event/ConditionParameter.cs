@@ -1,25 +1,26 @@
-using System.Data;
+﻿using System.Data;
 
-namespace Agebull.EntityModel.Common
+namespace Agebull.EntityModel.Events
 {
     /// <summary>
     /// 参数节点
     /// </summary>
-    public class ParameterItem
+    public class ConditionParameter
     {
         /// <summary>
-        /// 执行条件
+        /// 条件
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// 数据类型
+        /// 类型
         /// </summary>
-        public DbType DbType { get; set; }
+        public DbType Type { get; set; }
 
         /// <summary>
-        /// 值
+        /// 内容
         /// </summary>
         public string Value { get; set; }
+
     }
 }

@@ -8,16 +8,11 @@
 
 #region 引用
 
-using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -61,16 +56,6 @@ namespace Agebull.EntityModel.MySql
         /// 驱动提供者信息
         /// </summary>
         public DataAccessProvider<TEntity> Provider { get; set; }
-
-        /// <summary>
-        /// Sql对应的配置信息
-        /// </summary>
-        DataAccessOption<TEntity> ISqlBuilder<TEntity>.Option
-        {
-            get => Provider.Option;
-            set => Provider.Option = value;
-        }
-
 
         #region 数据结构支持
 
@@ -167,7 +152,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="value">值</param>
         /// <param name="parameters">参数列表</param>
         /// <returns>单个字段更新的SQL</returns>
-        public string FileUpdateSql(string field, object value, IList<DbParameter> parameters)
+        public string FileUpdateSetCode(string field, object value, IList<DbParameter> parameters)
         {
             field = Option.FieldMap[field];
             if (value == null)
@@ -191,20 +176,15 @@ namespace Agebull.EntityModel.MySql
         /// <param name="valueExpression">更新表达式(SQL)</param>
         /// <param name="condition">更新条件</param>
         /// <returns>更新的SQL</returns>
-        public string CreateUpdateSql(string valueExpression, string condition)
+        public string CreateUpdateSqlCode(string valueExpression, string condition)
         {
-            if (Option.NoInjection)
+            if (!Option.NoInjection && Provider.Injection != null)
             {
-                return $@"UPDATE `{Option.WriteTableName}` 
+                Provider.Injection.InjectionUpdateCode(ref valueExpression, ref condition);
+            }
+            return $@"UPDATE `{Option.WriteTableName}` 
    SET {valueExpression} 
  WHERE {condition};";
-            }
-            Provider.Injection?.CheckUpdateContition(ref condition);
-            return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
-UPDATE `{Option.WriteTableName}` 
-   SET {valueExpression} 
- WHERE {condition};
-{Provider.Injection?.AfterUpdateSql(condition)}";
         }
 
         /// <summary>
@@ -213,32 +193,20 @@ UPDATE `{Option.WriteTableName}`
         /// <param name="entity">实体</param>
         /// <param name="condition">更新条件</param>
         /// <returns>更新的SQL</returns>
-        public string GetUpdateSql(TEntity entity, string condition)
+        public string CreateUpdateSqlCode(TEntity entity, string condition)
         {
+            string valueExpression;
             if (!Option.UpdateByMidified)
             {
-                return $@"UPDATE `{Option.WriteTableName}` 
-   SET {Option.UpdateFields} 
- WHERE {condition};";
-            }
-            var sql = DataOperator.GetModifiedUpdateSql(entity);
-            if (sql == null)
-                return null;
-            if (!Option.NoInjection)
-            {
-                Provider.Injection?.CheckUpdateContition(ref condition);
-                return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
-UPDATE `{Option.WriteTableName}` 
-   SET {sql} 
- WHERE {condition};
-{Provider.Injection?.AfterUpdateSql(condition)}";
+                valueExpression = Option.UpdateFields;
             }
             else
             {
-                return $@"UPDATE `{Option.WriteTableName}` 
-   SET {sql} 
- WHERE {condition};";
+                valueExpression = DataOperator.GetModifiedUpdateSql(entity);
             }
+            if (valueExpression == null)
+                return null;
+            return CreateUpdateSqlCode(valueExpression, condition);
         }
 
 
@@ -252,52 +220,79 @@ UPDATE `{Option.WriteTableName}`
         public string FullLoadSqlCode => $@"SELECT {Option.LoadFields} FROM `{Option.ReadTableName}`";
 
 
-        private string _primaryConditionSQL;
+        private string _primaryKeyCondition;
 
         /// <summary>
         ///     主键的条件部分SQL
         /// </summary>
-        public string PrimaryKeyConditionSQL => _primaryConditionSQL ??= FieldConditionSQL(Option.PrimaryKey);
+        public string PrimaryKeyCondition => _primaryKeyCondition ??= FieldCondition(Option.PrimaryKey);
 
 
-        string ISqlBuilder.OrderSql(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
+        string ISqlBuilder.OrderCode(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
 
         /// <summary>
-        ///     得到可正确拼接的SQL条件语句（可能是没有）
+        ///     查询条件注入
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public string InjectionCondition(string condition)
+        string InjectionLoadCondition(string condition)
         {
-            if (Option.NoInjection)
+            var code = new StringBuilder();
+            InjectionLoadCondition(code, condition);
+            return code.ToString();
+        }
+
+        /// <summary>
+        ///     查询条件注入
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        void InjectionLoadCondition(StringBuilder code, string condition)
+        {
+            bool isFirst = true;
+            if (!string.IsNullOrEmpty(condition))
             {
-                return string.IsNullOrEmpty(condition) ? null : $"\nWHERE {condition}";
+                isFirst = false;
+                code.Append("\nWHERE (");
+                code.Append(condition);
+                code.Append(')');
+            }
+            if (!string.IsNullOrEmpty(Option.BaseCondition))
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                    code.Append("\nWHERE (");
+                }
+                else
+                {
+                    code.Append(" AND (");
+                }
+                code.Append(Option.BaseCondition);
+                code.Append(')');
             }
 
+            if (Option.NoInjection || Provider.Injection == null)
+            {
+                return;
+            }
             List<string> conditions = new List<string>();
-
-            if (!string.IsNullOrEmpty(condition))
-                conditions.Add(condition);
-            Provider.Injection?.InjectionCondition(conditions);
-            if (conditions.Count == 0)
-                return null;
-            var code = new StringBuilder();
-
-            bool isFirst = true;
+            Provider.Injection.InjectionQueryCondition(conditions);
             foreach (var con in conditions)
             {
                 if (isFirst)
                 {
                     isFirst = false;
-                    code.Append("\nWHERE ");
+                    code.Append("\nWHERE (");
                 }
                 else
                 {
-                    code.Append(" AND ");
+                    code.Append(" AND (");
                 }
-                code.Append($"({con})");
+                code.Append(con);
+                code.Append(')');
             }
-            return code.ToString();
         }
 
         /// <summary>
@@ -311,8 +306,8 @@ UPDATE `{Option.WriteTableName}`
         {
             if (field != "*")
                 field = $"`{Option.FieldMap[field]}`";
-            var sql = $@"SELECT {fun}({field}) FROM {Option.ReadTableName}{InjectionCondition(condition)};";
-            return sql;
+            condition = InjectionLoadCondition(condition);
+            return $@"SELECT {fun}({field}) FROM {Option.ReadTableName}{condition};";
         }
 
         /// <summary>
@@ -323,7 +318,8 @@ UPDATE `{Option.WriteTableName}`
         /// <returns>载入字段值的SQL语句</returns>
         public string CreateLoadValueSql(string field, string condition)
         {
-            return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{InjectionCondition(condition)};";
+            condition = InjectionLoadCondition(condition);
+            return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{condition};";
         }
 
         /// <summary>
@@ -334,8 +330,9 @@ UPDATE `{Option.WriteTableName}`
         /// <returns>载入字段值的SQL语句</returns>
         public string CreateLoadValuesSql(string field, ConditionItem convert)
         {
+            var condition = InjectionLoadCondition(convert.ConditionSql);
             return $@"SELECT `{Option.FieldMap[field]}` 
-FROM {Option.ReadTableName}{InjectionCondition(convert.ConditionSql)};";
+FROM {Option.ReadTableName}{condition};";
         }
 
         /// <summary>
@@ -348,14 +345,14 @@ FROM {Option.ReadTableName}{InjectionCondition(convert.ConditionSql)};";
         public string CreateLoadSql(string condition, string order, string limit)
         {
             var sql = new StringBuilder();
-            sql.Append($"SELECT {Option.LoadFields} FROM {Option.ReadTableName}");
-            sql.Append(InjectionCondition(condition));
+            sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
+            InjectionLoadCondition(sql, condition);
             if (order != null)
             {
-                sql.Append($" ORDER BY {order}");
+                sql.Append($"\nORDER BY {order}");
             }
             if (limit != null)
-                sql.Append($" LIMIT {limit}");
+                sql.Append($"\nLIMIT {limit}");
             sql.Append(';');
             return sql.ToString();
         }
@@ -371,26 +368,20 @@ FROM {Option.ReadTableName}{InjectionCondition(convert.ConditionSql)};";
         /// <returns></returns>
         public string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
+            var sql = new StringBuilder();
+            sql.Append($@"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
+            InjectionLoadCondition(sql, condition);
+
             var orderField = string.IsNullOrWhiteSpace(order) || !Option.FieldMap.ContainsKey(order)
                 ? Option.PrimaryKey
                 : Option.FieldMap[order];
-
-            var sql = new StringBuilder();
-            sql.Append($@"SELECT {Option.LoadFields}
-FROM {Option.ReadTableName}{InjectionCondition(condition)}
-ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
+            sql.Append($"\nORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
 
             if (pageSize >= 0)
             {
-                if (page <= 0)
-                    page = 1;
-                if (pageSize == 0)
-                    pageSize = 20;
-                else if (pageSize > 500)
-                    pageSize = 500;
-                sql.Append($" LIMIT {(page - 1) * pageSize},{pageSize}");
+                sql.Append($"\nLIMIT {(page - 1) * pageSize},{pageSize}");
             }
-            sql.Append(";");
+            sql.Append(';');
             return sql.ToString();
         }
 
@@ -405,19 +396,12 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <returns>删除的SQL语句</returns>
         public string CreateDeleteSql(string condition)
         {
-            if (!Option.NoInjection)
-            {
-                Provider.Injection?.CheckUpdateContition(ref condition);
-                return $@"{Provider.Injection?.BeforeUpdateSql(condition)}
-{Option.DeleteSqlCode} WHERE {condition};
-{Provider.Injection?.AfterUpdateSql(condition)}";
-
-            }
-            else if (string.IsNullOrEmpty(condition))
+            if (string.IsNullOrEmpty(condition))
             {
                 throw new ArgumentException("删除数据必须有一个条件");
             }
-
+            if (!Option.NoInjection && Provider.Injection != null)
+                condition = Provider.Injection.InjectionDeleteCondition(condition);
             return $"{Option.DeleteSqlCode} WHERE {condition};";
         }
 
@@ -434,11 +418,16 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         /// <summary>
         ///     物理删除数据
         /// </summary>
-        public string PhysicalDeleteSql(string condition)
+        public string PhysicalDeleteSqlCode(string condition)
         {
-            return string.IsNullOrEmpty(condition)
-                ? $"DELETE FROM `{Option.WriteTableName}"
-                : $"DELETE FROM `{Option.WriteTableName}` WHERE {condition};";
+            if (string.IsNullOrEmpty(condition))
+            {
+                throw new ArgumentException("删除数据必须有一个条件");
+            }
+            if (!Option.NoInjection && Provider.Injection != null)
+                condition = Provider.Injection.InjectionDeleteCondition(condition);
+
+            return $"DELETE FROM `{Option.WriteTableName}` WHERE {condition};";
         }
         #endregion
 
@@ -447,24 +436,15 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         string ISqlBuilder.Condition(string fieldName, string paraName)
             => $"(`{Option.FieldMap[fieldName]}` = ?{paraName})";
 
-        string ISqlBuilder.Condition(string fieldName, string paraName, string condition)
-            => $"(`{Option.FieldMap[fieldName]}` {condition} ?{paraName})";
-
-        /// <summary>
-        ///     用在条件中的字段条件
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="expression">条件表达式</param>
-        /// <returns>字段条件</returns>
-        public string FieldConditionSQL(string field, string expression = "=")
-            => $@"`{Option.FieldMap[field]}` {expression} ?{field}";
+        string ISqlBuilder.Condition(string fieldName, string paraName, string expression)
+            => $"(`{Option.FieldMap[fieldName]}` {expression} ?{paraName})";
 
         /// <summary>
         ///     组合条件SQL
         /// </summary>
         /// <param name="isAnd">是否用AND组合</param>
         /// <param name="conditions">条件</param>
-        public string JoinConditionSQL(bool isAnd, params string[] conditions)
+        public string ConcatCondition(bool isAnd, params string[] conditions)
         {
             if (conditions == null || conditions.Length == 0)
                 throw new ArgumentException(@"没有条件用于组合", nameof(conditions));
@@ -475,42 +455,54 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
             return sql.ToString();
         }
 
-        /// <summary>
-        ///     连接字段条件SQL
-        /// </summary>
-        /// <param name="isAnd">是否用AND组合</param>
-        /// <param name="fields">生成参数的字段</param>
-        public string FieldConditionSQL(bool isAnd, params string[] fields)
-        {
-            if (fields == null || fields.Length == 0)
-                throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
-            var sql = new StringBuilder();
-            sql.AppendFormat(@"({0})", FieldConditionSQL(fields[0]));
-            for (var idx = 1; idx < fields.Length; idx++)
-                sql.AppendFormat(@" {0} ({1}) ", isAnd ? "AND" : "OR", FieldConditionSQL(fields[idx]));
-            return sql.ToString();
-        }
-
 
         /// <summary>
         ///     连接字段条件SQL
         /// </summary>
         /// <param name="isAnd">是否用AND组合</param>
         /// <param name="fields">生成参数的字段</param>
-        public string FieldConditionSQL(bool isAnd, params (string field, object value)[] fields)
+        public string ConcatCondition(bool isAnd, params (string field, object value)[] fields)
         {
+
             if (fields == null || fields.Length == 0)
                 throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
             var sql = new StringBuilder();
-            sql.AppendFormat(@"({0})", FieldConditionSQL(fields[0].field));
+            sql.AppendFormat(@"({0})", FieldCondition(fields[0].field));
             var join = isAnd ? "AND" : "OR";
             for (var idx = 1; idx < fields.Length; idx++)
-                sql.Append($" {join} ({FieldConditionSQL(fields[idx].field)}) ");
+                sql.Append($" {join} ({FieldCondition(fields[idx].field)}) ");
             return sql.ToString();
         }
 
         #endregion
+        #region 字段条件
 
+        /// <summary>
+        ///     用在条件中的字段条件
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="expression">条件表达式</param>
+        /// <returns>字段条件</returns>
+        public string FieldCondition(string field, string expression = "=")
+            => $@"`{Option.FieldMap[field]}` {expression} ?{field}";
+
+        /// <summary>
+        ///     连接字段条件SQL
+        /// </summary>
+        /// <param name="isAnd">是否用AND组合</param>
+        /// <param name="fields">生成参数的字段</param>
+        public string ConcatFieldCondition(bool isAnd, params string[] fields)
+        {
+            if (fields == null || fields.Length == 0)
+                throw new ArgumentException(@"没有字段用于生成组合条件", nameof(fields));
+            var sql = new StringBuilder();
+            sql.AppendFormat(@"({0})", FieldCondition(fields[0]));
+            for (var idx = 1; idx < fields.Length; idx++)
+                sql.AppendFormat(@" {0} ({1}) ", isAnd ? "AND" : "OR", FieldCondition(fields[idx]));
+            return sql.ToString();
+        }
+
+        #endregion
         #region 参数
 
         /// <summary>
@@ -541,7 +533,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         public DbParameter CreateFieldParameter(string field, TEntity entity)
         {
             return CreateParameter(field,
-                Option.DataOperator.GetValue(entity, field),
+                DataOperator.GetValue(entity, field),
                 (MySqlDbType)DataOperator.GetDbType(field));
         }
 
@@ -569,7 +561,7 @@ ORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
         public DbParameter CreatePimaryKeyParameter(TEntity entity)
         {
             return CreateParameter(Option.PrimaryKey,
-                Option.DataOperator.GetValue(entity, Option.PrimaryKey),
+                DataOperator.GetValue(entity, Option.PrimaryKey),
                 (MySqlDbType)DataOperator.GetDbType(Option.PrimaryKey));
         }
         #endregion

@@ -11,6 +11,7 @@
 using Agebull.Common.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
@@ -73,8 +74,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">更新数据的实体</param>
         private async Task<bool> InsertInnerAsync(TEntity entity)
         {
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Insert);
             await using var connectionScope = await DataBase.CreateConnectionScope();
+
+            await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Insert);
             await using var cmd = connectionScope.CreateCommand(Option.InsertSqlCode);
 
             DataOperator.SetEntityParameter(cmd, entity);
@@ -91,12 +93,8 @@ namespace Agebull.EntityModel.Common
                     return false;
                 Provider.DataOperator.SetValue(entity, Option.PrimaryKey, key);
             }
-            if(Provider.Injection != null)
-            {
-                Provider.Injection.EndSaved(entity, DataOperatorType.Insert);
-                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Insert);
-            }
-            
+            await Provider.DataOperator.AfterSave(entity, DataOperatorType.Insert);
+
             return true;
         }
 
@@ -104,14 +102,14 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     更新数据
         /// </summary>
-        public async Task<bool> UpdateAsync(TEntity entity, bool reload = false)
+        public async Task<int> UpdateAsync(TEntity entity, bool reload = false)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             if (!await UpdateInnerAsync(entity))
-                return false;
+                return 0;
             if (reload)
                 await ReLoadInnerAsync(entity);
-            return true;
+            return true ? 1 : 0;
         }
 
         /// <summary>
@@ -140,8 +138,8 @@ namespace Agebull.EntityModel.Common
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Provider.DataOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
-            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyConditionSQL, null, null);
-            await using var cmd = connectionScope.CreateCommand(sql, para); 
+            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyCondition, null, null);
+            await using var cmd = connectionScope.CreateCommand(sql, para);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
                 return false;
@@ -183,18 +181,14 @@ namespace Agebull.EntityModel.Common
         {
             if (entity == null)
                 return false;
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Delete);
+            await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Delete);
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey,
                 Provider.DataOperator.GetValue(entity, Option.PrimaryKey),
                 SqlBuilder.GetDbType(Option.PrimaryKey));
-            var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, para);
+            var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, para);
             if (result == 0)
                 return false;
-            if (Provider.Injection != null)
-            {
-                Provider.Injection.EndSaved(entity, DataOperatorType.Delete);
-                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Delete);
-            }
+            await Provider.DataOperator.AfterSave(entity, DataOperatorType.Delete);
             return true;
         }
 
@@ -254,11 +248,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">更新数据的实体</param>
         private async Task<bool> UpdateInnerAsync(TEntity entity)
         {
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
+            await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Update);
             string sql;
             if (Option.UpdateByMidified)
             {
-                sql = SqlBuilder.GetUpdateSql(entity, SqlBuilder.PrimaryKeyConditionSQL);
+                sql = SqlBuilder.CreateUpdateSqlCode(entity, SqlBuilder.PrimaryKeyCondition);
                 if (sql == null)
                     return false;
             }
@@ -276,12 +270,8 @@ namespace Agebull.EntityModel.Common
             {
                 return false;
             }
+            await Provider.DataOperator.AfterSave(entity, DataOperatorType.Update);
 
-            if (Provider.Injection != null)
-            {
-                Provider.Injection.EndSaved(entity, DataOperatorType.Update);
-                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Update);
-            }
             return true;
         }
 
@@ -292,11 +282,9 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     删除数据
         /// </summary>
-        public async Task<bool> DeletePrimaryKeyAsync(object key)
+        public Task<int> DeletePrimaryKeyAsync(object key)
         {
-            await DeleteInnerAsync(SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
-            return true;
+            return DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
 
@@ -305,28 +293,20 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> lambda)
+        public Task<int> DeleteAsync(Expression<Func<TEntity, bool>> lambda)
         {
-            //throw new EntityModelDbException("批量删除功能被禁用");
             var convert = SqlBuilder.Compile(lambda);
-            return await DeleteByConditionAsync(convert.ConditionSql, convert.Parameters);
+            return DeleteInnerAsync(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     物理删除数据
         /// </summary>
-        public async Task<bool> PhysicalDeleteAsync(object key)
+        public Task<int> PhysicalDeleteAsync(object key)
         {
-            var condition = SqlBuilder.PrimaryKeyConditionSQL;
-            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey));
-            var paras = new[] { para };
-            Provider.Injection?.OnOperatorExecuting(condition, paras, DataOperatorType.Delete);
-            var result = await DataBase.ExecuteAsync(SqlBuilder.PhysicalDeleteSql(condition), para);
-            if (result == 0)
-                return false;
-            Provider.Injection?.OnOperatorExecuted(condition, paras, DataOperatorType.Delete);
-            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
-            return true;
+            var sql = SqlBuilder.PhysicalDeleteSqlCode(SqlBuilder.PrimaryKeyCondition);
+            return DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
+                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -334,56 +314,36 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>是否删除成功</returns>
-        public async Task<int> PhysicalDeleteAsync(Expression<Func<TEntity, bool>> lambda)
+        public Task<int> PhysicalDeleteAsync(Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            int cnt;
-            Provider.Injection?.OnOperatorExecuting(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-
-            cnt = await DataBase.ExecuteAsync(SqlBuilder.PhysicalDeleteSql(convert.ConditionSql), convert.Parameters);
-
-            if (cnt == 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(convert.ConditionSql, convert.Parameters, DataOperatorType.MulitDelete);
-            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitDelete, convert.ConditionSql, convert.Parameters);
-            return cnt;
+            if (string.IsNullOrEmpty(convert.ConditionSql))
+                throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
+            var sql = SqlBuilder.PhysicalDeleteSqlCode(convert.ConditionSql);
+            return DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     条件删除
         /// </summary>
-        public async Task<int> DeleteAsync(string condition, params DbParameter[] args)
+        public Task<int> DeleteAsync(string condition, params DbParameter[] args)
         {
             //throw new EntityModelDbException("批量删除功能被禁用");
             if (string.IsNullOrWhiteSpace(condition))
                 throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
-            return await DeleteByConditionAsync(condition, args);
-        }
-
-
-        /// <summary>
-        ///     条件删除
-        /// </summary>
-        private async Task<int> DeleteByConditionAsync(string condition, DbParameter[] args)
-        {
-            int cnt;
-            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Delete);
-            cnt = await DeleteInnerAsync(condition, args);
-            if (cnt == 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.Delete);
-            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitDelete, condition, args);
-            return cnt;
+            return DeleteInnerAsync(condition, args);
         }
 
         /// <summary>
         ///     删除
         /// </summary>
-        private async Task<int> DeleteInnerAsync(string condition, params DbParameter[] args)
+        private Task<int> DeleteInnerAsync(string condition, params DbParameter[] args)
         {
-            if (!string.IsNullOrEmpty(condition))
-                return await DataBase.ExecuteAsync(SqlBuilder.CreateDeleteSql(condition), args);
-            throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
+            if (string.IsNullOrEmpty(condition))
+                throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
+
+            return DoUpdateValueAsync(DataOperatorType.MulitDelete, SqlBuilder.CreateDeleteSql(condition),
+                SqlBuilder.PrimaryKeyCondition, args);
         }
 
         #endregion
@@ -397,12 +357,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="value">值</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string field, object value, object key)
+        public Task<int> SetValueAsync(string field, object value, object key)
         {
-            int re = await SetValueInnerAsync(field, value, SqlBuilder.PrimaryKeyConditionSQL, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            if (re > 0)
-                await Provider.Injection?.OnKeyEvent(DataOperatorType.Update, key);
-            return re;
+            return SetValueInnerAsync(field, value, SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
         /// <summary>
@@ -412,14 +369,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="value">值</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> fieldExpression,
+        public Task<int> SetValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> fieldExpression,
             TField value, TKey key)
         {
-            int re = await SetValueInnerAsync(GetPropertyName(fieldExpression), value, SqlBuilder.PrimaryKeyConditionSQL,
+            return SetValueInnerAsync(GetPropertyName(fieldExpression), value, SqlBuilder.PrimaryKeyCondition,
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            if (re > 0)
-                await Provider.Injection?.OnKeyEvent(DataOperatorType.Update, key);
-            return re;
         }
 
         /// <summary>
@@ -428,22 +382,13 @@ namespace Agebull.EntityModel.Common
         /// <param name="valueExpression">值的SQL方式</param>
         /// <param name="key">主键</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetCoustomValueAsync<TKey>(string valueExpression, TKey key)
+        public Task<int> SetCoustomValueAsync<TKey>(string valueExpression, TKey key)
         {
-            var condition = SqlBuilder.PrimaryKeyConditionSQL;
-            var sql = SqlBuilder.CreateUpdateSql(valueExpression, condition);
-            var parameter = new[]
+            var sql = SqlBuilder.CreateUpdateSqlCode(valueExpression, SqlBuilder.PrimaryKeyCondition);
+            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, SqlBuilder.PrimaryKeyCondition, new[]
             {
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey))
-            };
-            int result;
-            Provider.Injection?.OnOperatorExecuting(condition, parameter, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, parameter);
-            if (result == 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(condition, parameter, DataOperatorType.Update);
-            await Provider.Injection?.OnKeyEvent(DataOperatorType.Delete, key);
-            return result;
+            });
         }
 
         #endregion
@@ -464,7 +409,7 @@ namespace Agebull.EntityModel.Common
         public async Task SaveValueAsync(string field, object value, string[] conditionFiles, object[] conditionValues)
         {
             var args = CreateFieldsParameters(conditionFiles, conditionValues);
-            var condition = SqlBuilder.FieldConditionSQL(true, conditionFiles);
+            var condition = SqlBuilder.ConcatFieldCondition(true, conditionFiles);
             await SetValueByConditionAsync(field, value, condition, args);
         }
 
@@ -524,26 +469,6 @@ namespace Agebull.EntityModel.Common
             return await SetValueByConditionAsync(GetPropertyName(field), value, condition, args);
         }
 
-        /// <summary>
-        ///     条件更新实体中已记录更新部分
-        /// </summary>
-        /// <param name="entity">实体</param>
-        /// <param name="lambda">条件</param>
-        /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(TEntity entity, Expression<Func<TEntity, bool>> lambda)
-        {
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
-            var convert = SqlBuilder.Compile(lambda);
-            string sql = SqlBuilder.GetUpdateSql(entity, convert.ConditionSql);
-            if (sql == null)
-                return -1;
-            await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = connectionScope.CreateCommand(sql);
-            DataOperator.SetEntityParameter(cmd, entity);
-
-            DataBase.TraceSql(cmd);
-            return await cmd.ExecuteNonQueryAsync();
-        }
 
         /// <summary>
         ///     全量更新
@@ -555,6 +480,18 @@ namespace Agebull.EntityModel.Common
         {
             return await SetValueByConditionAsync(GetPropertyName(field), value, "-1", null);
         }
+        /// <summary>
+        ///     条件更新实体中已记录更新部分
+        /// </summary>
+        /// <param name="entity">实体</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        public Task<int> SetValueAsync(TEntity entity, Expression<Func<TEntity, bool>> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            string sql = SqlBuilder.CreateUpdateSqlCode(entity, convert.ConditionSql);
+            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, convert.ConditionSql, convert.Parameters);
+        }
 
         /// <summary>
         ///     条件更新
@@ -563,11 +500,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="value">值</param>
         /// <param name="lambda">条件</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value,
+        public Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value,
             Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await SetValueByConditionAsync(GetPropertyName(field), value, convert.ConditionSql,
+            return SetValueByConditionAsync(GetPropertyName(field), value, convert.ConditionSql,
                 convert.Parameters);
         }
 
@@ -579,12 +516,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private async Task<int> SetValueByConditionAsync(string field, object value, string condition,
+        private Task<int> SetValueByConditionAsync(string field, object value, string condition,
             params DbParameter[] args)
         {
-            int result = await DoUpdateValueAsync(field, value, condition, args);
-            await Provider.Injection?.OnMulitUpdateEvent(DataOperatorType.MulitUpdate, condition, args);
-            return result;
+            return DoUpdateValueAsync(field, value, condition, args);
         }
 
         /// <summary>
@@ -595,10 +530,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private async Task<int> SetValueInnerAsync(string field, object value, string condition,
+        private Task<int> SetValueInnerAsync(string field, object value, string condition,
             params DbParameter[] args)
         {
-            return await DoUpdateValueAsync(field, value, condition, args);
+            return DoUpdateValueAsync(field, value, condition, args);
         }
 
         /// <summary>
@@ -609,22 +544,35 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private async Task<int> DoUpdateValueAsync(string field, object value, string condition, DbParameter[] args)
+        private async Task<int> DoUpdateValueAsync(DataOperatorType operatorType, string sql, string condition, params DbParameter[] args)
+        {
+            if (sql == null)
+                return -1;
+            await Provider.DataOperator.BeforeExecute(operatorType, condition, args);
+            var cnt = await DataBase.ExecuteAsync(sql, args);
+            if (cnt <= 0)
+                return 0;
+            await Provider.DataOperator.AfterExecute(operatorType, condition, args);
+            return cnt;
+        }
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="value">值</param>
+        /// <param name="condition">更新条件</param>
+        /// <param name="args">条件参数</param>
+        /// <returns>更新行数</returns>
+        private Task<int> DoUpdateValueAsync(string field, object value, string condition, DbParameter[] args)
         {
             field = Option.FieldMap[field];
 
             var parameters = new List<DbParameter>();
             if (args != null)
                 parameters.AddRange(args);
-            var sql = SqlBuilder.CreateUpdateSql(SqlBuilder.FileUpdateSql(field, value, parameters), condition);
-
-            int result;
-            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
-            if (result <= 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-            return result;
+            var sql = SqlBuilder.CreateUpdateSqlCode(SqlBuilder.FileUpdateSetCode(field, value, parameters), condition);
+            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
         }
 
         /// <summary>
@@ -633,10 +581,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="expression">更新SQL表达式</param>
         /// <param name="condition">条件</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string expression, Expression<Func<TEntity, bool>> condition)
+        public Task<int> SetValueAsync(string expression, Expression<Func<TEntity, bool>> condition)
         {
             var convert = SqlBuilder.Compile(condition);
-            return await SetMulitValueAsync(expression, convert.ConditionSql, convert.Parameters);
+            return SetMulitValueAsync(expression, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -646,7 +594,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetMulitValueAsync(string expression, Expression<Func<TEntity, bool>> condition,
+        public Task<int> SetMulitValueAsync(string expression, Expression<Func<TEntity, bool>> condition,
             params DbParameter[] args)
         {
             var convert = SqlBuilder.Compile(condition);
@@ -655,7 +603,7 @@ namespace Agebull.EntityModel.Common
                 arg.AddRange(convert.DbParameter);
             if (args.Length > 0)
                 arg.AddRange(args);
-            return await SetMulitValueAsync(expression, convert.ConditionSql, arg.ToArray());
+            return SetMulitValueAsync(expression, convert.ConditionSql, arg.ToArray());
         }
 
         /// <summary>
@@ -665,17 +613,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetMulitValueAsync(string expression, string condition, DbParameter[] args)
+        public Task<int> SetMulitValueAsync(string expression, string condition, DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateUpdateSql(expression, condition);
-            int result;
-            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.MulitUpdate);
-
-            result = await DataBase.ExecuteAsync(sql, args);
-            if (result == 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-            return result;
+            var sql = SqlBuilder.CreateUpdateSqlCode(expression, condition);
+            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
         }
 
 
@@ -696,10 +637,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="fields">字段与值组合</param>
         /// <param name="lambda">条件</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(Expression<Func<TEntity, bool>> lambda, params (string field, object value)[] fields)
+        public Task<int> SetValueAsync(Expression<Func<TEntity, bool>> lambda, params (string field, object value)[] fields)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await SetValueAsync(convert.ConditionSql, convert.Parameters, fields);
+            return SetValueAsync(convert.ConditionSql, convert.Parameters, fields);
         }
 
         /// <summary>
@@ -709,7 +650,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
+        public Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
         {
             var parameters = new List<DbParameter>();
             if (args != null)
@@ -722,18 +663,12 @@ namespace Agebull.EntityModel.Common
                     first = false;
                 else
                     code.AppendLine(",");
-                code.Append(SqlBuilder.FileUpdateSql(Option.FieldMap[field.field], field.value, parameters));
+                code.Append(SqlBuilder.FileUpdateSetCode(Option.FieldMap[field.field], field.value, parameters));
             }
 
-            var sql = SqlBuilder.CreateUpdateSql(code.ToString(), condition);
+            var sql = SqlBuilder.CreateUpdateSqlCode(code.ToString(), condition);
+            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
 
-            int result;
-            Provider.Injection?.OnOperatorExecuting(condition, args, DataOperatorType.Update);
-            result = await DataBase.ExecuteAsync(sql, parameters.ToArray());
-            if (result <= 0)
-                return 0;
-            Provider.Injection?.OnOperatorExecuted(condition, args, DataOperatorType.MulitUpdate);
-            return result;
         }
         #endregion
 
@@ -780,7 +715,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<bool> InsertAsync(DbOperatorContext context, TEntity entity)
         {
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Insert);
+            await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Insert);
             DataOperator.SetParameterValue(entity, context.Command);
             if (Option.IsIdentity)
             {
@@ -795,12 +730,8 @@ namespace Agebull.EntityModel.Common
                 if (res == 0)
                     return false;
             }
+            await Provider.DataOperator.AfterSave(entity, DataOperatorType.Insert);
 
-            if (Provider.Injection != null)
-            {
-                Provider.Injection.EndSaved(entity, DataOperatorType.Insert);
-                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Insert);
-            }
             return true;
         }
 
@@ -830,7 +761,7 @@ namespace Agebull.EntityModel.Common
             var ctx = new DbOperatorContext
             {
                 ConnectionScope = scope,
-                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
+                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSqlCode(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyCondition))
             };
             DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();
@@ -845,7 +776,7 @@ namespace Agebull.EntityModel.Common
         {
             var ctx = new DbOperatorContext
             {
-                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSql(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyConditionSQL))
+                Command = scope.CreateCommand(SqlBuilder.CreateUpdateSqlCode(Option.UpdateSqlCode, SqlBuilder.PrimaryKeyCondition))
             };
             DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();
@@ -860,16 +791,13 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<bool> UpdateAsync(DbOperatorContext context, TEntity entity)
         {
-            Provider.Injection?.PrepareSave(entity, DataOperatorType.Update);
+            await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Update);
             DataOperator.SetParameterValue(entity, context.Command);
             var res = await context.Command.ExecuteNonQueryAsync();
             if (res == 0)
                 return false;
-            if (Provider.Injection != null)
-            {
-                Provider.Injection.EndSaved(entity, DataOperatorType.Update);
-                await Provider.Injection.OnEndSavedEvent(entity, DataOperatorType.Update);
-            }
+            await Provider.DataOperator.AfterSave(entity, DataOperatorType.Update);
+
             return true;
         }
 
@@ -886,66 +814,6 @@ namespace Agebull.EntityModel.Common
                 await UpdateAsync(context, entity);
             }
 
-            return true;
-        }
-
-        /// <summary>
-        /// 开始插入
-        /// </summary>
-        /// <returns></returns>
-        public async Task<DbOperatorContext> BeginDelete()
-        {
-            var scope = await DataBase.CreateConnectionScope();
-            var ctx = new DbOperatorContext
-            {
-                ConnectionScope = scope,
-                Command = scope.CreateCommand(SqlBuilder.CreateDeleteSql(SqlBuilder.PrimaryKeyConditionSQL))
-            };
-            ctx.Command.Parameters.Add(ParameterCreater.CreateParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            await ctx.Command.PrepareAsync();
-            return ctx;
-        }
-
-        /// <summary>
-        /// 开始插入
-        /// </summary>
-        /// <returns></returns>
-        public async Task<DbOperatorContext> BeginDelete(IConnectionScope scope)
-        {
-            var ctx = new DbOperatorContext
-            {
-                Command = scope.CreateCommand(SqlBuilder.CreateDeleteSql(SqlBuilder.PrimaryKeyConditionSQL))
-            };
-            ctx.Command.Parameters.Add(ParameterCreater.CreateParameter(Option.PrimaryKey, SqlBuilder.GetDbType(Option.PrimaryKey)));
-            await ctx.Command.PrepareAsync();
-            return ctx;
-        }
-
-        /// <summary>
-        /// 异步更新
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteAsync(DbOperatorContext context, object key)
-        {
-            context.Command.Parameters[Option.PrimaryKey].Value = key;
-            return await context.Command.ExecuteNonQueryAsync() == 1;
-        }
-
-        /// <summary>
-        /// 异步更新
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="entities"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteAsync(DbOperatorContext context, IEnumerable<object> keys)
-        {
-            foreach (var key in keys)
-            {
-                context.Command.Parameters[Option.PrimaryKey].Value = key;
-                await context.Command.ExecuteNonQueryAsync();
-            }
             return true;
         }
 

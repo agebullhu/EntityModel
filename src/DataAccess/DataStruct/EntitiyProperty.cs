@@ -14,63 +14,6 @@ using System;
 
 namespace Agebull.EntityModel.Common
 {
-    /// <summary>
-    ///     属性特性
-    /// </summary>
-    [Flags]
-    public enum PropertyFeatrue
-    {
-        /// <summary>
-        /// 无
-        /// </summary>
-        None,
-        /// <summary>
-        /// 数据库列
-        /// </summary>
-        DbCloumn,
-
-        /// <summary>
-        /// 属性
-        /// </summary>
-        Property,
-
-        /// <summary>
-        /// 接口
-        /// </summary>
-        Interface,
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        Alias
-    }
-
-    /// <summary>
-    ///     读写特性
-    /// </summary>
-    [Flags]
-    public enum ReadWriteFeatrue
-    {
-        /// <summary>
-        /// 不读写
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// 可读
-        /// </summary>
-        Read = 0x1,
-
-        /// <summary>
-        /// 插入
-        /// </summary>
-        Insert = 0x2,
-
-        /// <summary>
-        /// 更新
-        /// </summary>
-        Update = 0x4
-    }
 
     /// <summary>
     ///     表示属性结构
@@ -85,12 +28,17 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 字段特性
         /// </summary>
-        public PropertyFeatrue Featrue { get; set; }
+        public PropertyFeatrue PropertyFeatrue { get; set; }
 
         /// <summary>
         ///     连接字段
         /// </summary>
         public string Link { get; set; }
+
+        /// <summary>
+        ///     属性实现对应的接口
+        /// </summary>
+        public string[] Interfaces { get; set; }
 
         /// <summary>
         ///     标题

@@ -23,19 +23,6 @@ namespace Agebull.EntityModel.Common
         bool IsDisposed;
 
         /// <summary>
-        /// 析构
-        /// </summary>
-        public void Dispose()
-        {
-            if (IsDisposed)
-                return;
-            IsDisposed = true;
-            _= Command.DisposeAsync();
-            if (ConnectionScope != null)
-                _ = ConnectionScope.DisposeAsync();
-        }
-
-        /// <summary>
         ///     清理资源
         /// </summary>
 

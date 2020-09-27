@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Common
@@ -63,7 +64,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 可读写的属性
         /// </summary>
-        public EntitiyProperty[] ReadPproperties { get;protected set; }
+        public EntitiyProperty[] ReadPproperties { get; protected set; }
 
         /// <summary>
         ///     属性字典
@@ -139,7 +140,7 @@ namespace Agebull.EntityModel.Common
 
             foreach (var pro in properties)
             {
-                if (pro.Featrue.HasFlag(propertyFeatrue))
+                if (pro.PropertyFeatrue.HasFlag(propertyFeatrue))
                     action(pro);
             }
         }
@@ -153,7 +154,7 @@ namespace Agebull.EntityModel.Common
 
             foreach (var pro in properties)
             {
-                if (pro.Featrue.HasFlag(propertyFeatrue) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.PropertyFeatrue.HasFlag(propertyFeatrue) && pro.DbReadWrite.HasFlag(readWrite))
                     action(pro);
             }
         }
@@ -167,7 +168,7 @@ namespace Agebull.EntityModel.Common
 
             foreach (var pro in properties)
             {
-                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn))
                     action(pro);
             }
         }
@@ -181,7 +182,7 @@ namespace Agebull.EntityModel.Common
 
             foreach (var pro in properties)
             {
-                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
                     action(pro);
             }
         }
@@ -195,10 +196,63 @@ namespace Agebull.EntityModel.Common
 
             foreach (var pro in properties)
             {
-                if (pro.Featrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
                     await action(pro);
             }
         }
         #endregion
+    }
+
+
+    /// <summary>
+    /// 数据载入配置
+    /// </summary>
+    public class DataAccessOption<TEntity> : DataAccessOption
+        where TEntity : class, new()
+    {
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => Provider.SqlBuilder.DataBaseType;
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public ISqlBuilder<TEntity> SqlBuilder => Provider.SqlBuilder;
+
+        /// <summary>
+        /// 驱动提供者信息
+        /// </summary>
+        public DataAccessProvider<TEntity> Provider { get; set; }
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        public void Initiate()
+        {
+            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            PropertyMap = new Dictionary<string, EntitiyProperty>(StringComparer.OrdinalIgnoreCase);
+            var properties = Properties;
+            foreach (var pro in properties)
+            {
+                if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.DbCloumn))
+                    continue;
+                PropertyMap[pro.ColumnName] = pro;
+                PropertyMap[pro.PropertyName] = pro;
+
+                FieldMap[pro.ColumnName] = pro.ColumnName;
+                FieldMap[pro.PropertyName] = pro.ColumnName;
+            }
+
+            LoadFields ??= SqlBuilder.BuilderLoadFields();
+            InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
+            DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+            UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+
+            ReadPproperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
+
+        }
+
     }
 }

@@ -11,14 +11,15 @@
 
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
+    <Compile Remove="Scope\**" />
     <EmbeddedResource Remove="BusinessLogic\**" />
+    <EmbeddedResource Remove="Scope\**" />
     <None Remove="BusinessLogic\**" />
+    <None Remove="Scope\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DataUpdateTrigger\EntityEventArgument.cs" />
-    <Compile Remove="DataUpdateTrigger\EntitySubsist.cs" />
-    <Compile Remove="DataUpdateTrigger\IDataUpdateHandler.cs" />
+    <Compile Remove="DataAccess\DataAccessBase.group.cs" />
   </ItemGroup>
 
   <ItemGroup>

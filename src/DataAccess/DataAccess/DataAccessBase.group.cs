@@ -44,15 +44,13 @@ namespace Agebull.EntityModel.Common
             }
             var convert = SqlBuilder.Compile(lambda);
             code.AppendLine($" FROM {Option.ReadTableName} ");
-            code.AppendLine(SqlBuilder.InjectionCondition(convert.ConditionSql));
+            SqlBuilder.InjectionLoadCondition(code, convert.ConditionSql);
             code.Append($" GROUP BY {groupF};");
-
-
 
             var results = new List<T>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             {
-                using var cmd = connectionScope.CreateCommand( code.ToString(), convert.Parameters);
+                using var cmd = connectionScope.CreateCommand(code.ToString(), convert.Parameters);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {

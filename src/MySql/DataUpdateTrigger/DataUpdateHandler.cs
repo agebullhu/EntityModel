@@ -8,6 +8,7 @@
 
 using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -23,79 +24,6 @@ namespace Agebull.EntityModel.Events
     /// </summary>
     public class DataUpdateHandler : IDataUpdateHandler
     {
-        #region 对象类型检查
-
-        /// <summary>
-        /// 类型接口实现的数字表示
-        /// </summary>
-        public readonly Dictionary<Type, int> TypeInterfaces = new Dictionary<Type, int>();
-        /// <summary>
-        /// 表示
-        /// </summary>
-        public const int TypeofIAuthorData = 1;
-        /// <summary>
-        /// 表示
-        /// </summary>
-        public const int TypeofIHistoryData = 2;
-        /// <summary>
-        /// 表示
-        /// </summary>
-        public const int TypeofIOrganizationData = 4;
-        /// <summary>
-        /// 表示
-        /// </summary>
-        public const int TypeofIDepartmentData = 0x8;
-        /// <summary>
-        /// 表示
-        /// </summary>
-        public const int TypeofIVersionData = 0x10;
-
-        /// <summary>
-        /// 初始化类型
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        public void InitType<TEntity>() where TEntity : class, new()
-        {
-            if (TypeInterfaces.ContainsKey(typeof(TEntity)))
-                return;
-            var entity = new TEntity();
-            int type = 0;/*
-            if (entity is IAuthorData)
-            {
-                type |= TypeofIAuthorData;
-            }
-            if (entity is IHistoryData)
-            {
-                type |= TypeofIHistoryData;
-            }
-            if (entity is IOrganizationData)
-            {
-                type |= TypeofIOrganizationData;
-            }
-            if (entity is IDepartmentData)
-            {
-                type |= TypeofIDepartmentData;
-            }
-            if (entity is IVersionData)
-            {
-                type |= TypeofIVersionData;
-            }*/
-            TypeInterfaces.Add(typeof(TEntity), type);
-        }
-
-        /// <summary>
-        /// 是否指定类型
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public bool IsType<TEntity>(int type)
-        {
-            return TypeInterfaces.TryGetValue(typeof(TEntity), out var def) && (type & def) == type;
-        }
-
-        #endregion
-
         #region 数据事件
 
         /// <summary>
@@ -105,20 +33,73 @@ namespace Agebull.EntityModel.Events
         /// <param name="entity">实体</param>
         /// <param name="oType">操作</param>
         /// <param name="valueType">值类型</param>
-        /// <param name="value">内容</param>
+        /// <param name="val">内容</param>
         /// <remarks>
         /// 如果内容为实体,使用JSON序列化,
         /// 如果使用主键内容为#:[key](如:#:123)样式,
         /// 如果为批量操作,内容为QueryCondition的JSON序列化
         /// </remarks>
-        public async Task OnStatusChanged(string database, string entity, DataOperatorType oType, EntityEventValueType valueType, string value)
+        public async Task OnStatusChanged(string database, string entity,
+            DataOperatorType oType, EntityEventValueType valueType, object val)
         {
             var services = DependencyHelper.GetServices<IEntityEventProxy>();
             if (services == null)
                 return;
+            string value;
+            switch (valueType)
+            {
+                case EntityEventValueType.EntityJson:
+                    value = JsonConvert.SerializeObject(val);
+                    break;
+                case EntityEventValueType.Key:
+                case EntityEventValueType.Keys:
+                    value = val.ToString();
+                    break;
+                case EntityEventValueType.QueryCondition:
+                    {
+                        var arg = val as Tuple<string, DbParameter[]>;
+                        var parameter = arg.Item2;
+                        var queryCondition = new MulitCondition
+                        {
+                            Condition = arg.Item1,
+                            Parameters = new ConditionParameter[parameter.Length]
+                        };
+                        for (int i = 0; i < parameter.Length; i++)
+                        {
+                            queryCondition.Parameters[i] = new ConditionParameter
+                            {
+                                Name = parameter[i].ParameterName,
+                                Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
+                                Type = parameter[i].DbType
+                            };
+                        }
+                        value = JsonConvert.SerializeObject(queryCondition);
+                    }
+                    break;
+                default:
+                    value = null;
+                    break;
+            }
             foreach (var service in services)
                 await service.OnStatusChanged(database, entity, oType, valueType, value);
         }
+        #endregion
+
+        #region SQL注入
+
+        /// <summary>
+        ///     SQL注入
+        /// </summary>
+        /// <param name="option">当前数据操作配置</param>
+        /// <param name="conditions">附加的条件集合</param>
+        /// <returns></returns>
+        public void InjectionCondition<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
+            where TEntity : class, new()
+        {
+            foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
+                trigger.InjectionQueryCondition(option, conditions);
+        }
+
         #endregion
 
         #region 扩展流程
@@ -176,50 +157,148 @@ namespace Agebull.EntityModel.Events
                 trigger.OnOperatorExecuted(option, condition, args, operatorType);
         }
 
-        /// <summary>
-        ///     得到可正确拼接的SQL条件语句（可能是没有）
-        /// </summary>
-        /// <param name="option">当前数据操作配置</param>
-        /// <param name="conditions">附加的条件集合</param>
-        /// <returns></returns>
-        public void ConditionSqlCode<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
-            where TEntity : class, new()
-        {
-            foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>())
-                trigger.ConditionSqlCode(option, conditions);
-        }
-
-        /// <summary>
-        ///     与更新同时执行的SQL(更新之前立即执行)
-        /// </summary>
-        /// <param name="option">当前数据操作配置</param>
-        /// <param name="code">写入SQL的文本构造器</param>
-        /// <param name="condition">当前场景的执行条件</param>
-        /// <returns></returns>
-        public void BeforeUpdateSql<TEntity>(DataAccessOption<TEntity> option, StringBuilder code, string condition)
-             where TEntity : class, new()
-        {
-            foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>().Where(p => p.DataBaseType.HasFlag(option.DataBaseType)))
-            {
-                trigger.BeforeUpdateSql(option, condition, code);
-            }
-        }
-
-        /// <summary>
-        ///     与更新同时执行的SQL(更新之后立即执行)
-        /// </summary>
-        /// <param name="option">当前数据操作配置</param>
-        /// <param name="condition">当前场景的执行条件</param>
-        /// <param name="code">写入SQL的文本构造器</param>
-        /// <returns></returns>
-        public void AfterUpdateSql<TEntity>(DataAccessOption<TEntity> option, StringBuilder code, string condition)
-             where TEntity : class, new()
-        {
-            foreach (var trigger in DependencyHelper.GetServices<IDataTrigger>().Where(p => p.DataBaseType.HasFlag(option.DataBaseType)))
-            {
-                trigger.AfterUpdateSql(option, condition, code);
-            }
-        }
         #endregion
+
+
+        /*// <summary>
+        ///     载入条件数据
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns>如果有载入首行,否则返回空</returns>
+        public Task<List<TEntity>> LoadDataAsync(MulitCondition condition)
+        {
+            if (condition == null || string.IsNullOrEmpty(condition.Condition))
+                return Task.FromResult(new List<TEntity>());
+            if (condition.Parameters == null)
+                return LoadDataInnerAsync(condition.Condition, null, null);
+
+            List<DbParameter> args = new List<DbParameter>();
+            foreach (var item in condition.Parameters)
+            {
+                var pa = ParameterCreater.CreateParameter(item.Name, item.Type);
+                if (item.Value == null)
+                    pa.Value = DBNull.Value;
+                else
+                    switch (item.Type)
+                    {
+                        default:
+                            //case DbType.Xml:
+                            //case DbType.String:
+                            //case DbType.StringFixedLength:
+                            //case DbType.AnsiStringFixedLength:
+                            //case DbType.AnsiString:
+                            pa.Size = item.Value.Length * 2;
+                            pa.Value = item.Value;
+                            break;
+                        case DbType.Boolean:
+                            {
+                                pa.Value = bool.TryParse(item.Value, out var vl) && vl;
+                            }
+                            break;
+                        case DbType.Byte:
+                            {
+                                if (byte.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (byte)0;
+                            }
+                            break;
+                        case DbType.VarNumeric:
+                        case DbType.Decimal:
+                        case DbType.Currency:
+                            {
+                                if (decimal.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = (decimal)0;
+                            }
+                            break;
+                        case DbType.Time:
+                        case DbType.DateTime2:
+                        case DbType.DateTime:
+                        case DbType.Date:
+                            {
+                                if (DateTime.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.DateTimeOffset:
+                            {
+                                if (TimeSpan.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.Double:
+                            {
+                                if (double.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.Guid:
+                            {
+                                if (Guid.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.Int16:
+                            {
+                                if (short.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.Int32:
+                            {
+                                if (int.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.Int64:
+                            {
+                                if (long.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.SByte:
+                            break;
+                        case DbType.Single:
+                            {
+                                if (float.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.UInt16:
+                            {
+                                if (ushort.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.UInt32:
+                            {
+                                if (uint.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                        case DbType.UInt64:
+                            {
+                                if (ulong.TryParse(item.Value, out var vl))
+                                    pa.Value = vl;
+                                else pa.Value = DBNull.Value;
+                            }
+                            break;
+                    }
+                args.Add(pa);
+            }
+            return LoadDataInnerAsync(condition.Condition, null, args.ToArray());
+        }
+        */
+
     }
 }

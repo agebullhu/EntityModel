@@ -4,6 +4,7 @@ using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using Dapper;
+using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using Newtonsoft.Json;
 using System;
@@ -17,18 +18,25 @@ namespace DataAccessTest
 {
     class Program
     {
+        class aaa { }
+
         static async Task Main(string[] args)
         {
             ConfigurationHelper.Flush();
             DependencyHelper.AddScoped<EventBusDb>();
+            //DependencyHelper.ServiceCollection.AddTransient(typeof(IOperatorInjection<>),typeof(OperatorInjection<>));
+
             DependencyHelper.Reload();
+
+
             LoggerExtend.LogDataSql = false;
             await EntityModelPrepare();
             await DapperPrepare();
             Console.Write("请输入并行数：");
             var taskCnt = Console.ReadLine();
-            count = 0;
             {
+                Console.Write("【EntityModel Read】  ");
+                count = 0;
                 var list = new Task[int.Parse(taskCnt)];
                 var start = DateTime.Now;
                 for (var idx = 0; idx < list.Length; idx++)
@@ -37,10 +45,11 @@ namespace DataAccessTest
                 Task.WaitAll(list);
                 var end = DateTime.Now;
                 var time = (end - start).TotalSeconds;
-                Console.WriteLine($"【EntityModel Read】  ☆ {end}( { count / time}/s = {count } / {time}s)");
+                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
             }
-            count = 0;
             {
+                Console.Write("【Dapper Read】  ");
+                count = 0;
                 var list = new Task[int.Parse(taskCnt)];
                 var start = DateTime.Now;
                 for (var idx = 0; idx < list.Length; idx++)
@@ -49,22 +58,12 @@ namespace DataAccessTest
                 Task.WaitAll(list);
                 var end = DateTime.Now;
                 var time = (end - start).TotalSeconds;
-                Console.WriteLine($"【Dapper Read】 ☆ {end}( { count / time}/s = {count } / {time}s)");
+                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
             }
-            count = 0;
             {
-                var list = new Task[int.Parse(taskCnt)];
-                var start = DateTime.Now;
-                for (var idx = 0; idx < list.Length; idx++)
-                    list[idx] = DapperTest();
 
-                Task.WaitAll(list);
-                var end = DateTime.Now;
-                var time = (end - start).TotalSeconds;
-                Console.WriteLine($"【Dapper Read & Write】 ☆ {end}( { count / time}/s = {count } / {time}s)");
-            }
-            count = 0;
-            {
+                Console.Write("【EntityModel Write】  ");
+                count = 0;
                 var list = new Task[int.Parse(taskCnt)];
                 var start = DateTime.Now;
                 for (var idx = 0; idx < list.Length; idx++)
@@ -73,19 +72,35 @@ namespace DataAccessTest
                 Task.WaitAll(list);
                 var end = DateTime.Now;
                 var time = (end - start).TotalSeconds;
-                Console.WriteLine($"【EntityModel Read & Write】  ☆ {end}( { count / time}/s = {count } / {time}s)");
+                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
+            }
+            {
+                Console.Write("【Dapper Write】  ");
+                count = 0;
+                var list = new Task[int.Parse(taskCnt)];
+                var start = DateTime.Now;
+                for (var idx = 0; idx < list.Length; idx++)
+                    list[idx] = DapperTest();
+
+                Task.WaitAll(list);
+                var end = DateTime.Now;
+                var time = (end - start).TotalSeconds;
+                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
             }
         }
         static long count = 0;
         static async Task EntityModelPrepare()
         {
+            Console.Write("【EntityModel Prepare】");
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption,new EventSubscribeDataOperator());
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
-                await access.UpdateAsync(data);
+                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                var cnt = await access.UpdateAsync(data);
+                Console.WriteLine($"update {cnt} records,data:\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
             }
             catch (Exception ex)
             {
@@ -97,7 +112,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption, new EventSubscribeDataOperator());
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
 
                 //Console.WriteLine("【ExistAsync】");
@@ -216,8 +231,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = MysqlDataAccessProvider<EventSubscribeData, EventBusDb>.CreateDataAccess(DependencyHelper.ServiceProvider, EventSubscribeDataOperator.OperatorOption ,new EventSubscribeDataOperator());
-
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 for (int i = 0; i < 100; i++)
@@ -234,14 +248,15 @@ namespace DataAccessTest
 
         static async Task DapperPrepare()
         {
+            Console.Write("【Dapper Prepare】");
             using var scope = DependencyScope.CreateScope();
             try
             {
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
                 {
                     var data = await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
-                    await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
-                    Interlocked.Add(ref count, 100);
+                    var cnt = await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
+                    Console.WriteLine($" update {cnt} records,data:\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
                 }
             }
             catch (Exception ex)

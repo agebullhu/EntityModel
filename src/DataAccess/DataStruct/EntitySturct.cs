@@ -60,6 +60,22 @@ namespace Agebull.EntityModel.Common
         public string PrimaryKey { get; set; }
 
         /// <summary>
+        ///     实现的接口特性
+        /// </summary>
+        /// <remarks>
+        /// 接口特性：
+        /// 类似于接口的功能，但可能只从逻辑上保证接口特性，并不一定在数据模型上实现接口
+        /// 如实现IHistoryData接口，即为一个接口特性
+        /// 可通过接口特性完成SQL注入功能，从而独立化一些特殊功能
+        /// 如：要自动记录操作记录信息，只需要数据库有对应字段（create_date\create_user\update_date\update_user）
+        /// 接口器检查到此接口特性，即自动在Insert与Update语句中注入对应代码，实现自动化操作
+        /// 又如：逻辑删除，可通过检查特性来自动设置强查询条件is_delete=0
+        /// 再如：组织行级数据权限，可通过读取上下文中的角色设置与检查特性来自动设置强查询条件org_id=当前组织，
+        /// 写入数据时自动写入组织信息
+        /// </remarks>
+        public string[] InterfaceFeatures { get; set; }
+
+        /// <summary>
         ///     属性
         /// </summary>
         public List<EntitiyProperty> Properties { get; set; }

@@ -230,7 +230,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = Id,
                     PropertyIndex= Real_Id,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "",
                     Name         = "Id",
@@ -249,7 +249,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = EventId,
                     PropertyIndex= Real_EventId,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "EventId",
@@ -268,7 +268,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = Service,
                     PropertyIndex= Real_Service,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "Service",
@@ -287,7 +287,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = IsLookUp,
                     PropertyIndex= Real_IsLookUp,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "IsLookUp",
@@ -306,7 +306,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = ApiName,
                     PropertyIndex= Real_ApiName,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "ApiName",
@@ -325,7 +325,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = TargetDescription,
                     PropertyIndex= Real_TargetDescription,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "TargetDescription",
@@ -344,7 +344,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = TargetName,
                     PropertyIndex= Real_TargetName,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "TargetName",
@@ -363,7 +363,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = TargetType,
                     PropertyIndex= Real_TargetType,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "TargetType",
@@ -382,7 +382,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = Memo,
                     PropertyIndex= Real_Memo,
-                    Featrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                     Link         = "",
                     Name         = "Memo",
@@ -401,7 +401,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = IsFreeze,
                     PropertyIndex= Real_IsFreeze,
-                    Featrue      = PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.None,
                     Link         = "DataIsFreeze",
                     Name         = "IsFreeze",
@@ -420,7 +420,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = DataState,
                     PropertyIndex= Real_DataState,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "DataState",
                     Name         = "DataState",
@@ -439,7 +439,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = AddDate,
                     PropertyIndex= Real_AddDate,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read| ReadWriteFeatrue.Insert,
                     Link         = "AddDate",
                     Name         = "AddDate",
@@ -458,7 +458,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = AuthorId,
                     PropertyIndex= Real_AuthorId,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read| ReadWriteFeatrue.Insert,
                     Link         = "AddUserId",
                     Name         = "AuthorId",
@@ -477,7 +477,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = Author,
                     PropertyIndex= Real_Author,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "",
                     Name         = "Author",
@@ -496,7 +496,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = LastModifyDate,
                     PropertyIndex= Real_LastModifyDate,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "LastModifyDate",
                     Name         = "LastModifyDate",
@@ -515,7 +515,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = LastReviserId,
                     PropertyIndex= Real_LastReviserId,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "LastModifyUserId",
                     Name         = "LastReviserId",
@@ -534,7 +534,7 @@ namespace Zeroteam.MessageMVC.EventBus
                 {
                     Index        = LastReviser,
                     PropertyIndex= Real_LastReviser,
-                    Featrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
+                    PropertyFeatrue      = PropertyFeatrue.Interface | PropertyFeatrue.Property | PropertyFeatrue.DbCloumn,
                     DbReadWrite  = ReadWriteFeatrue.Read,
                     Link         = "",
                     Name         = "LastReviser",
