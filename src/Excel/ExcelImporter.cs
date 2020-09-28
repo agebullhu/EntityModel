@@ -18,6 +18,7 @@ using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -27,36 +28,26 @@ namespace Agebull.EntityModel.Excel
     ///     Excel导入类
     /// </summary>
     public class ExcelImporter<TData> : ScopeBase
-        where TData : EditDataObject, IIdentityData<long>, new()
+        where TData : EditDataObject, new()
     {
         #region 准备
+
+        /// <summary>
+        /// 数据访问对象
+        /// </summary>
+        public DataAccess<TData> Access { get; set; }
 
         /// <summary>
         ///     生成工作溥
         /// </summary>
         /// <param name="buffer">文件内容</param>
-        /// <param name="sheetName"></param>
-        /// <param name="map">字段映射</param>
         /// <returns>导入数量</returns>
-        public bool Prepare(byte[] buffer, string sheetName, Dictionary<string, string> map)
+        public bool Prepare(byte[] buffer)
         {
             Stream = new MemoryStream(buffer);
             Book = new XSSFWorkbook(Stream);
-            Sheet = Book.GetSheet(sheetName);
-            FieldMap = map;
+            Sheet = Book.GetSheetAt(0);
             return Prepare(Sheet);
-        }
-
-        /// <summary>
-        ///     准备导入Excel
-        /// </summary>
-        /// <param name="sheet">导入所在的工作表</param>
-        /// <param name="map">内部字段与Excel列的对照表</param>
-        /// <returns>导入数量</returns>
-        public bool Prepare(ISheet sheet, Dictionary<string, string> map)
-        {
-            FieldMap = map;
-            return Prepare(sheet);
         }
 
         /// <summary>
@@ -67,11 +58,22 @@ namespace Agebull.EntityModel.Excel
         public bool Prepare(ISheet sheet)
         {
             Sheet = sheet;
-            if (!Initiate() || !CheckFieldMaps()) return false;
-
+            if (!Initiate() || !CheckFieldMaps()) 
+                return false;
             ColumnFields2 = new Dictionary<string, int>();
             foreach (var mf in ColumnFields) ColumnFields2.Add(mf.Value, mf.Key);
             return true;
+        }
+
+        /// <summary>
+        ///     导出Excel
+        /// </summary>
+        /// <returns>数据</returns>
+        public byte[] ToStream()
+        {
+            using var mem = new MemoryStream();
+            Book.Write(mem);
+            return mem.GetBuffer();
         }
 
         #endregion
@@ -81,9 +83,18 @@ namespace Agebull.EntityModel.Excel
         /// <summary>
         ///     导入Excel
         /// </summary>
+        /// <returns>导入数量</returns>
+        public Task<bool> ImportExcel()
+        {
+            return ImportExcel(Write);
+        }
+
+        /// <summary>
+        ///     导入Excel
+        /// </summary>
         /// <param name="action">读到数据时的处理回调</param>
         /// <returns>导入数量</returns>
-        public bool ImportExcel(Func<TData, int, string> action)
+        public async Task<bool> ImportExcel(Func<TData, int, Task<string>> action)
         {
             var success = true;
             var emptyRow = 0;
@@ -101,7 +112,7 @@ namespace Agebull.EntityModel.Excel
                         break;
                 }
 
-                var msg = action(data, line);
+                var msg =await action(data, line);
                 if (nowSuccess && string.IsNullOrWhiteSpace(msg))
                     continue;
                 success = false;
@@ -110,15 +121,6 @@ namespace Agebull.EntityModel.Excel
             }
 
             return success;
-        }
-
-        /// <summary>
-        ///     导入Excel
-        /// </summary>
-        /// <returns>导入数量</returns>
-        public bool ImportExcel()
-        {
-            return ImportExcel(Write);
         }
 
         #endregion
@@ -229,27 +231,18 @@ namespace Agebull.EntityModel.Excel
         /// <param name="data"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        protected virtual string Write(TData data, int line)
+        protected virtual async Task<string> Write(TData data, int line)
         {
-            var info = data.Validate();
-            if (info.Succeed)
-                return !Write(data, out var msg2) ? msg2 : null;
+            var result = data.Validate();
+            if (result.Succeed)
+                return await Access.SaveAsync(data) ? "无法写入" : null;
 
-            foreach (var item in info.Items)
+            foreach (var item in result.Items)
                 if (ColumnFields2.TryGetValue(item.Name, out var col))
                     WriteCellState(line, col, item.Message, true);
-            return info.ToString();
+            return result.ToString();
         }
 
-        /// <summary>
-        ///     数据取到后的处理
-        /// </summary>
-        /// <returns></returns>
-        protected virtual bool Write(TData data, out string msg)
-        {
-            msg = null;
-            return true;
-        }
 
         #endregion
 
@@ -272,19 +265,6 @@ namespace Agebull.EntityModel.Excel
             return true;
         }
 
-
-        /// <summary>
-        ///     设置字段值
-        /// </summary>
-        /// <param name="data">数据类对象</param>
-        /// <param name="field">字段</param>
-        /// <param name="value">读取出的文本值</param>
-        protected virtual bool SetValue(TData data, string field, string value)
-        {
-            data.SetValue(field, value);
-            return true;
-        }
-
         #endregion
 
         #region 数据读取
@@ -301,7 +281,7 @@ namespace Agebull.EntityModel.Excel
             var field = ColumnFields[column];
             try
             {
-                SetValue(data, field, value);
+                data.SetValue(field, value);
                 return true;
             }
             catch (Exception ex)

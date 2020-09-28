@@ -9,42 +9,31 @@
                 自动实现基本增删改查API页面的基类
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
-            <summary>
-                检查值的唯一性
-            </summary>
-            <typeparam name="TValue"></typeparam>
-            <param name="name"></param>
-            <param name="field"></param>
-        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.ApiController`3.Business">
             <summary>
                 业务逻辑对象
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Convert(System.String)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Unique(System.String,System.String,`1)">
             <summary>
-            转换方法
+                检查值的唯一性
             </summary>
-            <param name="value"></param>
-            <returns></returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.List(Agebull.MicroZero.ZeroApis.QueryArgument)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.List">
             <summary>
                 列表数据
             </summary>
-            <param name="args">查询参数</param>
             <remarks>
             参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
             </remarks>
             <returns></returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.QueryFirst(`0)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.QueryFirst">
             <summary>
                 单条数据查询
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Details(Agebull.MicroZero.ZeroApis.IdArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Details">
             <summary>
                 单条详细数据
             </summary>
@@ -59,9 +48,32 @@
                 更新数据
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Delete(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Delete">
             <summary>
                 删除多条数据
+            </summary>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Export(`0)">
+            <summary>
+                导出到Excel
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Import(System.Byte[])">
+            <summary>
+                从Excep导入
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
             </summary>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
@@ -70,30 +82,6 @@
             </summary>
             <param name="filter">筛选器</param>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-                取得列表数据
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.LoadListData(System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                取得列表数据
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CheckListResult(ZeroTeam.MessageMVC.ZeroApis.ApiPageData{`0},System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                数据准备返回的处理
-            </summary>
-            <param name="result">当前的查询结果</param>
-            <param name="condition">当前的查询条件</param>
-            <param name="args">当前的查询参数</param>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.OnListLoaded(System.Collections.Generic.IList{`0})">
-            <summary>
-                数据载入的处理
-            </summary>
-            <param name="datas"></param>
-        </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.ReadFormData(`0,Agebull.MicroZero.ZeroApis.FormConvert)">
             <summary>
                 读取Form传过来的数据
@@ -101,35 +89,12 @@
             <param name="entity">实体</param>
             <param name="convert">转化器</param>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoDetails(`1)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.Convert(System.String)">
             <summary>
-                载入当前操作的数据
+            转换方法
             </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.OnDetailsLoaded(`0,System.Boolean)">
-            <summary>
-                详细数据载入
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.CreateData">
-            <summary>
-                新增一条带默认值的数据
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoAddNew">
-            <summary>
-                新增
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoUpdate(`1)">
-            <summary>
-                更新对象
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiController`3.DoDelete">
-            <summary>
-                删除对象
-            </summary>
+            <param name="value"></param>
+            <returns></returns>
         </member>
         <member name="T:Agebull.MicroZero.ZeroApis.ApiController`2">
             <summary>
@@ -144,37 +109,37 @@
                 审核支持API页面的基类
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditDeny(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditDeny">
             <summary>
                 审核不通过
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Pullback(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Pullback">
             <summary>
                 拉回已提交的审核
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.SubmitAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.SubmitAudit">
             <summary>
                 提交审核
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Validate(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.Validate">
             <summary>
                 校验审核数据
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditPass(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.AuditPass">
             <summary>
                 审核通过
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.UnAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.UnAudit">
             <summary>
                 重新审核
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.BackAudit(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForAudit`3.BackAudit">
             <summary>
                 退回(审核)
             </summary>
@@ -227,33 +192,25 @@
             <typeparam name="TPrimaryKey">主键类型</typeparam>
             <typeparam name="TBusinessLogic">业务对象</typeparam>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Reset(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Reset(System.String[])">
             <summary>
                 重置数据状态
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Discard(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Discard(System.String[])">
             <summary>
                 废弃数据
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Disable(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Disable(System.String[])">
             <summary>
                 禁用数据
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Enable(Agebull.MicroZero.ZeroApis.IdsArguent)">
+        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.Enable(System.String[])">
             <summary>
                 启用数据
             </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.CheckUnique``1(System.String,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
-            <summary>
-                检查值的唯一性
-            </summary>
-            <typeparam name="TValue"></typeparam>
-            <param name="name"></param>
-            <param name="field"></param>
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`3.OnReset">
             <summary>
@@ -287,107 +244,6 @@
         </member>
         <member name="M:Agebull.MicroZero.ZeroApis.ApiControllerForDataState`2.Convert(System.String)">
             <inheritdoc/>
-        </member>
-        <member name="T:Agebull.MicroZero.ZeroApis.IDataExtendChecker">
-            <summary>
-                数据扩展检查器
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareAddnew``1(``0)">
-            <summary>
-            新增前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareUpdate``1(``0)">
-            <summary>
-            更新前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareDelete``1(System.Collections.Generic.IEnumerable{System.Int64})">
-            <summary>
-            删除前检查
-            </summary>
-            <param name="ids"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.IDataExtendChecker.PrepareQuery(Agebull.EntityModel.Common.IDataAccess,System.String@,System.Data.Common.DbParameter[]@)">
-            <summary>
-            查询前检查
-            </summary>
-            <param name="dataTable"></param>
-            <param name="condition"></param>
-            <param name="args"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.MicroZero.ZeroApis.DataExtendChecker">
-            <summary>
-                数据扩展检查器
-            </summary>
-        </member>
-        <member name="F:Agebull.MicroZero.ZeroApis.DataExtendChecker.ExtendCheckers.Dictionary">
-            <summary>
-            检查器集合
-            </summary>
-        </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.DataExtendChecker.ExtendCheckers.Convert">
-            <summary>
-            转换器
-            </summary>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.Regist``2">
-            <summary>
-            注册检查器
-            </summary>
-            <typeparam name="TDataExtendChecker">检查器本身</typeparam>
-            <typeparam name="TTargetType">检查的目标类型</typeparam>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareAddnew``1(``0)">
-            <summary>
-            新增前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareUpdate``1(``0)">
-            <summary>
-            更新前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareDelete``1(System.Int64[])">
-            <summary>
-            删除前检查
-            </summary>
-            <param name="ids"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.DataExtendChecker.PrepareQuery``1(Agebull.EntityModel.Common.IDataAccess,System.String@,System.Data.Common.DbParameter[]@)">
-            <summary>
-            查询前检查
-            </summary>
-            <param name="dataTable"></param>
-            <param name="condition"></param>
-            <param name="args"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.MicroZero.ZeroApis.HttpPostAttribute">
-            <summary>
-            兼容性
-            </summary>
-        </member>
-        <member name="T:Agebull.MicroZero.ZeroApis.HttpGetAttribute">
-            <summary>
-            兼容性
-            </summary>
         </member>
         <member name="T:Agebull.MicroZero.ZeroApis.FormConvert">
             <summary>
@@ -1215,371 +1071,6 @@
             <param name="exception"></param>
             <param name="tag">扩展信息</param>
             <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.EasyComboValues">
-            <summary>
-            支持Easy combobox的键值对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyComboValues.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyComboValues.#ctor(System.Object,System.Object,System.Object,System.Object)">
-            <summary>
-            构造
-            </summary>
-            <param name="key"></param>
-            <param name="value"></param>
-            <param name="extend"></param>
-            <param name="tag"></param>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.EasyComboValues.Empty">
-            <summary>
-            空内容
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Key">
-            <summary>
-                键
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Value">
-            <summary>
-                值
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Extend">
-            <summary>
-                值
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyComboValues.Tag">
-            <summary>
-                值
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.EasyUiGridData`1">
-            <summary>
-            支持EasyUi表格列表数据的对象
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Data">
-            <summary>
-                返回的数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Total">
-            <summary>
-                总行数
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiGridData`1.Footer">
-            <summary>
-                页脚
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase">
-            <summary>
-                EasyUi树数据的格式
-            </summary>
-            <remarks>仅调用ToJson时符合格式</remarks>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.ID">
-            <summary>
-                节点的 id，它对于加载远程数据很重要。
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsChecked">
-            <summary>
-                是否已选择
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsSelect">
-            <summary>
-                是否已选择
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.TreeState">
-            <summary>
-                表格树关闭状态
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Icon">
-            <summary>
-                图标
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsOpen">
-            <summary>
-                是否展开
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.IsFolder">
-            <summary>
-            是否文件夹
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Text">
-            <summary>
-                显示的节点文字。
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Title">
-            <summary>
-                对象的原始标题
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Attributes">
-            <summary>
-                给一个节点追加的自定义属性。
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Tag">
-            <summary>
-                标签文本
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Memo">
-            <summary>
-                备注文本
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Json">
-            <summary>
-                还有其它的
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Extend">
-            <summary>
-                其它文本
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.ToString">
-            <inheritdoc />
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.EasyUiTreeNodeBase.Empty">
-            <summary>
-            空对象
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNode">
-            <summary>
-                EasyUi树数据的格式
-            </summary>
-            <remarks>仅调用ToJson时符合格式</remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.#ctor(System.Collections.Generic.List{Agebull.EntityModel.EasyUI.EasyUiTreeNode})">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.HaseChildren">
-            <summary>
-            有否子级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.Children">
-            <summary>
-                表格树的下级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode.TreeState">
-            <summary>
-                表格树关闭状态
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.EasyUiTreeNode.EmptyNode">
-            <summary>
-            空内容
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode.ToString">
-            <inheritdoc />
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1">
-            <summary>
-                EasyUi树数据的格式
-            </summary>
-            <remarks>仅调用ToJson时符合格式</remarks>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.HaseChildren">
-            <summary>
-            有否子级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.Data">
-            <summary>
-                数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.Children">
-            <summary>
-                表格树的下级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.TreeState">
-            <summary>
-                表格树关闭状态
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.EasyUiTreeNode`1.ToString">
-            <inheritdoc />
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.FamilyData`2">
-            <summary>
-                两层树形数据
-            </summary>
-            <typeparam name="TParent">上级类型</typeparam>
-            <typeparam name="TChild">子级类型</typeparam>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.FamilyData`2.Data">
-            <summary>
-                本级数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.FamilyData`2.Children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.TreeData`1">
-            <summary>
-                树形数据
-            </summary>
-            <typeparam name="TData">数据类型</typeparam>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.TreeData`1._children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`1.Data">
-            <summary>
-                本级数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`1.Children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.TreeData`2">
-            <summary>
-                树形数据(带关联节点)
-            </summary>
-            <typeparam name="TData">本级数据</typeparam>
-            <typeparam name="TItem">其它关联节点</typeparam>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.TreeData`2._children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.TreeData`2._items">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Data">
-            <summary>
-                本级数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Items">
-            <summary>
-                其它关联节点
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`2.Children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.TreeData`3">
-            <summary>
-                树形数据(带关联节点)
-            </summary>
-            <typeparam name="TData">本级数据</typeparam>
-            <typeparam name="TItem">其它关联节点</typeparam>
-            <typeparam name="TFriend">本级关联数据</typeparam>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.TreeData`3._children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.EasyUI.TreeData`3._items">
-            <summary>
-                其它关联节点
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Data">
-            <summary>
-                本级数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Friend">
-            <summary>
-                本级关联数据
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Items">
-            <summary>
-                其它关联节点
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.TreeData`3.Children">
-            <summary>
-                子级
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.EasyUI.PageData`1">
-            <summary>
-                分页类
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.EasyUI.PageData`1.#ctor">
-            <summary>
-                分页类
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.WhereStr">
-            <summary>
-                查询条件
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageIndex">
-            <summary>
-                当前页码
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageSize">
-            <summary>
-                每页显示条数
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.Count">
-            <summary>
-                总记录数
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.PageCount">
-            <summary>
-                总页码数
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.EasyUI.PageData`1.DataSoure">
-            <summary>
-                数据集
-            </summary>
         </member>
     </members>
 </doc>

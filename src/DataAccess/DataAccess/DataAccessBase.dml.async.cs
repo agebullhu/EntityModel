@@ -102,14 +102,14 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     更新数据
         /// </summary>
-        public async Task<int> UpdateAsync(TEntity entity, bool reload = false)
+        public async Task<bool> UpdateAsync(TEntity entity, bool reload = false)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             if (!await UpdateInnerAsync(entity))
-                return 0;
+                return false;
             if (reload)
                 await ReLoadInnerAsync(entity);
-            return true ? 1 : 0;
+            return true;
         }
 
         /// <summary>
@@ -140,6 +140,7 @@ namespace Agebull.EntityModel.Common
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Provider.DataOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
             var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyCondition, null, null);
             await using var cmd = connectionScope.CreateCommand(sql, para);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
                 return false;
@@ -264,7 +265,7 @@ namespace Agebull.EntityModel.Common
             await using var cmd = connectionScope.CreateCommand(sql);
             DataOperator.SetEntityParameter(cmd, entity);
 
-            //DataBase.TraceSql(cmd);
+            DataBase.TraceSql(cmd);
 
             if (await cmd.ExecuteNonQueryAsync() <= 0)
             {
@@ -282,9 +283,9 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     删除数据
         /// </summary>
-        public Task<int> DeletePrimaryKeyAsync(object key)
+        public async Task<bool> DeletePrimaryKeyAsync(object key)
         {
-            return DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            return 1 == await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
 
@@ -302,10 +303,10 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     物理删除数据
         /// </summary>
-        public Task<int> PhysicalDeleteAsync(object key)
+        public async Task<bool> PhysicalDeleteAsync(object key)
         {
             var sql = SqlBuilder.PhysicalDeleteSqlCode(SqlBuilder.PrimaryKeyCondition);
-            return DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
+            return 1 == await DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
                 ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
@@ -573,6 +574,18 @@ namespace Agebull.EntityModel.Common
                 parameters.AddRange(args);
             var sql = SqlBuilder.CreateUpdateSqlCode(SqlBuilder.FileUpdateSetCode(field, value, parameters), condition);
             return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
+        }
+
+        /// <summary>
+        ///     自定义更新（更新表达式自写）
+        /// </summary>
+        /// <param name="expression">更新SQL表达式</param>
+        /// <param name="condition">条件</param>
+        /// <returns>更新行数</returns>
+        public Task<int> SetValueAsync(string expression, LambdaItem<TEntity> condition)
+        {
+            var convert = SqlBuilder.Compile(condition);
+            return SetMulitValueAsync(expression, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>

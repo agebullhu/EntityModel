@@ -267,6 +267,7 @@ namespace Agebull.EntityModel.MySql
         {
             await using var scope = await ConnectionScope.CreateScope(this);
             using var cmd = scope.CreateCommand(sql, args);
+            TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -283,6 +284,7 @@ namespace Agebull.EntityModel.MySql
         {
             await using var scope = await ConnectionScope.CreateScope(this);
             await using var cmd = scope.CreateCommand(sql, args);
+            TraceSql(cmd);
             var result = await cmd.ExecuteScalarAsync();
             return (result != null, result == DBNull.Value ? null : result);
         }
@@ -302,25 +304,9 @@ namespace Agebull.EntityModel.MySql
         {
             if (!LoggerExtend.LogDataSql)
                 return;
-            TraceSql(cmd.CommandText, cmd.Parameters.Cast<MySqlParameter>());
-        }
-
-        /// <summary>
-        ///     记录SQL日志
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        public void TraceSql(string sql, IEnumerable<DbParameter> args)
-        {
-            if (!LoggerExtend.LogDataSql)
-                return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
-            var parameters = args as MySqlParameter[] ?? args.ToArray();
+            var parameters = cmd.Parameters.OfType<MySqlParameter>();
             foreach (var par in parameters)
             {
                 code.AppendLine($"declare ?{par.ParameterName} {par.DbType};");
@@ -332,9 +318,8 @@ namespace Agebull.EntityModel.MySql
                 else
                     code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
-            code.AppendLine(sql);
-
-            Console.WriteLine(code.ToString());
+            code.AppendLine(cmd.CommandText);
+            DependencyScope.Logger?.Information(code.ToString());
         }
 
         #endregion

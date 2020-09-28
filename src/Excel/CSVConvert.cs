@@ -17,16 +17,17 @@ namespace Hpc.Project.ImportSkuCsv
         /// <summary>
         ///     导出
         /// </summary>
+        /// <param name="access"></param>
         /// <param name="datas"></param>
         /// <returns></returns>
-        public static string Export<T>(IList<T> datas)
-            where T : EditDataObject
+        public static string Export<T>(DataAccess<T> access, IList<T> datas)
+            where T : class, new()
         {
             if (datas.Count == 0)
                 return null;
             var sb = new StringBuilder();
             bool first = true;
-            var fields = datas[0].__Struct.Properties.Values.Where(p => p.CanExport).ToArray();
+            var fields = access.Option.Properties.Where(p => p.CanExport).ToArray();
             foreach (var pro in fields)
             {
                 if (first)
@@ -45,7 +46,7 @@ namespace Hpc.Project.ImportSkuCsv
                         first = false;
                     else
                         sb.Append(',');
-                    var value = data.GetValue(pro.Name)?.ToString();
+                    var value = access.DataOperator.GetValue(data, pro.Name)?.ToString();
                     if (value != null && pro.PropertyType == typeof(string))
                         value = value.Replace("\"", "\"\"");
                     sb.Append($"\"{value}\"");

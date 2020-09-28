@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.0.1.5</Version>
+    <Version>5.0.0.11-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
@@ -32,10 +32,14 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Agebull.EntityModel.Excel.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NPOI" Version="2.5.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
   </ItemGroup>
 
 </Project>

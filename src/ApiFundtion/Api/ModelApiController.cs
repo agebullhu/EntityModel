@@ -18,17 +18,16 @@ namespace Agebull.MicroZero.ZeroApis
         }
 
         #region 基本属性
+
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        public IUser UserInfo { get; set; }
-
-        IInlineMessage _message;
+        public IUser UserInfo => GlobalContext.Current.User;
 
         /// <summary>
         /// 原始调用帧消息
         /// </summary>
-        public IInlineMessage Message => _message ??= GlobalContext.Current.Message;
+        public IInlineMessage Message => GlobalContext.Current.Message;
 
         #endregion
 
@@ -53,6 +52,11 @@ namespace Agebull.MicroZero.ZeroApis
 
         #region 权限相关
 
+        /// <summary>
+        ///     当前用户是否已登录成功
+        /// </summary>
+        protected internal bool UserIsLogin => !string.IsNullOrEmpty(UserInfo.UserId);
+
         /*// <summary>
         ///     是否公开页面
         /// </summary>
@@ -67,11 +71,6 @@ namespace Agebull.MicroZero.ZeroApis
         ///     当前页面权限配置
         /// </summary>
         public IRolePower PagePower => BusinessContext.Context.CurrentPagePower;*/
-
-        /// <summary>
-        ///     当前用户是否已登录成功
-        /// </summary>
-        protected internal bool UserIsLogin => !string.IsNullOrEmpty(UserInfo.UserId);
 
         #endregion
 

@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>4.0.1.5</Version>
+    <Version>5.0.0.11-bate</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -40,24 +40,38 @@
     <DocumentationFile>Agebull.EntityModel.Core.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Base\**" />
+    <Compile Remove="ClientData\**" />
     <Compile Remove="DEncrypt\**" />
+    <Compile Remove="Helper\**" />
+    <Compile Remove="Permissions\**" />
     <Compile Remove="Redis\**" />
+    <Compile Remove="Tson\**" />
+    <EmbeddedResource Remove="Base\**" />
+    <EmbeddedResource Remove="ClientData\**" />
     <EmbeddedResource Remove="DEncrypt\**" />
+    <EmbeddedResource Remove="Helper\**" />
+    <EmbeddedResource Remove="Permissions\**" />
     <EmbeddedResource Remove="Redis\**" />
+    <EmbeddedResource Remove="Tson\**" />
+    <None Remove="Base\**" />
+    <None Remove="ClientData\**" />
     <None Remove="DEncrypt\**" />
+    <None Remove="Helper\**" />
+    <None Remove="Permissions\**" />
     <None Remove="Redis\**" />
+    <None Remove="Tson\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Base\TableSql.cs" />
     <Compile Remove="Entity\ApiArrayResult.cs" />
     <Compile Remove="Entity\ApiFileResult.cs" />
     <Compile Remove="Entity\ApiValueResult.cs" />
-    <Compile Remove="Helper\EditScope.cs" />
-    <Compile Remove="Permissions\IPowerChecker.cs" />
-    <Compile Remove="Permissions\IRolePower.cs" />
+    <Compile Remove="Interface\ISqlCondition.cs" />
+    <Compile Remove="Interface\PropertyChangingEventArgsEx.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="Status\EditArrestMode.cs" />
+    <Compile Remove="Status\IconHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,6 +86,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.19" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
   </ItemGroup>
 </Project>

@@ -369,7 +369,7 @@ FROM {Option.ReadTableName}{condition};";
         public string CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
         {
             var sql = new StringBuilder();
-            sql.Append($@"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
+            sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
             InjectionLoadCondition(sql, condition);
 
             var orderField = string.IsNullOrWhiteSpace(order) || !Option.FieldMap.ContainsKey(order)

@@ -53,7 +53,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     字段
         /// </summary>
-        private readonly Dictionary<string, string> _messages = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _messages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// 设置错误字段
@@ -79,7 +79,7 @@ namespace Agebull.MicroZero.ZeroApis
                 StringBuilder msg = new StringBuilder();
                 foreach (var kv in _messages)
                 {
-                    var field = Data.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == kv.Key)?.Caption ?? kv.Key;
+                    var field = Data.__Struct.Properties.FirstOrDefault(p => p.JsonName == kv.Key)?.Caption ?? kv.Key;
                     msg.AppendLine($"{field} : {kv.Value}");
                 }
                 return msg.ToString();
@@ -94,7 +94,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数
         /// </summary>
-        private readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
+        internal readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
 
         /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充

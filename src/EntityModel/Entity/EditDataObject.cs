@@ -263,11 +263,11 @@ namespace Agebull.EntityModel.Common
 
         #region 属性
 
-        /*// <summary>
+        /// <summary>
         ///     实体结构
         /// </summary>
         [IgnoreDataMember, Browsable(false), JsonIgnore]
-        public abstract EntitySturct __Struct { get; }*/
+        public abstract EntitySturct __Struct { get; }
 
         #endregion
 

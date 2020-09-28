@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.Excel
     /// </summary>
     /// <typeparam name="TData">数据类型</typeparam>
     public class ExcelReportBase<TData>
-        where TData : EditDataObject, IIdentityData<long>, new()
+            where TData : class, new()
     {
         /// <summary>
         ///     行高与列宽(第一个数组为列宽,第一个数组为行高)

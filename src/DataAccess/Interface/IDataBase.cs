@@ -110,17 +110,6 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         void TraceSql(DbCommand cmd);
 
-        /// <summary>
-        ///     记录SQL日志
-        /// </summary>
-        /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
-        /// <returns>操作的第一行第一列或空</returns>
-        /// <remarks>
-        ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-        /// </remarks>
-        void TraceSql(string sql, IEnumerable<DbParameter> args);
-
         #endregion
 
     }

@@ -17,28 +17,13 @@ namespace Agebull.EntityModel.Excel
     /// </summary>
     /// <typeparam name="TData">数据类型</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    /// <typeparam name="TAccess">数据类型对应的数据访问类</typeparam>
-    public class ExcelExporter<TData,TPrimaryKey, TAccess> : ScopeBase
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
-        where TAccess : class, IDataAccess<TData>, new()
+    public class ExcelExporter<TData, TPrimaryKey> : ScopeBase
+            where TData : class, new()
     {
-
-
-
-        private TAccess _access;
-
         /// <summary>
         ///     数据访问对象
         /// </summary>
-        public TAccess Access => _access ??= CreateAccess();
-
-        /// <summary>
-        ///     数据访问对象
-        /// </summary>
-        protected virtual TAccess CreateAccess()
-        {
-            return new TAccess();
-        }
+        public DataAccess<TData> Access { get; set; }
 
         /// <summary>
         /// 工作簿对象
@@ -49,11 +34,11 @@ namespace Agebull.EntityModel.Excel
         ///     导出Excel
         /// </summary>
         /// <returns>数据</returns>
-        public byte[] ExportExcel(string name, string path)
+        public async Task<byte[]> ExportExcel(string name, string path)
         {
             Book = new XSSFWorkbook(path);
             var sheet = Book.CreateSheet(name);
-            ExportExcel(sheet);
+            await ExportExcel(sheet);
             using var mem = new MemoryStream();
             Book.Write(mem);
             return mem.GetBuffer();
@@ -66,11 +51,11 @@ namespace Agebull.EntityModel.Excel
         /// <param name="name"></param>
         /// <param name="path"></param>
         /// <returns>数据</returns>
-        public byte[] ExportExcel(LambdaItem<TData> lambda, string name, string path)
+        public async Task<byte[]> ExportExcel(LambdaItem<TData> lambda, string name, string path)
         {
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);
-            ExportExcel(sheet, lambda).Wait();
+            await ExportExcel(sheet, lambda);
             using var mem = new MemoryStream();
             Book.Write(mem);
             return mem.ToArray();
@@ -112,11 +97,11 @@ namespace Agebull.EntityModel.Excel
         /// <param name="lambda">查询条件</param>
         /// <param name="name"></param>
         /// <returns>数据</returns>
-        public byte[] ExportExcel(Expression<Func<TData, bool>> lambda, string name = "Sheet1")
+        public async Task<byte[]> ExportExcel(Expression<Func<TData, bool>> lambda, string name = "Sheet1")
         {
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);
-            ExportExcel(sheet, lambda);
+            await ExportExcel(sheet, lambda);
             using var mem = new MemoryStream();
             Book.Write(mem);
             return mem.GetBuffer();
@@ -128,26 +113,27 @@ namespace Agebull.EntityModel.Excel
         /// <param name="sheet">导入所在的工作表</param>
         /// <param name="lambda">查询条件</param>
         /// <returns>数据</returns>
-        public void ExportExcel(ISheet sheet, Expression<Func<TData, bool>> lambda)
+        public async Task ExportExcel(ISheet sheet, Expression<Func<TData, bool>> lambda)
         {
-            var datas = Access.All(lambda);
+            var datas = await Access.AllAsync(lambda);
             WriteToSheet(sheet, datas);
         }
 
         /// <summary>
         /// 数据载入的处理
         /// </summary>
-        public Action<List<TData>> OnDataLoad;
+        public Func<List<TData>,Task> OnDataLoad;
 
         /// <summary>
         ///     导出Excel
         /// </summary>
         /// <param name="sheet">导入所在的工作表</param>
         /// <returns>数据</returns>
-        public void ExportExcel(ISheet sheet)
+        public async Task ExportExcel(ISheet sheet)
         {
-            var datas = Access.All();
-            OnDataLoad?.Invoke(datas);
+            var datas = await Access.AllAsync();
+            if(OnDataLoad != null)
+                await OnDataLoad(datas);
             WriteToSheet(sheet, datas);
         }
 
@@ -187,7 +173,7 @@ namespace Agebull.EntityModel.Excel
 
             int line = 0;
             var row = sheet.SafeGetRow(line);
-            var importFields = datas[0].__Struct.Properties.Values.Where(p => p.CanExport).OrderBy(p => p.Index).ToArray();
+            var importFields = Access.Option.Properties.Where(p => p.CanExport).OrderBy(p => p.Index).ToArray();
             int idx = 0;
             foreach (var field in importFields)
             {
@@ -199,7 +185,7 @@ namespace Agebull.EntityModel.Excel
                 row = sheet.SafeGetRow(++line);
                 foreach (var field in importFields)
                 {
-                    var vl = data.GetValue(field.PropertyName);
+                    var vl = Access.DataOperator.GetValue(data, field.PropertyName);
                     if (vl != null)
                     {
                         if (field.PropertyType == typeof(int))

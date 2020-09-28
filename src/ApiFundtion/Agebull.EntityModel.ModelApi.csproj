@@ -31,7 +31,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>4.0.1.5</Version>
+    <Version>5.0.0.11-bate</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -50,6 +50,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
     <DocumentationFile>Agebull.EntityModel.ModelApi.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="WebSeitch\**" />
+    <EmbeddedResource Remove="WebSeitch\**" />
+    <None Remove="WebSeitch\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\DataExtendChecker.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Agebull.EntityModel.ModelApi.xml" />
+  </ItemGroup>
   
   <ItemGroup>
     <Folder Include="Properties\" />

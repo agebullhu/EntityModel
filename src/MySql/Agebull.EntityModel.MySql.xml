@@ -210,17 +210,6 @@
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.TraceSql(System.String,System.Collections.Generic.IEnumerable{System.Data.Common.DbParameter})">
-            <summary>
-                记录SQL日志
-            </summary>
-            <param name="sql">SQL语句</param>
-            <param name="args">参数</param>
-            <returns>操作的第一行第一列或空</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-            </remarks>
-        </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlSqlBuilder`1">
             <summary>
                 Sql实体访问类

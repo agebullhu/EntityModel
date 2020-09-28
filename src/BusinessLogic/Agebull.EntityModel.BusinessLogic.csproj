@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>5.0.0.1-bate</Version>
+    <Version>5.0.0.11-bate</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>
@@ -34,7 +34,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
+    <Compile Remove="IDataExtendChecker.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Agebull.EntityModel.BusinessLogic.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
     <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
   </ItemGroup>
 </Project>

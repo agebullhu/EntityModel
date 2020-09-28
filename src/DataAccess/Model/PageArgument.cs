@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ZeroTeam.MessageMVC.ZeroApis
 {
@@ -11,7 +12,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         /// <summary>
         ///     页号
         /// </summary>
-        public int PageIndex { get; set; }
+        public int Page { get; set; }
 
         /// <summary>
         ///     每页行数
@@ -22,7 +23,6 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     排序
         /// </summary>
         public string Order { get; set; }
-
 
         /// <summary>
         ///     反序
@@ -39,7 +39,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         {
             var msg = new StringBuilder();
             var success = true;
-            if (PageIndex < 0)
+            if (Page < 0)
             {
                 success = false;
                 msg.Append("页号必须大于或等于0");
@@ -64,13 +64,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     当前页号（从1开始）
         /// </summary>
         /// <example>1</example>
-        public int Page => PageIndex;
-
-        /// <summary>
-        ///     当前页号（从1开始）
-        /// </summary>
-        /// <example>1</example>
-        public int PageIndex { get; set; }
+        public int Page { get; set; }
 
         /// <summary>
         ///     一页行数
@@ -88,7 +82,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     总行数
         /// </summary>
         /// <example>9999</example>
-        public long RowCount { get; set; }
+        public long Total { get; set; }
 
     }
 

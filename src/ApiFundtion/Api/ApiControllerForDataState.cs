@@ -13,6 +13,7 @@ using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
@@ -29,7 +30,7 @@ namespace Agebull.MicroZero.ZeroApis
     public abstract class ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic> :
         ApiController<TData, TPrimaryKey, TBusinessLogic>
         where TData : EditDataObject, IStateData, IIdentityData<TPrimaryKey>, new()
-        where TBusinessLogic : class, IBusinessLogicByStateData<TData, TPrimaryKey>, new()
+        where TBusinessLogic : BusinessLogicByStateData<TData, TPrimaryKey>, new()
     {
         #region API
 
@@ -38,9 +39,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/reset")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public IApiResult Reset(IdsArguent arg)
+        public async Task<IApiResult> Reset(string[] selects)
         {
-            OnReset();
+          await  OnReset();
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -51,9 +52,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/discard")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public IApiResult Discard(IdsArguent arg)
+        public async Task<IApiResult> Discard(string[] selects)
         {
-            OnDiscard();
+            await OnDiscard();
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -64,9 +65,9 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/disable")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public IApiResult Disable(IdsArguent arg)
+        public async Task<IApiResult> Disable(string[] selects)
         {
-            OnDisable();
+            await OnDisable();
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -77,42 +78,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         [Route("state/enable")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public IApiResult Enable(IdsArguent arg)
+        public async Task<IApiResult> Enable(string[] selects)
         {
-            OnEnable();
+            await OnEnable();
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
-        }
-
-        #endregion
-
-        #region 数据校验支持
-
-        /// <summary>
-        ///     检查值的唯一性
-        /// </summary>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="field"></param>
-        protected override void CheckUnique<TValue>(string name, Expression<Func<TData, TValue>> field)
-        {
-            if (!RequestArgumentConvert.TryGet(name, out string no))
-            {
-                SetFailed(name + "为空");
-                return;
-            }
-
-            var id = RequestArgumentConvert.GetInt("id", 0);
-            Expression<Func<TData, bool>> condition;
-            if (id == 0)
-                condition = p => p.DataState < DataStateType.Delete;
-            else
-                condition = p => !Equals(p.Id , id) && p.DataState < DataStateType.Delete;
-            if (Business.Access.IsUnique(field, no, condition))
-                SetFailed(name + "[" + no + "]不唯一");
-            else
-                GlobalContext.Current.Status.LastMessage = name + "[" + no + "]唯一";
         }
 
         #endregion
@@ -122,7 +93,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     恢复对象
         /// </summary>
-        private void OnReset()
+        private async Task OnReset()
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -130,14 +101,14 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
 
-            if (!Business.LoopIds(ids, Business.Reset))
+            if (!await Business.LoopIds(ids, Business.Reset))
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
         ///     废弃对象
         /// </summary>
-        private void OnDiscard()
+        private async Task OnDiscard()
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -145,14 +116,14 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
 
-            if (!Business.LoopIds(ids, Business.Discard))
+            if (!await Business.LoopIds(ids, Business.Discard))
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
         ///     启用对象
         /// </summary>
-        private void OnEnable()
+        private async Task OnEnable()
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -160,14 +131,14 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
 
-            if (!Business.LoopIds(ids, Business.Enable))
+            if (!await Business.LoopIds(ids, Business.Enable))
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
         ///     禁用对象
         /// </summary>
-        private void OnDisable()
+        private async Task OnDisable()
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -175,7 +146,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return;
             }
 
-            if (!Business.LoopIds(ids, Business.Disable))
+            if (!await Business.LoopIds(ids, Business.Disable))
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
         }
 
@@ -186,15 +157,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        protected override ApiPageData<TData> GetListData(LambdaItem<TData> lambda)
+        protected override Task<ApiPageData<TData>> GetListData(LambdaItem<TData> lambda)
         {
             if (!RequestArgumentConvert.TryGet("_state_", out int state) || state < 0 || state >= 0x100)
                 return base.GetListData(lambda);
-            //BUG:using (ManageModeScope.CreateScope())
-            {
-                lambda.AddRoot(p => p.DataState == (DataStateType)state);
-                return base.GetListData(lambda);
-            }
+            lambda.AddRoot(p => p.DataState == (DataStateType)state);
+            return base.GetListData(lambda);
         }
 
         #endregion
@@ -204,7 +172,7 @@ namespace Agebull.MicroZero.ZeroApis
     /// </summary>
     public abstract class ApiControllerForDataState<TData, TBusinessLogic> : ApiControllerForDataState<TData, long, TBusinessLogic>
         where TData : EditDataObject, IStateData, IIdentityData<long>, new()
-        where TBusinessLogic : class, IBusinessLogicByStateData<TData, long>, new()
+        where TBusinessLogic : BusinessLogicByStateData<TData, long>, new()
     {
         ///<inheritdoc/>
         protected sealed override (bool, long) Convert(string value)

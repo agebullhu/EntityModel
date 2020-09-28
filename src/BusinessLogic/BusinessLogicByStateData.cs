@@ -11,6 +11,7 @@
 using Agebull.EntityModel.Common;
 using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
@@ -22,12 +23,10 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 基于数据状态的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    /// <typeparam name="TAccess">数据访问对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public class BusinessLogicByStateData<TData, TPrimaryKey, TAccess>
-        : UiBusinessLogicBase<TData, TPrimaryKey, TAccess>, IBusinessLogicByStateData<TData, TPrimaryKey>
+    public abstract class BusinessLogicByStateData<TData, TPrimaryKey>
+        : BusinessLogicBase<TData, TPrimaryKey>
         where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
-        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
         #region 数据状态逻辑
 
@@ -37,9 +36,9 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="data">数据</param>
         /// <param name="isAdd">是否为新增</param>
         /// <returns>如果为否将阻止后续操作</returns>
-        protected override bool CanSave(TData data, bool isAdd)
+        protected override async Task<bool> CanSave(TData data, bool isAdd)
         {
-            if (!base.CanSave(data, isAdd))
+            if (!await base.CanSave(data, isAdd))
                 return false;
             if (!data.IsFreeze)
                 return true;
@@ -51,10 +50,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override bool PrepareDelete(TPrimaryKey id)
+        protected override async Task<bool> PrepareDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => id.Equals(p.Id ) && !p.IsFreeze))
-                return base.PrepareDelete(id);
+            if (await Access.AnyAsync(p => id.Equals(p.Id) && !p.IsFreeze))
+                return await base.PrepareDelete(id);
             GlobalContext.Current.Status.LastMessage = "数据已锁定";
             GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
             return false;
@@ -63,20 +62,20 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象后置处理
         /// </summary>
-        protected override void OnDeleted(TPrimaryKey id)
+        protected override async Task OnDeleted(TPrimaryKey id)
         {
-            OnStateChanged(id, BusinessCommandType.Delete);
-            base.OnDeleted(id);
+            await OnStateChanged(id, BusinessCommandType.Delete);
+            await base.OnDeleted(id);
         }
 
         /// <summary>
         ///     删除对象操作
         /// </summary>
-        protected override bool DoDelete(TPrimaryKey id)
+        protected override async Task<bool> DoDelete(TPrimaryKey id)
         {
-            if (Access.Any(p => p.DataState == DataStateType.Delete && Equals(p.Id , id)))
-                return Access.PhysicalDelete(id);
-            return Access.DeletePrimaryKey(id);
+            if (await Access.AnyAsync(p => p.DataState == DataStateType.Delete && Equals(p.Id, id)))
+                return await Access.PhysicalDeleteAsync(id);
+            return await Access.DeletePrimaryKeyAsync(id);
         }
 
         #endregion
@@ -89,10 +88,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="data">数据</param>
         /// <param name="isAdd">是否为新增</param>
         /// <returns>如果为否将阻止后续操作</returns>
-        protected override bool LastSaved(TData data, bool isAdd)
+        protected override async Task<bool> LastSaved(TData data, bool isAdd)
         {
-            OnStateChanged(data, isAdd ? BusinessCommandType.AddNew : BusinessCommandType.Update);
-            return base.LastSaved(data, isAdd);
+            await OnStateChanged(data, isAdd ? BusinessCommandType.AddNew : BusinessCommandType.Update);
+            return await base.LastSaved(data, isAdd);
         }
 
         /// <summary>
@@ -105,20 +104,20 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="cmd">命令</param>
-        protected override void OnStateChanged(TData data, BusinessCommandType cmd)
+        protected override async Task OnStateChanged(TData data, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;
-            var old = Access.NoInjection;
-            Access.NoInjection = true;
+            var old = Access.Option.NoInjection;
+            Access.Option.NoInjection = true;
             try
             {
-                DoStateChanged(data);
-                OnInnerCommand(data, cmd);
+                await DoStateChanged(data);
+                await OnInnerCommand(data, cmd);
             }
             finally
             {
-                Access.NoInjection = old;
+                Access.Option.NoInjection = old;
             }
         }
 
@@ -127,14 +126,14 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="id">数据</param>
         /// <param name="cmd">命令</param>
-        protected sealed override void OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
+        protected sealed override async Task OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
         {
             if (!unityStateChanged)
                 return;
-            var data = Access.LoadByPrimaryKey(id);
+            var data = await Access.LoadByPrimaryKeyAsync(id);
             if (data == null)
                 return;
-            OnStateChanged(data,cmd);
+            await OnStateChanged(data, cmd);
         }
 
         /// <summary>
@@ -142,9 +141,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected virtual void DoStateChanged(TData data)
-        {
-        }
+        protected virtual Task DoStateChanged(TData data) => Task.CompletedTask;
 
         #endregion
 
@@ -154,55 +151,118 @@ namespace Agebull.EntityModel.BusinessLogic
         ///     重置数据状态
         /// </summary>
         /// <param name="id"></param>
-        public virtual bool Reset(TPrimaryKey id)
+        public virtual async Task<bool> Reset(TPrimaryKey id)
         {
-            if (!Access.ResetState(id))
+            if (!await ResetState(id))
                 return false;
-            OnStateChanged(id, BusinessCommandType.SetState);
+            await OnStateChanged(id, BusinessCommandType.SetState);
             return true;
         }
 
         /// <summary>
         ///     启用对象
         /// </summary>
-        public virtual bool Enable(TPrimaryKey id)
+        public virtual Task<bool> Enable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Enable, true,
-                p => Equals(p.Id , id) && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
+                p => Equals(p.Id, id) && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
         ///     禁用对象
         /// </summary>
-        public virtual bool Disable(TPrimaryKey id)
+        public virtual Task<bool> Disable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Disable, true,
-                p => Equals(p.Id , id) && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
+                p => Equals(p.Id, id) && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
         ///     弃用对象
         /// </summary>
-        public virtual bool Discard(TPrimaryKey id)
+        public virtual Task<bool> Discard(TPrimaryKey id)
         {
-            return SetDataState(id, DataStateType.Discard, true, p => Equals(p.Id , id) && p.DataState == DataStateType.None);
+            return SetDataState(id, DataStateType.Discard, true, p => Equals(p.Id, id) && p.DataState == DataStateType.None);
         }
 
         /// <summary>
         ///     修改状态
         /// </summary>
-        protected bool SetDataState(TPrimaryKey id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
+        protected async Task<bool> SetDataState(TPrimaryKey id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
         {
-            if (filter != null && !Access.Any(filter))
+            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
+            if (filter != null && !await Access.AnyAsync(filter))
                 return false;
-            if (filter == null && !Access.ExistPrimaryKey(id))
+            if (filter == null && !await Access.ExistPrimaryKeyAsync(id))
                 return false;
-            Access.SetState(state, isFreeze, id);
-            using var scope = TransactionScope.CreateScope(Access.DataBase);
-            Access.SetValue(p => p.IsFreeze, isFreeze, id);
-            Access.SetValue(p => p.DataState, state, id);
-            OnStateChanged(id, BusinessCommandType.SetState);
-            return scope.Succeed();
+            await SetState(state, isFreeze, id);
+            await OnStateChanged(id, BusinessCommandType.SetState);
+            await connectionScope.Commit();
+            return true;
+        }
+
+        #endregion
+
+        #region MyRegion
+
+        /// <summary>
+        ///     删除的SQL语句
+        /// </summary>
+        protected string DeleteSqlCode => $@"UPDATE {Access.Option.ReadTableName} SET 
+`{Access.Option.FieldMap[nameof(IStateData.DataState)]}`=255";
+
+        /// <summary>
+        ///     重置状态的SQL语句
+        /// </summary>
+        protected string ResetStateFileSqlCode(int state = 0, int isFreeze = 0) => $@"
+{Access.Option.FieldMap[nameof(IStateData.DataState)]}={state},
+{Access.Option.FieldMap[nameof(IStateData.IsFreeze)]}={isFreeze}";
+
+
+        /// <summary>
+        /// 修改状态
+        /// </summary>
+        protected virtual async Task<bool> SetState(DataStateType state, bool isFreeze, TPrimaryKey id)
+        {
+            var para = Access.ParameterCreater.CreateParameter(Access.Option.PrimaryKey,
+                id,
+                Access.SqlBuilder.GetDbType(Access.Option.PrimaryKey));
+
+
+            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
+SET {ResetStateFileSqlCode((int)state, isFreeze ? 1 : 0)} 
+WHERE {Access.SqlBuilder.PrimaryKeyCondition}";
+            return await Access.DataBase.ExecuteAsync(sql, para) == 1;
+        }
+
+
+        /// <summary>
+        /// 重置状态
+        /// </summary>
+        protected virtual async Task<bool> ResetState(TPrimaryKey id)
+        {
+            var para = Access.ParameterCreater.CreateParameter(Access.Option.PrimaryKey,
+                id,
+                Access.SqlBuilder.GetDbType(Access.Option.PrimaryKey));
+
+            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
+SET {ResetStateFileSqlCode()} 
+WHERE {Access.SqlBuilder.PrimaryKeyCondition}";
+
+            return await Access.DataBase.ExecuteAsync(sql, para) == 1;
+        }
+
+        /// <summary>
+        /// 重置状态
+        /// </summary>
+        protected virtual async Task<bool> ResetState(Expression<Func<TData, bool>> lambda)
+        {
+            var convert = Access.SqlBuilder.Compile(lambda);
+            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
+SET {ResetStateFileSqlCode()} 
+WHERE {convert.ConditionSql}";
+
+            return await Access.DataBase.ExecuteAsync(sql, convert.Parameters) > 0;
         }
 
         #endregion
@@ -212,11 +272,9 @@ namespace Agebull.EntityModel.BusinessLogic
     /// 基于数据状态的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    /// <typeparam name="TAccess">数据访问对象</typeparam>
-    public class BusinessLogicByStateData<TData, TAccess>
-        : BusinessLogicByStateData<TData,long, TAccess>
+    public abstract class BusinessLogicByStateData<TData>
+        : BusinessLogicByStateData<TData, long>
         where TData : EditDataObject, IIdentityData<long>, IStateData, new()
-        where TAccess : class, IDataAccessByStateData<TData>, new()
     {
     }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>5.0.0.1-bate</Version>
+    <Version>5.0.0.11-bate</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.45" />
+    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.46" />
   </ItemGroup>
 
 </Project>

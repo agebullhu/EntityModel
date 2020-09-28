@@ -83,11 +83,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public async Task<bool> BeginTransaction()
         {
-            if (DataBase.Transaction != null)
-                return false;
-            _hereTransaction = true;
-            DataBase.TransactionSuccess = false;
-            DataBase.Transaction = await DataBase._connection.BeginTransactionAsync();
+            //if (DataBase.Transaction != null)
+            //    return false;
+            //_hereTransaction = true;
+            //DataBase.TransactionSuccess = false;
+            //DataBase.Transaction = await DataBase._connection.BeginTransactionAsync();
             return true;
         }
         
@@ -96,9 +96,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task Rollback()
         {
-            DataBase.TransactionSuccess = false;
-            if (DataBase.Transaction == null)
-                await DataBase.Transaction.RollbackAsync();
+            //DataBase.TransactionSuccess = false;
+            //if (DataBase.Transaction == null)
+            //    await DataBase.Transaction.RollbackAsync();
         }
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task Commit()
         {
-            DataBase.TransactionSuccess = true;
-            if (_hereTransaction && DataBase.Transaction != null)
-                await DataBase.Transaction.CommitAsync();
+            //DataBase.TransactionSuccess = true;
+            //if (_hereTransaction && DataBase.Transaction != null)
+            //    await DataBase.Transaction.CommitAsync();
         }
         #endregion
 
@@ -126,6 +126,7 @@ namespace Agebull.EntityModel.MySql
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
             using var cmd = CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -141,6 +142,7 @@ namespace Agebull.EntityModel.MySql
         public async Task<(bool hase, object value)> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
             await using var cmd = CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             var result = await cmd.ExecuteScalarAsync();
             return (result != null, result == DBNull.Value ? null : result);
         }

@@ -795,7 +795,7 @@ namespace Agebull.MicroZero.ZeroApis
             if (TryGet("id", out value))
                 return true;
             var data = new TData();
-            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
+            var pri = data.__Struct.Properties.First(p => p.Name == data.__Struct.PrimaryKey);
             if (TryGet(pri.JsonName, out value))
                 return true;
             return TryGet(pri.Name, out value);
@@ -817,7 +817,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return re.state;
             }
             var data = new TData();
-            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
+            var pri = data.__Struct.Properties.First(p => p.Name == data.__Struct.PrimaryKey);
 
             if (TryGetValue(pri.JsonName, out str))
             {

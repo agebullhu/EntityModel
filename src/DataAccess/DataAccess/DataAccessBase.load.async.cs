@@ -85,6 +85,17 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
+        public Task<TEntity> FirstOrDefaultAsync(LambdaItem<TEntity> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            return LoadFirstInnerAsync(convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     载入首行
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <returns>如果有载入首行,否则返回空</returns>
         public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
@@ -136,6 +147,18 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入尾行,否则返回空</returns>
+        public Task<TEntity> LastAsync(LambdaItem<TEntity> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+
+            return LoadLastInnerAsync(convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     载入尾行
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <returns>如果有载入尾行,否则返回空</returns>
         public Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
@@ -166,6 +189,18 @@ namespace Agebull.EntityModel.Common
             return LoadLastInnerAsync(condition, args);
         }
 
+
+        /// <summary>
+        ///     载入尾行
+        /// </summary>
+        /// <param name="lambda">查询表达式</param>
+        /// <returns>如果有载入尾行,否则返回空</returns>
+        public Task<TEntity> LastOrDefaultAsync(LambdaItem<TEntity> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+
+            return LoadLastInnerAsync(convert.ConditionSql, convert.Parameters);
+        }
 
         /// <summary>
         ///     载入尾行
@@ -914,6 +949,7 @@ namespace Agebull.EntityModel.Common
             var sql = SqlBuilder.CreatePageSql(page, limit, order, desc, condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -1008,11 +1044,28 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">查询条件</param>
         /// <param name="args">查询参数</param>
         /// <returns></returns>
+        public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string order, bool desc, LambdaItem<TEntity> lambda)
+        {
+            var item = SqlBuilder.Compile(lambda);
+            return LoadPageAsync(page, limit, order, desc, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        /// <param name="page">页号(从1开始)</param>
+        /// <param name="limit">每页行数(小于不分页）</param>
+        /// <param name="order">排序字段</param>
+        /// <param name="desc">是否反序</param>
+        /// <param name="condition">查询条件</param>
+        /// <param name="args">查询参数</param>
+        /// <returns></returns>
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string order, bool desc, string condition,
             params DbParameter[] args)
         {
             return LoadPageAsync(page, limit, order, desc, condition, args);
         }
+
 
         private async Task<ApiPageData<TEntity>> LoadPageAsync(int page, int limit, string order, bool desc, string condition,
             DbParameter[] args)
@@ -1030,9 +1083,9 @@ namespace Agebull.EntityModel.Common
             var data = await PageDataAsync(page, limit, order, desc, condition, args);
             return new ApiPageData<TEntity>
             {
-                RowCount = count,
+                Total = count,
                 Rows = data,
-                PageIndex = page,
+                Page = page,
                 PageSize = limit,
                 PageCount = count / limit + ((count % limit) > 0 ? 1 : 0)
             };
@@ -1101,6 +1154,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             {
                 await using var cmd = connectionScope.CreateCommand(sql, convert.Parameters);
+                DataBase.TraceSql(cmd);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
@@ -1151,6 +1205,7 @@ namespace Agebull.EntityModel.Common
             var values = new List<T>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -1292,6 +1347,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, null, "1");
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
                 return null;
@@ -1307,6 +1363,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, SqlBuilder.OrderCode(true, Option.PrimaryKey), "1");
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())
                 return null;
@@ -1322,6 +1379,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, orderBy, null);
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
                 results.Add(await LoadEntityAsync(reader));
@@ -1336,6 +1394,7 @@ namespace Agebull.EntityModel.Common
             var results = new List<TEntity>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql, args);
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -1353,6 +1412,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(procedure, args);
             cmd.CommandType = CommandType.StoredProcedure;
+            DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -1385,7 +1445,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="condition"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, object val, Expression<Func<TEntity, bool>> condition)
+        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, TValue val, Expression<Func<TEntity, bool>> condition)
         {
             if (Equals(val, default(TValue)))
                 return false;
@@ -1404,14 +1464,14 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="key"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, object val, object key)
+        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, TValue val, object key)
         {
             if (Equals(val, default(TValue)))
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(Option.FieldMap.ContainsKey(fieldName));
             return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
-                , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName))
+                , ParameterCreater.CreateParameter("c_vl_", val)
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
@@ -1421,7 +1481,7 @@ namespace Agebull.EntityModel.Common
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
         /// <param name="val"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, object val)
+        public async Task<bool> IsUniqueAsync<TValue>(Expression<Func<TEntity, TValue>> field, TValue val)
         {
             if (Equals(val, default(TValue)))
                 return false;
@@ -1437,7 +1497,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="condition"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(string field, object val, Expression<Func<TEntity, bool>> condition)
+        public async Task<bool> IsUniqueAsync<TValue>(string field, TValue val, Expression<Func<TEntity, bool>> condition)
         {
             var convert = SqlBuilder.Compile(condition);
             convert.AddAndCondition(SqlBuilder.Condition(field, "c_vl_"),
@@ -1452,10 +1512,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="field"></param>
         /// <param name="val"></param>
         /// <param name="key"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(string field, object val, object key)
+        public async Task<bool> IsUniqueAsync(string field, string val, object key)
         {
             return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
-                , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(field))
+                , ParameterCreater.CreateParameter("c_vl_", val)
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
 
@@ -1465,10 +1525,35 @@ namespace Agebull.EntityModel.Common
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>
         /// <param name="val"></param>
-        public async Task<bool> IsUniqueAsync<TValue>(string field, object val)
+        public async Task<bool> IsUniqueAsync(string field, string val)
         {
-            return !await ExistAsync(SqlBuilder.Condition(field, "c_vl_"),
-                ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(field)));
+            return !await ExistAsync(SqlBuilder.Condition(field, "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
+        }
+
+        /// <summary>
+        ///     检查值的唯一性
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="val"></param>
+        /// <param name="key"></param>
+        public async Task<bool> IsUniqueAsync<TValue>(string fieldName, object val, string key)
+        {
+            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
+                , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName))
+                , ParameterCreater.CreateParameter(Option.PrimaryKey, key));
+        }
+
+        /// <summary>
+        ///     检查值的唯一性
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="val"></param>
+        /// <param name="key"></param>
+        public async Task<bool> IsUniqueAsync<TValue>(string fieldName, string val)
+        {
+            return !await ExistAsync(SqlBuilder.Condition(fieldName, "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
         }
         #endregion
     }
