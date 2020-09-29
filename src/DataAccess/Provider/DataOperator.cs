@@ -29,27 +29,12 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public DataAccessProvider<TEntity> Provider { get; set; }
 
-        /// <summary>
-        ///     得到字段的值
-        /// </summary>
-        /// <param name="field"> 字段的名字 </param>
-        /// <returns> 字段的值 </returns>
-        public virtual object GetValue(TEntity entity, string field) => null;
-
-        /// <summary>
-        ///     配置字段的值
-        /// </summary>
-        /// <param name="field"> 字段的名字 </param>
-        /// <param name="value"> 字段的值 </param>
-        public virtual void SetValue(TEntity entity, string field, object value) { }
-
-
         /*// <summary>
         /// 取得仅更新的SQL语句
         /// </summary>
         public string GetModifiedUpdateSql(TEntity entity)
         {
-            //if (!(entity is EditDataObject data))
+            //if (!(entity is class data))
             //{
             //    return Option.UpdateFields;
             //}

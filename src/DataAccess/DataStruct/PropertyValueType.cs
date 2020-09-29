@@ -19,9 +19,19 @@ namespace Agebull.EntityModel.Common
         Value,
 
         /// <summary>
+        ///     数字枚举
+        /// </summary>
+        NumberEnum,
+
+        /// <summary>
         ///     文本
         /// </summary>
         String,
+
+        /// <summary>
+        ///     文本枚举
+        /// </summary>
+        StringEnum,
 
         /// <summary>
         ///     可为空的值对象

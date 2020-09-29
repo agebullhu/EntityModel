@@ -23,8 +23,27 @@ using ZeroTeam.MessageMVC.ZeroApis;
 
 namespace Agebull.EntityModel.Common
 {
-    partial class DataAccess<TEntity>
+    /// <summary>
+    ///     Sql实体访问类
+    /// </summary>
+    /// <typeparam name="TEntity">实体</typeparam>
+    public partial class DataQuery<TEntity> : DataAccessBase<TEntity>
+         where TEntity : class, new()
     {
+
+        #region 构造
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="provider"></param>
+        public DataQuery(DataAccessProvider<TEntity> provider)
+            :base(provider)
+        {
+        }
+
+        #endregion
+
         #region 首行
 
         /// <summary>
@@ -444,7 +463,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        private async Task<bool> ExistInnerAsync(string condition = null, DbParameter args = null)
+        protected async Task<bool> ExistInnerAsync(string condition = null, DbParameter args = null)
         {
             return await ExistInnerAsync(condition, args == null ? new DbParameter[0] : new[] { args });
         }
@@ -452,7 +471,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     是否存在数据
         /// </summary>
-        private async Task<bool> ExistInnerAsync(string condition, DbParameter[] args)
+        protected async Task<bool> ExistInnerAsync(string condition, DbParameter[] args)
         {
             var (hase, _) = await LoadValueAsync(Option.PrimaryKey, condition, args);
             return hase;
@@ -537,7 +556,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     总数据量
         /// </summary>
-        private async Task<long> CountInnerAsync(string condition = null, DbParameter args = null)
+        protected async Task<long> CountInnerAsync(string condition = null, DbParameter args = null)
         {
             var (_, value) = await CollectInnerAsync<long>("Count", Option.PrimaryKey, condition, args);
             return value;
@@ -803,7 +822,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     汇总
         /// </summary>
-        private async Task<(bool hase, object value)> CollectInnerAsync(string fun, string field, string condition, params DbParameter[] args)
+        protected async Task<(bool hase, object value)> CollectInnerAsync(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = SqlBuilder.CreateCollectSql(fun, field, condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
@@ -817,7 +836,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">查询表达式</param>
         /// <param name="args"></param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        private async Task<(bool hase, TValue value)> CollectInnerAsync<TValue>(string fun, string field, string condition, params DbParameter[] args)
+        protected async Task<(bool hase, TValue value)> CollectInnerAsync<TValue>(string fun, string field, string condition, params DbParameter[] args)
         {
             var sql = SqlBuilder.CreateCollectSql(fun, field, condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
@@ -943,7 +962,7 @@ namespace Agebull.EntityModel.Common
 
 
 
-        private async Task<List<TEntity>> LoadPageDataAsync(int page, int limit, string order, bool desc, string condition, DbParameter[] args)
+        protected async Task<List<TEntity>> LoadPageDataAsync(int page, int limit, string order, bool desc, string condition, DbParameter[] args)
         {
             var results = new List<TEntity>();
             var sql = SqlBuilder.CreatePageSql(page, limit, order, desc, condition);
@@ -1067,7 +1086,7 @@ namespace Agebull.EntityModel.Common
         }
 
 
-        private async Task<ApiPageData<TEntity>> LoadPageAsync(int page, int limit, string order, bool desc, string condition,
+        protected async Task<ApiPageData<TEntity>> LoadPageAsync(int page, int limit, string order, bool desc, string condition,
             DbParameter[] args)
         {
             if (page <= 0)
@@ -1199,7 +1218,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     读取多个值
         /// </summary>
-        private async Task<List<T>> LoadValuesInnerAsync<T>(string field, string condition, params DbParameter[] args)
+        protected async Task<List<T>> LoadValuesInnerAsync<T>(string field, string condition, params DbParameter[] args)
         {
             var sql = SqlBuilder.CreateLoadValueSql(field, condition);
             var values = new List<T>();
@@ -1334,6 +1353,23 @@ namespace Agebull.EntityModel.Common
             return await ReLoadInnerAsync(entity);
         }
 
+        /// <summary>
+        ///     重新载入
+        /// </summary>
+        protected async Task<bool> ReLoadInnerAsync(TEntity entity)
+        {
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Provider.EntityOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
+            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyCondition, null, null);
+            await using var cmd = connectionScope.CreateCommand(sql, para);
+            DataBase.TraceSql(cmd);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+                return false;
+            await DataOperator.LoadEntity(reader, entity);
+            return true;
+        }
+
         #endregion
 
         #region 载入数据
@@ -1342,7 +1378,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     读取首行
         /// </summary>
-        private async Task<TEntity> LoadFirstInnerAsync(string condition, params DbParameter[] args)
+        protected async Task<TEntity> LoadFirstInnerAsync(string condition, params DbParameter[] args)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, null, "1");
@@ -1358,7 +1394,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     读取尾行
         /// </summary>
-        private async Task<TEntity> LoadLastInnerAsync(string condition, params DbParameter[] args)
+        protected async Task<TEntity> LoadLastInnerAsync(string condition, params DbParameter[] args)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, SqlBuilder.OrderCode(true, Option.PrimaryKey), "1");
@@ -1373,7 +1409,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     读取全部
         /// </summary>
-        private async Task<List<TEntity>> LoadDataInnerAsync(string condition, string orderBy, params DbParameter[] args)
+        protected async Task<List<TEntity>> LoadDataInnerAsync(string condition, string orderBy, params DbParameter[] args)
         {
             var results = new List<TEntity>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
@@ -1426,7 +1462,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="reader">数据读取器</param>
         /// <returns>读取数据的实体</returns>
-        private async Task<TEntity> LoadEntityAsync(DbDataReader reader)
+        protected async Task<TEntity> LoadEntityAsync(DbDataReader reader)
         {
             var entity = new TEntity();
             await DataOperator.LoadEntity(reader, entity);

@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="option">当前数据操作配置</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        void InjectionQueryCondition<TEntity>(DataAccessOption<TEntity> option, List<string> conditions)
+        void InjectionQueryCondition<TEntity>(DataAccessOption option, List<string> conditions)
             where TEntity : class, new()
         { }
 
@@ -33,7 +33,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="valueExpression"></param>
         /// <returns></returns>
-        void InjectionUpdateCode<TEntity>(DataAccessOption<TEntity> option, StringBuilder valueExpression, StringBuilder condition)
+        void InjectionUpdateCode<TEntity>(DataAccessOption option, StringBuilder valueExpression, StringBuilder condition)
             where TEntity : class, new()
         { }
 
@@ -43,7 +43,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="option">当前数据操作配置</param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        void InjectionDeleteCondition<TEntity>(DataAccessOption<TEntity> option, StringBuilder condition)
+        void InjectionDeleteCondition<TEntity>(DataAccessOption option, StringBuilder condition)
             where TEntity : class, new()
         { }
 

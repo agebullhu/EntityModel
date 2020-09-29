@@ -28,14 +28,14 @@ namespace Agebull.EntityModel.Excel
     ///     Excel导入类
     /// </summary>
     public class ExcelImporter<TData> : ScopeBase
-        where TData : EditDataObject, new()
+        where TData : class, new()
     {
         #region 准备
 
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        public DataAccess<TData> Access { get; set; }
+        public DataAccess<TData> DataAccess { get; set; }
 
         /// <summary>
         ///     生成工作溥
@@ -58,7 +58,7 @@ namespace Agebull.EntityModel.Excel
         public bool Prepare(ISheet sheet)
         {
             Sheet = sheet;
-            if (!Initiate() || !CheckFieldMaps()) 
+            if (!Initiate() || !CheckFieldMaps())
                 return false;
             ColumnFields2 = new Dictionary<string, int>();
             foreach (var mf in ColumnFields) ColumnFields2.Add(mf.Value, mf.Key);
@@ -112,7 +112,7 @@ namespace Agebull.EntityModel.Excel
                         break;
                 }
 
-                var msg =await action(data, line);
+                var msg = await action(data, line);
                 if (nowSuccess && string.IsNullOrWhiteSpace(msg))
                     continue;
                 success = false;
@@ -233,14 +233,20 @@ namespace Agebull.EntityModel.Excel
         /// <returns></returns>
         protected virtual async Task<string> Write(TData data, int line)
         {
-            var result = data.Validate();
-            if (result.Succeed)
-                return await Access.SaveAsync(data) ? "无法写入" : null;
+            if (data is IValidate validate)
+            {
+                if (validate.Validate(out var result))
+                    return await DataAccess.SaveAsync(data) ? "无法写入" : null;
 
-            foreach (var item in result.Items)
-                if (ColumnFields2.TryGetValue(item.Name, out var col))
-                    WriteCellState(line, col, item.Message, true);
-            return result.ToString();
+                foreach (var item in result.Items)
+                    if (ColumnFields2.TryGetValue(item.Name, out var col))
+                        WriteCellState(line, col, item.Message, true);
+                return result.ToString();
+            }
+            else
+            {
+                return await DataAccess.SaveAsync(data) ? "无法写入" : null;
+            }
         }
 
 
@@ -281,7 +287,7 @@ namespace Agebull.EntityModel.Excel
             var field = ColumnFields[column];
             try
             {
-                data.SetValue(field, value);
+                DataAccess.Provider.EntityOperator.SetValue(data, field, value);
                 return true;
             }
             catch (Exception ex)

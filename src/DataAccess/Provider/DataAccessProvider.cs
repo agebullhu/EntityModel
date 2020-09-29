@@ -16,7 +16,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 配置
         /// </summary>
-        public DataAccessOption<TEntity> Option { get; set; }
+        public DataAccessOption Option { get; set; }
 
         /// <summary>
         /// 参数构造
@@ -24,10 +24,15 @@ namespace Agebull.EntityModel.Common
         public IParameterCreater ParameterCreater => SqlBuilder;
 
         /// <summary>
-        /// 自动构建数据库对象
+        /// 数据处理
         /// </summary>
         public IDataOperator<TEntity> DataOperator { get; set; }
 
+        /// <summary>
+        /// 实体操作
+        /// </summary>
+        public IEntityOperator<TEntity> EntityOperator { get; set; }
+       
         /// <summary>
         /// 自动构建数据库对象
         /// </summary>

@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.Excel
         /// <summary>
         ///     数据访问对象
         /// </summary>
-        public DataAccess<TData> Access { get; set; }
+        public DataQuery<TData> DataQuery { get; set; }
 
         /// <summary>
         /// 工作簿对象
@@ -86,7 +86,7 @@ namespace Agebull.EntityModel.Excel
         /// <returns>数据</returns>
         public async Task ExportExcel(ISheet sheet, LambdaItem<TData> lambda)
         {
-            var datas = await Access.AllAsync(lambda);
+            var datas = await DataQuery.AllAsync(lambda);
             OnDataLoad?.Invoke(datas);
             WriteToSheet(sheet, datas);
         }
@@ -115,14 +115,14 @@ namespace Agebull.EntityModel.Excel
         /// <returns>数据</returns>
         public async Task ExportExcel(ISheet sheet, Expression<Func<TData, bool>> lambda)
         {
-            var datas = await Access.AllAsync(lambda);
+            var datas = await DataQuery.AllAsync(lambda);
             WriteToSheet(sheet, datas);
         }
 
         /// <summary>
         /// 数据载入的处理
         /// </summary>
-        public Func<List<TData>,Task> OnDataLoad;
+        public Func<List<TData>, Task> OnDataLoad;
 
         /// <summary>
         ///     导出Excel
@@ -131,8 +131,8 @@ namespace Agebull.EntityModel.Excel
         /// <returns>数据</returns>
         public async Task ExportExcel(ISheet sheet)
         {
-            var datas = await Access.AllAsync();
-            if(OnDataLoad != null)
+            var datas = await DataQuery.AllAsync();
+            if (OnDataLoad != null)
                 await OnDataLoad(datas);
             WriteToSheet(sheet, datas);
         }
@@ -173,11 +173,11 @@ namespace Agebull.EntityModel.Excel
 
             int line = 0;
             var row = sheet.SafeGetRow(line);
-            var importFields = Access.Option.Properties.Where(p => p.CanExport).OrderBy(p => p.Index).ToArray();
+            var importFields = DataQuery.Option.Properties.Where(p => p.CanExport).OrderBy(p => p.Index).ToArray();
             int idx = 0;
             foreach (var field in importFields)
             {
-                row.SetCellValue(field.Title ?? field.PropertyName, idx++, stylestr);
+                row.SetCellValue(field.Caption, idx++, stylestr);
             }
             foreach (var data in datas)
             {
@@ -185,7 +185,7 @@ namespace Agebull.EntityModel.Excel
                 row = sheet.SafeGetRow(++line);
                 foreach (var field in importFields)
                 {
-                    var vl = Access.DataOperator.GetValue(data, field.PropertyName);
+                    var vl = DataQuery.Provider.EntityOperator.GetValue(data, field.PropertyName);
                     if (vl != null)
                     {
                         if (field.PropertyType == typeof(int))

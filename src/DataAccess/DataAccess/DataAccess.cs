@@ -23,8 +23,25 @@ using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Da
 
 namespace Agebull.EntityModel.Common
 {
-    partial class DataAccess<TEntity>
+    /// <summary>
+    ///     Sql实体访问类
+    /// </summary>
+    /// <typeparam name="TEntity">实体</typeparam>
+    public sealed partial class DataAccess<TEntity> : DataQuery<TEntity>
+         where TEntity : class, new()
     {
+        #region 构造
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="provider"></param>
+        public DataAccess(DataAccessProvider<TEntity> provider)
+            : base(provider)
+        {
+        }
+
+        #endregion
         #region 实体更新
 
         /// <summary>
@@ -91,7 +108,7 @@ namespace Agebull.EntityModel.Common
                 var key = await cmd.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-                Provider.DataOperator.SetValue(entity, Option.PrimaryKey, key);
+                Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
             }
             await Provider.DataOperator.AfterSave(entity, DataOperatorType.Insert);
 
@@ -132,23 +149,6 @@ namespace Agebull.EntityModel.Common
         }
 
         /// <summary>
-        ///     重新载入
-        /// </summary>
-        private async Task<bool> ReLoadInnerAsync(TEntity entity)
-        {
-            await using var connectionScope = await DataBase.CreateConnectionScope();
-            var para = ParameterCreater.CreateParameter(Option.PrimaryKey, Provider.DataOperator.GetValue(entity, Option.PrimaryKey), SqlBuilder.GetDbType(Option.PrimaryKey));
-            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyCondition, null, null);
-            await using var cmd = connectionScope.CreateCommand(sql, para);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return false;
-            await DataOperator.LoadEntity(reader, entity);
-            return true;
-        }
-
-        /// <summary>
         ///     删除数据
         /// </summary>
         public async Task<int> DeleteAsync(IEnumerable<TEntity> entities)
@@ -184,7 +184,7 @@ namespace Agebull.EntityModel.Common
                 return false;
             await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Delete);
             var para = ParameterCreater.CreateParameter(Option.PrimaryKey,
-                Provider.DataOperator.GetValue(entity, Option.PrimaryKey),
+                Provider.EntityOperator.GetValue(entity, Option.PrimaryKey),
                 SqlBuilder.GetDbType(Option.PrimaryKey));
             var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, para);
             if (result == 0)
@@ -232,7 +232,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         private async Task<bool> SaveInnerAsync(TEntity entity)
         {
-            if (await ExistPrimaryKeyAsync(Provider.DataOperator.GetValue(entity, Option.PrimaryKey)))
+            if (await ExistPrimaryKeyAsync(Provider.EntityOperator.GetValue(entity, Option.PrimaryKey)))
             {
                 return await UpdateInnerAsync(entity);
             }
@@ -735,7 +735,7 @@ namespace Agebull.EntityModel.Common
                 var key = await context.Command.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-                Provider.DataOperator.SetValue(entity, Option.PrimaryKey, key);
+                Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
             }
             else
             {

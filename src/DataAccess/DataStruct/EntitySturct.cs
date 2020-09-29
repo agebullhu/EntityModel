@@ -17,7 +17,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表示实体结构
     /// </summary>
-    public class EntitySturct : SimpleConfig
+    public class EntityStruct : SimpleConfig
     {
         /// <summary>
         ///     导出的名称
@@ -43,11 +43,6 @@ namespace Agebull.EntityModel.Common
         ///     写表名
         /// </summary>
         public string WriteTableName { get; set; }
-
-        /// <summary>
-        ///     实体类型
-        /// </summary>
-        public int EntityType { get; set; }
 
         /// <summary>
         /// 是否自增主键
@@ -78,7 +73,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     属性
         /// </summary>
-        public List<EntitiyProperty> Properties { get; set; }
+        public List<EntityProperty> Properties { get; set; }
 
         /// <summary>
         ///     属性总量

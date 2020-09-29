@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                trigger.InjectionQueryCondition(Provider.Option, conditions);
+                trigger.InjectionQueryCondition<TEntity>(Provider.Option, conditions);
         }
 
 
@@ -75,7 +75,7 @@ namespace Agebull.EntityModel.Common
             var con = new StringBuilder(condition);
 
             foreach (var trigger in services)
-                trigger.InjectionUpdateCode(Provider.Option, val, con);
+                trigger.InjectionUpdateCode<TEntity>(Provider.Option, val, con);
 
             valueExpression = val.ToString();
             condition = con.ToString();
@@ -96,7 +96,7 @@ namespace Agebull.EntityModel.Common
             var con = new StringBuilder(condition);
 
             foreach (var trigger in services)
-                trigger.InjectionDeleteCondition(Provider.Option, con);
+                trigger.InjectionDeleteCondition<TEntity>(Provider.Option, con);
 
             return con.ToString();
         }

@@ -250,17 +250,6 @@
                 FORM对象转化辅助类
             </summary>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.FormConvert.#ctor(Agebull.EntityModel.Common.EditDataObject)">
-            <summary>
-            构造
-            </summary>
-            <param name="data"></param>
-        </member>
-        <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.Data">
-            <summary>
-                读取过程的错误消息记录
-            </summary>
-        </member>
         <member name="P:Agebull.MicroZero.ZeroApis.FormConvert.IsUpdata">
             <summary>
                 是否更新状态
@@ -962,7 +951,15 @@
             <param name="value">参数值</param>
             <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         </member>
-        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId``1(System.Int64@)">
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId(System.String,System.Int64@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="jsonName">参数名</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId(System.Int64@)">
             <summary>
                 读主键参数
             </summary>
@@ -973,6 +970,15 @@
             <summary>
                 读主键参数
             </summary>
+            <param name="value">参数值</param>
+            <param name="convert">转换器</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:Agebull.MicroZero.ZeroApis.RequestArgumentConvert.TryGetId``2(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``1}},``1@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="jsonName">参数名</param>
             <param name="value">参数值</param>
             <param name="convert">转换器</param>
             <returns>如果参数存在且可转换为对应类型，则返回True</returns>

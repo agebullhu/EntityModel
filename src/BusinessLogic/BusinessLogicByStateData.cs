@@ -24,9 +24,8 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public abstract class BusinessLogicByStateData<TData, TPrimaryKey>
-        : BusinessLogicBase<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IStateData, new()
+    public abstract class BusinessLogicByStateData<TData, TPrimaryKey> : BusinessLogicBase<TData, TPrimaryKey>
+        where TData : class, IIdentityData<TPrimaryKey>, IStateData, new()
     {
         #region 数据状态逻辑
 
@@ -272,9 +271,8 @@ WHERE {convert.ConditionSql}";
     /// 基于数据状态的业务逻辑基类
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
-    public abstract class BusinessLogicByStateData<TData>
-        : BusinessLogicByStateData<TData, long>
-        where TData : EditDataObject, IIdentityData<long>, IStateData, new()
+    public abstract class BusinessLogicByStateData<TData> : BusinessLogicByStateData<TData, long>
+        where TData : class, IIdentityData<long>, IStateData, new()
     {
     }
 }

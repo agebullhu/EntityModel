@@ -46,7 +46,7 @@ namespace Hpc.Project.ImportSkuCsv
                         first = false;
                     else
                         sb.Append(',');
-                    var value = access.DataOperator.GetValue(data, pro.Name)?.ToString();
+                    var value = access.Provider.EntityOperator.GetValue(data, pro.PropertyName)?.ToString();
                     if (value != null && pro.PropertyType == typeof(string))
                         value = value.Replace("\"", "\"\"");
                     sb.Append($"\"{value}\"");

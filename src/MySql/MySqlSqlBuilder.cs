@@ -25,7 +25,7 @@ namespace Agebull.EntityModel.MySql
     ///     Sql实体访问类
     /// </summary>
     public sealed class MySqlSqlBuilder<TEntity> : ParameterCreater, ISqlBuilder<TEntity>
-    where TEntity : class, new()
+        where TEntity : class, new()
     {
         /// <summary>
         /// 数据库类型
@@ -45,7 +45,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// Sql语句构造器
         /// </summary>
-        public DataAccessOption<TEntity> Option => Provider.Option;
+        public DataAccessOption Option => Provider.Option;
 
         /// <summary>
         /// Sql语句构造器
@@ -74,7 +74,7 @@ namespace Agebull.EntityModel.MySql
                 else
                     code.Append(',');
                 code.Append('`');
-                code.Append(pro.ColumnName);
+                code.Append(pro.FieldName);
                 code.Append('`');
             });
             return code.ToString();
@@ -95,7 +95,7 @@ namespace Agebull.EntityModel.MySql
                    fields.Append(',');
 
                fields.Append('`');
-               fields.Append(pro.ColumnName);
+               fields.Append(pro.FieldName);
                fields.Append("`=?");
                fields.Append(pro.PropertyName);
            });
@@ -121,7 +121,7 @@ namespace Agebull.EntityModel.MySql
                      fields.Append(',');
                  }
                  fields.Append('`');
-                 fields.Append(pro.ColumnName);
+                 fields.Append(pro.FieldName);
                  fields.Append('`');
 
                  paras.Append('?');
@@ -196,16 +196,22 @@ namespace Agebull.EntityModel.MySql
         public string CreateUpdateSqlCode(TEntity entity, string condition)
         {
             string valueExpression;
-            if (!Option.UpdateByMidified)
+            if (entity is IEditStatus status && !status.EditStatusRedorder.IsSetFullModify)
             {
-                valueExpression = Option.UpdateFields;
+                var code = new List<string>();
+                Option.FroeachDbProperties(pro =>
+                {
+                    if (status.EditStatusRedorder.IsChanged(pro.PropertyName))
+                        code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");
+                });
+                if (code.Count == 0)
+                    return null;
+                valueExpression = string.Join(',', code);
             }
             else
             {
-                valueExpression = DataOperator.GetModifiedUpdateSql(entity);
+                valueExpression = Option.UpdateFields;
             }
-            if (valueExpression == null)
-                return null;
             return CreateUpdateSqlCode(valueExpression, condition);
         }
 
@@ -433,11 +439,18 @@ FROM {Option.ReadTableName}{condition};";
 
         #region 字段条件
 
-        string ISqlBuilder.Condition(string fieldName, string paraName)
-            => $"(`{Option.FieldMap[fieldName]}` = ?{paraName})";
+        string ISqlBuilder.Condition(string fieldName, string paraName) => $"(`{Option.FieldMap[fieldName]}` = ?{paraName})";
 
-        string ISqlBuilder.Condition(string fieldName, string paraName, string expression)
-            => $"(`{Option.FieldMap[fieldName]}` {expression} ?{paraName})";
+        string ISqlBuilder.Condition(string fieldName, string paraName, string expression) => $"(`{Option.FieldMap[fieldName]}` {expression} ?{paraName})";
+
+
+        /// <summary>
+        ///     用在条件中的字段条件
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="expression">条件表达式</param>
+        /// <returns>字段条件</returns>
+        public string FieldCondition(string field, string expression = "=") => $@"`{Option.FieldMap[field]}` {expression} ?{field}";
 
         /// <summary>
         ///     组合条件SQL
@@ -474,18 +487,6 @@ FROM {Option.ReadTableName}{condition};";
             return sql.ToString();
         }
 
-        #endregion
-        #region 字段条件
-
-        /// <summary>
-        ///     用在条件中的字段条件
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="expression">条件表达式</param>
-        /// <returns>字段条件</returns>
-        public string FieldCondition(string field, string expression = "=")
-            => $@"`{Option.FieldMap[field]}` {expression} ?{field}";
-
         /// <summary>
         ///     连接字段条件SQL
         /// </summary>
@@ -503,6 +504,7 @@ FROM {Option.ReadTableName}{condition};";
         }
 
         #endregion
+
         #region 参数
 
         /// <summary>
@@ -532,9 +534,7 @@ FROM {Option.ReadTableName}{condition};";
         /// <param name="entity">取值的实体</param>
         public DbParameter CreateFieldParameter(string field, TEntity entity)
         {
-            return CreateParameter(field,
-                DataOperator.GetValue(entity, field),
-                (MySqlDbType)DataOperator.GetDbType(field));
+            return CreateParameter(field, Provider.EntityOperator.GetValue(entity, field), (MySqlDbType)DataOperator.GetDbType(field));
         }
 
         /// <summary>
@@ -560,10 +560,9 @@ FROM {Option.ReadTableName}{condition};";
         /// <param name="entity">取值的实体</param>
         public DbParameter CreatePimaryKeyParameter(TEntity entity)
         {
-            return CreateParameter(Option.PrimaryKey,
-                DataOperator.GetValue(entity, Option.PrimaryKey),
-                (MySqlDbType)DataOperator.GetDbType(Option.PrimaryKey));
+            return CreateParameter(Option.PrimaryKey, Provider.EntityOperator.GetValue(entity, Option.PrimaryKey), (MySqlDbType)DataOperator.GetDbType(Option.PrimaryKey));
         }
+
         #endregion
 
         #region Expression

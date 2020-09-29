@@ -110,8 +110,8 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     设置为改变
         /// </summary>
-        /// <param name="propertyIndex"> 字段的名字 </param>
-        public void SetModify(int propertyIndex)
+        /// <param name="property"> 字段的名字 </param>
+        public void SetModify(string property)
         {
             if (IsReadOnly)
                 return;

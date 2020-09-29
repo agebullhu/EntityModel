@@ -95,7 +95,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
@@ -112,7 +112,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
 
                 //Console.WriteLine("【ExistAsync】");
@@ -231,7 +231,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData, EventBusDb, EventSubscribeDataOperator>(EventSubscribeDataOperator.OperatorOption);
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 for (int i = 0; i < 100; i++)
@@ -252,10 +252,11 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
+                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
                 {
-                    var data = await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
-                    var cnt = await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
+                    var data = await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
+                    var cnt = await connection.ExecuteAsync(EventSubscribeDataOperator.Option.UpdateSqlCode, data);
                     Console.WriteLine($" update {cnt} records,data:\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
                 }
             }
@@ -269,10 +270,11 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
+                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
                 for (int i = 0; i < 100; i++)
                 {
                     await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                    await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
+                    await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
                 }
                 Interlocked.Add(ref count, 100);
             }
@@ -286,11 +288,13 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
+                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
+
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                var data = await connection.QueryFirstAsync<EventSubscribeData>(EventSubscribeDataOperator.LoadSqlCode);
+                var data = await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
                 for (int i = 0; i < 100; i++)
                 {
-                    await connection.ExecuteAsync(EventSubscribeDataOperator.UpdateSqlCode, data);
+                    await connection.ExecuteAsync(EventSubscribeDataOperator.Option.UpdateSqlCode, data);
                 }
                 Interlocked.Add(ref count, 100);
             }

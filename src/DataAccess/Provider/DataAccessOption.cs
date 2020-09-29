@@ -33,7 +33,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 表配置
         /// </summary>
-        public EntitySturct DataSturct { get; set; }
+        public EntityStruct DataSturct { get; set; }
 
         /// <summary>
         ///     主键字段(可动态覆盖PrimaryKey)
@@ -43,14 +43,14 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     字段字典
         /// </summary>
-        private List<EntitiyProperty> _properties;
+        private List<EntityProperty> _properties;
         private string readTableName;
         private string writeTableName;
 
         /// <summary>
         ///     属性
         /// </summary>
-        public List<EntitiyProperty> Properties
+        public List<EntityProperty> Properties
         {
             get => _properties ?? DataSturct.Properties;
             set => _properties = value;
@@ -59,12 +59,12 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     属性字典
         /// </summary>
-        public Dictionary<string, EntitiyProperty> PropertyMap { get; protected set; }
+        public Dictionary<string, EntityProperty> PropertyMap { get; protected set; }
 
         /// <summary>
         /// 可读写的属性
         /// </summary>
-        public EntitiyProperty[] ReadPproperties { get; protected set; }
+        public EntityProperty[] ReadPproperties { get; protected set; }
 
         /// <summary>
         ///     属性字典
@@ -109,14 +109,14 @@ namespace Agebull.EntityModel.Common
         public string LoadFields { get; set; }
 
         /// <summary>
-        ///     插入的SQL语句
-        /// </summary>
-        public string InsertSqlCode { get; set; }
-
-        /// <summary>
         ///     全部更新的SQL语句
         /// </summary>
         public string UpdateFields { get; set; }
+
+        /// <summary>
+        ///     插入的SQL语句
+        /// </summary>
+        public string InsertSqlCode { get; set; }
 
         /// <summary>
         ///     全部更新的SQL语句
@@ -128,13 +128,57 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public string DeleteSqlCode { get; set; }
 
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public ISqlBuilder SqlBuilder { get; set; }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => SqlBuilder.DataBaseType;
+
+        bool _isInitiated;
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        public void Initiate()
+        {
+            if (_isInitiated)
+                return;
+            _isInitiated = true;
+
+            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);
+            var properties = Properties;
+            foreach (var pro in properties)
+            {
+                if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
+                    continue;
+                PropertyMap[pro.FieldName] = pro;
+                PropertyMap[pro.PropertyName] = pro;
+
+                FieldMap[pro.FieldName] = pro.FieldName;
+                FieldMap[pro.PropertyName] = pro.FieldName;
+            }
+
+            LoadFields ??= SqlBuilder.BuilderLoadFields();
+            InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
+            DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+            UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+
+            ReadPproperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
+
+        }
 
         #region 迭代
 
         /// <summary>
         /// 迭代循环属性
         /// </summary>
-        public void FroeachProperties(PropertyFeatrue propertyFeatrue, Action<EntitiyProperty> action)
+        public void FroeachProperties(PropertyFeatrue propertyFeatrue, Action<EntityProperty> action)
         {
             var properties = Properties;
 
@@ -148,7 +192,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 迭代循环属性
         /// </summary>
-        public void FroeachProperties(PropertyFeatrue propertyFeatrue, ReadWriteFeatrue readWrite, Action<EntitiyProperty> action)
+        public void FroeachProperties(PropertyFeatrue propertyFeatrue, ReadWriteFeatrue readWrite, Action<EntityProperty> action)
         {
             var properties = Properties;
 
@@ -162,13 +206,13 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 迭代循环属性
         /// </summary>
-        public void FroeachDbProperties(Action<EntitiyProperty> action)
+        public void FroeachDbProperties(Action<EntityProperty> action)
         {
             var properties = Properties;
 
             foreach (var pro in properties)
             {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field))
                     action(pro);
             }
         }
@@ -176,13 +220,13 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 迭代循环属性
         /// </summary>
-        public void FroeachDbProperties(ReadWriteFeatrue readWrite, Action<EntitiyProperty> action)
+        public void FroeachDbProperties(ReadWriteFeatrue readWrite, Action<EntityProperty> action)
         {
             var properties = Properties;
 
             foreach (var pro in properties)
             {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
                     action(pro);
             }
         }
@@ -190,69 +234,16 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 迭代循环属性
         /// </summary>
-        public async Task FroeachDbProperties(ReadWriteFeatrue readWrite, Func<EntitiyProperty, Task> action)
+        public async Task FroeachDbProperties(ReadWriteFeatrue readWrite, Func<EntityProperty, Task> action)
         {
             var properties = Properties;
 
             foreach (var pro in properties)
             {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
                     await action(pro);
             }
         }
         #endregion
-    }
-
-
-    /// <summary>
-    /// 数据载入配置
-    /// </summary>
-    public class DataAccessOption<TEntity> : DataAccessOption
-        where TEntity : class, new()
-    {
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        public DataBaseType DataBaseType => Provider.SqlBuilder.DataBaseType;
-
-        /// <summary>
-        /// Sql语句构造器
-        /// </summary>
-        public ISqlBuilder<TEntity> SqlBuilder => Provider.SqlBuilder;
-
-        /// <summary>
-        /// 驱动提供者信息
-        /// </summary>
-        public DataAccessProvider<TEntity> Provider { get; set; }
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        public void Initiate()
-        {
-            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            PropertyMap = new Dictionary<string, EntitiyProperty>(StringComparer.OrdinalIgnoreCase);
-            var properties = Properties;
-            foreach (var pro in properties)
-            {
-                if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.DbCloumn))
-                    continue;
-                PropertyMap[pro.ColumnName] = pro;
-                PropertyMap[pro.PropertyName] = pro;
-
-                FieldMap[pro.ColumnName] = pro.ColumnName;
-                FieldMap[pro.PropertyName] = pro.ColumnName;
-            }
-
-            LoadFields ??= SqlBuilder.BuilderLoadFields();
-            InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
-            DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
-            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
-            UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
-
-            ReadPproperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.DbCloumn) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
-
-        }
-
     }
 }

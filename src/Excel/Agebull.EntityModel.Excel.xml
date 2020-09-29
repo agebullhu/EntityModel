@@ -70,7 +70,7 @@
             <typeparam name="TData">数据类型</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.Access">
+        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.DataQuery">
             <summary>
                 数据访问对象
             </summary>
@@ -386,7 +386,7 @@
                 Excel导入类
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.Access">
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.DataAccess">
             <summary>
             数据访问对象
             </summary>

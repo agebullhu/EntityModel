@@ -13,7 +13,7 @@ namespace Agebull.MicroZero.ZeroApis
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
     public abstract class ApiController<TData, TPrimaryKey, TBusinessLogic> : ModelApiController
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
+        where TData : class, IIdentityData<TPrimaryKey>, new()
         where TBusinessLogic : BusinessLogicBase<TData, TPrimaryKey>, new()
     {
         #region 基础变量
@@ -109,9 +109,12 @@ namespace Agebull.MicroZero.ZeroApis
         public async Task<IApiResult<TData>> AddNew(TData arg)
         {
             var data = new TData();
-            data.__status.IsNew = true;
-            data.__status.IsFromClient = true;
-            var convert = new FormConvert(data);
+            if(data is IEditStatus status)
+            {
+                status.EditStatusRedorder.IsExist = false;
+                status.EditStatusRedorder.IsFromClient = true;
+            }
+            var convert = new FormConvert();
             ReadFormData(data, convert);
             if (convert.Failed)
             {
@@ -131,9 +134,12 @@ namespace Agebull.MicroZero.ZeroApis
         {
             var data = new TData();
 
-            data.__status.IsExist = true;
-            data.__status.IsFromClient = true;
-            var convert = new FormConvert(data);
+            if (data is IEditStatus status)
+            {
+                status.EditStatusRedorder.IsExist = true;
+                status.EditStatusRedorder.IsFromClient = true;
+            }
+            var convert = new FormConvert();
             if (!convert.Arguments.TryGetValue("id", out var id) )
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
             
@@ -196,9 +202,9 @@ namespace Agebull.MicroZero.ZeroApis
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public async Task<IApiResult<byte[]>> Import(byte[] stream)
         {
-            var res = await Business.Import(stream);
-            var result = ApiResultHelper.Succees(res.state);
-            if (!res.success)
+            var (success, state) = await Business.Import(stream);
+            var result = ApiResultHelper.Succees(state);
+            if (!success)
             {
                 result.Code = OperatorStatusCode.BusinessError;
                 result.Message = "导入发生错误，请检查";
@@ -259,7 +265,7 @@ namespace Agebull.MicroZero.ZeroApis
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
     public abstract class ApiController<TData, TBusinessLogic> : ApiController<TData, long, TBusinessLogic>
-        where TData : EditDataObject, IIdentityData<long>, new()
+        where TData : class, IIdentityData<long>, new()
         where TBusinessLogic : BusinessLogicBase<TData, long>, new()
     {
         ///<inheritdoc/>

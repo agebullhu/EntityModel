@@ -62,17 +62,6 @@
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
         </member>
-        <member name="T:Agebull.EntityModel.MySql.MysqlDataAccessProviderExtensions">
-            <summary>
-            数据访问提供器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MysqlDataAccessProviderExtensions.CreateDataAccess``3(System.IServiceProvider,Agebull.EntityModel.Common.DataAccessOption{``0})">
-            <summary>
-            构造数据访问对象
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlDataBase">
             <summary>
                 表示MySql数据库对象
@@ -209,6 +198,17 @@
             <remarks>
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
+        </member>
+        <member name="T:Agebull.EntityModel.MySql.MysqlExtensions">
+            <summary>
+            数据访问提供器
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MysqlExtensions.CreateDataAccess``3(System.IServiceProvider,Agebull.EntityModel.Common.DataAccessOption)">
+            <summary>
+            构造数据访问对象
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlSqlBuilder`1">
             <summary>
@@ -383,6 +383,14 @@
                 物理删除数据
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FieldCondition(System.String,System.String)">
+            <summary>
+                用在条件中的字段条件
+            </summary>
+            <param name="field">字段</param>
+            <param name="expression">条件表达式</param>
+            <returns>字段条件</returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ConcatCondition(System.Boolean,System.String[])">
             <summary>
                 组合条件SQL
@@ -396,14 +404,6 @@
             </summary>
             <param name="isAnd">是否用AND组合</param>
             <param name="fields">生成参数的字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FieldCondition(System.String,System.String)">
-            <summary>
-                用在条件中的字段条件
-            </summary>
-            <param name="field">字段</param>
-            <param name="expression">条件表达式</param>
-            <returns>字段条件</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ConcatFieldCondition(System.Boolean,System.String[])">
             <summary>

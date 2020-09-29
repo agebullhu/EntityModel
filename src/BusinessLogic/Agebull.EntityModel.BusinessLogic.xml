@@ -262,7 +262,7 @@
                 更新对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Saved(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnSaved(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
             <summary>
                 更新对象
             </summary>

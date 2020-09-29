@@ -50,14 +50,14 @@ namespace Agebull.EntityModel.Common
         {
             foreach (var pro in Provider.Option.ReadPproperties)
             {
-                var val = reader.GetValue(pro.ColumnName);
+                var val = reader.GetValue(pro.FieldName);
                 if (val == null || val == DBNull.Value)
                 {
-                    SetValue(entity, pro.PropertyName, null);
+                    Provider.EntityOperator.SetValue(entity, pro.PropertyName, null);
                 }
                 else
                 {
-                    SetValue(entity, pro.PropertyName, val);
+                    Provider.EntityOperator.SetValue(entity, pro.PropertyName, val);
                 }
             };
             return Task.CompletedTask;
@@ -76,16 +76,10 @@ namespace Agebull.EntityModel.Common
             foreach (var pro in Provider.Option.ReadPproperties)
             {
                 cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName,
-                            GetValue(entity, pro.PropertyName),
+                            Provider.EntityOperator.GetValue(entity, pro.PropertyName),
                             pro.DbType));
             }
         }
-
-        /// <summary>
-        /// 取得仅更新的SQL语句
-        /// </summary>
-        string GetModifiedUpdateSql(TEntity entity) => Provider.Option.UpdateSqlCode;
-
 
         /// <summary>
         /// 设置插入数据的命令
@@ -110,23 +104,9 @@ namespace Agebull.EntityModel.Common
         {
             Provider.Option.FroeachDbProperties(pro =>
             {
-                cmd.Parameters[pro.PropertyName].Value = GetValue(data, pro.PropertyName) ?? DBNull.Value;
+                cmd.Parameters[pro.PropertyName].Value = Provider.EntityOperator.GetValue(data, pro.PropertyName) ?? DBNull.Value;
             });
         }
-
-        /// <summary>
-        ///     得到字段的值
-        /// </summary>
-        /// <param name="field"> 字段的名字 </param>
-        /// <returns> 字段的值 </returns>
-        object GetValue(TEntity entity, string field);
-
-        /// <summary>
-        ///     配置字段的值
-        /// </summary>
-        /// <param name="field"> 字段的名字 </param>
-        /// <param name="value"> 字段的值 </param>
-        void SetValue(TEntity entity, string field, object value);
 
         #region 扩展 
 
@@ -164,5 +144,27 @@ namespace Agebull.EntityModel.Common
         Task AfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter) => Task.CompletedTask;
 
         #endregion
+    }
+
+
+    /// <summary>
+    ///     表明是一个实体操作对象
+    /// </summary>
+    public interface IEntityOperator<TEntity>
+        where TEntity : class, new()
+    {
+        /// <summary>
+        ///     得到字段的值
+        /// </summary>
+        /// <param name="field"> 字段的名字 </param>
+        /// <returns> 字段的值 </returns>
+        object GetValue(TEntity entity, string field);
+
+        /// <summary>
+        ///     配置字段的值
+        /// </summary>
+        /// <param name="field"> 字段的名字 </param>
+        /// <param name="value"> 字段的值 </param>
+        void SetValue(TEntity entity, string field, object value);
     }
 }

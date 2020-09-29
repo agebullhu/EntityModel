@@ -1,5 +1,6 @@
 ﻿#region 引用
 
+using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -787,18 +788,22 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     读主键参数
         /// </summary>
+        /// <param name="jsonName">参数名</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        public static bool TryGetId<TData>(out long value)
-           where TData : EntityModel.Common.EditDataObject, new()
+        public static bool TryGetId(string jsonName, out long value)
         {
-            if (TryGet("id", out value))
-                return true;
-            var data = new TData();
-            var pri = data.__Struct.Properties.First(p => p.Name == data.__Struct.PrimaryKey);
-            if (TryGet(pri.JsonName, out value))
-                return true;
-            return TryGet(pri.Name, out value);
+            return TryGet("id", out value) || TryGet(jsonName, out value);
+        }
+
+        /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetId(out long value)
+        {
+            return TryGet("id", out value);
         }
 
         /// <summary>
@@ -808,29 +813,39 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="convert">转换器</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public static bool TryGetId<TData, TPrimaryKey>(Func<string, (bool state, TPrimaryKey key)> convert, out TPrimaryKey value)
-           where TData : EntityModel.Common.EditDataObject, new()
+           where TData : class, new()
         {
             if (TryGetValue("id", out var str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
-            var data = new TData();
-            var pri = data.__Struct.Properties.First(p => p.Name == data.__Struct.PrimaryKey);
+            value = default;
+            return false;
+        }
 
-            if (TryGetValue(pri.JsonName, out str))
+        /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="jsonName">参数名</param>
+        /// <param name="value">参数值</param>
+        /// <param name="convert">转换器</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetId<TData, TPrimaryKey>(string jsonName, Func<string, (bool state, TPrimaryKey key)> convert, out TPrimaryKey value)
+           where TData : class, new()
+        {
+            if (TryGetValue("id", out var str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
-
-            if (TryGetValue(pri.Name, out str))
+            if (TryGetValue(jsonName, out str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
             value = default;
             return false;

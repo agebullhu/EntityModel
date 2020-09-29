@@ -8,96 +8,147 @@
 
 #region 引用
 
-using System;
 
 #endregion
 
+using System;
+
 namespace Agebull.EntityModel.Common
 {
-
     /// <summary>
     ///     表示属性结构
     /// </summary>
-    public sealed class EntitiyProperty : SimpleConfig
+    public sealed class EntityProperty
     {
         /// <summary>
-        /// 数据库读写特性
+        ///     标题
         /// </summary>
-        public ReadWriteFeatrue DbReadWrite { get; set; }
+        private string caption;
+        /// <summary>
+        ///     说明
+        /// </summary>
+        private string description;
+        private string propertyName;
+        private string jsonName;
+        private string fieldName;
+        private bool? canImport;
+        private bool? canExport;
+        private ReadWriteFeatrue? dbReadWrite;
+        //基础定义
+        PropertyDefault propertyDefault;
+
+        public EntityProperty(PropertyDefault @default)
+        {
+            propertyDefault = @default;
+        }
+
+        public EntityProperty(PropertyDefault @default, int idx, string newName = null, string newField = null)
+        {
+            Index = idx;
+            propertyName = newName;
+            fieldName = newField;
+            propertyDefault = @default;
+        }
+
 
         /// <summary>
-        /// 字段特性
+        /// 序号
         /// </summary>
-        public PropertyFeatrue PropertyFeatrue { get; set; }
+        public int Index { get; set; }
 
-        /// <summary>
-        ///     连接字段
-        /// </summary>
-        public string Link { get; set; }
-
-        /// <summary>
-        ///     属性实现对应的接口
-        /// </summary>
-        public string[] Interfaces { get; set; }
 
         /// <summary>
         ///     标题
         /// </summary>
-        public string Title { get => Caption; set => Caption = value; }
+        public string Caption
+        {
+            get => caption ?? propertyName ?? propertyDefault.Caption ?? propertyDefault.Name;
+            set => caption = value;
+        }
 
         /// <summary>
-        ///     属性名称
+        ///     说明
         /// </summary>
-        public string PropertyName { get => Name; set => Name = value; }
+        public string Description
+        {
+            get => description ?? propertyDefault.Description;
+            set => description = value;
+        }
+
+        /// <summary>
+        ///     名称
+        /// </summary>
+        public string PropertyName
+        {
+            get => propertyName ?? propertyDefault.Name;
+            set => propertyName = value;
+        }
 
         /// <summary>
         ///     JSON属性名称
         /// </summary>
-        public string JsonName { get; set; }
+        public string JsonName { get => jsonName ?? propertyDefault.JsonName; set => jsonName = value; }
 
         /// <summary>
         ///     数据库字段名称
         /// </summary>
-        public string ColumnName { get; set; }
+        public string FieldName { get => fieldName ?? propertyDefault.FieldName; set => fieldName = value; }
 
         /// <summary>
-        ///     属性类型
+        /// 数据库读写特性
         /// </summary>
-        public Type PropertyType { get; set; }
-
-        /// <summary>
-        ///     数据库类型(直接对应特定数据库的类型,不是通用的DbType)
-        /// </summary>
-        public int DbType { get; set; }
-
-        /// <summary>
-        ///     索引
-        /// </summary>
-        public int Index { get; set; }
-
-        /// <summary>
-        ///     索引
-        /// </summary>
-        public int PropertyIndex { get; set; }
-
-        /// <summary>
-        ///     能否为空
-        /// </summary>
-        public bool CanNull { get; set; }
-
-        /// <summary>
-        ///     属性类型
-        /// </summary>
-        public PropertyValueType ValueType { get; set; }
+        public ReadWriteFeatrue DbReadWrite
+        {
+            get => dbReadWrite.HasValue ? dbReadWrite.Value : propertyDefault.DbReadWrite;
+            set => dbReadWrite = value;
+        }
 
         /// <summary>
         ///     能否导入
         /// </summary>
-        public bool CanImport { get; set; }
+        public bool CanImport
+        {
+            get => canImport.HasValue ? canImport.Value : propertyDefault.CanImport;
+            set => canImport = value;
+        }
 
         /// <summary>
         ///     能否导出
         /// </summary>
-        public bool CanExport { get; set; }
+        public bool CanExport
+        {
+            get => canExport.HasValue ? canExport.Value : propertyDefault.CanExport;
+            set => canExport = value;
+        }
+
+        /// <summary>
+        /// 字段特性
+        /// </summary>
+        public PropertyFeatrue PropertyFeatrue => propertyDefault.PropertyFeatrue;
+
+        /// <summary>
+        ///     属性实现对应的接口
+        /// </summary>
+        public string Entity => propertyDefault.Entity;
+
+        /// <summary>
+        ///     属性类型
+        /// </summary>
+        public Type PropertyType => propertyDefault.PropertyType;
+
+        /// <summary>
+        ///     数据库类型(直接对应特定数据库的类型,不是通用的DbType)
+        /// </summary>
+        public int DbType => propertyDefault.DbType;
+
+        /// <summary>
+        ///     能否为空
+        /// </summary>
+        public bool CanNull => propertyDefault.CanNull;
+
+        /// <summary>
+        ///     属性类型
+        /// </summary>
+        public PropertyValueType ValueType => propertyDefault.ValueType;
     }
 }

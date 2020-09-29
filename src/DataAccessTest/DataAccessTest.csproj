@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="EventSubscribe.DataAccessOption.cs" />
   </ItemGroup>
 
@@ -18,6 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataSturct\Agebull.EntityModel.DataSturct.csproj" />
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
     <ProjectReference Include="..\Injection\Agebull.EntityModel.Injection.csproj" />
     <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>

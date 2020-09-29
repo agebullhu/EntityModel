@@ -19,18 +19,16 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     /// 数据访问提供器
     /// </summary>
-    public static class MysqlDataAccessProviderExtensions
+    public static class MysqlExtensions
     {
         /// <summary>
         /// 构造数据访问对象
         /// </summary>
         /// <returns></returns>
-        public static DataAccess<TEntity> CreateDataAccess<TEntity, TDataBase, TDataOperator>(
-            this IServiceProvider serviceProvider,
-            DataAccessOption<TEntity> option)
+        public static DataAccess<TEntity> CreateDataAccess<TEntity, TDataBase, TDataOperator>(this IServiceProvider serviceProvider, DataAccessOption option)
         where TEntity : class, new()
         where TDataBase : MySqlDataBase
-        where TDataOperator : IDataOperator<TEntity>,new()
+        where TDataOperator : IDataOperator<TEntity>, new()
         {
             var provider = new DataAccessProvider<TEntity>
             {
@@ -41,12 +39,11 @@ namespace Agebull.EntityModel.MySql
                 Injection = serviceProvider.GetService<IOperatorInjection<TEntity>>(),
                 SqlBuilder = new MySqlSqlBuilder<TEntity>()
             };
-            provider.Option.Provider = provider;
             provider.SqlBuilder.Provider = provider;
             if (provider.Injection != null)
                 provider.Injection.Provider = provider;
             provider.DataOperator.Provider = provider;
-
+            option.SqlBuilder = provider.SqlBuilder;
             option.Initiate();
 
             return new DataAccess<TEntity>(provider);

@@ -1,47 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Agebull.EntityModel.Common
 {
-    /// <summary>
-    /// 校验节点
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class ValidateResultDictionary
-    {
-        /// <summary>
-        /// 校验结果
-        /// </summary>
-        [JsonProperty("results", NullValueHandling = NullValueHandling.Ignore)]
-        public List<ValidateResult> Result = new List<ValidateResult>();
-
-        /// <summary>
-        /// 尝试加入
-        /// </summary>
-        /// <param name="row"></param>
-        public void TryAdd(ValidateResult row)
-        {
-            Result.Add(row);
-        }
-        /// <summary>
-        /// 文本
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("检查结果:");
-            foreach (var item in Result)
-            {
-                sb.AppendLine($"{item.Id}:");
-                sb.Append(item);
-            }
-            return sb.ToString();
-        }
-    }
-
     /// <summary>
     /// 校验节点
     /// </summary>
@@ -144,42 +106,5 @@ namespace Agebull.EntityModel.Common
                 Message = message
             });
         }
-    }
-
-    /// <summary>
-    /// 校验节点
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class ValidateItem
-    {
-        /// <summary>
-        /// 正确
-        /// </summary>
-        [JsonProperty("succeed", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Succeed { get; set; }
-
-        /// <summary>
-        /// 1警告
-        /// </summary>
-        [JsonProperty("warning", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Warning { get; set; }
-
-        /// <summary>
-        /// 字段名称
-        /// </summary>
-        [JsonProperty("field", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 字段标题目
-        /// </summary>
-        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
-        public string Caption { get; set; }
-
-        /// <summary>
-        /// 消息
-        /// </summary>
-        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
-        public string Message { get; set; }
     }
 }

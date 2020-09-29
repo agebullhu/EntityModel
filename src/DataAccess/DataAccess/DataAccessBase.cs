@@ -20,7 +20,7 @@ namespace Agebull.EntityModel.Common
     ///     Sql实体访问类
     /// </summary>
     /// <typeparam name="TEntity">实体</typeparam>
-    public sealed partial class DataAccess<TEntity> : SimpleConfig//, IDataAccess<TEntity>
+    public class DataAccessBase<TEntity>
          where TEntity : class, new()
     {
         #region 构造
@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// Sql语句构造器
         /// </summary>
-        public DataAccessOption<TEntity> Option => Provider.Option;
+        public DataAccessOption Option => Provider.Option;
 
         /// <summary>
         /// Sql语句构造器
@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.Common
         /// 构造
         /// </summary>
         /// <param name="provider"></param>
-        public DataAccess(DataAccessProvider<TEntity> provider)
+        protected DataAccessBase(DataAccessProvider<TEntity> provider)
         {
             Provider = provider;
         }
@@ -75,7 +75,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     无懒构造数据库对象
         /// </summary>
-        public IDataBase OriDataBase { get; private set; }
+        public IDataBase OriDataBase { get; protected set; }
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace Agebull.EntityModel.Common
         /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <returns></returns>
-        private static string GetPropertyName<T>(Expression<Func<TEntity, T>> action)
+        protected static string GetPropertyName<T>(Expression<Func<TEntity, T>> action)
         {
             if (action.Body is MemberExpression expression)
                 return expression.Member.Name;

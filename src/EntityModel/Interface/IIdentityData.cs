@@ -6,8 +6,22 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
+using System;
+
 namespace Agebull.EntityModel.Common
 {
+    /// <summary>
+    ///     表示有全局唯一标识的数据
+    /// </summary>
+    public interface IGlobalKey
+    {
+        /// <summary>
+        ///     数字标识
+        /// </summary>
+        /// <value>int</value>
+        Guid Key { get; set; }
+    }
+
     /// <summary>
     ///     表示有唯一数字标识的数据
     /// </summary>
@@ -51,6 +65,10 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public interface IUnionUniqueEntity
     {
+        /// <summary>
+        ///     组合后的唯一值
+        /// </summary>
+        string UniqueValue { get; }
     }
 
 }

@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
     public abstract class BusinessLogicByAudit<TData, TPrimaryKey>
         : BusinessLogicByStateData<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, IHistoryData, IAuditData, IStateData, new()
+        where TData : class, IHistoryData, IIdentityData<TPrimaryKey>, IAuditData, IStateData, new()
     {
         #region 消息
 
@@ -570,12 +570,15 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            var result = data.Validate();
-            if (result.Succeed)
-                return await ValidateExtend(data);
-            putError?.Invoke(result);
-            GlobalContext.Current.Status.LastMessage = result.ToString();
-            return false;
+            if (data is IValidate validate)
+            {
+                if (validate.Validate(out var result))
+                    return await ValidateExtend(data);
+                putError?.Invoke(result);
+                GlobalContext.Current.Status.LastMessage = result.ToString();
+                return false;
+            }
+            return true;
         }
 
 
@@ -706,7 +709,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     public abstract class BusinessLogicByAudit<TData> : BusinessLogicByAudit<TData, long>
-        where TData : EditDataObject, IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
+        where TData : class,  IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
     {
     }
 }

@@ -26,7 +26,7 @@ namespace Agebull.MicroZero.ZeroApis
     /// </summary>
     public abstract class ApiControllerForAudit<TData, TPrimaryKey, TBusinessLogic>
         : ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<TPrimaryKey>, new()
+        where TData : class, IStateData, IHistoryData, IAuditData, IIdentityData<TPrimaryKey>, new()
         where TBusinessLogic : BusinessLogicByAudit<TData, TPrimaryKey>, new()
     {
         #region API
@@ -285,7 +285,7 @@ namespace Agebull.MicroZero.ZeroApis
     /// </summary>
     public abstract class ApiControllerForAudit<TData, TBusinessLogic>
         : ApiControllerForAudit<TData, long, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IHistoryData, IAuditData, IIdentityData<long>, new()
+        where TData : class, IStateData, IHistoryData, IAuditData, IIdentityData<long>, new()
         where TBusinessLogic : BusinessLogicByAudit<TData, long>, new()
     {
     }

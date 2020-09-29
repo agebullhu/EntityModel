@@ -4,421 +4,6 @@
         <name>Agebull.EntityModel.Core</name>
     </assembly>
     <members>
-        <member name="T:Agebull.EntityModel.Common.DataObjectBase">
-            <summary>
-                实体基类
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.CopyValue(Agebull.EntityModel.Common.IDataObject)">
-            <summary>
-                复制值
-            </summary>
-            <param name="source">复制的源字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValue(System.String,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValue(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValue``1(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValue(System.Int32,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValue(System.String,System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValue(System.Int32)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValue``1(System.Int32)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.CopyValueInner(Agebull.EntityModel.Common.DataObjectBase)">
-            <summary>
-                复制值
-            </summary>
-            <param name="source">复制的源字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValueInner(System.String,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValueInner(System.String,System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValueInner(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.SetValueInner(System.Int32,System.Object)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValueInner(System.Int32)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValueInner``1(System.String)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataObjectBase.GetValueInner``1(System.Int32)">
-            <summary>
-                设置属性值
-            </summary>
-            <param name="property"></param>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.EditDataObject">
-            <summary>
-                编辑支持的实体对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.EditDataObject.__status">
-            <summary>
-                状态对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.CopyValueInner(Agebull.EntityModel.Common.DataObjectBase)">
-            <summary>
-                复制值
-            </summary>
-            <param name="source">复制的源字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.AcceptChangedInner">
-            <summary>
-                接受修改(只可重写,不可调用)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.RejectChangedInner">
-            <summary>
-                回退修改(只可重写,不可调用)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.OnModified(System.Int32)">
-            <summary>
-                已被修改(不可调用,只可重写)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.OnModifiedInner(System.Int32)">
-            <summary>
-                已被修改(不可调用,只可重写)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.RejectChanged">
-            <summary>
-            设置为未修改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.AcceptChanged">
-            <summary>
-            设置为未修改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.RecordModifiedInner(System.Int32)">
-            <summary>
-                记录属性修改
-            </summary>
-            <param name="propertyIndex">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.OnDelete(System.Boolean)">
-            <summary>
-                对象删除时的同步处理(只可重写,不可调用)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.OnAdd(System.Boolean)">
-            <summary>
-                对象新增时的同步处理(只可重写,不可调用)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.LaterPeriodByModify">
-            <summary>
-                属性修改的后期处理(保存后)
-            </summary>
-            <remarks>
-                对当前对象的属性的更改,请自行保存,否则将丢失
-            </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.Validate">
-            <summary>
-                数据校验
-            </summary>
-            <returns>校验消息,如果正确,返回空</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.Validate(Agebull.EntityModel.Common.ValidateResult)">
-            <summary>
-                数据校验
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EditDataObject.Reset">
-            <summary>
-                重置
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.EditDataObject.__Struct">
-            <summary>
-                实体结构
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.EntityValueChecker">
-            <summary>
-            校验节点
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.EntityValueChecker.IsModify(System.String,System.String)">
-            <summary>
-            对比文本是否相同
-            </summary>
-            <param name="txt"></param>
-            <param name="val"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.NotificationObject">
-            <summary>
-                有属性通知的对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnPropertyChanged(System.Int32)">
-            <summary>
-                发出属性修改事件
-            </summary>
-            <param name="propertyIndex">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.RecordModifiedInner(System.Int32)">
-            <summary>
-                记录属性修改
-            </summary>
-            <param name="propertyIndex">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnPropertyChangedInner(System.Int32)">
-            <summary>
-                属性修改处理
-            </summary>
-            <param name="propertyIndex">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnPropertyChanged(System.String)">
-            <summary>
-                发出属性修改事件
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.RecordModifiedInner(System.String)">
-            <summary>
-                记录属性修改
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnPropertyChangedInner(System.String)">
-            <summary>
-                属性修改处理
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="E:Agebull.EntityModel.Common.NotificationObject.propertyChanged">
-            <summary>
-                属性修改事件
-            </summary>
-        </member>
-        <member name="E:Agebull.EntityModel.Common.NotificationObject.PropertyChanged">
-            <summary>
-                属性修改事件(属性为空表示删除)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.RaisePropertyChangedEvent(System.String)">
-            <summary>
-                发出属性修改事件
-            </summary>
-            <param name="propertyName">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.RaisePropertyChangedInner(System.ComponentModel.PropertyChangedEventArgs)">
-            <summary>
-                发出属性修改事件(不受阻止模式影响)
-            </summary>
-            <param name="args">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnStatusChanged(Agebull.EntityModel.Common.NotificationStatusType)">
-            <summary>
-                发出状态变化事件
-            </summary>
-            <param name="status">状态</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.StatusChangedInner(Agebull.EntityModel.Common.NotificationStatusType)">
-            <summary>
-                状态变化处理
-            </summary>
-            <param name="status">状态</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.NotificationObject.OnStatusChangedInner(Agebull.EntityModel.Common.NotificationStatusType)">
-            <summary>
-                状态变化处理
-            </summary>
-            <param name="status">状态</param>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.ValidateResultDictionary">
-            <summary>
-            校验节点
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.ValidateResultDictionary.Result">
-            <summary>
-            校验结果
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResultDictionary.TryAdd(Agebull.EntityModel.Common.ValidateResult)">
-            <summary>
-            尝试加入
-            </summary>
-            <param name="row"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResultDictionary.ToString">
-            <summary>
-            文本
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.ValidateResult">
-            <summary>
-            校验节点
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateResult.Id">
-            <summary>
-            主键
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateResult.Succeed">
-            <summary>
-            是否正确
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.ValidateResult.Items">
-            <summary>
-            节点
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.ValidateResult.Messages">
-            <summary>
-            消息
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.ToString">
-            <summary>
-            到消息文本
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.ToJson">
-            <summary>
-            到消息文本
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.Add(System.String)">
-            <summary>
-            加入消息
-            </summary>
-            <param name="message"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.AddNoEmpty(System.String,System.String)">
-            <summary>
-            加入校验不能为空的消息
-            </summary>
-            <param name="caption"></param>
-            <param name="field"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.Add(System.String,System.String,System.String)">
-            <summary>
-            加入消息
-            </summary>
-            <param name="caption"></param>
-            <param name="field"></param>
-            <param name="message"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ValidateResult.AddWarning(System.String,System.String,System.String)">
-            <summary>
-            加入警告
-            </summary>
-            <param name="caption"></param>
-            <param name="field"></param>
-            <param name="message"></param>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.ValidateItem">
-            <summary>
-            校验节点
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateItem.Succeed">
-            <summary>
-            正确
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateItem.Warning">
-            <summary>
-            1警告
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateItem.Name">
-            <summary>
-            字段名称
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateItem.Caption">
-            <summary>
-            字段标题目
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ValidateItem.Message">
-            <summary>
-            消息
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.Common.DataStateType">
             <summary>
                 数据状态
@@ -667,6 +252,17 @@
                 对当前对象的属性的更改,请自行保存,否则将丢失
             </remarks>
         </member>
+        <member name="T:Agebull.EntityModel.Common.IGlobalKey">
+            <summary>
+                表示有全局唯一标识的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IGlobalKey.Key">
+            <summary>
+                数字标识
+            </summary>
+            <value>int</value>
+        </member>
         <member name="T:Agebull.EntityModel.Common.IIdentityData`1">
             <summary>
                 表示有唯一数字标识的数据
@@ -702,6 +298,11 @@
         <member name="T:Agebull.EntityModel.Common.IUnionUniqueEntity">
             <summary>
                 表示有唯一数字标识的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IUnionUniqueEntity.UniqueValue">
+            <summary>
+                组合后的唯一值
             </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.IInnerTree`1">
@@ -783,242 +384,135 @@
             <param name="value">The value.</param>
             <param name="serializer">The calling serializer.</param>
         </member>
-        <member name="T:Agebull.EntityModel.Common.IndexEditStatus">
+        <member name="T:Agebull.EntityModel.Common.IValidate">
             <summary>
-                编辑状态
+            表示实体校验接口
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.#ctor(Agebull.EntityModel.Common.EditDataObject)">
+        <member name="M:Agebull.EntityModel.Common.IValidate.Validate(Agebull.EntityModel.Common.ValidateResult@)">
             <summary>
-            构造
+            数据校验
             </summary>
-            <param name="data"></param>
+            <param name="result"></param>
+            <returns></returns>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IndexEditStatus.Entity">
+        <member name="T:Agebull.EntityModel.Common.ValidateItem">
             <summary>
-                对应的对象
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.IndexEditStatus.modifiedProperties">
-            <summary>
-                修改的属性列表
+            校验节点
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.IndexEditStatus.ModifiedProperties">
+        <member name="P:Agebull.EntityModel.Common.ValidateItem.Succeed">
             <summary>
-                修改的属性列表
+            正确
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.FieldIsModified(System.Int32)">
+        <member name="P:Agebull.EntityModel.Common.ValidateItem.Warning">
             <summary>
-                是否修改
+            1警告
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.SetUnModify">
+        <member name="P:Agebull.EntityModel.Common.ValidateItem.Name">
             <summary>
-                设置为非改变
+            字段名称
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.SetModified">
+        <member name="P:Agebull.EntityModel.Common.ValidateItem.Caption">
             <summary>
-                设置为改变
+            字段标题目
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.SetUnModify(System.Int32)">
+        <member name="P:Agebull.EntityModel.Common.ValidateItem.Message">
             <summary>
-                设置为非改变
-            </summary>
-            <param name="propertyIndex"> 字段的名字 </param>
-            <returns>总体是否修改</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.RecordModified(System.Int32)">
-            <summary>
-                记录属性修改
-            </summary>
-            <param name="propertyIndex">属性</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.CopyState(Agebull.EntityModel.Common.IndexEditStatus)">
-            <summary>
-                复制修改状态
-            </summary>
-            <param name="target">要复制的源</param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.IndexEditStatus.CopyStateInner(Agebull.EntityModel.Common.IndexEditStatus)">
-            <summary>
-                复制修改状态
-            </summary>
-            <param name="target">要复制的源</param>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.NotificationStatusType">
-            <summary>
-                通知对象的状态类型
+            消息
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.None">
+        <member name="T:Agebull.EntityModel.Common.ValidateResult">
             <summary>
-                原始状态
+            校验节点
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Refresh">
+        <member name="P:Agebull.EntityModel.Common.ValidateResult.Id">
             <summary>
-                已刷新
+            主键
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Modified">
+        <member name="P:Agebull.EntityModel.Common.ValidateResult.Succeed">
             <summary>
-                已修改
+            是否正确
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Added">
+        <member name="F:Agebull.EntityModel.Common.ValidateResult.Items">
             <summary>
-                新增完成
+            节点
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Saved">
+        <member name="F:Agebull.EntityModel.Common.ValidateResult.Messages">
             <summary>
-                保存完成
+            消息
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Deleted">
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.ToString">
             <summary>
-                已实际刪除
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Inner">
-            <summary>
-                正在内部操作
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.Synchronous">
-            <summary>
-                正在同步
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.CanReDo">
-            <summary>
-                可以重做
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.CanUnDo">
-            <summary>
-                可以撤销
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.ReDo">
-            <summary>
-                重做
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.NotificationStatusType.UnDo">
-            <summary>
-                撤销
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.ObjectStatus">
-            <summary>
-                对象状态基类
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsReadOnly">
-            <summary>
-                是否只读,用于在访问前__EntityStatus前防止构造__EntityStatus消耗内存
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.EntityStatusNull">
-            <summary>
-                状态对象为空
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.Entity">
-            <summary>
-                状态对象
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.ObjectStatus._status">
-            <summary>
-                状态对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.Status">
-            <summary>
-                状态对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.Reset(System.SByte)">
-            <summary>
-                重置
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.AcceptChanged">
-            <summary>
-                接受修改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.RejectChanged">
-            <summary>
-                回退修改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.FieldIsModified(System.Int32)">
-            <summary>
-                是否修改
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.SetUnModify(System.Int32)">
-            <summary>
-                设置为非改变
-            </summary>
-            <param name="propertyIndex"> 字段的名字 </param>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ObjectStatus.SetModify(System.Int32)">
-            <summary>
-                设置为改变
-            </summary>
-            <param name="propertyIndex"> 字段的名字 </param>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsModified">
-            <summary>
-                是否已修改
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsExist">
-            <summary>
-                是否已存在
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsNew">
-            <summary>
-                是否新增加的
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsDelete">
-            <summary>
-                是否已删除
+            到消息文本
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsFromClient">
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.ToJson">
             <summary>
-                是否来自编辑客户端
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.ObjectStatus.IsShadow">
-            <summary>
-                是否影子复制
+            到消息文本
             </summary>
             <returns></returns>
-            <remarks>
-                影子复制是为节省内在而设置的,有已下特性
-                1 从一个长生存期(进程相同)的对象复制而来
-                2 它有可能被修改
-                3 当它被修改时,使用已修改的新拷贝并独立存储
-                4 当它未修改时,使用源对象的内容且不进行存储
-                属性说明
-                1 当设置为真时,它是一种特殊的新增对象(即设置新增标记)
-                2 当设置为假时,它是普通的新增对象(即只有新增标记)
-                3 无论设置为真假,新增标记将保留
-                4 由于需要尽量减少不必要的保存,它不调用新增方法(OnAdd)
-            </remarks>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.Add(System.String)">
+            <summary>
+            加入消息
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.AddNoEmpty(System.String,System.String)">
+            <summary>
+            加入校验不能为空的消息
+            </summary>
+            <param name="caption"></param>
+            <param name="field"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.Add(System.String,System.String,System.String)">
+            <summary>
+            加入消息
+            </summary>
+            <param name="caption"></param>
+            <param name="field"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResult.AddWarning(System.String,System.String,System.String)">
+            <summary>
+            加入警告
+            </summary>
+            <param name="caption"></param>
+            <param name="field"></param>
+            <param name="message"></param>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ValidateResultDictionary">
+            <summary>
+            校验节点
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.ValidateResultDictionary.Result">
+            <summary>
+            校验结果
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResultDictionary.TryAdd(Agebull.EntityModel.Common.ValidateResult)">
+            <summary>
+            尝试加入
+            </summary>
+            <param name="row"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ValidateResultDictionary.ToString">
+            <summary>
+            文本
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.Interfaces.IVersionData">
             <summary>

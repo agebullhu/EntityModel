@@ -29,7 +29,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// <typeparam name="TData">数据对象</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
     public abstract class BusinessLogicBase<TData, TPrimaryKey> //: IBusinessLogicBase<TData, TPrimaryKey>
-        where TData : EditDataObject, IIdentityData<TPrimaryKey>, new()
+        where TData : class, IIdentityData<TPrimaryKey>, new()
     {
         #region 基础支持对象
 
@@ -214,6 +214,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             var exporter = new ExcelExporter<TData, TPrimaryKey>
             {
+                DataQuery = Access,
                 OnDataLoad = OnListLoaded
             };
             var data = new TData();
@@ -232,7 +233,7 @@ namespace Agebull.EntityModel.BusinessLogic
             var map = Access.Option.DataSturct.Properties.Where(p => p.CanImport).ToDictionary(p => p.Caption, p => p.PropertyName);
             var exporter = new ExcelImporter<TData>
             {
-                Access = Access,
+                DataAccess = Access,
                 FieldMap = map
             };
             exporter.Prepare(stream);
@@ -255,8 +256,15 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual Task<bool> CanSave(TData data, bool isAdd)
         {
-            if (isAdd || data.__status.IsModified)
+            if (data is IValidate validate && !validate.Validate(out var result))
+            {
+                GlobalContext.Current.Status.LastMessage = result.ToString();
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+                return Task.FromResult(false);
+            }
+            if (isAdd || !(data is IEditStatus status) || status.EditStatusRedorder.IsModified)
                 return Task.FromResult(true);
+
             GlobalContext.Current.Status.LastMessage = "数据未修改";
             GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
             return Task.FromResult(false);
@@ -270,7 +278,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual async Task<bool> PrepareSave(TData data, bool isAdd)
         {
-            if (data.__status.IsFromClient && !await PrepareSaveByUser(data, isAdd))
+            if (data is IEditStatus status && status.EditStatusRedorder.IsFromClient && !await PrepareSaveByUser(data, isAdd))
                 return false;
             return await OnSaving(data, isAdd);
         }
@@ -283,7 +291,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual async Task<bool> LastSaved(TData data, bool isAdd)
         {
-            if (data.__status.IsFromClient && !await LastSavedByUser(data, isAdd))
+            if (data is IEditStatus status && status.EditStatusRedorder.IsFromClient && !await LastSavedByUser(data, isAdd))
                 return false;
             return await OnSaved(data, isAdd);
         }
@@ -358,7 +366,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     return false;
                 }
 
-                if (data.__status.IsExist)
+                if (data is IEditStatus status && status.EditStatusRedorder.IsExist)
                 {
                     if (!await Access.UpdateAsync(data))
                         return false;
@@ -366,7 +374,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 else if (!await Access.InsertAsync(data))
                     return false;
 
-                if (!await Saved(data, BusinessCommandType.AddNew))
+                if (!await OnSaved(data, BusinessCommandType.AddNew))
                     return false;
             }
             await connectionScope.Commit();
@@ -391,7 +399,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 }
                 if (!await Access.UpdateAsync(data))
                     return false;
-                if (!await Saved(data, BusinessCommandType.Update))
+                if (!await OnSaved(data, BusinessCommandType.Update))
                     return false;
             }
             await connectionScope.Commit();
@@ -401,7 +409,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     更新对象
         /// </summary>
-        private async Task<bool> Saved(TData data, BusinessCommandType type)
+        private async Task<bool> OnSaved(TData data, BusinessCommandType type)
         {
             if (!await LastSaved(data, BusinessCommandType.AddNew == type))
                 return false;
@@ -538,7 +546,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     public abstract class BusinessLogicBase<TData> : BusinessLogicBase<TData, long>
-        where TData : EditDataObject, IIdentityData<long>, new()
+        where TData : class, IEditStatus, IIdentityData<long>, new()
     {
     }
 }

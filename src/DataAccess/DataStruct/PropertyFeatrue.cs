@@ -23,25 +23,21 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 无
         /// </summary>
-        None,
+        None = 0x0,
+
         /// <summary>
         /// 数据库列
         /// </summary>
-        DbCloumn,
+        Field = 0x1,
 
         /// <summary>
         /// 属性
         /// </summary>
-        Property,
+        Property = 0x2,
 
         /// <summary>
         /// 接口
         /// </summary>
-        Interface,
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        Alias
+        Interface = 0x4
     }
 }

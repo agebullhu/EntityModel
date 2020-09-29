@@ -27,20 +27,6 @@ namespace Agebull.MicroZero.ZeroApis
         #region 基本属性
 
         /// <summary>
-        /// 构造
-        /// </summary>
-        /// <param name="data"></param>
-        public FormConvert(EditDataObject data)
-        {
-            Data = data;
-        }
-
-        /// <summary>
-        ///     读取过程的错误消息记录
-        /// </summary>
-        public EditDataObject Data { get; }
-
-        /// <summary>
         ///     是否更新状态
         /// </summary>
         public bool IsUpdata { get; set; }
@@ -79,8 +65,7 @@ namespace Agebull.MicroZero.ZeroApis
                 StringBuilder msg = new StringBuilder();
                 foreach (var kv in _messages)
                 {
-                    var field = Data.__Struct.Properties.FirstOrDefault(p => p.JsonName == kv.Key)?.Caption ?? kv.Key;
-                    msg.AppendLine($"{field} : {kv.Value}");
+                    msg.AppendLine($"{kv.Key} : {kv.Value}");
                 }
                 return msg.ToString();
             }

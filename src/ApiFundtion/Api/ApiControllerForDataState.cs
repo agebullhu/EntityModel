@@ -29,7 +29,7 @@ namespace Agebull.MicroZero.ZeroApis
     /// <typeparam name="TBusinessLogic">业务对象</typeparam>
     public abstract class ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic> :
         ApiController<TData, TPrimaryKey, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IIdentityData<TPrimaryKey>, new()
+        where TData : class, IStateData, IIdentityData<TPrimaryKey>, new()
         where TBusinessLogic : BusinessLogicByStateData<TData, TPrimaryKey>, new()
     {
         #region API
@@ -171,7 +171,7 @@ namespace Agebull.MicroZero.ZeroApis
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
     public abstract class ApiControllerForDataState<TData, TBusinessLogic> : ApiControllerForDataState<TData, long, TBusinessLogic>
-        where TData : EditDataObject, IStateData, IIdentityData<long>, new()
+        where TData : class, IStateData, IIdentityData<long>, new()
         where TBusinessLogic : BusinessLogicByStateData<TData, long>, new()
     {
         ///<inheritdoc/>
