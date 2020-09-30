@@ -11,6 +11,11 @@ namespace Agebull.EntityModel.Common
     public class DataAccessOption
     {
         /// <summary>
+        /// 是否查询
+        /// </summary>
+        public bool IsQuery { get; set; }
+
+        /// <summary>
         /// 按修改更新
         /// </summary>
         public bool UpdateByMidified { get; set; }

@@ -42,10 +42,15 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         public static DataAccess<TEntity> CreateDataAccess<TEntity>(this IServiceProvider serviceProvider)
             where TEntity : class, new()
         {
+            var option = GetOption<TEntity>();
+            if (option == null)
+                throw new NotSupportedException($"{typeof(TEntity).FullName}没有对应配置项，请通过设计器生成");
+            if (option.IsQuery)
+                throw new NotSupportedException($"{typeof(TEntity).FullName}是一个查询，请使用CreateDataQuery方法");
             var provider = new DataAccessProvider<TEntity>
             {
                 ServiceProvider = serviceProvider,
-                Option = GetOption<TEntity>(),
+                Option = option,
                 SqlBuilder = new MySqlSqlBuilder<TEntity>(),
                 Injection = serviceProvider.GetService<IOperatorInjection<TEntity>>(),
                 CreateDataBase = () => serviceProvider.GetService<EventBusDb>(),

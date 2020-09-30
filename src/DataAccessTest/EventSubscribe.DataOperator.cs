@@ -26,6 +26,8 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option => new DataAccessOption
         {
+            ReadTableName = "",
+            WriteTableName = "",
             LoadFields = LoadFields,
             UpdateFields = UpdateFields,
             InsertSqlCode = InsertSqlCode,
