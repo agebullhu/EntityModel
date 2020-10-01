@@ -111,6 +111,12 @@ namespace Agebull.EntityModel.Common
         #region 扩展 
 
         /// <summary>
+        ///     载入后
+        /// </summary>
+        /// <param name="entity">实体</param>
+        Task AfterLoad(TEntity entity) => Task.CompletedTask;
+
+        /// <summary>
         ///     实体保存前处理(Insert/Update/Delete)
         /// </summary>
         /// <param name="entity">保存的对象</param>

@@ -453,7 +453,8 @@ namespace Zeroteam.MessageMVC.EventBus
         }
         #endregion
 
-
+        public EventSubscribeData EventSubscribe { get; set; }
+        public List<EventSubscribeData> Childre { get; set; }
         #region 接口属性
 
 

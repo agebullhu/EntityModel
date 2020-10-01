@@ -252,8 +252,6 @@ VALUES
                 entity.LastReviser = await reader.GetFieldValueAsync<string>(16);
         }
 
-
-
         /// <summary>
         /// 设置插入数据的命令
         /// </summary>

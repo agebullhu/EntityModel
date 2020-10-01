@@ -1336,7 +1336,7 @@ namespace Agebull.EntityModel.Common
         }*/
 
         /// <summary>
-        ///     如果存在的话读取首行
+        ///     外键
         /// </summary>
         public Task<List<TEntity>> LoadByForeignKeyAsync(string foreignKey, object key)
         {
@@ -1367,6 +1367,8 @@ namespace Agebull.EntityModel.Common
             if (!await reader.ReadAsync())
                 return false;
             await DataOperator.LoadEntity(reader, entity);
+            await DataOperator.AfterLoad(entity);
+            
             return true;
         }
 
@@ -1466,6 +1468,7 @@ namespace Agebull.EntityModel.Common
         {
             var entity = new TEntity();
             await DataOperator.LoadEntity(reader, entity);
+            await DataOperator.AfterLoad(entity);
             return entity;
         }
 
