@@ -89,6 +89,8 @@ namespace Agebull.EntityModel.MySql
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
            {
+               if (pro.Entity != Option.DataSturct.Name)
+                   return;
                if (first)
                    first = false;
                else
@@ -112,8 +114,10 @@ namespace Agebull.EntityModel.MySql
             var paras = new StringBuilder();
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
-             {
-                 if (first)
+            {
+                if (pro.Entity != Option.DataSturct.Name)
+                    return;
+                if (first)
                      first = false;
                  else
                  {
@@ -196,12 +200,12 @@ namespace Agebull.EntityModel.MySql
         public string CreateUpdateSqlCode(TEntity entity, string condition)
         {
             string valueExpression;
-            if (entity is IEditStatus status && !status.EditStatusRedorder.IsSetFullModify)
+            if (entity is IEditStatus status && status.EditStatusRedorder != null && !status.EditStatusRedorder.IsSetFullModify)
             {
                 var code = new List<string>();
                 Option.FroeachDbProperties(pro =>
                 {
-                    if (status.EditStatusRedorder.IsChanged(pro.PropertyName))
+                    if (pro.Entity == Option.DataSturct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
                         code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");
                 });
                 if (code.Count == 0)

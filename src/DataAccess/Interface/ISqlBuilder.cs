@@ -140,7 +140,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        string CreateLoadSql(string condition, string order, string limit);
+        string CreateLoadSql(string condition=null, string order = null, string limit = null);
 
         /// <summary>
         /// 单值读取SQL

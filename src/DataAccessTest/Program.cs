@@ -29,9 +29,8 @@ namespace DataAccessTest
             DependencyHelper.Reload();
 
 
-            LoggerExtend.LogDataSql = false;
             await EntityModelPrepare();
-            await DapperPrepare();
+            LoggerExtend.LogDataSql = false;
             Console.Write("请输入并行数：");
             var taskCnt = Console.ReadLine();
             {
@@ -60,33 +59,34 @@ namespace DataAccessTest
                 var time = (end - start).TotalSeconds;
                 Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
             }
-            {
+            //await DapperPrepare();
+            //{
 
-                Console.Write("【EntityModel Write】  ");
-                count = 0;
-                var list = new Task[int.Parse(taskCnt)];
-                var start = DateTime.Now;
-                for (var idx = 0; idx < list.Length; idx++)
-                    list[idx] = EntityModelTest();
+            //    Console.Write("【EntityModel Write】  ");
+            //    count = 0;
+            //    var list = new Task[int.Parse(taskCnt)];
+            //    var start = DateTime.Now;
+            //    for (var idx = 0; idx < list.Length; idx++)
+            //        list[idx] = EntityModelTest();
 
-                Task.WaitAll(list);
-                var end = DateTime.Now;
-                var time = (end - start).TotalSeconds;
-                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
-            }
-            {
-                Console.Write("【Dapper Write】  ");
-                count = 0;
-                var list = new Task[int.Parse(taskCnt)];
-                var start = DateTime.Now;
-                for (var idx = 0; idx < list.Length; idx++)
-                    list[idx] = DapperTest();
+            //    Task.WaitAll(list);
+            //    var end = DateTime.Now;
+            //    var time = (end - start).TotalSeconds;
+            //    Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
+            //}
+            //{
+            //    Console.Write("【Dapper Write】  ");
+            //    count = 0;
+            //    var list = new Task[int.Parse(taskCnt)];
+            //    var start = DateTime.Now;
+            //    for (var idx = 0; idx < list.Length; idx++)
+            //        list[idx] = DapperTest();
 
-                Task.WaitAll(list);
-                var end = DateTime.Now;
-                var time = (end - start).TotalSeconds;
-                Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
-            }
+            //    Task.WaitAll(list);
+            //    var end = DateTime.Now;
+            //    var time = (end - start).TotalSeconds;
+            //    Console.WriteLine($"☆ {end}( { count / time}/s = {count } / {time}s)");
+            //}
         }
         static long count = 0;
         static async Task EntityModelPrepare()
@@ -95,7 +95,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultModel>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
@@ -112,7 +112,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultEntity>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
 
                 //Console.WriteLine("【ExistAsync】");
@@ -169,7 +169,7 @@ namespace DataAccessTest
                     //await using var cxt1 = await access.BeginInsert();
                     //await using var cxt2 = await access.BeginUpdate(connectionScope);
                     //await using var cxt3 = await access.BeginDelete(connectionScope);
-                    //EventSubscribeData data = await access.FirstAsync();
+                    //EventDefaultData data = await access.FirstAsync();
                     //var s = DateTime.Now;
                     //await access.InsertAsync(cxt1, data);
                     for (int i = 0; i < 100; i++)
@@ -231,7 +231,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeData>();
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultEntity>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 for (int i = 0; i < 100; i++)
@@ -252,11 +252,11 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
+                var loadSqlCode = EventDefaultEntityDataOperator.Option.SqlBuilder.CreateLoadSql();
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
                 {
-                    var data = await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
-                    var cnt = await connection.ExecuteAsync(EventSubscribeDataOperator.Option.UpdateSqlCode, data);
+                    var data = await connection.QueryFirstAsync<EventDefaultEntity>(loadSqlCode);
+                    var cnt = await connection.ExecuteAsync(EventDefaultEntityDataOperator.Option.UpdateSqlCode, data);
                     Console.WriteLine($" update {cnt} records,data:\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
                 }
             }
@@ -270,11 +270,11 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
+                var loadSqlCode = EventDefaultEntityDataOperator.Option.SqlBuilder.CreateLoadSql();
                 for (int i = 0; i < 100; i++)
                 {
                     await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                    await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
+                    await connection.QueryFirstAsync<EventDefaultEntity>(loadSqlCode);
                 }
                 Interlocked.Add(ref count, 100);
             }
@@ -288,13 +288,13 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var loadSqlCode = EventSubscribeDataOperator.Option.SqlBuilder.CreateLoadSql(EventSubscribeDataOperator.Option.SqlBuilder.PrimaryKeyCondition, "id", "1");
+                var loadSqlCode = EventDefaultEntityDataOperator.Option.SqlBuilder.CreateLoadSql();
 
                 await using var connection = await MySqlDataBase.OpenConnection("EventBusDb");
-                var data = await connection.QueryFirstAsync<EventSubscribeData>(loadSqlCode);
+                var data = await connection.QueryFirstAsync<EventDefaultEntity>(loadSqlCode);
                 for (int i = 0; i < 100; i++)
                 {
-                    await connection.ExecuteAsync(EventSubscribeDataOperator.Option.UpdateSqlCode, data);
+                    await connection.ExecuteAsync(EventDefaultEntityDataOperator.Option.UpdateSqlCode, data);
                 }
                 Interlocked.Add(ref count, 100);
             }
@@ -313,7 +313,7 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var option = new EventSubscribeDataAccessOption();
+                var option = new EventDefaultDataAccessOption();
                 var access = option.CreateDataAccess(DependencyHelper.ServiceProvider);
                 //await using var connectionScope = await access.DataBase.CreateConnectionScope();
 
@@ -371,7 +371,7 @@ namespace DataAccessTest
                     //await using var cxt1 = await access.BeginInsert();
                     //await using var cxt2 = await access.BeginUpdate(connectionScope);
                     //await using var cxt3 = await access.BeginDelete(connectionScope);
-                    //EventSubscribeData data = await access.FirstAsync();
+                    //EventDefaultData data = await access.FirstAsync();
                     //var s = DateTime.Now;
                     //await access.InsertAsync(cxt1, data);
                     for (int i = 0; i < 100; i++)

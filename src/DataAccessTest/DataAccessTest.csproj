@@ -16,7 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="EventBusDb.cs" />
+    <Compile Remove="EventBusDb.Designer.cs" />
+    <Compile Remove="EventSubscribe.cs" />
     <Compile Remove="EventSubscribe.DataAccessOption.cs" />
+    <Compile Remove="EventSubscribe.DataOperator.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
     <ProjectReference Include="..\DataSturct\Agebull.EntityModel.DataSturct.csproj" />
     <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
     <ProjectReference Include="..\Injection\Agebull.EntityModel.Injection.csproj" />
@@ -34,6 +39,10 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entity\" />
   </ItemGroup>
 
 </Project>

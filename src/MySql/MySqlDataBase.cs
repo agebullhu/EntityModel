@@ -319,7 +319,7 @@ namespace Agebull.EntityModel.MySql
                     code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
             code.AppendLine(cmd.CommandText);
-            DependencyScope.Logger?.Information(code.ToString());
+            Console.WriteLine(code.ToString());
         }
 
         #endregion

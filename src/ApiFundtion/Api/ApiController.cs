@@ -109,7 +109,7 @@ namespace Agebull.MicroZero.ZeroApis
         public async Task<IApiResult<TData>> AddNew(TData arg)
         {
             var data = new TData();
-            if(data is IEditStatus status)
+            if (data is IEditStatus status && status.EditStatusRedorder != null)
             {
                 status.EditStatusRedorder.IsExist = false;
                 status.EditStatusRedorder.IsFromClient = true;
@@ -134,15 +134,15 @@ namespace Agebull.MicroZero.ZeroApis
         {
             var data = new TData();
 
-            if (data is IEditStatus status)
+            if (data is IEditStatus status&& status.EditStatusRedorder != null)
             {
                 status.EditStatusRedorder.IsExist = true;
                 status.EditStatusRedorder.IsFromClient = true;
             }
             var convert = new FormConvert();
-            if (!convert.Arguments.TryGetValue("id", out var id) )
+            if (!convert.Arguments.TryGetValue("id", out var id))
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
-            
+
             data.Id = Convert(id).Item2;
             ReadFormData(data, convert);
             if (convert.Failed)

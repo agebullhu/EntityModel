@@ -19,12 +19,12 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public static class DataInterface
     {
-        public class IAuthorInfomation
+        public class IAuthorData
         {
             /// <summary>
             /// 名称
             /// </summary>
-            public const string Name = nameof(IAuthorInfomation);
+            public const string Name = nameof(IAuthorData);
 
             public static PropertyDefault AddDate => new PropertyDefault
             {
@@ -87,12 +87,12 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 修改信息
         /// </summary>
-        public class IModifyInfomation
+        public class IHistoryData
         {
             /// <summary>
             /// 名称
             /// </summary>
-            public const string Name = nameof(IModifyInfomation);
+            public const string Name = nameof(IHistoryData);
 
 
             public static PropertyDefault LastModifyDate => new PropertyDefault

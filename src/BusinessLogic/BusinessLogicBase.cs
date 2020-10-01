@@ -32,7 +32,10 @@ namespace Agebull.EntityModel.BusinessLogic
         where TData : class, IIdentityData<TPrimaryKey>, new()
     {
         #region 基础支持对象
-
+        /// <summary>
+        /// 依赖对象
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
         /// <summary>
         ///     实体类型
         /// </summary>
@@ -262,7 +265,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
                 return Task.FromResult(false);
             }
-            if (isAdd || !(data is IEditStatus status) || status.EditStatusRedorder.IsModified)
+            if (isAdd || !(data is IEditStatus status) || status.EditStatusRedorder == null || status.EditStatusRedorder.IsModified)
                 return Task.FromResult(true);
 
             GlobalContext.Current.Status.LastMessage = "数据未修改";
@@ -278,7 +281,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual async Task<bool> PrepareSave(TData data, bool isAdd)
         {
-            if (data is IEditStatus status && status.EditStatusRedorder.IsFromClient && !await PrepareSaveByUser(data, isAdd))
+            if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsFromClient && !await PrepareSaveByUser(data, isAdd))
                 return false;
             return await OnSaving(data, isAdd);
         }
@@ -291,7 +294,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual async Task<bool> LastSaved(TData data, bool isAdd)
         {
-            if (data is IEditStatus status && status.EditStatusRedorder.IsFromClient && !await LastSavedByUser(data, isAdd))
+            if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsFromClient && !await LastSavedByUser(data, isAdd))
                 return false;
             return await OnSaved(data, isAdd);
         }
@@ -366,7 +369,7 @@ namespace Agebull.EntityModel.BusinessLogic
                     return false;
                 }
 
-                if (data is IEditStatus status && status.EditStatusRedorder.IsExist)
+                if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsExist)
                 {
                     if (!await Access.UpdateAsync(data))
                         return false;

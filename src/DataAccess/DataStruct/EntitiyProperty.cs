@@ -34,8 +34,9 @@ namespace Agebull.EntityModel.Common
         private bool? canImport;
         private bool? canExport;
         private ReadWriteFeatrue? dbReadWrite;
+
         //基础定义
-        PropertyDefault propertyDefault;
+        readonly PropertyDefault propertyDefault;
 
         public EntityProperty(PropertyDefault @default)
         {
@@ -99,7 +100,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public ReadWriteFeatrue DbReadWrite
         {
-            get => dbReadWrite.HasValue ? dbReadWrite.Value : propertyDefault.DbReadWrite;
+            get => dbReadWrite ?? propertyDefault.DbReadWrite;
             set => dbReadWrite = value;
         }
 
@@ -108,7 +109,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public bool CanImport
         {
-            get => canImport.HasValue ? canImport.Value : propertyDefault.CanImport;
+            get => canImport ?? propertyDefault.CanImport;
             set => canImport = value;
         }
 
@@ -117,7 +118,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public bool CanExport
         {
-            get => canExport.HasValue ? canExport.Value : propertyDefault.CanExport;
+            get => canExport ?? propertyDefault.CanExport;
             set => canExport = value;
         }
 

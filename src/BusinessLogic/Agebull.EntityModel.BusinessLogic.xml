@@ -101,6 +101,11 @@
             <typeparam name="TData">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.ServiceProvider">
+            <summary>
+            依赖对象
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.EntityType">
             <summary>
                 实体类型

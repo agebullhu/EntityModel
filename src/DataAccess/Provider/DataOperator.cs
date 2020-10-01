@@ -6,15 +6,6 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-#region 引用
-
-
-#endregion
-
-using System;
-using System.Data;
-using System.Data.Common;
-using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Common
 {
@@ -28,36 +19,5 @@ namespace Agebull.EntityModel.Common
         /// 驱动提供者信息
         /// </summary>
         public DataAccessProvider<TEntity> Provider { get; set; }
-
-        /*// <summary>
-        /// 取得仅更新的SQL语句
-        /// </summary>
-        public string GetModifiedUpdateSql(TEntity entity)
-        {
-            //if (!(entity is class data))
-            //{
-            //    return Option.UpdateFields;
-            //}
-            //if (data.__status.IsReadOnly)
-            //{
-            //    return Option.UpdateFields;
-            //}
-            //if (!data.__status.IsModified)
-            //    return null;
-            //StringBuilder sql = new StringBuilder();
-            //bool first = true;
-            //foreach (var pro in Option.Properties.Where(p => p.Featrue.HasFlag(PropertyFeatrue.Property)))
-            //{
-            //    if (data.__status.Status.ModifiedProperties[pro.PropertyIndex] <= 0 || !Option.FieldMap.ContainsKey(pro.Name))
-            //        continue;
-            //    if (first)
-            //        first = false;
-            //    else
-            //        sql.Append(',');
-            //    sql.AppendLine($"       `{pro.ColumnName}` = ?{pro.Name}");
-            //}
-            //return first ? null : sql.ToString();
-        }*/
-
     }
 }
