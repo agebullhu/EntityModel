@@ -69,6 +69,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
+    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

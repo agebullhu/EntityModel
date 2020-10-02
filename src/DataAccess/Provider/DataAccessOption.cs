@@ -33,12 +33,12 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 是否自增主键
         /// </summary>
-        public bool IsIdentity => DataSturct.IsIdentity;
+        public bool IsIdentity => DataStruct.IsIdentity;
 
         /// <summary>
         /// 表配置
         /// </summary>
-        public EntityStruct DataSturct { get; set; }
+        public EntityStruct DataStruct { get; set; }
 
         /// <summary>
         ///     主键字段(可动态覆盖PrimaryKey)
@@ -57,7 +57,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public List<EntityProperty> Properties
         {
-            get => _properties ?? DataSturct.Properties;
+            get => _properties ?? DataStruct.Properties;
             set => _properties = value;
         }
 
@@ -81,7 +81,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public string PrimaryKey
         {
-            get => _keyField ?? DataSturct.PrimaryKey;
+            get => _keyField ?? DataStruct.PrimaryKey;
             set => _keyField = value;
         }
 
@@ -95,7 +95,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public string ReadTableName
         {
-            get => readTableName ?? DataSturct.ReadTableName;
+            get => readTableName ?? DataStruct.ReadTableName;
             set => readTableName = value;
         }
 
@@ -104,7 +104,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public string WriteTableName
         {
-            get => writeTableName ?? DataSturct.WriteTableName;
+            get => writeTableName ?? DataStruct.WriteTableName;
             set => writeTableName = value;
         }
 
@@ -161,12 +161,11 @@ namespace Agebull.EntityModel.Common
             {
                 if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
                     continue;
-                PropertyMap[pro.FieldName] = pro;
-                PropertyMap[pro.PropertyName] = pro;
+                PropertyMap[pro.FieldName] = PropertyMap[pro.PropertyName] = pro;
 
-                FieldMap[pro.FieldName] = pro.FieldName;
-                FieldMap[pro.PropertyName] = pro.FieldName;
+                FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
             }
+
 
             LoadFields ??= SqlBuilder.BuilderLoadFields();
             InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();

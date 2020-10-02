@@ -286,6 +286,13 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateInsertSqlCode(`0)">
+            <summary>
+                生成更新的SQL
+            </summary>
+            <param name="entity">实体</param>
+            <returns>更新的SQL</returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateUpdateSqlCode(`0,System.String)">
             <summary>
                 生成更新的SQL
@@ -538,7 +545,7 @@
                 用于MySql的Lambda表达式解析器(仅支持查询条件)
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.MySql.PredicateConvert._columnMap">
+        <member name="F:Agebull.EntityModel.MySql.PredicateConvert._option">
             <summary>
                 关联字段
             </summary>
@@ -558,11 +565,11 @@
             具体数据库对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.#ctor(Agebull.EntityModel.Common.IParameterCreater,System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.#ctor(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption)">
             <summary>
                 构造
             </summary>
-            <param name="map">关联字段</param>
+            <param name="option">设置</param>
             <param name="parameter">关联字段</param>
         </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetName(System.Linq.Expressions.MemberExpression)">
@@ -579,67 +586,45 @@
             <param name="expression">Lambda节点对象</param>
             <returns>计算结果值</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,System.String[],System.Linq.Expressions.Expression{``0})">
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,System.Linq.Expressions.Expression{``0})">
             <summary>
                 分析Lambda表达式
             </summary>
             <typeparam name="T">方法类型</typeparam>
             <param name="parameter"></param>
-            <param name="columns">关联字段</param>
+            <param name="option">设置</param>
             <param name="predicate">Lambda表达式</param>
             <returns>结果条件对象(SQL条件和参数)</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,System.Collections.Generic.Dictionary{System.String,System.String},System.Linq.Expressions.Expression{``0})">
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,System.Linq.Expressions.Expression{``0},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
             <summary>
                 分析Lambda表达式
             </summary>
             <typeparam name="T">方法类型</typeparam>
             <param name="parameter"></param>
-            <param name="map">关联字段</param>
-            <param name="predicate">Lambda表达式</param>
-            <returns>结果条件对象(SQL条件和参数)</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,System.Collections.Generic.Dictionary{System.String,System.String},System.Linq.Expressions.Expression{``0},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
-            <summary>
-                分析Lambda表达式
-            </summary>
-            <typeparam name="T">方法类型</typeparam>
-            <param name="parameter"></param>
-            <param name="map">关联字段</param>
+            <param name="option">设置</param>
             <param name="predicate">Lambda表达式</param>
             <param name="condition">之前已解析的条件,可为空</param>
             <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
             <returns>结果条件对象(SQL条件和参数)</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert2``1(Agebull.EntityModel.Common.IParameterCreater,System.String[],System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,Agebull.EntityModel.Common.LambdaItem{``0})">
             <summary>
                 分析Lambda表达式
             </summary>
             <typeparam name="T">方法类型</typeparam>
             <param name="parameter"></param>
-            <param name="columns">关联字段</param>
-            <param name="predicate">Lambda表达式</param>
-            <param name="condition">之前已解析的条件,可为空</param>
-            <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
-            <returns>结果条件对象(SQL条件和参数)</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,System.Collections.Generic.Dictionary{System.String,System.String},Agebull.EntityModel.Common.LambdaItem{``0})">
-            <summary>
-                分析Lambda表达式
-            </summary>
-            <typeparam name="T">方法类型</typeparam>
-            <param name="parameter"></param>
-            <param name="map">关联字段</param>
+            <param name="option">设置</param>
             <param name="filter">Lambda表达式</param>
             <returns>结果条件对象(SQL条件和参数)</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,System.Collections.Generic.Dictionary{System.String,System.String},Agebull.EntityModel.Common.LambdaItem{``0},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,Agebull.EntityModel.Common.LambdaItem{``0},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
             <summary>
                 分析Lambda表达式
             </summary>
             <typeparam name="T">方法类型</typeparam>
             <param name="parameter"></param>
-            <param name="map">关联字段</param>
+            <param name="option">设置</param>
             <param name="filter">Lambda表达式</param>
             <param name="condition">之前已解析的条件,可为空</param>
             <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>

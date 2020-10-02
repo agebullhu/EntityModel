@@ -24,7 +24,9 @@ namespace DataAccessTest
         {
             ConfigurationHelper.Flush();
             DependencyHelper.AddScoped<EventBusDb>();
-            //DependencyHelper.ServiceCollection.AddTransient(typeof(IOperatorInjection<>),typeof(OperatorInjection<>));
+            DependencyHelper.ServiceCollection
+                .AddTransient(typeof(IOperatorInjection<>), typeof(OperatorInjection<>))
+                .AddSingleton<ISqlInjection, DataInterfaceFeatureInjection>();
 
             DependencyHelper.Reload();
 
@@ -99,8 +101,12 @@ namespace DataAccessTest
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var data = await access.FirstAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                await access.InsertAsync(data);
+                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
                 var cnt = await access.UpdateAsync(data);
-                Console.WriteLine($"update {cnt} records,data:\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
+                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+
+                Console.WriteLine($"update {cnt} records");
             }
             catch (Exception ex)
             {

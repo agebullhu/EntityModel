@@ -216,14 +216,15 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 表示Sql生成器
     /// </summary>
-    public interface ISqlBuilder<TEntity> : ISqlBuilder
+    public interface ISqlBuilder<TEntity> : ISqlBuilder, IDataAccessTool<TEntity>
         where TEntity : class, new()
     {
         /// <summary>
-        /// 驱动提供者信息
+        ///     生成插入的SQL
         /// </summary>
-        DataAccessProvider<TEntity> Provider { get; set; }
-
+        /// <param name="entity">实体</param>
+        /// <returns>更新的SQL</returns>
+        public string CreateInsertSqlCode(TEntity entity);
 
         /// <summary>
         ///     生成更新的SQL

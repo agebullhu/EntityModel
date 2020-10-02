@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/2 2:12:46*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 2:37:26*/
 #region
 using System;
 using System.Collections.Generic;
@@ -78,6 +78,75 @@ namespace Zeroteam.MessageMVC.EventBus
             }
         }
         [IgnoreDataMember , JsonIgnore]
+        public bool _isFreeze;
+
+        
+        /// <summary>
+        ///  冻结更新
+        /// </summary>
+        /// <remarks>
+        ///     无论在什么数据状态,一旦设置且保存后,数据将不再允许执行Update的操作,作为Update的统一开关.取消的方法是单独设置这个字段的值
+        /// </remarks>
+        /// <example>
+        ///     true
+        /// </example>
+        [JsonProperty("isFreeze",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  bool IsFreeze
+        {
+            get => this._isFreeze;
+            set
+            {
+                if(this._isFreeze == value)
+                    return;
+                this._isFreeze = value;
+                this.OnSeted(nameof(IsFreeze));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public DateTime _lastModifyDate;
+
+        
+        /// <summary>
+        ///  最后修改日期
+        /// </summary>
+        /// <example>
+        ///     2012-12-21
+        /// </example>
+        [JsonProperty("lastModifyDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
+        public  DateTime LastModifyDate
+        {
+            get => this._lastModifyDate;
+            set
+            {
+                if(this._lastModifyDate == value)
+                    return;
+                this._lastModifyDate = value;
+                this.OnSeted(nameof(LastModifyDate));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _authorId;
+
+        
+        /// <summary>
+        ///  制作人标识
+        /// </summary>
+        /// <value>
+        ///     用户提交时不能为空,后台保存时不能为空,
+        /// </value>
+        [JsonProperty("authorId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string AuthorId
+        {
+            get => this._authorId;
+            set
+            {
+                if(this._authorId == value)
+                    return;
+                this._authorId = value;
+                this.OnSeted(nameof(AuthorId));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
         public long _eventId;
 
         
@@ -100,6 +169,72 @@ namespace Zeroteam.MessageMVC.EventBus
             }
         }
         [IgnoreDataMember , JsonIgnore]
+        public DataStateType _dataState;
+
+        
+        /// <summary>
+        ///  数据状态
+        /// </summary>
+        /// <example>
+        ///     0
+        /// </example>
+        [JsonProperty("dataState",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  DataStateType DataState
+        {
+            get => this._dataState;
+            set
+            {
+                if(this._dataState == value)
+                    return;
+                this._dataState = value;
+                this.OnSeted(nameof(DataState));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _lastReviserId;
+
+        
+        /// <summary>
+        ///  最后修改者标识
+        /// </summary>
+        /// <value>
+        ///     可存储32个字符.合理长度应不大于32.
+        /// </value>
+        [JsonProperty("lastReviserId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string LastReviserId
+        {
+            get => this._lastReviserId;
+            set
+            {
+                if(this._lastReviserId == value)
+                    return;
+                this._lastReviserId = value;
+                this.OnSeted(nameof(LastReviserId));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _author;
+
+        
+        /// <summary>
+        ///  制作人
+        /// </summary>
+        /// <value>
+        ///     用户提交时不能为空,后台保存时不能为空,可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("author",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string Author
+        {
+            get => this._author;
+            set
+            {
+                if(this._author == value)
+                    return;
+                this._author = value;
+                this.OnSeted(nameof(Author));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
         public string _service;
 
         
@@ -119,6 +254,28 @@ namespace Zeroteam.MessageMVC.EventBus
                     return;
                 this._service = value;
                 this.OnSeted(nameof(Service));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public DateTime _addDate;
+
+        
+        /// <summary>
+        ///  制作时间
+        /// </summary>
+        /// <example>
+        ///     2012-12-21
+        /// </example>
+        [JsonProperty("addDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
+        public  DateTime AddDate
+        {
+            get => this._addDate;
+            set
+            {
+                if(this._addDate == value)
+                    return;
+                this._addDate = value;
+                this.OnSeted(nameof(AddDate));
             }
         }
         [IgnoreDataMember , JsonIgnore]
@@ -254,163 +411,6 @@ namespace Zeroteam.MessageMVC.EventBus
                     return;
                 this._targetDescription = value;
                 this.OnSeted(nameof(TargetDescription));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public bool _isFreeze;
-
-        
-        /// <summary>
-        ///  冻结更新
-        /// </summary>
-        /// <remarks>
-        ///     无论在什么数据状态,一旦设置且保存后,数据将不再允许执行Update的操作,作为Update的统一开关.取消的方法是单独设置这个字段的值
-        /// </remarks>
-        /// <example>
-        ///     true
-        /// </example>
-        [JsonProperty("isFreeze",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  bool IsFreeze
-        {
-            get => this._isFreeze;
-            set
-            {
-                if(this._isFreeze == value)
-                    return;
-                this._isFreeze = value;
-                this.OnSeted(nameof(IsFreeze));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public DataStateType _dataState;
-
-        
-        /// <summary>
-        ///  数据状态
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("dataState",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  DataStateType DataState
-        {
-            get => this._dataState;
-            set
-            {
-                if(this._dataState == value)
-                    return;
-                this._dataState = value;
-                this.OnSeted(nameof(DataState));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _authorId;
-
-        
-        /// <summary>
-        ///  制作人标识
-        /// </summary>
-        /// <value>
-        ///     用户提交时不能为空,后台保存时不能为空,
-        /// </value>
-        [JsonProperty("authorId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string AuthorId
-        {
-            get => this._authorId;
-            set
-            {
-                if(this._authorId == value)
-                    return;
-                this._authorId = value;
-                this.OnSeted(nameof(AuthorId));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _author;
-
-        
-        /// <summary>
-        ///  制作人
-        /// </summary>
-        /// <value>
-        ///     用户提交时不能为空,后台保存时不能为空,可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("author",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string Author
-        {
-            get => this._author;
-            set
-            {
-                if(this._author == value)
-                    return;
-                this._author = value;
-                this.OnSeted(nameof(Author));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public DateTime _lastModifyDate;
-
-        
-        /// <summary>
-        ///  最后修改日期
-        /// </summary>
-        /// <example>
-        ///     2012-12-21
-        /// </example>
-        [JsonProperty("lastModifyDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
-        public  DateTime LastModifyDate
-        {
-            get => this._lastModifyDate;
-            set
-            {
-                if(this._lastModifyDate == value)
-                    return;
-                this._lastModifyDate = value;
-                this.OnSeted(nameof(LastModifyDate));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public DateTime _addDate;
-
-        
-        /// <summary>
-        ///  制作时间
-        /// </summary>
-        /// <example>
-        ///     2012-12-21
-        /// </example>
-        [JsonProperty("addDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
-        public  DateTime AddDate
-        {
-            get => this._addDate;
-            set
-            {
-                if(this._addDate == value)
-                    return;
-                this._addDate = value;
-                this.OnSeted(nameof(AddDate));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _lastReviserId;
-
-        
-        /// <summary>
-        ///  最后修改者标识
-        /// </summary>
-        /// <value>
-        ///     可存储32个字符.合理长度应不大于32.
-        /// </value>
-        [JsonProperty("lastReviserId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string LastReviserId
-        {
-            get => this._lastReviserId;
-            set
-            {
-                if(this._lastReviserId == value)
-                    return;
-                this._lastReviserId = value;
-                this.OnSeted(nameof(LastReviserId));
             }
         }
         [IgnoreDataMember , JsonIgnore]

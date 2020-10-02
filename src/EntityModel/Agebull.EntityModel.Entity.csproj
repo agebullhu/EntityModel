@@ -70,8 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Interface\ISqlCondition.cs" />
-    <Compile Remove="Interface\PropertyChangingEventArgsEx.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 

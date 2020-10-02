@@ -94,21 +94,24 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
 
             await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Insert);
-            await using var cmd = connectionScope.CreateCommand(Option.InsertSqlCode);
+            {
+                var sql = SqlBuilder.CreateInsertSqlCode(entity);
+                await using var cmd = connectionScope.CreateCommand(sql);
 
-            DataOperator.SetEntityParameter(cmd, entity);
-            DataBase.TraceSql(cmd);
-            if (!Option.IsIdentity)
-            {
-                if (await cmd.ExecuteNonQueryAsync() == 0)
-                    return false;
-            }
-            else
-            {
-                var key = await cmd.ExecuteScalarAsync();
-                if (key == DBNull.Value || key == null)
-                    return false;
-                Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
+                DataOperator.SetEntityParameter(cmd, entity);
+                DataBase.TraceSql(cmd);
+                if (!Option.IsIdentity)
+                {
+                    if (await cmd.ExecuteNonQueryAsync() == 0)
+                        return false;
+                }
+                else
+                {
+                    var key = await cmd.ExecuteScalarAsync();
+                    if (key == DBNull.Value || key == null)
+                        return false;
+                    Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
+                }
             }
             await Provider.DataOperator.AfterSave(entity, DataOperatorType.Insert);
 
@@ -262,14 +265,16 @@ namespace Agebull.EntityModel.Common
                 sql = Option.UpdateSqlCode;
             }
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = connectionScope.CreateCommand(sql);
-            DataOperator.SetEntityParameter(cmd, entity);
-
-            DataBase.TraceSql(cmd);
-
-            if (await cmd.ExecuteNonQueryAsync() <= 0)
             {
-                return false;
+                await using var cmd = connectionScope.CreateCommand(sql);
+                DataOperator.SetEntityParameter(cmd, entity);
+
+                DataBase.TraceSql(cmd);
+
+                if (await cmd.ExecuteNonQueryAsync() <= 0)
+                {
+                    return false;
+                }
             }
             await Provider.DataOperator.AfterSave(entity, DataOperatorType.Update);
 
@@ -554,6 +559,8 @@ namespace Agebull.EntityModel.Common
             if (cnt <= 0)
                 return 0;
             await Provider.DataOperator.AfterExecute(operatorType, condition, args);
+            if (Provider.Injection != null)
+                await Provider.Injection.AfterExecute(operatorType, condition, args);
             return cnt;
         }
 

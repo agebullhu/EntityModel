@@ -45,6 +45,11 @@ namespace Agebull.EntityModel.Common
         public string FieldName { get; set; }
 
         /// <summary>
+        ///     数据库表名称
+        /// </summary>
+        public string TableName { get; set; }
+
+        /// <summary>
         ///     属性类型
         /// </summary>
         public Type PropertyType { get; set; }

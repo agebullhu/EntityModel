@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     关联字段
         /// </summary>
-        private readonly Dictionary<string, string> _columnMap;
+        private readonly DataAccessOption _option;
 
         /// <summary>
         ///     结果条件节点
@@ -50,12 +50,12 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     构造
         /// </summary>
-        /// <param name="map">关联字段</param>
+        /// <param name="option">设置</param>
         /// <param name="parameter">关联字段</param>
-        PredicateConvert(IParameterCreater parameter, Dictionary<string, string> map)
+        PredicateConvert(IParameterCreater parameter, DataAccessOption option)
         {
             ParameterCreater = parameter;
-            _columnMap = map;
+            _option = option;
         }
 
         /// <summary>
@@ -93,25 +93,12 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="parameter"></param>
-        /// <param name="columns">关联字段</param>
+        /// <param name="option">设置</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(IParameterCreater parameter, string[] columns, Expression<T> predicate)
+        public static ConditionItem Convert<T>(IParameterCreater parameter, DataAccessOption option, Expression<T> predicate)
         {
-            return Convert(parameter, columns.ToDictionary(p => p, p => p), predicate);
-        }
-
-        /// <summary>
-        ///     分析Lambda表达式
-        /// </summary>
-        /// <typeparam name="T">方法类型</typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="map">关联字段</param>
-        /// <param name="predicate">Lambda表达式</param>
-        /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, Expression<T> predicate)
-        {
-            var convert = new PredicateConvert(parameter, map);
+            var convert = new PredicateConvert(parameter, option);
             return convert.Convert(predicate);
         }
 
@@ -120,14 +107,14 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="parameter"></param>
-        /// <param name="map">关联字段</param>
+        /// <param name="option">设置</param>
         /// <param name="predicate">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static void Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, Expression<T> predicate, ConditionItem condition, bool mergeByAnd = true)
+        public static void Convert<T>(IParameterCreater parameter, DataAccessOption option, Expression<T> predicate, ConditionItem condition, bool mergeByAnd = true)
         {
-            var convert = new PredicateConvert(parameter, map)
+            var convert = new PredicateConvert(parameter, option)
             {
                 _condition = condition,
                 _mergeByAnd = mergeByAnd
@@ -140,33 +127,13 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="parameter"></param>
-        /// <param name="columns">关联字段</param>
-        /// <param name="predicate">Lambda表达式</param>
-        /// <param name="condition">之前已解析的条件,可为空</param>
-        /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
-        /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert2<T>(IParameterCreater parameter, string[] columns, Expression<Func<T, bool>> predicate, ConditionItem condition = null, bool mergeByAnd = true)
-        {
-            var convert = new PredicateConvert(parameter, columns.ToDictionary(p => p, p => p))
-            {
-                _condition = condition,
-                _mergeByAnd = mergeByAnd
-            };
-            return convert.Convert(predicate);
-        }
-
-        /// <summary>
-        ///     分析Lambda表达式
-        /// </summary>
-        /// <typeparam name="T">方法类型</typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="map">关联字段</param>
+        /// <param name="option">设置</param>
         /// <param name="filter">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, LambdaItem<T> filter)
+        public static ConditionItem Convert<T>(IParameterCreater parameter, DataAccessOption option, LambdaItem<T> filter)
         {
             var condition = new ConditionItem { ParameterCreater = parameter };
-            Convert(parameter, map, filter, condition, true);
+            Convert(parameter, option, filter, condition, true);
             return condition;
         }
 
@@ -175,14 +142,14 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="parameter"></param>
-        /// <param name="map">关联字段</param>
+        /// <param name="option">设置</param>
         /// <param name="filter">Lambda表达式</param>
         /// <param name="condition">之前已解析的条件,可为空</param>
         /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        static ConditionItem Convert<T>(IParameterCreater parameter, Dictionary<string, string> map, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
+        static ConditionItem Convert<T>(IParameterCreater parameter, DataAccessOption option, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
         {
-            var root = new PredicateConvert(parameter, map)
+            var root = new PredicateConvert(parameter, option)
             {
                 ParameterCreater = parameter,
                 _condition = condition,
@@ -194,7 +161,7 @@ namespace Agebull.EntityModel.MySql
             }
             foreach (var ch in filter.Roots)
             {
-                Convert(parameter, map, ch, condition, true);
+                Convert(parameter, option, ch, condition, true);
             }
 
             ConditionItem item = new ConditionItem
@@ -204,11 +171,11 @@ namespace Agebull.EntityModel.MySql
             };
             foreach (var ch in filter.Ands)
             {
-                Convert(parameter, map, ch, item, true);
+                Convert(parameter, option, ch, item, true);
             }
             foreach (var ch in filter.Ors)
             {
-                Convert(parameter, map, ch, item, false);
+                Convert(parameter, option, ch, item, false);
             }
             root._condition.ParaIndex = item.ParaIndex;
             root._condition.AddAndCondition(item.ConditionSql, item.Parameters);
@@ -510,9 +477,9 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Expression is ParameterExpression)
             {
-                if (_columnMap.TryGetValue(expression.Member.Name, out var field))
-                    return $"`{field}`";
-                throw new EntityModelDbException($"字段不存在于数据库中.{expression.Member.Name}");
+                if (_option.PropertyMap.TryGetValue(expression.Member.Name, out var field))
+                    return $"`{field.FieldName}`";
+                return $"`{expression.Member.Name}`";
             }
             var par1 = expression.Expression as MemberExpression;
             if (!(par1?.Expression is ParameterExpression))
@@ -523,6 +490,8 @@ namespace Agebull.EntityModel.MySql
                 switch (expression.Member.Name)
                 {
                     case "Length":
+                        if (_option.PropertyMap.TryGetValue(expression.Member.Name, out var field))
+                            return $"`LENGTH({field.FieldName})`";
                         return $"LENGTH(`{par1.Member.Name}`)";
                 }
             }

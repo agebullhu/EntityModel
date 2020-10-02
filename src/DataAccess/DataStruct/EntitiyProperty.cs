@@ -31,6 +31,7 @@ namespace Agebull.EntityModel.Common
         private string propertyName;
         private string jsonName;
         private string fieldName;
+        private string tableName; 
         private bool? canImport;
         private bool? canExport;
         private ReadWriteFeatrue? dbReadWrite;
@@ -43,11 +44,13 @@ namespace Agebull.EntityModel.Common
             propertyDefault = @default;
         }
 
-        public EntityProperty(PropertyDefault @default, int idx, string newName = null, string newField = null)
+        public EntityProperty(PropertyDefault @default, int idx, string newName, string newTable, string newField, ReadWriteFeatrue readWrite)
         {
             Index = idx;
             propertyName = newName;
+            tableName = newTable;
             fieldName = newField;
+            dbReadWrite = readWrite;
             propertyDefault = @default;
         }
 
@@ -94,6 +97,11 @@ namespace Agebull.EntityModel.Common
         ///     数据库字段名称
         /// </summary>
         public string FieldName { get => fieldName ?? propertyDefault.FieldName; set => fieldName = value; }
+
+        /// <summary>
+        ///     数据库表名称
+        /// </summary>
+        public string TableName { get => tableName ?? propertyDefault.TableName; set => tableName = value; }
 
         /// <summary>
         /// 数据库读写特性

@@ -221,7 +221,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 OnDataLoad = OnListLoaded
             };
             var data = new TData();
-            var bytes = await exporter.ExportExcelAsync(filter, Access.Option.DataSturct.ImportName, null);
+            var bytes = await exporter.ExportExcelAsync(filter, Access.Option.DataStruct.ImportName, null);
             return ($"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 bytes);
@@ -233,7 +233,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns></returns>
         public async Task<(bool success, byte[] state)> Import(byte[] stream)
         {
-            var map = Access.Option.DataSturct.Properties.Where(p => p.CanImport).ToDictionary(p => p.Caption, p => p.PropertyName);
+            var map = Access.Option.DataStruct.Properties.Where(p => p.CanImport).ToDictionary(p => p.Caption, p => p.PropertyName);
             var exporter = new ExcelImporter<TData>
             {
                 DataAccess = Access,

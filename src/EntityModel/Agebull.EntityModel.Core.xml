@@ -4,6 +4,75 @@
         <name>Agebull.EntityModel.Core</name>
     </assembly>
     <members>
+        <member name="T:Agebull.EntityModel.Common.AuditStateType">
+            <summary>
+                审核状态类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.None">
+            <summary>
+                草稿
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Again">
+            <summary>
+                重新处理
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Submit">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Deny">
+            <summary>
+                审核不通过
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Pass">
+            <summary>
+                审核通过
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.End">
+            <summary>
+                结束
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.State">
+            <summary>
+            不正确的状态
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.AuditStateTypeHelper">
+            <summary>
+            审核状态扩展类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToCaption(Agebull.EntityModel.Common.AuditStateType)">
+            <summary>
+                到中文名称
+            </summary>
+            <param name="state">审核状态类型</param>
+            <returns>中文名称</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToChiness(Agebull.EntityModel.Common.AuditStateType)">
+            <summary>
+                到中文名称
+            </summary>
+            <param name="state">审核状态类型</param>
+            <returns>中文名称</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAudit(Agebull.EntityModel.Common.IAuditData)">
+            <summary>
+                是否可以审核
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAgainAudit(Agebull.EntityModel.Common.IAuditData)">
+            <summary>
+                是否可以反审核
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.DataStateType">
             <summary>
                 数据状态
@@ -73,6 +142,23 @@
              用于框架内部,调用者可忽略
             </remarks>
         </member>
+        <member name="T:Agebull.EntityModel.Common.DataStateHelper">
+            <summary>
+                数据状态扩展类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataStateHelper.IsDeleted(Agebull.EntityModel.Common.IStateData)">
+            <summary>
+                是否为删除数据
+            </summary>
+            <param name="data">数据</param>
+            <returns>是否为删除数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataStateHelper.ToCaption(Agebull.EntityModel.Common.DataStateType)">
+            <summary>
+                数据状态枚举类型
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.IAuditData">
             <summary>
                 表示这条数据支持审核
@@ -101,75 +187,6 @@
                 审核日期
             </summary>
             <value>DateTime</value>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.AuditStateType">
-            <summary>
-                审核状态类型
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.None">
-            <summary>
-                草稿
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.Again">
-            <summary>
-                重新处理
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.Submit">
-            <summary>
-                提交审核
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.Deny">
-            <summary>
-                审核不通过
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.Pass">
-            <summary>
-                审核通过
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.End">
-            <summary>
-                结束
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.AuditStateType.State">
-            <summary>
-            不正确的状态
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.AuditStateTypeHelper">
-            <summary>
-            审核状态扩展类
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToCaption(Agebull.EntityModel.Common.AuditStateType)">
-            <summary>
-                到中文名称
-            </summary>
-            <param name="state">审核状态类型</param>
-            <returns>中文名称</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToChiness(Agebull.EntityModel.Common.AuditStateType)">
-            <summary>
-                到中文名称
-            </summary>
-            <param name="state">审核状态类型</param>
-            <returns>中文名称</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAudit(Agebull.EntityModel.Common.IAuditData)">
-            <summary>
-                是否可以审核
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAgainAudit(Agebull.EntityModel.Common.IAuditData)">
-            <summary>
-                是否可以反审核
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.IDataObject">
             <summary>
@@ -326,6 +343,16 @@
                 表示这条数据支持逻辑删除
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Common.ISqlCondition">
+            <summary>
+                表示可以提供SQL的查询条件
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlCondition.GetSqlCondition">
+            <summary>
+                取得SQL的查询条件
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.IStateData">
             <summary>
                 表示这条数据支持数据状态
@@ -341,23 +368,6 @@
                 数据是否已冻结，如果是，则为只读数据
             </summary>
             <value>bool</value>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.DataStateHelper">
-            <summary>
-                数据状态扩展类
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataStateHelper.IsDeleted(Agebull.EntityModel.Common.IStateData)">
-            <summary>
-                是否为删除数据
-            </summary>
-            <param name="data">数据</param>
-            <returns>是否为删除数据</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataStateHelper.ToCaption(Agebull.EntityModel.Common.DataStateType)">
-            <summary>
-                数据状态枚举类型
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.MyDateTimeConverter">
             <summary>
@@ -782,6 +792,39 @@
         <member name="P:Agebull.Common.SnowFlakeIdGenerator.OrgId">
             <summary>
             组织标识
+            </summary>
+        </member>
+        <member name="T:HY.GameApi.Model.PropertyChangingEventArgsEx">
+            <summary>
+                System.ComponentModel.INotifyPropertyChanging.PropertyChanged 事件提供数据。
+            </summary>
+        </member>
+        <member name="M:HY.GameApi.Model.PropertyChangingEventArgsEx.#ctor(System.String,System.Object,System.Object)">
+            <summary>
+                构造
+            </summary>
+            <param name="propertyIndex">属性名称</param>
+            <param name="oldValue">旧值</param>
+            <param name="newValue">新值</param>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.OldValue">
+            <summary>
+                原始的属性
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.NewValue">
+            <summary>
+                更改的属性
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.ValueIsChaged">
+            <summary>
+                新值是否在处理过程中修改
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.Arrest">
+            <summary>
+                修改必须被阻止
             </summary>
         </member>
     </members>

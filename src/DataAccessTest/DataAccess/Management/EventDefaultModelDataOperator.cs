@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/2 3:54:33*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 5:13:21*/
 #region
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using MySqlConnector;
 
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Interfaces;
+using Agebull.EntityModel.MySql;
 
 
 #endregion
@@ -39,31 +40,30 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             PrimaryKey       = EventBusDb.EventDefault_Struct_.PrimaryKey,
             ReadTableName    = EventBusDb.EventDefault_Struct_.TableName,
             WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
+            InterfaceFeature = new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
             Properties       = new List<EntityProperty>
             {
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Id,1,"Id","id"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.EventName,2,"EventName","event_name"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.EventCode,3,"EventCode","event_code"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Version,4,"Version","version"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Region,5,"Region","region"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.EventType,6,"EventType","event_type"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.ResultOption,7,"ResultOption","result_option"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.SuccessOption,8,"SuccessOption","success_option"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.App,9,"App","app"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Classify,10,"Classify","classify"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Tag,11,"Tag","tag"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.Memo,12,"Memo","memo"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetType,13,"TargetType","target_type"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetName,14,"TargetName","target_name"),
-                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetDescription,15,"TargetDescription","target_description"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Id,16,"EventSubscribeId","event_subscribe_id"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Service,17,"Service","service"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.IsLookUp,18,"IsLookUp","is_look_up"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.ApiName,19,"ApiName","api_name"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Memo,20,"EventSubscribeMemo","event_subscribe_memo"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetName,21,"EventSubscribeTargetName","event_subscribe_target_name"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetType,22,"EventSubscribeTargetType","event_subscribe_target_type"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetDescription,23,"EventSubscribeTargetDescription","event_subscribe_target_description")
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Id,0,"Id","tb_event_default","id",ReadWriteFeatrue.Read),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Service,1,"Service","tb_event_subscribe","service",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.IsLookUp,2,"IsLookUp","tb_event_subscribe","is_look_up",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.ApiName,3,"ApiName","tb_event_subscribe","api_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Memo,4,"EventSubscribeMemo","tb_event_subscribe","event_subscribe_memo",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetName,5,"EventSubscribeTargetName","tb_event_subscribe","event_subscribe_target_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetType,6,"EventSubscribeTargetType","tb_event_subscribe","event_subscribe_target_type",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.EventName,7,"EventName","tb_event_default","event_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.EventCode,8,"EventCode","tb_event_default","event_code",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Version,9,"Version","tb_event_default","version",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Region,10,"Region","tb_event_default","region",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.EventType,11,"EventType","tb_event_default","event_type",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.ResultOption,12,"ResultOption","tb_event_default","result_option",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.SuccessOption,13,"SuccessOption","tb_event_default","success_option",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.App,14,"App","tb_event_default","app",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Classify,15,"Classify","tb_event_default","classify",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Tag,16,"Tag","tb_event_default","tag",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.Memo,17,"Memo","tb_event_default","memo",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetType,18,"TargetType","tb_event_default","target_type",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetName,19,"TargetName","tb_event_default","target_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventDefault_Struct_.TargetDescription,20,"TargetDescription","tb_event_default","target_description",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update)
             }
         };
 
@@ -72,15 +72,15 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            NoInjection      = true,
+            NoInjection      = false,
             IsQuery          = false,
             UpdateByMidified = true,
             ReadTableName    = FromSqlCode,
-            WriteTableName   = "tb_event_default",
+            WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
             LoadFields       = LoadFields,
             UpdateFields     = UpdateFields,
             InsertSqlCode    = InsertSqlCode,
-            DataSturct       = Struct
+            DataStruct       = Struct
         };
 
         #endregion
@@ -96,7 +96,13 @@ LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.
         /// <summary>
         /// 读取的字段
         /// </summary>
-        public const string LoadFields = @"`tb_event_default`.`id` AS `id`
+        public const string LoadFields = @"`tb_event_subscribe`.`service` AS `service`
+,`tb_event_subscribe`.`is_look_up` AS `is_look_up`
+,`tb_event_subscribe`.`api_name` AS `api_name`
+,`tb_event_subscribe`.`memo` AS `event_subscribe_memo`
+,`tb_event_subscribe`.`target_name` AS `event_subscribe_target_name`
+,`tb_event_subscribe`.`target_type` AS `event_subscribe_target_type`
+,`tb_event_default`.`id` AS `id`
 ,`tb_event_default`.`event_name` AS `event_name`
 ,`tb_event_default`.`event_code` AS `event_code`
 ,`tb_event_default`.`version` AS `version`
@@ -111,14 +117,6 @@ LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.
 ,`tb_event_default`.`target_type` AS `target_type`
 ,`tb_event_default`.`target_name` AS `target_name`
 ,`tb_event_default`.`target_description` AS `target_description`
-,`tb_event_subscribe`.`id` AS `event_subscribe_id`
-,`tb_event_subscribe`.`service` AS `service`
-,`tb_event_subscribe`.`is_look_up` AS `is_look_up`
-,`tb_event_subscribe`.`api_name` AS `api_name`
-,`tb_event_subscribe`.`memo` AS `event_subscribe_memo`
-,`tb_event_subscribe`.`target_name` AS `event_subscribe_target_name`
-,`tb_event_subscribe`.`target_type` AS `event_subscribe_target_type`
-,`tb_event_subscribe`.`target_description` AS `event_subscribe_target_description`
 ";
 
         /// <summary>
@@ -159,14 +157,7 @@ INSERT INTO `tb_event_default`
     `memo`,
     `target_type`,
     `target_name`,
-    `target_description`,
-    `service`,
-    `is_look_up`,
-    `api_name`,
-    `event_subscribe_memo`,
-    `event_subscribe_target_name`,
-    `event_subscribe_target_type`,
-    `event_subscribe_target_description`
+    `target_description`
 )
 VALUES
 (
@@ -183,14 +174,7 @@ VALUES
     ?Memo,
     ?TargetType,
     ?TargetName,
-    ?TargetDescription,
-    ?Service,
-    ?IsLookUp,
-    ?ApiName,
-    ?EventSubscribeMemo,
-    ?EventSubscribeTargetName,
-    ?EventSubscribeTargetType,
-    ?EventSubscribeTargetDescription
+    ?TargetDescription
 );";
 
         #endregion
@@ -208,6 +192,23 @@ VALUES
                return (int)MySqlDbType.VarChar;
             switch (property)
             {
+                case "service":
+                    return (int)MySqlDbType.VarString;
+                case "is_look_up":
+                case "islookup":
+                    return (int)MySqlDbType.Byte;
+                case "api_name":
+                case "apiname":
+                    return (int)MySqlDbType.VarString;
+                case "event_subscribe_memo":
+                case "eventsubscribememo":
+                    return (int)MySqlDbType.Text;
+                case "event_subscribe_target_name":
+                case "eventsubscribetargetname":
+                    return (int)MySqlDbType.VarString;
+                case "event_subscribe_target_type":
+                case "eventsubscribetargettype":
+                    return (int)MySqlDbType.VarString;
                 case "id":
                     return (int)MySqlDbType.Int64;
                 case "event_name":
@@ -246,29 +247,6 @@ VALUES
                 case "target_description":
                 case "targetdescription":
                     return (int)MySqlDbType.Text;
-                case "event_subscribe_id":
-                case "eventsubscribeid":
-                    return (int)MySqlDbType.Int64;
-                case "service":
-                    return (int)MySqlDbType.VarString;
-                case "is_look_up":
-                case "islookup":
-                    return (int)MySqlDbType.Byte;
-                case "api_name":
-                case "apiname":
-                    return (int)MySqlDbType.VarString;
-                case "event_subscribe_memo":
-                case "eventsubscribememo":
-                    return (int)MySqlDbType.Text;
-                case "event_subscribe_target_name":
-                case "eventsubscribetargetname":
-                    return (int)MySqlDbType.VarString;
-                case "event_subscribe_target_type":
-                case "eventsubscribetargettype":
-                    return (int)MySqlDbType.VarString;
-                case "event_subscribe_target_description":
-                case "eventsubscribetargetdescription":
-                    return (int)MySqlDbType.Text;
                 default:
                     return (int)MySqlDbType.VarChar;
             }
@@ -284,80 +262,75 @@ VALUES
         public async Task LoadEntity(DbDataReader r,EventDefaultModel entity)
         {
             var reader = r as MySqlDataReader;
-            entity.Id = await reader.GetFieldValueAsync<long>(0);
-            if (reader.IsDBNull(1))
-                entity.EventName = null;
-            else
-                entity.EventName = await reader.GetFieldValueAsync<string>(1);
-            if (reader.IsDBNull(2))
-                entity.EventCode = null;
-            else
-                entity.EventCode = await reader.GetFieldValueAsync<string>(2);
-            if (reader.IsDBNull(3))
-                entity.Version = null;
-            else
-                entity.Version = await reader.GetFieldValueAsync<string>(3);
-            entity.Region = (RegionType)(await reader.GetFieldValueAsync<int>(4));
-            entity.EventType = (EventType)(await reader.GetFieldValueAsync<int>(5));
-            entity.ResultOption = (ResultOptionType)(await reader.GetFieldValueAsync<int>(6));
-            entity.SuccessOption = (SuccessOptionType)(await reader.GetFieldValueAsync<int>(7));
-            if (reader.IsDBNull(8))
-                entity.App = null;
-            else
-                entity.App = await reader.GetFieldValueAsync<string>(8);
-            if (reader.IsDBNull(9))
-                entity.Classify = null;
-            else
-                entity.Classify = await reader.GetFieldValueAsync<string>(9);
-            if (reader.IsDBNull(10))
-                entity.Tag = null;
-            else
-                entity.Tag = await reader.GetFieldValueAsync<string>(10);
-            if (reader.IsDBNull(11))
-                entity.Memo = null;
-            else
-                entity.Memo = await reader.GetFieldValueAsync<string>(11);
-            if (reader.IsDBNull(12))
-                entity.TargetType = null;
-            else
-                entity.TargetType = await reader.GetFieldValueAsync<string>(12);
-            if (reader.IsDBNull(13))
-                entity.TargetName = null;
-            else
-                entity.TargetName = await reader.GetFieldValueAsync<string>(13);
-            if (reader.IsDBNull(14))
-                entity.TargetDescription = null;
-            else
-                entity.TargetDescription = await reader.GetFieldValueAsync<string>(14);
-            entity.EventSubscribeId = await reader.GetFieldValueAsync<long>(15);
-            if (reader.IsDBNull(16))
+            if (reader.IsDBNull(0))
                 entity.Service = null;
             else
-                entity.Service = await reader.GetFieldValueAsync<string>(16);
-            if (reader.IsDBNull(17))
+                entity.Service = await reader.GetFieldValueAsync<string>(0);
+            if (reader.IsDBNull(1))
                 entity.IsLookUp = default;
             else
-                entity.IsLookUp = await reader.GetFieldValueAsync<bool>(17);
-            if (reader.IsDBNull(18))
+                entity.IsLookUp = await reader.GetFieldValueAsync<bool>(1);
+            if (reader.IsDBNull(2))
                 entity.ApiName = null;
             else
-                entity.ApiName = await reader.GetFieldValueAsync<string>(18);
-            if (reader.IsDBNull(19))
+                entity.ApiName = await reader.GetFieldValueAsync<string>(2);
+            if (reader.IsDBNull(3))
                 entity.EventSubscribeMemo = null;
             else
-                entity.EventSubscribeMemo = await reader.GetFieldValueAsync<string>(19);
-            if (reader.IsDBNull(20))
+                entity.EventSubscribeMemo = await reader.GetFieldValueAsync<string>(3);
+            if (reader.IsDBNull(4))
                 entity.EventSubscribeTargetName = null;
             else
-                entity.EventSubscribeTargetName = await reader.GetFieldValueAsync<string>(20);
-            if (reader.IsDBNull(21))
+                entity.EventSubscribeTargetName = await reader.GetFieldValueAsync<string>(4);
+            if (reader.IsDBNull(5))
                 entity.EventSubscribeTargetType = null;
             else
-                entity.EventSubscribeTargetType = await reader.GetFieldValueAsync<string>(21);
-            if (reader.IsDBNull(22))
-                entity.EventSubscribeTargetDescription = null;
+                entity.EventSubscribeTargetType = await reader.GetFieldValueAsync<string>(5);
+            entity.Id = await reader.GetFieldValueAsync<long>(6);
+            if (reader.IsDBNull(7))
+                entity.EventName = null;
             else
-                entity.EventSubscribeTargetDescription = await reader.GetFieldValueAsync<string>(22);
+                entity.EventName = await reader.GetFieldValueAsync<string>(7);
+            if (reader.IsDBNull(8))
+                entity.EventCode = null;
+            else
+                entity.EventCode = await reader.GetFieldValueAsync<string>(8);
+            if (reader.IsDBNull(9))
+                entity.Version = null;
+            else
+                entity.Version = await reader.GetFieldValueAsync<string>(9);
+            entity.Region = (RegionType)(await reader.GetFieldValueAsync<int>(10));
+            entity.EventType = (EventType)(await reader.GetFieldValueAsync<int>(11));
+            entity.ResultOption = (ResultOptionType)(await reader.GetFieldValueAsync<int>(12));
+            entity.SuccessOption = (SuccessOptionType)(await reader.GetFieldValueAsync<int>(13));
+            if (reader.IsDBNull(14))
+                entity.App = null;
+            else
+                entity.App = await reader.GetFieldValueAsync<string>(14);
+            if (reader.IsDBNull(15))
+                entity.Classify = null;
+            else
+                entity.Classify = await reader.GetFieldValueAsync<string>(15);
+            if (reader.IsDBNull(16))
+                entity.Tag = null;
+            else
+                entity.Tag = await reader.GetFieldValueAsync<string>(16);
+            if (reader.IsDBNull(17))
+                entity.Memo = null;
+            else
+                entity.Memo = await reader.GetFieldValueAsync<string>(17);
+            if (reader.IsDBNull(18))
+                entity.TargetType = null;
+            else
+                entity.TargetType = await reader.GetFieldValueAsync<string>(18);
+            if (reader.IsDBNull(19))
+                entity.TargetName = null;
+            else
+                entity.TargetName = await reader.GetFieldValueAsync<string>(19);
+            if (reader.IsDBNull(20))
+                entity.TargetDescription = null;
+            else
+                entity.TargetDescription = await reader.GetFieldValueAsync<string>(20);
         }
 
         /// <summary>
@@ -374,14 +347,12 @@ VALUES
             {  
                 var ch = new EventSubscribeEntity
                 {
-                    Id = entity.EventSubscribeId,
                     Service = entity.Service,
                     IsLookUp = entity.IsLookUp,
                     ApiName = entity.ApiName,
                     Memo = entity.EventSubscribeMemo,
                     TargetName = entity.EventSubscribeTargetName,
-                    TargetType = entity.EventSubscribeTargetType,
-                    TargetDescription = entity.EventSubscribeTargetDescription
+                    TargetType = entity.EventSubscribeTargetType
                 };
                 ch.EventId = entity.Id;
                 var (hase,id) = await accessEventSubscribe.LoadValueAsync(p=> p.Id , p=>  p.EventId == entity.Id);
@@ -403,6 +374,12 @@ VALUES
         /// <returns>返回真说明要取主键</returns>
         public void SetEntityParameter(EventDefaultModel entity, MySqlCommand cmd)
         {
+            cmd.Parameters.Add(new MySqlParameter("Service", entity.Service));
+            cmd.Parameters.Add(new MySqlParameter("IsLookUp", entity.IsLookUp ? (byte)1 : (byte)0));
+            cmd.Parameters.Add(new MySqlParameter("ApiName", entity.ApiName));
+            cmd.Parameters.Add(new MySqlParameter("EventSubscribeMemo", entity.EventSubscribeMemo));
+            cmd.Parameters.Add(new MySqlParameter("EventSubscribeTargetName", entity.EventSubscribeTargetName));
+            cmd.Parameters.Add(new MySqlParameter("EventSubscribeTargetType", entity.EventSubscribeTargetType));
             cmd.Parameters.Add(new MySqlParameter("Id", entity.Id));
             cmd.Parameters.Add(new MySqlParameter("EventName", entity.EventName));
             cmd.Parameters.Add(new MySqlParameter("EventCode", entity.EventCode));
@@ -418,14 +395,6 @@ VALUES
             cmd.Parameters.Add(new MySqlParameter("TargetType", entity.TargetType));
             cmd.Parameters.Add(new MySqlParameter("TargetName", entity.TargetName));
             cmd.Parameters.Add(new MySqlParameter("TargetDescription", entity.TargetDescription));
-            cmd.Parameters.Add(new MySqlParameter("EventSubscribeId", entity.EventSubscribeId));
-            cmd.Parameters.Add(new MySqlParameter("Service", entity.Service));
-            cmd.Parameters.Add(new MySqlParameter("IsLookUp", entity.IsLookUp ? (byte)1 : (byte)0));
-            cmd.Parameters.Add(new MySqlParameter("ApiName", entity.ApiName));
-            cmd.Parameters.Add(new MySqlParameter("EventSubscribeMemo", entity.EventSubscribeMemo));
-            cmd.Parameters.Add(new MySqlParameter("EventSubscribeTargetName", entity.EventSubscribeTargetName));
-            cmd.Parameters.Add(new MySqlParameter("EventSubscribeTargetType", entity.EventSubscribeTargetType));
-            cmd.Parameters.Add(new MySqlParameter("EventSubscribeTargetDescription", entity.EventSubscribeTargetDescription));
         }
 
         #endregion
@@ -443,6 +412,12 @@ VALUES
             if (property == null) return null;
             return (property.Trim().ToLower()) switch
             {
+                "service" => entity.Service,
+                "islookup" => entity.IsLookUp,
+                "apiname" => entity.ApiName,
+                "eventsubscribememo" => entity.EventSubscribeMemo,
+                "eventsubscribetargetname" => entity.EventSubscribeTargetName,
+                "eventsubscribetargettype" => entity.EventSubscribeTargetType,
                 "id" => entity.Id,
                 "eventname" => entity.EventName,
                 "eventcode" => entity.EventCode,
@@ -458,14 +433,6 @@ VALUES
                 "targettype" => entity.TargetType,
                 "targetname" => entity.TargetName,
                 "targetdescription" => entity.TargetDescription,
-                "eventsubscribeid" => entity.EventSubscribeId,
-                "service" => entity.Service,
-                "islookup" => entity.IsLookUp,
-                "apiname" => entity.ApiName,
-                "eventsubscribememo" => entity.EventSubscribeMemo,
-                "eventsubscribetargetname" => entity.EventSubscribeTargetName,
-                "eventsubscribetargettype" => entity.EventSubscribeTargetType,
-                "eventsubscribetargetdescription" => entity.EventSubscribeTargetDescription,
                 _ => null
             };
         }
@@ -483,6 +450,35 @@ VALUES
                 return;
             switch(property.Trim().ToLower())
             {
+            case "service":
+                entity.Service = value == null ? null : value.ToString();
+                return;
+            case "islookup":
+                if (value != null)
+                {
+                    int vl;
+                    if (int.TryParse(value.ToString(), out vl))
+                    {
+                        entity.IsLookUp = vl != 0;
+                    }
+                    else
+                    {
+                        entity.IsLookUp = Convert.ToBoolean(value);
+                    }
+                }
+                return;
+            case "apiname":
+                entity.ApiName = value == null ? null : value.ToString();
+                return;
+            case "eventsubscribememo":
+                entity.EventSubscribeMemo = value == null ? null : value.ToString();
+                return;
+            case "eventsubscribetargetname":
+                entity.EventSubscribeTargetName = value == null ? null : value.ToString();
+                return;
+            case "eventsubscribetargettype":
+                entity.EventSubscribeTargetType = value == null ? null : value.ToString();
+                return;
             case "id":
                 entity.Id = (long)Convert.ToDecimal(value);
                 return;
@@ -635,41 +631,6 @@ VALUES
                 return;
             case "targetdescription":
                 entity.TargetDescription = value == null ? null : value.ToString();
-                return;
-            case "eventsubscribeid":
-                entity.EventSubscribeId = (long)Convert.ToDecimal(value);
-                return;
-            case "service":
-                entity.Service = value == null ? null : value.ToString();
-                return;
-            case "islookup":
-                if (value != null)
-                {
-                    int vl;
-                    if (int.TryParse(value.ToString(), out vl))
-                    {
-                        entity.IsLookUp = vl != 0;
-                    }
-                    else
-                    {
-                        entity.IsLookUp = Convert.ToBoolean(value);
-                    }
-                }
-                return;
-            case "apiname":
-                entity.ApiName = value == null ? null : value.ToString();
-                return;
-            case "eventsubscribememo":
-                entity.EventSubscribeMemo = value == null ? null : value.ToString();
-                return;
-            case "eventsubscribetargetname":
-                entity.EventSubscribeTargetName = value == null ? null : value.ToString();
-                return;
-            case "eventsubscribetargettype":
-                entity.EventSubscribeTargetType = value == null ? null : value.ToString();
-                return;
-            case "eventsubscribetargetdescription":
-                entity.EventSubscribeTargetDescription = value == null ? null : value.ToString();
                 return;
             }
         }

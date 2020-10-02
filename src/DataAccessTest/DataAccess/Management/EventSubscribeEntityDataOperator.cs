@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/2 2:42:35*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 5:13:18*/
 #region
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using MySqlConnector;
 
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Interfaces;
+using Agebull.EntityModel.MySql;
 
 
 #endregion
@@ -39,25 +40,26 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             PrimaryKey       = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
             ReadTableName    = EventBusDb.EventSubscribe_Struct_.TableName,
             WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
+            InterfaceFeature = new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
             Properties       = new List<EntityProperty>
             {
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Id,1,"Id","id"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.EventId,2,"EventId","event_id"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Service,3,"Service","service"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.IsLookUp,4,"IsLookUp","is_look_up"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.ApiName,5,"ApiName","api_name"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Memo,6,"Memo","memo"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetName,7,"TargetName","target_name"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetType,8,"TargetType","target_type"),
-                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetDescription,9,"TargetDescription","target_description"),
-                new EntityProperty(DataInterface.IStateData.IsFreeze,10,"IsFreeze","is_freeze"),
-                new EntityProperty(DataInterface.IStateData.DataState,11,"DataState","data_state"),
-                new EntityProperty(DataInterface.IAuthorData.AuthorId,12,"AuthorId","created_user_id"),
-                new EntityProperty(DataInterface.IAuthorData.Author,13,"Author","created_user"),
-                new EntityProperty(DataInterface.IHistoryData.LastModifyDate,14,"LastModifyDate","latest_updated_date"),
-                new EntityProperty(DataInterface.IAuthorData.AddDate,15,"AddDate","created_date"),
-                new EntityProperty(DataInterface.IHistoryData.LastReviserId,16,"LastReviserId","latest_updated_user_id"),
-                new EntityProperty(DataInterface.IHistoryData.LastReviser,17,"LastReviser","latest_updated_user")
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Id,0,"Id","tb_event_subscribe","id",ReadWriteFeatrue.Read),
+                new EntityProperty(GlobalDataInterfaces.IStateData.IsFreeze,1,"IsFreeze","tb_event_subscribe","is_freeze",ReadWriteFeatrue.Read),
+                new EntityProperty(GlobalDataInterfaces.IHistoryData.LastModifyDate,2,"LastModifyDate","tb_event_subscribe","latest_updated_date",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert),
+                new EntityProperty(GlobalDataInterfaces.IAuthorData.AuthorId,3,"AuthorId","tb_event_subscribe","created_user_id",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.EventId,4,"EventId","tb_event_subscribe","event_id",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(GlobalDataInterfaces.IStateData.DataState,5,"DataState","tb_event_subscribe","data_state",ReadWriteFeatrue.Read),
+                new EntityProperty(GlobalDataInterfaces.IHistoryData.LastReviserId,6,"LastReviserId","tb_event_subscribe","latest_updated_user_id",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert),
+                new EntityProperty(GlobalDataInterfaces.IAuthorData.Author,7,"Author","tb_event_subscribe","created_user",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Service,8,"Service","tb_event_subscribe","service",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(GlobalDataInterfaces.IAuthorData.AddDate,9,"AddDate","tb_event_subscribe","created_date",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.IsLookUp,10,"IsLookUp","tb_event_subscribe","is_look_up",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.ApiName,11,"ApiName","tb_event_subscribe","api_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.Memo,12,"Memo","tb_event_subscribe","memo",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetName,13,"TargetName","tb_event_subscribe","target_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetType,14,"TargetType","tb_event_subscribe","target_type",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(EventBusDb.EventSubscribe_Struct_.TargetDescription,15,"TargetDescription","tb_event_subscribe","target_description",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
+                new EntityProperty(GlobalDataInterfaces.IHistoryData.LastReviser,16,"LastReviser","tb_event_subscribe","latest_updated_user",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert)
             }
         };
 
@@ -66,15 +68,15 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            NoInjection      = true,
+            NoInjection      = false,
             IsQuery          = false,
             UpdateByMidified = false,
             ReadTableName    = FromSqlCode,
-            WriteTableName   = "tb_event_subscribe",
+            WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
             LoadFields       = LoadFields,
             UpdateFields     = UpdateFields,
             InsertSqlCode    = InsertSqlCode,
-            DataSturct       = Struct
+            DataStruct       = Struct
         };
 
         #endregion
@@ -89,29 +91,29 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 读取的字段
         /// </summary>
-        public const string LoadFields = @"`tb_event_subscribe`.`id` AS `Id`
-,`tb_event_subscribe`.`event_id` AS `EventId`
-,`tb_event_subscribe`.`service` AS `Service`
-,`tb_event_subscribe`.`is_look_up` AS `IsLookUp`
-,`tb_event_subscribe`.`api_name` AS `ApiName`
-,`tb_event_subscribe`.`memo` AS `Memo`
-,`tb_event_subscribe`.`target_name` AS `TargetName`
-,`tb_event_subscribe`.`target_type` AS `TargetType`
-,`tb_event_subscribe`.`target_description` AS `TargetDescription`
-,`tb_event_subscribe`.`is_freeze` AS `IsFreeze`
-,`tb_event_subscribe`.`data_state` AS `DataState`
-,`tb_event_subscribe`.`latest_updated_date` AS `LastModifyDate`
-,`tb_event_subscribe`.`latest_updated_user_id` AS `LastReviserId`
-,`tb_event_subscribe`.`latest_updated_user` AS `LastReviser`
-,`tb_event_subscribe`.`created_user_id` AS `AuthorId`
-,`tb_event_subscribe`.`created_user` AS `Author`
-,`tb_event_subscribe`.`created_date` AS `AddDate`
+        public const string LoadFields = @"`tb_event_subscribe`.`id` AS `id`
+,`tb_event_subscribe`.`event_id` AS `event_id`
+,`tb_event_subscribe`.`service` AS `service`
+,`tb_event_subscribe`.`is_look_up` AS `is_look_up`
+,`tb_event_subscribe`.`api_name` AS `api_name`
+,`tb_event_subscribe`.`memo` AS `memo`
+,`tb_event_subscribe`.`target_name` AS `target_name`
+,`tb_event_subscribe`.`target_type` AS `target_type`
+,`tb_event_subscribe`.`target_description` AS `target_description`
+,`tb_event_subscribe`.`is_freeze` AS `is_freeze`
+,`tb_event_subscribe`.`data_state` AS `data_state`
+,`tb_event_subscribe`.`latest_updated_date` AS `latest_updated_date`
+,`tb_event_subscribe`.`latest_updated_user_id` AS `latest_updated_user_id`
+,`tb_event_subscribe`.`latest_updated_user` AS `latest_updated_user`
+,`tb_event_subscribe`.`created_user_id` AS `created_user_id`
+,`tb_event_subscribe`.`created_user` AS `created_user`
+,`tb_event_subscribe`.`created_date` AS `created_date`
 ";
 
         /// <summary>
         /// 更新的字段
         /// </summary>
-        public static string UpdateFields = $@"
+        public static string UpdateFields = @"
        `event_id` = ?EventId,
        `service` = ?Service,
        `is_look_up` = ?IsLookUp,
@@ -119,13 +121,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
        `memo` = ?Memo,
        `target_name` = ?TargetName,
        `target_type` = ?TargetType,
-       `target_description` = ?TargetDescription,
-       `created_user` = ?Author";
+       `target_description` = ?TargetDescription";
 
         /// <summary>
         /// 写入的Sql
         /// </summary>
-        public static string InsertSqlCode => $@"
+        public static string InsertSqlCode => @"
 INSERT INTO `tb_event_subscribe`
 (
     `event_id`,
@@ -136,8 +137,6 @@ INSERT INTO `tb_event_subscribe`
     `target_name`,
     `target_type`,
     `target_description`,
-    `is_freeze`,
-    `data_state`,
     `latest_updated_date`,
     `latest_updated_user_id`,
     `latest_updated_user`,
@@ -155,8 +154,6 @@ VALUES
     ?TargetName,
     ?TargetType,
     ?TargetDescription,
-    ?IsFreeze,
-    ?DataState,
     ?LastModifyDate,
     ?LastReviserId,
     ?LastReviser,
@@ -312,21 +309,21 @@ VALUES
         public void SetEntityParameter(EventSubscribeEntity entity, MySqlCommand cmd)
         {
             cmd.Parameters.Add(new MySqlParameter("Id", entity.Id));
+            cmd.Parameters.Add(new MySqlParameter("IsFreeze", entity.IsFreeze ? (byte)1 : (byte)0));
+            cmd.Parameters.Add(new MySqlParameter("LastModifyDate", entity.LastModifyDate));
+            cmd.Parameters.Add(new MySqlParameter("AuthorId", entity.AuthorId));
             cmd.Parameters.Add(new MySqlParameter("EventId", entity.EventId));
+            cmd.Parameters.Add(new MySqlParameter("DataState", (int)entity.DataState));
+            cmd.Parameters.Add(new MySqlParameter("LastReviserId", entity.LastReviserId));
+            cmd.Parameters.Add(new MySqlParameter("Author", entity.Author));
             cmd.Parameters.Add(new MySqlParameter("Service", entity.Service));
+            cmd.Parameters.Add(new MySqlParameter("AddDate", entity.AddDate));
             cmd.Parameters.Add(new MySqlParameter("IsLookUp", entity.IsLookUp ? (byte)1 : (byte)0));
             cmd.Parameters.Add(new MySqlParameter("ApiName", entity.ApiName));
             cmd.Parameters.Add(new MySqlParameter("Memo", entity.Memo));
             cmd.Parameters.Add(new MySqlParameter("TargetName", entity.TargetName));
             cmd.Parameters.Add(new MySqlParameter("TargetType", entity.TargetType));
             cmd.Parameters.Add(new MySqlParameter("TargetDescription", entity.TargetDescription));
-            cmd.Parameters.Add(new MySqlParameter("IsFreeze", entity.IsFreeze ? (byte)1 : (byte)0));
-            cmd.Parameters.Add(new MySqlParameter("DataState", (int)entity.DataState));
-            cmd.Parameters.Add(new MySqlParameter("AuthorId", entity.AuthorId));
-            cmd.Parameters.Add(new MySqlParameter("Author", entity.Author));
-            cmd.Parameters.Add(new MySqlParameter("LastModifyDate", entity.LastModifyDate));
-            cmd.Parameters.Add(new MySqlParameter("AddDate", entity.AddDate));
-            cmd.Parameters.Add(new MySqlParameter("LastReviserId", entity.LastReviserId));
             cmd.Parameters.Add(new MySqlParameter("LastReviser", entity.LastReviser));
         }
 

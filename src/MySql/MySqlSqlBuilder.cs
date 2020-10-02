@@ -89,7 +89,7 @@ namespace Agebull.EntityModel.MySql
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
            {
-               if (pro.Entity != Option.DataSturct.Name)
+               if (pro.Entity != Option.DataStruct.Name)
                    return;
                if (first)
                    first = false;
@@ -115,35 +115,35 @@ namespace Agebull.EntityModel.MySql
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
-                if (pro.Entity != Option.DataSturct.Name)
+                if (pro.Entity != Option.DataStruct.Name)
                     return;
                 if (first)
-                     first = false;
-                 else
-                 {
-                     paras.Append(',');
-                     fields.Append(',');
-                 }
-                 fields.Append('`');
-                 fields.Append(pro.FieldName);
-                 fields.Append('`');
+                    first = false;
+                else
+                {
+                    paras.Append(',');
+                    fields.Append(',');
+                }
+                fields.Append('`');
+                fields.Append(pro.FieldName);
+                fields.Append('`');
 
-                 paras.Append('?');
-                 paras.Append(pro.PropertyName);
-             });
+                paras.Append('?');
+                paras.Append(pro.PropertyName);
+            });
             paras.Append(");");
-            if (Option.DataSturct.IsIdentity)
+            if (Option.DataStruct.IsIdentity)
             {
                 paras.Append("\nSELECT @@IDENTITY;");
             }
-            return $"INSERT INTO `{Option.DataSturct.WriteTableName}`({fields})\nVALUES({paras}";
+            return $"INSERT INTO `{Option.DataStruct.WriteTableName}`({fields})\nVALUES({paras}";
         }
 
         /// <summary>
         /// 删除的代码
         /// </summary>
         /// <returns></returns>
-        public string BuilderDeleteSqlCode() => $"DELETE FROM `{Option.DataSturct.WriteTableName}`";
+        public string BuilderDeleteSqlCode() => $"DELETE FROM `{Option.DataStruct.WriteTableName}`";
 
         #endregion
 
@@ -195,6 +195,48 @@ namespace Agebull.EntityModel.MySql
         ///     生成更新的SQL
         /// </summary>
         /// <param name="entity">实体</param>
+        /// <returns>更新的SQL</returns>
+        public string CreateInsertSqlCode(TEntity entity)
+        {
+            if (Option.NoInjection || Provider.Injection == null)
+            {
+                return Option.InsertSqlCode;
+            }
+            var fields = new StringBuilder();
+            var paras = new StringBuilder();
+            bool first = true;
+            Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
+            {
+                if (pro.Entity != Option.DataStruct.Name)
+                    return;
+                if (first)
+                    first = false;
+                else
+                {
+                    paras.Append(',');
+                    fields.Append(',');
+                }
+                fields.Append('`');
+                fields.Append(pro.FieldName);
+                fields.Append('`');
+
+                paras.Append('?');
+                paras.Append(pro.PropertyName);
+            });
+
+            Provider.Injection.InjectionInsertCode(fields, paras);
+            paras.Append(");");
+            if (Option.DataStruct.IsIdentity)
+            {
+                paras.Append("\nSELECT @@IDENTITY;");
+            }
+            return $"INSERT INTO `{Option.WriteTableName}`({fields})\nVALUES({paras}";
+        }
+
+        /// <summary>
+        ///     生成更新的SQL
+        /// </summary>
+        /// <param name="entity">实体</param>
         /// <param name="condition">更新条件</param>
         /// <returns>更新的SQL</returns>
         public string CreateUpdateSqlCode(TEntity entity, string condition)
@@ -205,12 +247,12 @@ namespace Agebull.EntityModel.MySql
                 var code = new List<string>();
                 Option.FroeachDbProperties(pro =>
                 {
-                    if (pro.Entity == Option.DataSturct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
+                    if (pro.Entity == Option.DataStruct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
                         code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");
                 });
                 if (code.Count == 0)
                     return null;
-                valueExpression = string.Join(',', code);
+                valueExpression = string.Join(",\n", code);
             }
             else
             {
@@ -572,10 +614,10 @@ FROM {Option.ReadTableName}{condition};";
         #region Expression
 
         ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda)
-            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
+            => PredicateConvert.Convert(this, Option, lambda);
 
         ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda)
-            => PredicateConvert.Convert(this, Option.FieldMap, lambda);
+            => PredicateConvert.Convert(this, Option, lambda);
 
         #endregion
     }

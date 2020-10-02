@@ -54,7 +54,24 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                trigger.InjectionQueryCondition<TEntity>(Provider.Option, conditions);
+                trigger.InjectionQueryCondition(Provider, conditions);
+        }
+
+        /// <summary>
+        ///     注入数据插入代码
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public void InjectionInsertCode(StringBuilder fields, StringBuilder values)
+        {
+            if (Provider.Option.NoInjection)
+                return;
+            var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
+            if (services.Length == 0)
+                return;
+            foreach (var trigger in services)
+                trigger.InjectionInsertCode(Provider, fields, values);
         }
 
 
@@ -71,14 +88,19 @@ namespace Agebull.EntityModel.Common
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
                 return;
-            var val = new StringBuilder(valueExpression);
-            var con = new StringBuilder(condition);
+            var val = new StringBuilder();
+            var con = new List<string>();
 
             foreach (var trigger in services)
-                trigger.InjectionUpdateCode<TEntity>(Provider.Option, val, con);
-
-            valueExpression = val.ToString();
-            condition = con.ToString();
+                trigger.InjectionUpdateCode(Provider, val, con);
+            if (val.Length > 0)
+                valueExpression += val.ToString();
+            if (con.Count > 0)
+            {
+                condition = string.IsNullOrEmpty(condition)
+                    ? string.Join(" AND ",con)
+                    : $"({condition}) AND {string.Join(" AND ", con)}";
+            }
         }
 
         /// <summary>
@@ -93,19 +115,21 @@ namespace Agebull.EntityModel.Common
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
                 return condition;
-            var con = new StringBuilder(condition);
+            var con = new List<string>();
 
             foreach (var trigger in services)
-                trigger.InjectionDeleteCondition<TEntity>(Provider.Option, con);
+                trigger.InjectionDeleteCondition(Provider, con);
 
-            return con.ToString();
+            return con.Count > 0 
+                ? $"({condition}) {string.Join(" AND ", con)}" 
+                : condition;
         }
 
         #endregion
 
         #region 扩展 
 
-        /*// <summary>
+        /// <summary>
         ///     实体保存前处理(Insert/Update/Delete)
         /// </summary>
         /// <param name="entity">保存的对象</param>
@@ -118,7 +142,7 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                await trigger.BeforeSave(Provider.Option, entity, operatorType);
+                await trigger.BeforeSave(Provider, entity, operatorType);
         }
 
         /// <summary>
@@ -137,7 +161,7 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                await trigger.AfterSave(Provider.Option, entity, operatorType);
+                await trigger.AfterSave(Provider, entity, operatorType);
 
             if (!Provider.Option.CanRaiseEvent)
                 return;
@@ -158,7 +182,7 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                await trigger.BeforeExecute(Provider.Option, operatorType, condition, parameter);
+                await trigger.BeforeExecute(Provider, operatorType, condition, parameter);
         }
 
         /// <summary>
@@ -175,7 +199,7 @@ namespace Agebull.EntityModel.Common
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
-                await trigger.AfterExecute(Provider.Option, operatorType, condition, parameter);
+                await trigger.AfterExecute(Provider, operatorType, condition, parameter);
 
             if (!Provider.Option.CanRaiseEvent)
                 return;
@@ -239,9 +263,9 @@ namespace Agebull.EntityModel.Common
                     break;
             }
             foreach (var service in services)
-                await service.OnStatusChanged(Provider.Option.DataSturct.ProjectName,
-                    Provider.Option.DataSturct.EntityName, oType, valueType, value);
-        }*/
+                await service.OnStatusChanged(Provider.Option.DataStruct.ProjectName,
+                    Provider.Option.DataStruct.EntityName, oType, valueType, value);
+        }
         #endregion
     }
 }

@@ -103,7 +103,7 @@ namespace Agebull.EntityModel.Events
                     break;
             }
 
-            await service.OnStatusChanged(Provider.Option.DataSturct.ProjectName,Provider.Option.DataSturct.EntityName, oType, valueType, value);
+            await service.OnStatusChanged(Provider.Option.DataStruct.ProjectName,Provider.Option.DataStruct.EntityName, oType, valueType, value);
         }
         #endregion
     }

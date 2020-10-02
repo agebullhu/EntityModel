@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/2 3:54:33*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 4:55:37*/
 #region
 using System;
 using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("Id",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("id",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
         public long Id
         {
             get => this._id;
@@ -75,336 +75,6 @@ namespace Zeroteam.MessageMVC.EventBus
                     return;
                 this._id = value;
                 this.OnSeted(nameof(Id));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _eventName;
-
-        
-        /// <summary>
-        ///  事件名称
-        /// </summary>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("EventName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string EventName
-        {
-            get => this._eventName;
-            set
-            {
-                if(this._eventName == value)
-                    return;
-                this._eventName = value;
-                this.OnSeted(nameof(EventName));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _eventCode;
-
-        
-        /// <summary>
-        ///  事件编码
-        /// </summary>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("EventCode",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string EventCode
-        {
-            get => this._eventCode;
-            set
-            {
-                if(this._eventCode == value)
-                    return;
-                this._eventCode = value;
-                this.OnSeted(nameof(EventCode));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _version;
-
-        
-        /// <summary>
-        ///  版本号
-        /// </summary>
-        /// <value>
-        ///     可存储16个字符.合理长度应不大于16.
-        /// </value>
-        [JsonProperty("Version",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string Version
-        {
-            get => this._version;
-            set
-            {
-                if(this._version == value)
-                    return;
-                this._version = value;
-                this.OnSeted(nameof(Version));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public RegionType _region;
-
-        
-        /// <summary>
-        ///  领域范围
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("Region",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  RegionType Region
-        {
-            get => this._region;
-            set
-            {
-                if(this._region == value)
-                    return;
-                this._region = value;
-                this.OnSeted(nameof(Region));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public EventType _eventType;
-
-        
-        /// <summary>
-        ///  事件类型
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("EventType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  EventType EventType
-        {
-            get => this._eventType;
-            set
-            {
-                if(this._eventType == value)
-                    return;
-                this._eventType = value;
-                this.OnSeted(nameof(EventType));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public ResultOptionType _resultOption;
-
-        
-        /// <summary>
-        ///  处理结果
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("ResultOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  ResultOptionType ResultOption
-        {
-            get => this._resultOption;
-            set
-            {
-                if(this._resultOption == value)
-                    return;
-                this._resultOption = value;
-                this.OnSeted(nameof(ResultOption));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public SuccessOptionType _successOption;
-
-        
-        /// <summary>
-        ///  成功判断
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("SuccessOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  SuccessOptionType SuccessOption
-        {
-            get => this._successOption;
-            set
-            {
-                if(this._successOption == value)
-                    return;
-                this._successOption = value;
-                this.OnSeted(nameof(SuccessOption));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _app;
-
-        
-        /// <summary>
-        ///  所属应用
-        /// </summary>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("App",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string App
-        {
-            get => this._app;
-            set
-            {
-                if(this._app == value)
-                    return;
-                this._app = value;
-                this.OnSeted(nameof(App));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _classify;
-
-        
-        /// <summary>
-        ///  事件分类
-        /// </summary>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("Classify",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string Classify
-        {
-            get => this._classify;
-            set
-            {
-                if(this._classify == value)
-                    return;
-                this._classify = value;
-                this.OnSeted(nameof(Classify));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _tag;
-
-        
-        /// <summary>
-        ///  事件标签
-        /// </summary>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("Tag",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string Tag
-        {
-            get => this._tag;
-            set
-            {
-                if(this._tag == value)
-                    return;
-                this._tag = value;
-                this.OnSeted(nameof(Tag));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _memo;
-
-        
-        /// <summary>
-        ///  事件备注
-        /// </summary>
-        [JsonProperty("Memo",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string Memo
-        {
-            get => this._memo;
-            set
-            {
-                if(this._memo == value)
-                    return;
-                this._memo = value;
-                this.OnSeted(nameof(Memo));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _targetType;
-
-        
-        /// <summary>
-        ///  目标类型
-        /// </summary>
-        /// <remarks>
-        ///     *表示所有类型
-        /// </remarks>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("TargetType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string TargetType
-        {
-            get => this._targetType;
-            set
-            {
-                if(this._targetType == value)
-                    return;
-                this._targetType = value;
-                this.OnSeted(nameof(TargetType));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _targetName;
-
-        
-        /// <summary>
-        ///  目标名称
-        /// </summary>
-        /// <remarks>
-        ///     *表示所有目标
-        /// </remarks>
-        /// <value>
-        ///     可存储200个字符.合理长度应不大于200.
-        /// </value>
-        [JsonProperty("TargetName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string TargetName
-        {
-            get => this._targetName;
-            set
-            {
-                if(this._targetName == value)
-                    return;
-                this._targetName = value;
-                this.OnSeted(nameof(TargetName));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public string _targetDescription;
-
-        
-        /// <summary>
-        ///  目标说明
-        /// </summary>
-        [JsonProperty("TargetDescription",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string TargetDescription
-        {
-            get => this._targetDescription;
-            set
-            {
-                if(this._targetDescription == value)
-                    return;
-                this._targetDescription = value;
-                this.OnSeted(nameof(TargetDescription));
-            }
-        }
-        [IgnoreDataMember , JsonIgnore]
-        public long _eventSubscribeId;
-
-        
-        /// <summary>
-        ///  主键
-        /// </summary>
-        /// <example>
-        ///     0
-        /// </example>
-        [JsonProperty("id",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  long EventSubscribeId
-        {
-            get => this._eventSubscribeId;
-            set
-            {
-                if(this._eventSubscribeId == value)
-                    return;
-                this._eventSubscribeId = value;
-                this.OnSeted(nameof(EventSubscribeId));
             }
         }
         [IgnoreDataMember , JsonIgnore]
@@ -483,7 +153,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <summary>
         ///  订阅备注
         /// </summary>
-        [JsonProperty("memo",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventSubscribeMemo",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
         public  string EventSubscribeMemo
         {
             get => this._eventSubscribeMemo;
@@ -508,7 +178,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("targetName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventSubscribeTargetName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
         public  string EventSubscribeTargetName
         {
             get => this._eventSubscribeTargetName;
@@ -533,7 +203,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("targetType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventSubscribeTargetType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
         public  string EventSubscribeTargetType
         {
             get => this._eventSubscribeTargetType;
@@ -546,22 +216,311 @@ namespace Zeroteam.MessageMVC.EventBus
             }
         }
         [IgnoreDataMember , JsonIgnore]
-        public string _eventSubscribeTargetDescription;
+        public string _eventName;
+
+        
+        /// <summary>
+        ///  事件名称
+        /// </summary>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("eventName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string EventName
+        {
+            get => this._eventName;
+            set
+            {
+                if(this._eventName == value)
+                    return;
+                this._eventName = value;
+                this.OnSeted(nameof(EventName));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _eventCode;
+
+        
+        /// <summary>
+        ///  事件编码
+        /// </summary>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("eventCode",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string EventCode
+        {
+            get => this._eventCode;
+            set
+            {
+                if(this._eventCode == value)
+                    return;
+                this._eventCode = value;
+                this.OnSeted(nameof(EventCode));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _version;
+
+        
+        /// <summary>
+        ///  版本号
+        /// </summary>
+        /// <value>
+        ///     可存储16个字符.合理长度应不大于16.
+        /// </value>
+        [JsonProperty("version",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string Version
+        {
+            get => this._version;
+            set
+            {
+                if(this._version == value)
+                    return;
+                this._version = value;
+                this.OnSeted(nameof(Version));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public RegionType _region;
+
+        
+        /// <summary>
+        ///  领域范围
+        /// </summary>
+        /// <example>
+        ///     0
+        /// </example>
+        [JsonProperty("region",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  RegionType Region
+        {
+            get => this._region;
+            set
+            {
+                if(this._region == value)
+                    return;
+                this._region = value;
+                this.OnSeted(nameof(Region));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public EventType _eventType;
+
+        
+        /// <summary>
+        ///  事件类型
+        /// </summary>
+        /// <example>
+        ///     0
+        /// </example>
+        [JsonProperty("eventType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  EventType EventType
+        {
+            get => this._eventType;
+            set
+            {
+                if(this._eventType == value)
+                    return;
+                this._eventType = value;
+                this.OnSeted(nameof(EventType));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public ResultOptionType _resultOption;
+
+        
+        /// <summary>
+        ///  处理结果
+        /// </summary>
+        /// <example>
+        ///     0
+        /// </example>
+        [JsonProperty("resultOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  ResultOptionType ResultOption
+        {
+            get => this._resultOption;
+            set
+            {
+                if(this._resultOption == value)
+                    return;
+                this._resultOption = value;
+                this.OnSeted(nameof(ResultOption));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public SuccessOptionType _successOption;
+
+        
+        /// <summary>
+        ///  成功判断
+        /// </summary>
+        /// <example>
+        ///     0
+        /// </example>
+        [JsonProperty("successOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  SuccessOptionType SuccessOption
+        {
+            get => this._successOption;
+            set
+            {
+                if(this._successOption == value)
+                    return;
+                this._successOption = value;
+                this.OnSeted(nameof(SuccessOption));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _app;
+
+        
+        /// <summary>
+        ///  所属应用
+        /// </summary>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("app",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string App
+        {
+            get => this._app;
+            set
+            {
+                if(this._app == value)
+                    return;
+                this._app = value;
+                this.OnSeted(nameof(App));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _classify;
+
+        
+        /// <summary>
+        ///  事件分类
+        /// </summary>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("classify",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string Classify
+        {
+            get => this._classify;
+            set
+            {
+                if(this._classify == value)
+                    return;
+                this._classify = value;
+                this.OnSeted(nameof(Classify));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _tag;
+
+        
+        /// <summary>
+        ///  事件标签
+        /// </summary>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("tag",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string Tag
+        {
+            get => this._tag;
+            set
+            {
+                if(this._tag == value)
+                    return;
+                this._tag = value;
+                this.OnSeted(nameof(Tag));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _memo;
+
+        
+        /// <summary>
+        ///  事件备注
+        /// </summary>
+        [JsonProperty("memo",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string Memo
+        {
+            get => this._memo;
+            set
+            {
+                if(this._memo == value)
+                    return;
+                this._memo = value;
+                this.OnSeted(nameof(Memo));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _targetType;
+
+        
+        /// <summary>
+        ///  目标类型
+        /// </summary>
+        /// <remarks>
+        ///     *表示所有类型
+        /// </remarks>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("targetType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string TargetType
+        {
+            get => this._targetType;
+            set
+            {
+                if(this._targetType == value)
+                    return;
+                this._targetType = value;
+                this.OnSeted(nameof(TargetType));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _targetName;
+
+        
+        /// <summary>
+        ///  目标名称
+        /// </summary>
+        /// <remarks>
+        ///     *表示所有目标
+        /// </remarks>
+        /// <value>
+        ///     可存储200个字符.合理长度应不大于200.
+        /// </value>
+        [JsonProperty("targetName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        public  string TargetName
+        {
+            get => this._targetName;
+            set
+            {
+                if(this._targetName == value)
+                    return;
+                this._targetName = value;
+                this.OnSeted(nameof(TargetName));
+            }
+        }
+        [IgnoreDataMember , JsonIgnore]
+        public string _targetDescription;
 
         
         /// <summary>
         ///  目标说明
         /// </summary>
         [JsonProperty("targetDescription",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
-        public  string EventSubscribeTargetDescription
+        public  string TargetDescription
         {
-            get => this._eventSubscribeTargetDescription;
+            get => this._targetDescription;
             set
             {
-                if(this._eventSubscribeTargetDescription == value)
+                if(this._targetDescription == value)
                     return;
-                this._eventSubscribeTargetDescription = value;
-                this.OnSeted(nameof(EventSubscribeTargetDescription));
+                this._targetDescription = value;
+                this.OnSeted(nameof(TargetDescription));
             }
         }
         #endregion

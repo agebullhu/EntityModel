@@ -29,8 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
-    <ProjectReference Include="..\DataSturct\Agebull.EntityModel.DataSturct.csproj" />
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
     <ProjectReference Include="..\Injection\Agebull.EntityModel.Injection.csproj" />
     <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
   </ItemGroup>

@@ -68,7 +68,7 @@ namespace Agebull.EntityModel.Common
         /// 再如：组织行级数据权限，可通过读取上下文中的角色设置与检查特性来自动设置强查询条件org_id=当前组织，
         /// 写入数据时自动写入组织信息
         /// </remarks>
-        public string[] InterfaceFeatures { get; set; }
+        public string[] InterfaceFeature { get; set; }
 
         /// <summary>
         ///     属性

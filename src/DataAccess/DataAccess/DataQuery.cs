@@ -38,7 +38,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="provider"></param>
         public DataQuery(DataAccessProvider<TEntity> provider)
-            :base(provider)
+            : base(provider)
         {
         }
 
@@ -967,12 +967,18 @@ namespace Agebull.EntityModel.Common
             var results = new List<TEntity>();
             var sql = SqlBuilder.CreatePageSql(page, limit, order, desc, condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = connectionScope.CreateCommand(sql, args);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            {//析构Commad对象，否则连接不可重用
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    results.Add(await LoadEntityAsync(reader));
+                }
+            }
+            foreach (var entity in results)
             {
-                results.Add(await LoadEntityAsync(reader));
+                await DataOperator.AfterLoad(entity);
             }
             return results;
         }
@@ -1368,7 +1374,7 @@ namespace Agebull.EntityModel.Common
                 return false;
             await DataOperator.LoadEntity(reader, entity);
             await DataOperator.AfterLoad(entity);
-            
+
             return true;
         }
 
@@ -1382,14 +1388,19 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         protected async Task<TEntity> LoadFirstInnerAsync(string condition, params DbParameter[] args)
         {
+            TEntity entity;
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, null, "1");
-            await using var cmd = connectionScope.CreateCommand(sql, args);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return null;
-            return await LoadEntityAsync(reader);
+            {
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                if (!await reader.ReadAsync())
+                    return null;
+                entity = await LoadEntityAsync(reader);
+            }
+            await DataOperator.AfterLoad(entity);
+            return entity;
         }
 
 
@@ -1398,14 +1409,19 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         protected async Task<TEntity> LoadLastInnerAsync(string condition, params DbParameter[] args)
         {
+            TEntity entity;
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, SqlBuilder.OrderCode(true, Option.PrimaryKey), "1");
-            await using var cmd = connectionScope.CreateCommand(sql, args);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return null;
-            return await LoadEntityAsync(reader);
+            {
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                if (!await reader.ReadAsync())
+                    return null;
+                entity = await LoadEntityAsync(reader);
+            }
+            await DataOperator.AfterLoad(entity);
+            return entity;
         }
 
         /// <summary>
@@ -1416,11 +1432,15 @@ namespace Agebull.EntityModel.Common
             var results = new List<TEntity>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var sql = SqlBuilder.CreateLoadSql(condition, orderBy, null);
-            await using var cmd = connectionScope.CreateCommand(sql, args);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-                results.Add(await LoadEntityAsync(reader));
+            {
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                    results.Add(await LoadEntityAsync(reader));
+            }
+            foreach (var entity in results)
+                await DataOperator.AfterLoad(entity);
             return results;
         }
 
@@ -1431,13 +1451,17 @@ namespace Agebull.EntityModel.Common
         {
             var results = new List<TEntity>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await using var cmd = connectionScope.CreateCommand(sql, args);
-            DataBase.TraceSql(cmd);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
             {
-                results.Add(await LoadEntityAsync(reader));
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    results.Add(await LoadEntityAsync(reader));
+                }
             }
+            foreach (var entity in results)
+                await DataOperator.AfterLoad(entity);
             return results;
         }
 
@@ -1468,7 +1492,6 @@ namespace Agebull.EntityModel.Common
         {
             var entity = new TEntity();
             await DataOperator.LoadEntity(reader, entity);
-            await DataOperator.AfterLoad(entity);
             return entity;
         }
 
