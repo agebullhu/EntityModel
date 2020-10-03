@@ -8,7 +8,7 @@ using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
-namespace ZeroTeam.MessageMVC.ModelApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     参数解析器

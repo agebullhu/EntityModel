@@ -7,7 +7,7 @@ using ZeroTeam.MessageMVC.Messages;
 using ZeroTeam.MessageMVC.Services;
 using ZeroTeam.MessageMVC.ZeroApis;
 
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     /// 日志处理中间件

@@ -1,36 +1,12 @@
-﻿using ZeroTeam.MessageMVC.Context;
-using ZeroTeam.MessageMVC.Messages;
-using ZeroTeam.MessageMVC.ZeroApis;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     /// ZeroApi控制器基类
     /// </summary>
-    public abstract class ModelApiController : IApiController
+    public abstract class ModelApiController : ControllerBase
     {
-        /// <summary>
-        /// 构造
-        /// </summary>
-        protected ModelApiController()
-        {
-            GlobalContext.Current.Status.LastState = OperatorStatusCode.Success;
-        }
-
-        #region 基本属性
-
-        /// <summary>
-        /// 当前登录用户
-        /// </summary>
-        public IUser UserInfo => GlobalContext.Current.User;
-
-        /// <summary>
-        /// 原始调用帧消息
-        /// </summary>
-        public IInlineMessage Message => GlobalContext.Current.Message;
-
-        #endregion
-
         #region 状态
 
         /// <summary>

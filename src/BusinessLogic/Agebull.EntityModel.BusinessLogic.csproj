@@ -36,14 +36,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BusinessLogic\StatusCode.cs" />
     <Compile Remove="IDataExtendChecker.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NPOI" Version="2.5.1" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Agebull.EntityModel.BusinessLogic.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Entity.csproj" />
-    <ProjectReference Include="..\Excel\Agebull.EntityModel.Excel.csproj" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
-namespace ZeroTeam.MessageMVC.ModelApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     FORM对象转化辅助类

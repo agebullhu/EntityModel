@@ -73,19 +73,42 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         /// <param name="expression">Lambda节点对象</param>
         /// <returns>计算结果值</returns>
-        public static object GetValue(Expression expression)
+        public static T GetValue<T>(Expression expression)
         {
             var lambda = Expression.Lambda(expression);
             try
             {
                 dynamic func = lambda.Compile();
-                return func();
+                return (T)func();
             }
             catch (Exception e)
             {
                 DependencyScope.Logger.Exception(e, expression.ToString());
-                return null;
+                return default;
             }
+        }
+        /// <summary>
+        ///     取得值
+        /// </summary>
+        /// <param name="expression">Lambda节点对象</param>
+        /// <returns>计算结果值</returns>
+        public static object GetValue(Expression expression)
+        {
+            if(expression.NodeType == ExpressionType.Call)
+            {
+                var lambda = Expression.Lambda(expression);
+                try
+                {
+                    dynamic func = lambda.Compile();
+                    return func();
+                }
+                catch (Exception e)
+                {
+                    DependencyScope.Logger.Exception(e, expression.ToString());
+                    return null;
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -216,7 +239,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>正确合格的SQL文本</returns>
         private string CheckSingle(string str)
         {
-            return str.Contains("(") ? str : $"{str} = 1";
+            return str;//.Contains("(") ? str : $"{str} = 1";
         }
 
         /// <summary>
@@ -384,6 +407,7 @@ namespace Agebull.EntityModel.MySql
             {
                 throw new EntityModelDbException($"不支持方法:{expression.Method.Name}");
             }
+
             if (expression.Method.Name == "Equals")
             {
                 string left, right;
@@ -408,6 +432,15 @@ namespace Agebull.EntityModel.MySql
                 if (rnull)
                     return $"({left} IS NULL)";
                 return $"({left} = {right})";
+            }
+            if (expression.Method.DeclaringType == typeof(EntityProperty))
+            {
+                var field = GetValue<EntityProperty>(expression.Object);
+                return expression.Method.Name switch
+                {
+                    nameof(EntityProperty.Eq) => $"(`{field.FieldName}` = {ConvertExpression(expression.Arguments[0])})",
+                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
             }
             if (expression.Method.DeclaringType == typeof(StringEx))
             {

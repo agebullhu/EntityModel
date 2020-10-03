@@ -159,5 +159,10 @@ namespace Agebull.EntityModel.Common
         ///     属性类型
         /// </summary>
         public PropertyValueType ValueType => propertyDefault.ValueType;
+
+        public bool Eq(string value)
+        {
+            return true;
+        }
     }
 }

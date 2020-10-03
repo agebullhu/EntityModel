@@ -1,13 +1,9 @@
-﻿using ZeroTeam.MessageMVC.Context;
-using ZeroTeam.MessageMVC.Messages;
-using ZeroTeam.MessageMVC.ZeroApis;
-
-namespace ZeroTeam.MessageMVC.ModelApi
+﻿namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     /// ZeroApi控制器基类
     /// </summary>
-    public abstract class ModelApiController : IApiController
+    public abstract class ModelApi
     {
         /// <summary>
         /// 构造
@@ -18,11 +14,6 @@ namespace ZeroTeam.MessageMVC.ModelApi
         }
 
         #region 基本属性
-
-        /// <summary>
-        /// 当前登录用户
-        /// </summary>
-        public IUser UserInfo => GlobalContext.Current.User;
 
         /// <summary>
         /// 原始调用帧消息

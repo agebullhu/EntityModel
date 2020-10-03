@@ -9,12 +9,13 @@
 
   <PropertyGroup>
     <Description>ZeroTeam.MessageMVC之实体操作Api基础</Description>
-    <AssemblyTitle>Agebull.EntityModel.ModelApi</AssemblyTitle>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <AssemblyTitle>ZeroTeam.MessageMVC.ModelApi</AssemblyTitle>
+
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName></AssemblyName>
-    <PackageId>Agebull.EntityModel.ModelApi</PackageId>
-    <PackageTags>Agebull.EntityModel.ModelApi</PackageTags>
+    <PackageId>ZeroTeam.MessageMVC.ModelApi</PackageId>
+    <PackageTags>ZeroTeam.MessageMVC.ModelApi</PackageTags>
 
     <PackageProjectUrl>https://github.com/ZeroTeam-Net/MessageMVC</PackageProjectUrl>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
@@ -44,16 +45,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
-    <DocumentationFile>Agebull.EntityModel.ModelApi.xml</DocumentationFile>
+    <DocumentationFile>ZeroTeam.MessageMVC.ModelApi.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
-    <DocumentationFile>Agebull.EntityModel.ModelApi.xml</DocumentationFile>
+    <DocumentationFile>ZeroTeam.MessageMVC.ModelApi.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApiBack\**" />
     <Compile Remove="WebSeitch\**" />
+    <EmbeddedResource Remove="ApiBack\**" />
     <EmbeddedResource Remove="WebSeitch\**" />
+    <None Remove="ApiBack\**" />
     <None Remove="WebSeitch\**" />
   </ItemGroup>
 
@@ -62,11 +66,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Agebull.EntityModel.ModelApi.xml" />
+    <None Remove="ZeroTeam.MessageMVC.ModelApi.xml" />
   </ItemGroup>
   
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.24" />
   </ItemGroup>
   
   <ItemGroup>

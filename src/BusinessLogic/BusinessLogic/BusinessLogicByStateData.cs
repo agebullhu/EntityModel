@@ -12,7 +12,7 @@ using Agebull.EntityModel.Common;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using ZeroTeam.MessageMVC.Context;
+
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
@@ -41,8 +41,8 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             if (!data.IsFreeze)
                 return true;
-            GlobalContext.Current.Status.LastMessage = "数据已锁定";
-            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            Context.LastMessage = "数据已锁定";
+            Context.LastState = Context.ArgumentError;
             return false;
         }
 
@@ -53,8 +53,8 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (await Access.AnyAsync(p => id.Equals(p.Id) && !p.IsFreeze))
                 return await base.PrepareDelete(id);
-            GlobalContext.Current.Status.LastMessage = "数据已锁定";
-            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            Context.LastMessage = "数据已锁定";
+            Context.LastState = Context.ArgumentError;
             return false;
         }
 

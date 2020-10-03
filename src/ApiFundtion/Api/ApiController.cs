@@ -1,4 +1,5 @@
-﻿using Agebull.EntityModel.BusinessLogic;
+﻿using Agebull.Common.Ioc;
+using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #pragma warning disable IDE0060 // 删除未使用的参数
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     ///     自动实现基本增删改查API页面的基类
@@ -23,11 +24,11 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     业务逻辑对象
         /// </summary>
-        protected TBusinessLogic Business
+        protected TBusinessLogic Business => _business ??= new TBusinessLogic
         {
-            get => _business ??= new TBusinessLogic();
-            set => _business = value;
-        }
+            Context = new BusinessContext(),
+            ServiceProvider = DependencyHelper.ServiceProvider
+        };
 
         #endregion
 
@@ -134,7 +135,7 @@ namespace Agebull.MicroZero.ZeroApis
         {
             var data = new TData();
 
-            if (data is IEditStatus status&& status.EditStatusRedorder != null)
+            if (data is IEditStatus status && status.EditStatusRedorder != null)
             {
                 status.EditStatusRedorder.IsExist = true;
                 status.EditStatusRedorder.IsFromClient = true;

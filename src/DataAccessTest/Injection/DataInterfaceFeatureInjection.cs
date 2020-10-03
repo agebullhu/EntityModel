@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ZeroTeam.MessageMVC.Context;
 using static Agebull.EntityModel.MySql.GlobalDataInterfaces;
 using IStateData = Agebull.EntityModel.MySql.GlobalDataInterfaces.IStateData;
 #endregion
@@ -56,14 +55,14 @@ namespace Agebull.EntityModel.MySql
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IAuthorData)))
             {
                 AddValue(fields, values, IAuthorData.AddDate, DateTime.Now);
-                AddValue(fields, values, IAuthorData.Author, GlobalContext.Current?.User.NickName);
-                AddValue(fields, values, IAuthorData.AuthorId, GlobalContext.Current?.User.UserId);
+                //AddValue(fields, values, IAuthorData.Author, GlobalContext.Current?.User.NickName);
+                //AddValue(fields, values, IAuthorData.AuthorId, GlobalContext.Current?.User.UserId);
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IHistoryData)))
             {
                 AddValue(fields, values, IHistoryData.LastModifyDate, DateTime.Now);
-                AddValue(fields, values, IHistoryData.LastReviser, GlobalContext.Current?.User.NickName);
-                AddValue(fields, values, IHistoryData.LastReviserId, GlobalContext.Current?.User.UserId);
+                //AddValue(fields, values, IHistoryData.LastReviser, GlobalContext.Current?.User.NickName);
+                //AddValue(fields, values, IHistoryData.LastReviserId, GlobalContext.Current?.User.UserId);
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IStateData)))
             {
@@ -77,7 +76,7 @@ namespace Agebull.EntityModel.MySql
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IDepartmentData)))
             {
                 //AddValue(fields, values, IDepartmentData.DepartmentId, GlobalContext.Current.User.OrganizationId);
-                AddValue(fields, values, IDepartmentData.DepartmentId, GlobalContext.Current?.User.OrganizationId);
+                //AddValue(fields, values, IDepartmentData.DepartmentId, GlobalContext.Current?.User.OrganizationId);
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IVersionData)))
             {
@@ -112,8 +111,8 @@ namespace Agebull.EntityModel.MySql
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IHistoryData)))
             {
                 SetValue(valueExpression, IHistoryData.LastModifyDate, DateTime.Now);
-                SetValue(valueExpression, IHistoryData.LastReviser, GlobalContext.Current?.User.NickName);
-                SetValue(valueExpression, IHistoryData.LastReviserId, GlobalContext.Current?.User.UserId);
+                //SetValue(valueExpression, IHistoryData.LastReviser, GlobalContext.Current?.User.NickName);
+                //SetValue(valueExpression, IHistoryData.LastReviserId, GlobalContext.Current?.User.UserId);
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IVersionData)))
             {

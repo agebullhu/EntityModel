@@ -13,7 +13,7 @@ using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZeroTeam.MessageMVC.Context;
+
 
 #endregion
 
@@ -230,7 +230,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState == AuditStateType.None))
                 return await base.PrepareDelete(id);
-            GlobalContext.Current.Status.LastMessage = "仅未进行任何审核操作的数据可以被删除";
+            Context.LastMessage = "仅未进行任何审核操作的数据可以被删除";
             return false;
         }
 
@@ -320,17 +320,17 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                GlobalContext.Current.Status.LastMessage = "已审核处理的数据无法拉回";
+                Context.LastMessage = "已审核处理的数据无法拉回";
                 return false;
             }
-            if (data.LastReviserId != GlobalContext.Current.User.UserId)
+            if (data.LastReviserId != Context.UserId)
             {
-                GlobalContext.Current.Status.LastMessage = "不是本人提交的数据无法拉回";
+                Context.LastMessage = "不是本人提交的数据无法拉回";
                 return false;
             }
             if (data.LastModifyDate < DateTime.Now.AddMinutes(-10))
             {
-                GlobalContext.Current.Status.LastMessage = "已提交超过十分钟的数据无法拉回";
+                Context.LastMessage = "已提交超过十分钟的数据无法拉回";
                 return false;
             }
 
@@ -409,7 +409,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data.AuditState != AuditStateType.Submit)
             {
-                GlobalContext.Current.Status.LastMessage = BackMessage;
+                Context.LastMessage = BackMessage;
                 return false;
             }
             await DoBack(data);
@@ -430,7 +430,7 @@ namespace Agebull.EntityModel.BusinessLogic
             //ApiContext.Current.IsSystemMode = true;
             if (data == null || data.IsDeleted())
             {
-                GlobalContext.Current.Status.LastMessage = "数据不存在或已删除！";
+                Context.LastMessage = "数据不存在或已删除！";
                 return false;
             }
             if (data.AuditState == AuditStateType.Submit)
@@ -439,7 +439,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             if (data.AuditState > AuditStateType.Submit)
             {
-                GlobalContext.Current.Status.LastMessage = SubmitMessage;
+                Context.LastMessage = SubmitMessage;
                 return false;
             }
 
@@ -476,14 +476,14 @@ namespace Agebull.EntityModel.BusinessLogic
                 case AuditStateType.Pass:
                     state = DataStateType.Enable;
                     data.AuditDate = DateTime.Now;
-                    data.Auditor = GlobalContext.Current.User.NickName;
-                    data.AuditorId = GlobalContext.Current.User.UserId;
+                    data.Auditor = Context.NickName;
+                    data.AuditorId = Context.UserId;
                     break;
                 case AuditStateType.Deny:
                     state = DataStateType.Discard;
                     data.AuditDate = DateTime.Now;
-                    data.Auditor = GlobalContext.Current.User.NickName;
-                    data.AuditorId = GlobalContext.Current.User.UserId;
+                    data.Auditor = Context.NickName;
+                    data.AuditorId = Context.UserId;
                     break;
                 case AuditStateType.End:
                     data.IsFreeze = true;
@@ -514,7 +514,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data == null || data.IsDeleted())
             {
-                GlobalContext.Current.Status.LastMessage = "数据不存在或已删除！";
+                Context.LastMessage = "数据不存在或已删除！";
                 return Task.FromResult(false);
             }
             if (data.AuditState <= AuditStateType.Submit)
@@ -522,7 +522,7 @@ namespace Agebull.EntityModel.BusinessLogic
             if (data.LastModifyDate >= DateTime.Now.AddMinutes(-30) &&
                 (data.AuditState == AuditStateType.Pass || data.AuditState == AuditStateType.Deny))
                 return Task.FromResult(true);
-            GlobalContext.Current.Status.LastMessage = AuditMessageReDo;
+            Context.LastMessage = AuditMessageReDo;
             return Task.FromResult(false);
         }
         /// <summary>
@@ -575,7 +575,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 if (validate.Validate(out var result))
                     return await ValidateExtend(data);
                 putError?.Invoke(result);
-                GlobalContext.Current.Status.LastMessage = result.ToString();
+                Context.LastMessage = result.ToString();
                 return false;
             }
             return true;
@@ -591,13 +591,13 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data.AuditState == AuditStateType.End)
             {
-                GlobalContext.Current.Status.LastMessage = UnAuditMessageLock;
+                Context.LastMessage = UnAuditMessageLock;
                 return Task.FromResult(false);
             }
 
             if (data.AuditState >= AuditStateType.Deny)
                 return Task.FromResult(true);
-            GlobalContext.Current.Status.LastMessage = UnAuditMessageNoSubmit;
+            Context.LastMessage = UnAuditMessageNoSubmit;
             return Task.FromResult(false);
         }
 

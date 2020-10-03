@@ -19,7 +19,7 @@ using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     ///     审核支持API页面的基类

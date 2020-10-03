@@ -579,6 +579,13 @@
             <param name="expression">字段或属性对象</param>
             <returns>名称</returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue``1(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression">Lambda节点对象</param>
+            <returns>计算结果值</returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue(System.Linq.Expressions.Expression)">
             <summary>
                 取得值

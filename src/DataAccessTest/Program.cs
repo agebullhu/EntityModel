@@ -97,9 +97,11 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataQuery<EventSubscribeModel>();
+                var access = DependencyHelper.ServiceProvider.CreateDataQuery<EventSubscribeEntity>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
-                var data = await access.AllAsync();
+                var pro = access.Option.PropertyMap["EventId"];
+                var data = await access.AllAsync(p => pro.Eq("1"));
+                 data = await access.AllAsync(p => access.Option.PropertyMap["EventId"].Eq("1"));
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
                 //await access.InsertAsync(data);
                 //Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));

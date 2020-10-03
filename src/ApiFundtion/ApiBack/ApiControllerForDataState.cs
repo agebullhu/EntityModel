@@ -19,7 +19,7 @@ using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
 
-namespace ZeroTeam.MessageMVC.ModelApi
+namespace Agebull.MicroZero.ZeroApis
 {
     /// <summary>
     ///     支持数据状态的启用禁用方法的页面的基类
@@ -28,7 +28,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
     /// <typeparam name="TBusinessLogic">业务对象</typeparam>
     public abstract class ApiControllerForDataState<TData, TPrimaryKey, TBusinessLogic> :
-        ApiController<TData, TPrimaryKey, TBusinessLogic>
+        WriteApiController<TData, TPrimaryKey, TBusinessLogic>
         where TData : class, IStateData, IIdentityData<TPrimaryKey>, new()
         where TBusinessLogic : BusinessLogicByStateData<TData, TPrimaryKey>, new()
     {
@@ -37,11 +37,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     重置数据状态
         /// </summary>
-        [Route("state/reset")]
-        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Reset(string[] selects)
+        protected async Task<IApiResult> Reset(List<TPrimaryKey> selects)
         {
-          await  OnReset();
+            if (!await Business.LoopIds(selects, Business.Reset))
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -50,11 +49,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     废弃数据
         /// </summary>
-        [Route("state/discard")]
-        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Discard(string[] selects)
+        protected async Task<IApiResult> Discard(List<TPrimaryKey> selects)
         {
-            await OnDiscard();
+            if (!await Business.LoopIds(selects, Business.Discard))
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -63,11 +61,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     禁用数据
         /// </summary>
-        [Route("state/disable")]
-        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Disable(string[] selects)
+        protected async Task<IApiResult> Disable(List<TPrimaryKey> selects)
         {
-            await OnDisable();
+            if (!await Business.LoopIds(selects, Business.Disable))
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -76,11 +73,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     启用数据
         /// </summary>
-        [Route("state/enable")]
-        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Enable(string[] selects)
+        protected async Task<IApiResult> Enable(List<TPrimaryKey> selects)
         {
-            await OnEnable();
+            if (!await Business.LoopIds(selects, Business.Enable))
+                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();
@@ -88,81 +84,15 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
         #endregion
 
-        #region 操作
-
-        /// <summary>
-        ///     恢复对象
-        /// </summary>
-        private async Task OnReset()
-        {
-            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!await Business.LoopIds(ids, Business.Reset))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
-        }
-
-        /// <summary>
-        ///     废弃对象
-        /// </summary>
-        private async Task OnDiscard()
-        {
-            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!await Business.LoopIds(ids, Business.Discard))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
-        }
-
-        /// <summary>
-        ///     启用对象
-        /// </summary>
-        private async Task OnEnable()
-        {
-            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!await Business.LoopIds(ids, Business.Enable))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
-        }
-
-        /// <summary>
-        ///     禁用对象
-        /// </summary>
-        private async Task OnDisable()
-        {
-            if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
-            {
-                SetFailed("没有数据");
-                return;
-            }
-
-            if (!await Business.LoopIds(ids, Business.Disable))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
-        }
-
-        #endregion
-
         #region 列表数据
 
         /// <summary>
-        ///     取得列表数据
+        ///     读取查询条件
         /// </summary>
-        protected override Task<ApiPageData<TData>> GetListData(LambdaItem<TData> lambda)
+        protected override void GetQueryFilter(LambdaItem<TData> lambda)
         {
             if (!RequestArgumentConvert.TryGet("_state_", out int state) || state < 0 || state >= 0x100)
-                return base.GetListData(lambda);
-            lambda.AddRoot(p => p.DataState == (DataStateType)state);
-            return base.GetListData(lambda);
+                lambda.AddRoot(p => p.DataState == (DataStateType)state);
         }
 
         #endregion

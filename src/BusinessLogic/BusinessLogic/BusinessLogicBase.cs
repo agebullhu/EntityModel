@@ -10,13 +10,13 @@
 
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Excel;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #endregion
@@ -32,15 +32,12 @@ namespace Agebull.EntityModel.BusinessLogic
         where TData : class, IIdentityData<TPrimaryKey>, new()
     {
         #region 基础支持对象
+
         /// <summary>
         /// 依赖对象
         /// </summary>
         public IServiceProvider ServiceProvider { get; set; }
-        /// <summary>
-        ///     实体类型
-        /// </summary>
-        public virtual int EntityType => 0;
-
+        
         private DataAccess<TData> _access;
 
         /// <summary>
@@ -58,6 +55,21 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected BusinessLogicBase()
         {
+        }
+
+        #endregion
+
+        #region 上下文
+
+        IBusinessContext _context;
+
+        /// <summary>
+        /// 上下文
+        /// </summary>
+        public IBusinessContext Context
+        {
+            get => _context ??= ServiceProvider.GetService<IBusinessContext>();
+            set => _context = value;
         }
 
         #endregion
@@ -171,6 +183,15 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     分页读取
         /// </summary>
+        public Task<ApiPageData<TData>> PageData(PageArgument argument, LambdaItem<TData> lambda)
+        {
+            var item = Access.SqlBuilder.Compile(lambda);
+            return PageData(argument.Page, argument.PageSize, argument.Order, argument.Desc, item.ConditionSql, item.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
         public Task<ApiPageData<TData>> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> lambda)
         {
             var item = Access.SqlBuilder.Compile(lambda);
@@ -261,15 +282,15 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (data is IValidate validate && !validate.Validate(out var result))
             {
-                GlobalContext.Current.Status.LastMessage = result.ToString();
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+                Context.LastMessage = result.ToString();
+                Context.LastState = Context.ArgumentError;
                 return Task.FromResult(false);
             }
             if (isAdd || !(data is IEditStatus status) || status.EditStatusRedorder == null || status.EditStatusRedorder.IsModified)
                 return Task.FromResult(true);
 
-            GlobalContext.Current.Status.LastMessage = "数据未修改";
-            GlobalContext.Current.Status.LastState = OperatorStatusCode.ArgumentError;
+            Context.LastMessage = "数据未修改";
+            Context.LastState = Context.ArgumentError;
             return Task.FromResult(false);
         }
 
@@ -472,7 +493,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             if (!await DoDelete(id))
             {
-                GlobalContext.Current.Status.LastMessage = $"主键值为({id})的数据不存在,删除失败";
+                Context.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                 return false;
             }
             await OnDeleted(id);
