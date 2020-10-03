@@ -160,9 +160,22 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public PropertyValueType ValueType => propertyDefault.ValueType;
 
-        public bool Eq(string value)
+        /// <summary>
+        /// 用于查询表达式解析
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool IsEquals<T>(T value)
         {
             return true;
         }
+
+        /// <summary>
+        /// 用于SQL中的文本字段比较
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="des"></param>
+        /// <returns></returns>
+        public bool Expression<T>(string expression, T value) => true;
     }
 }

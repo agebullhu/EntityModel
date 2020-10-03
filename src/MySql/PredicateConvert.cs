@@ -27,6 +27,8 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     public sealed class PredicateConvert
     {
+        #region 参数
+
         /// <summary>
         ///     关联字段
         /// </summary>
@@ -47,6 +49,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public IParameterCreater ParameterCreater { get; set; }
 
+        #endregion
+        #region Cotr
+
         /// <summary>
         ///     构造
         /// </summary>
@@ -56,59 +61,6 @@ namespace Agebull.EntityModel.MySql
         {
             ParameterCreater = parameter;
             _option = option;
-        }
-
-        /// <summary>
-        ///     取得名称
-        /// </summary>
-        /// <param name="expression">字段或属性对象</param>
-        /// <returns>名称</returns>
-        public static string GetName(MemberExpression expression)
-        {
-            return expression.Member.Name;
-        }
-
-        /// <summary>
-        ///     取得值
-        /// </summary>
-        /// <param name="expression">Lambda节点对象</param>
-        /// <returns>计算结果值</returns>
-        public static T GetValue<T>(Expression expression)
-        {
-            var lambda = Expression.Lambda(expression);
-            try
-            {
-                dynamic func = lambda.Compile();
-                return (T)func();
-            }
-            catch (Exception e)
-            {
-                DependencyScope.Logger.Exception(e, expression.ToString());
-                return default;
-            }
-        }
-        /// <summary>
-        ///     取得值
-        /// </summary>
-        /// <param name="expression">Lambda节点对象</param>
-        /// <returns>计算结果值</returns>
-        public static object GetValue(Expression expression)
-        {
-            if(expression.NodeType == ExpressionType.Call)
-            {
-                var lambda = Expression.Lambda(expression);
-                try
-                {
-                    dynamic func = lambda.Compile();
-                    return func();
-                }
-                catch (Exception e)
-                {
-                    DependencyScope.Logger.Exception(e, expression.ToString());
-                    return null;
-                }
-            }
-            return null;
         }
 
         /// <summary>
@@ -218,85 +170,63 @@ namespace Agebull.EntityModel.MySql
                 _condition = new ConditionItem { ParameterCreater = ParameterCreater };
             }
             var old = _condition.ConditionSql;
-            var sql = ConvertExpression(predicate.Body);
-            var news = CheckSingle(sql);
-
-            if (string.IsNullOrEmpty(old))
+            var sql = ExpressionSql(predicate.Body);
+            if (sql != null)
             {
-                _condition.ConditionSql = news;
-            }
-            else if (!string.IsNullOrEmpty(news))
-            {
-                _condition.ConditionSql = $"({old}) {(_mergeByAnd ? "AND" : "OR")} ({news})";
+                if (string.IsNullOrEmpty(old))
+                {
+                    _condition.ConditionSql = sql;
+                }
+                else
+                {
+                    _condition.ConditionSql = $"({old}) {LogicLink} ({sql})";
+                }
             }
             return _condition;
         }
-
-        /// <summary>
-        ///     不成文的表达式处理
-        /// </summary>
-        /// <param name="str">有可能不合格的SQL文本</param>
-        /// <returns>正确合格的SQL文本</returns>
-        private string CheckSingle(string str)
-        {
-            return str;//.Contains("(") ? str : $"{str} = 1";
-        }
+        #endregion
+        #region 转换表达式
 
         /// <summary>
         ///     转换表达式
         /// </summary>
         /// <param name="expression">Lambda对象</param>
         /// <returns>解释后的SQL文本</returns>
-        private string ConvertExpression(Expression expression)
+        private (bool toArg, object value) ConvertExpression(Expression expression)
         {
             if (expression is BinaryExpression binaryExpression)
             {
-                return Convert(binaryExpression);
+                return (false, Convert(binaryExpression));
             }
 
             if (expression is UnaryExpression unary)
             {
-                return Convert(unary);
+                return (false, Convert(unary));
             }
 
             if (expression is MethodCallExpression call)
             {
-                return Convert(call);
+                return (false, Convert(call));
             }
 
             if (expression is MemberExpression memberExpression)
             {
-                return Convert(memberExpression);
+                return (false, Convert(memberExpression));
             }
 
             if (expression is ConstantExpression constantExpression)
             {
                 return Convert(constantExpression);
             }
-
-            if (expression is NewArrayExpression array)
-            {
-                var sb = new StringBuilder();
-                bool first = true;
-                foreach (var arg in array.Expressions)
-                {
-                    if (first)
-                        first = false;
-                    else
-                        sb.Append(',');
-                    sb.Append(ConvertExpression(arg));
-                }
-                return sb.ToString();
-            }
             if (expression.NodeType == ExpressionType.IsTrue)
             {
-                return "1";
+                return (false, 1);
             }
             if (expression.NodeType == ExpressionType.IsFalse)
             {
-                return "0";
+                return (false, 0);
             }
-            throw new EntityModelDbException("Invalid lambda expression");
+            return (false, CheckDynamicValue(GetValue(expression)));
         }
 
         /// <summary>
@@ -307,74 +237,64 @@ namespace Agebull.EntityModel.MySql
         private string Convert(BinaryExpression expression)
         {
             //left
-            var lefttext = ConvertExpression(expression.Left);
+            var (_, left) = ConvertExpression(expression.Left);
             //right
-            var righttext = ConvertExpression(expression.Right);
-            if (lefttext == null)
+            var (rToArg, right) = ConvertExpression(expression.Right);
+            //body
+            switch (expression.NodeType)
             {
-                return righttext;
-            }
-            if (righttext == null)
+                case ExpressionType.AndAlso:
+                    return left == null && right == null
+                        ? null
+                            : left == null
+                            ? right.ToString()
+                                : right == null
+                                ? left.ToString()
+                                : $"({left}) AND ({right})";
+                case ExpressionType.OrElse:
+                    return left == null && right == null
+                        ? null
+                            : left == null
+                            ? right.ToString()
+                                : right == null
+                                ? left.ToString()
+                                : $"({left}) OR ({right})";
+            };
+
+            if (right is string rt && left is string lt)
             {
-                return lefttext;
-            }
-            if (string.Equals(righttext, "null", StringComparison.OrdinalIgnoreCase))
-            {
-                return expression.NodeType switch
+                if (string.Equals(rt, "NULL", StringComparison.OrdinalIgnoreCase))
                 {
-                    ExpressionType.Equal => $"({lefttext} IS NULL)",
-                    ExpressionType.NotEqual => $"({lefttext} IS NOT NULL)",
-                    _ => throw new EntityModelDbException("Invalid lambda expression"),
-                };
-            }
-            if (string.Equals(lefttext, "null", StringComparison.OrdinalIgnoreCase))
-            {
-                return expression.NodeType switch
+                    return expression.NodeType switch
+                    {
+                        ExpressionType.Equal => $"{lt} IS NULL",
+                        ExpressionType.NotEqual => $"{lt} IS NOT NULL",
+                        _ => CheckDynamicValue(GetValue(expression))//("Invalid lambda expression"),
+                    };
+                }
+                if (string.Equals(lt, "NULL", StringComparison.OrdinalIgnoreCase))
                 {
-                    ExpressionType.Equal => $"({righttext} IS NULL)",
-                    ExpressionType.NotEqual => $"({righttext} IS NOT NULL)",
-                    _ => throw new EntityModelDbException("Invalid lambda expression"),
-                };
+                    return expression.NodeType switch
+                    {
+                        ExpressionType.Equal => $"{rt} IS NULL",
+                        ExpressionType.NotEqual => $"{rt} IS NOT NULL",
+                        _ => CheckDynamicValue(GetValue(expression))//("Invalid lambda expression"),
+                    };
+                }
             }
+
+            var rs = ToSql((rToArg, right));
             //body
             return expression.NodeType switch
             {
-                ExpressionType.AndAlso => $"({CheckSingle(lefttext)} AND {CheckSingle(righttext)})",
-                ExpressionType.OrElse => $"({CheckSingle(lefttext)} OR {CheckSingle(righttext)})",
-                ExpressionType.Equal => $"({lefttext} = {righttext})",
-                ExpressionType.NotEqual => $"({lefttext} <> {righttext})",
-                ExpressionType.GreaterThanOrEqual => $"({lefttext} >= {righttext})",
-                ExpressionType.GreaterThan => $"({lefttext} > {righttext})",
-                ExpressionType.LessThanOrEqual => $"({lefttext} <= {righttext})",
-                ExpressionType.LessThan => $"({lefttext} < {righttext})",
-                _ => throw new EntityModelDbException("Invalid lambda expression"),
+                ExpressionType.Equal => $"{left} = {rs}",
+                ExpressionType.NotEqual => $"{left} <> {rs}",
+                ExpressionType.GreaterThanOrEqual => $"{left} >= {rs}",
+                ExpressionType.GreaterThan => $"{left} > {rs}",
+                ExpressionType.LessThanOrEqual => $"{left} <= {rs}",
+                ExpressionType.LessThan => $"{left} < {rs}",
+                _ => CheckDynamicValue(GetValue(expression))//("Invalid lambda expression"),
             };
-        }
-
-        /// <summary>
-        ///     取得方法对象的参数
-        /// </summary>
-        /// <param name="expression">方法Lambda对象</param>
-        /// <returns>参数文本</returns>
-        private string GetArguments(MethodCallExpression expression)
-        {
-            var sb = new StringBuilder();
-            var isFirst = true;
-            foreach (var arg in expression.Arguments)
-            {
-                if (isFirst)
-                {
-                    isFirst = false;
-                }
-                else
-                {
-                    sb.Append(',');
-                }
-                var ar = ConvertExpression(arg);
-                sb.Append(ar ?? "NULL");
-            }
-
-            return isFirst ? null : sb.ToString();
         }
 
         /// <summary>
@@ -384,15 +304,15 @@ namespace Agebull.EntityModel.MySql
         /// <returns>解释后的SQL文本</returns>
         private string Convert(UnaryExpression expression)
         {
-            return expression.NodeType switch
+            if (expression.NodeType == ExpressionType.Convert)
+                return ExpressionSql(expression.Operand);
+            if (expression.NodeType != ExpressionType.Not)
+                return CheckDynamicValue(GetValue(expression));//("Invalid lambda expression");
+
+            return (expression.Operand) switch
             {
-                ExpressionType.Not => expression.Operand is ParameterExpression parameterExpression
-                                       ? $"`{parameterExpression.Name}` == 0"
-                                       : $"NOT({ConvertExpression(expression.Operand)})",
-                ExpressionType.Convert => ConvertExpression(expression.Operand),
-                ExpressionType.Decrement => $"({ConvertExpression(expression.Operand)}) - 1",
-                ExpressionType.Increment => $"({ConvertExpression(expression.Operand)}) + 1",
-                _ => throw new EntityModelDbException("Invalid lambda expression"),
+                MemberExpression member => $"{GetField(member)} = 0",
+                _ => $"NOT({ExpressionSql(expression.Operand)})"
             };
         }
 
@@ -405,98 +325,99 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Method.DeclaringType == null)
             {
-                throw new EntityModelDbException($"不支持方法:{expression.Method.Name}");
+                return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
             }
 
-            if (expression.Method.Name == "Equals")
+            if (expression.Method.IsStatic)
             {
-                string left, right;
-                if (expression.Method.IsStatic)
+                if (expression.Method.DeclaringType == typeof(Math))
                 {
-                    left = ConvertExpression(expression.Arguments[0]);
-                    right = ConvertExpression(expression.Arguments[1]);
+                    switch (expression.Method.Name)
+                    {
+                        case nameof(Math.Abs):
+                            if (TryGetField(expression.Arguments[0], out var field2))
+                                return $"ABS({field2})";
+                            break;
+                    };
                 }
-                else
-                {
-                    left = ConvertExpression(expression.Object);
-                    right = GetArguments(expression);
-                }
-
-                var lnull = left == null;
-                var rnull = right == null;
-                if (lnull && rnull)
-                    return "(1 = 1)";
-
-                if (lnull)
-                    return $"({right} IS NULL)";
-                if (rnull)
-                    return $"({left} IS NULL)";
-                return $"({left} = {right})";
+                return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
             }
             if (expression.Method.DeclaringType == typeof(EntityProperty))
             {
-                var field = GetValue<EntityProperty>(expression.Object);
+                var property = GetValue<EntityProperty>(expression.Object);
                 return expression.Method.Name switch
                 {
-                    nameof(EntityProperty.Eq) => $"(`{field.FieldName}` = {ConvertExpression(expression.Arguments[0])})",
-                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                    nameof(EntityProperty.IsEquals) => $"`{property.FieldName}` = {ExpressionSql(expression.Arguments[0])}",
+                    nameof(EntityProperty.Expression) => $"`{property.FieldName}` {GetValue(expression.Arguments[0])} {ExpressionSql(expression.Arguments[1])}",
+                    _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                 };
             }
-            if (expression.Method.DeclaringType == typeof(StringEx))
+            if (expression.Method.DeclaringType == typeof(Ex))
             {
                 return expression.Method.Name switch
                 {
-                    "LeftLike" => $"({ConvertExpression(expression.Arguments[0])} Like concat({ConvertExpression(expression.Arguments[1])}, '%'))",
-                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                    nameof(Ex.In) => $"{GetField(expression.Arguments[0])} IN ({ExpressionSql(expression.Arguments[1])})",
+                    nameof(Ex.Like) => $"{GetField(expression.Arguments[0])} LIKE CONCAT('%',{ExpressionSql(expression.Arguments[1])}, '%')",
+                    nameof(Ex.LeftLike) => $"{GetField(expression.Arguments[0])} LIKE CONCAT({ExpressionSql(expression.Arguments[1])}, '%')",
+                    nameof(Ex.FieldEquals) => $"{GetField(expression.Arguments[0])} = {ExpressionSql(expression.Arguments[1])}",
+                    nameof(Ex.Expression) => $"{GetField(expression.Arguments[0])} {ExpressionValue(expression.Arguments[1])} {ExpressionValue(expression.Arguments[2])}",
+                    nameof(Ex.Condition) => $"{GetValue<string>(expression.Arguments[0])}",
+                    nameof(Ex.IsNotNull) => $"{GetField(expression.Arguments[0])} IS NOT NULL",
+                    nameof(Ex.IsNull) => $"{GetField(expression.Arguments[0])} IS NULL",
+                    _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                 };
             }
-            if (expression.Method.DeclaringType == typeof(string))
+            if (TryGetField(expression.Object, out var field))
             {
-                return expression.Method.Name switch
+                if (expression.Method.Name == nameof(object.Equals))
                 {
-                    "ToUpper" => $"UPPER({ConvertExpression(expression.Object)})",
-                    "Contains" => $"({ConvertExpression(expression.Object)} Like concat('%',{GetArguments(expression)},'%'))",
-                    "ToLower" => $"LOWER({ConvertExpression(expression.Object)})",
-                    "Trim" => $"TRIM({ConvertExpression(expression.Object)})",
-                    "TrimStart" => $"LTRIM({ConvertExpression(expression.Object)})",
-                    "TrimEnd" => $"RTRIM({ConvertExpression(expression.Object)})",
-                    "Replace" => $"REPLACE({ConvertExpression(expression.Object)},{GetArguments(expression)})",
-                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
-                };
-            }
-            if (expression.Method.DeclaringType == typeof(Math))
-            {
-                return expression.Method.Name switch
+                    string value = GetArgument(expression.Arguments);
+                    if (value == null)
+                        return $"{field} IS NULL";
+                    return $"{field} = {value}";
+                }
+                if (expression.Method.DeclaringType == typeof(string))
                 {
-                    "Abs" => $"ABS({GetArguments(expression)})",
-                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
-                };
-            }
-            if (expression.Method.DeclaringType == typeof(Enum))
-            {
-                return expression.Method.Name switch
+                    return expression.Method.Name switch
+                    {
+                        nameof(string.ToUpper) => $"UPPER({field})",
+                        nameof(string.Contains) => $"{field} LIKE CONCAT('%',{GetArguments(expression.Arguments)},'%')",
+                        nameof(string.ToLower) => $"LOWER({field})",
+                        nameof(string.Trim) => $"TRIM({field})",
+                        nameof(string.TrimStart) => $"LTRIM({field})",
+                        nameof(string.TrimEnd) => $"RTRIM({field})",
+                        nameof(string.Replace) => $"REPLACE({field},{GetArguments(expression.Arguments)})",
+                        _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                    };
+                }
+                if (expression.Method.DeclaringType == typeof(Enum))
                 {
-                    "HasFlag" => string.Format("({0} & {1}) = {1}", ConvertExpression(expression.Object), GetArguments(expression)),
-                    _ => throw new EntityModelDbException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
-                };
+                    return expression.Method.Name switch
+                    {
+                        nameof(Enum.HasFlag) => string.Format("({0} & {1}) = {1}", field, GetValue<int>(expression.Arguments[0])),
+                        _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                    };
+                }
             }
 
-            if (expression.Method.Name == "Contains")
+            if (expression.Method.Name == nameof(string.Contains))
             {
                 string value;
-                string field;
+                string field1;
                 if (expression.Object == null)//扩展方法
                 {
-                    value = ConvertExpression(expression.Arguments[0]);
-                    field = ConvertExpression(expression.Arguments[1]);
+                    field1 = GetField(expression.Arguments[1]);
+                    value = ExpressionSql(expression.Arguments[0]);
                 }
                 else
                 {
-                    value = ConvertExpression(expression.Object);
-                    field = GetArguments(expression);
+                    field1 = GetArguments(expression.Arguments);
+                    value = ExpressionSql(expression.Object);
                 }
-                if (!string.IsNullOrWhiteSpace(field) && !string.IsNullOrWhiteSpace(value))
-                    return $"{field} IN ({value})";
+
+                if (!string.IsNullOrWhiteSpace(field1) && !string.IsNullOrWhiteSpace(value))
+                    return $"{field1} IN ({value})";
+                return null;
             }
             return CheckDynamicValue(GetValue(expression));
         }
@@ -510,42 +431,251 @@ namespace Agebull.EntityModel.MySql
         {
             if (expression.Expression is ParameterExpression)
             {
-                if (_option.PropertyMap.TryGetValue(expression.Member.Name, out var field))
-                    return $"`{field.FieldName}`";
-                return $"`{expression.Member.Name}`";
+                return GetField(expression);
             }
-            var par1 = expression.Expression as MemberExpression;
-            if (!(par1?.Expression is ParameterExpression))
-                return CheckDynamicValue(GetValue(expression));
+            if (expression.Expression is MemberExpression par1 && par1.Expression is ParameterExpression)
+            {
+                if (par1.Type == typeof(string) && expression.Member.Name == "Length")
+                    return $"LENGTH({GetField(par1)})";
+                return CheckDynamicValue(GetValue(expression));//($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
+            }
+            return CheckDynamicValue(GetValue(expression));
+        }
 
-            if (par1.Type == typeof(string))
+        /// <summary>
+        ///     转换表达式
+        /// </summary>
+        /// <param name="expression">常量Lambda对象</param>
+        /// <returns>解释后的SQL文本</returns>
+        private (bool toArg, object value) Convert(ConstantExpression expression)
+        {
+            if (expression.Value == null)
             {
-                switch (expression.Member.Name)
-                {
-                    case "Length":
-                        if (_option.PropertyMap.TryGetValue(expression.Member.Name, out var field))
-                            return $"`LENGTH({field.FieldName})`";
-                        return $"LENGTH(`{par1.Member.Name}`)";
-                }
+                return (false, "NULL");
             }
-            else if (par1.Type == typeof(DateTime))
+            switch (expression.Type.Name)
             {
-                switch (expression.Member.Name)
-                {
-                    case "Now":
-                        return $"?{_condition.AddParameter(DateTime.Now)}";
-                    case "Today":
-                        return $"?{_condition.AddParameter(DateTime.Today)}";
-                }
+                case "byte":
+                case "Byte":
+                case "sbyte":
+                case "SByte":
+                case "short":
+                case "Int16":
+                case "ushort":
+                case "UInt16":
+                case "int":
+                case "Int32":
+                case "uint":
+                case "IntPtr":
+                case "UInt32":
+                case "UIntPtr":
+                case "float":
+                case "Float":
+                case "double":
+                case "Double":
+                case "decimal":
+                case "Decimal":
+                case "long":
+                case "Int64":
+                case "ulong":
+                case "UInt64":
+                    return (false, expression.Value);
+                case "bool":
+                case "Boolean":
+                    return (false, (bool)expression.Value ? 1 : 0);
+                case "char":
+                case "Char":
+                    return ((char)expression.Value) switch
+                    {
+                        '\t' => (false, "'\t'"),
+                        '\r' => (false, "'\r'"),
+                        '\n' => (false, "'\n'"),
+                        _ => (false, $"'{expression.Value}'"),
+                    };
             }
-            throw new EntityModelDbException($"不支持属性:{expression.Member.DeclaringType.FullName}.{expression.Member.Name}");
+            return (true, expression.Value);
+        }
+
+        /// <summary>
+        ///     取得方法对象的参数
+        /// </summary>
+        /// <param name="arguments">方法Lambda对象</param>
+        /// <returns>参数文本</returns>
+        private string GetArgument(IEnumerable<Expression> arguments)
+        {
+            var arg = arguments.FirstOrDefault();
+            if (arg == null)
+                return null;
+            return ExpressionSql(arg);
+        }
+
+        /// <summary>
+        ///     取得方法对象的参数
+        /// </summary>
+        /// <param name="arguments">方法Lambda对象</param>
+        /// <returns>参数文本</returns>
+        private string GetArguments(IEnumerable<Expression> arguments)
+        {
+            var sb = new StringBuilder();
+            var isFirst = true;
+            foreach (var arg in arguments)
+            {
+                var (toArg, value) = ConvertExpression(arg);
+                if (value == null)
+                    continue;
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.Append(',');
+                }
+                sb.Append(ToSql((toArg, value)));
+            }
+            return isFirst ? null : sb.ToString();
+        }
+
+        #endregion
+        #region Helper
+
+        /// <summary>
+        ///     取得名称
+        /// </summary>
+        /// <param name="expression">字段或属性对象</param>
+        /// <returns>名称</returns>
+        private static string GetName(MemberExpression expression)
+        {
+            return expression.Member.Name;
+        }
+
+        /// <summary>
+        ///     取得值
+        /// </summary>
+        /// <param name="expression">Lambda节点对象</param>
+        /// <returns>计算结果值</returns>
+        private static T GetValue<T>(Expression expression)
+        {
+            var lambda = Expression.Lambda(expression);
+            try
+            {
+                dynamic func = lambda.Compile();
+                return (T)func();
+            }
+            catch (Exception e)
+            {
+                DependencyScope.Logger.Exception(e, expression.ToString());
+                return default;
+            }
+        }
+        /// <summary>
+        ///     取得值
+        /// </summary>
+        /// <param name="expression">Lambda节点对象</param>
+        /// <returns>计算结果值</returns>
+        private string GetField(Expression expression)
+        {
+            var field = expression is MemberExpression member
+                ? member.Member.Name
+                : expression is ConstantExpression constant
+                    ? (string)Convert(constant).value
+                    : GetValue<string>(expression);
+
+            _option.FieldMap.TryGetValue(field, out field);
+            return $"`{field}`";
+        }
+
+        /// <summary>
+        ///     取得字段
+        /// </summary>
+        /// <param name="expression">Lambda节点对象</param>
+        /// <param name="field">字段</param>
+        /// <returns>计算结果值</returns>
+        private bool TryGetField(Expression expression, out string field)
+        {
+            field = expression is MemberExpression member
+                ? member.Member.Name
+                : expression is ConstantExpression constant
+                    ? (string)Convert(constant).value
+                    : GetValue<string>(expression);
+            if (!_option.FieldMap.TryGetValue(field, out field))
+                return false;
+            field = $"`{field}`";
+            return true;
+        }
+        /// <summary>
+        ///     取得值
+        /// </summary>
+        /// <param name="member">Lambda节点对象</param>
+        /// <returns>计算结果值</returns>
+        private string GetField(MemberExpression member)
+        {
+            var field = member.Member.Name;
+
+            _option.FieldMap.TryGetValue(field, out field);
+            return $"`{field}`";
+        }
+        string LogicLink => _mergeByAnd ? "AND" : "OR";
+        string ToSql((bool toArg, object value) re)
+        {
+            if (re.value == null)
+                return null;
+            if (re.toArg)
+            {
+                var name = _condition.AddParameter(re.value);
+                return $"?{name}";
+            }
+            else
+            {
+                return re.value?.ToString();
+            }
+        }
+
+        /// <summary>
+        ///     转换表达式
+        /// </summary>
+        /// <param name="expression">Lambda对象</param>
+        /// <returns>解释后的SQL文本</returns>
+        private string ExpressionSql(Expression expression)
+        {
+            return ToSql(ConvertExpression(expression));
+        }
+
+        /// <summary>
+        ///     转换表达式
+        /// </summary>
+        /// <param name="expression">Lambda对象</param>
+        /// <returns>解释后的SQL文本</returns>
+        private object ExpressionValue(Expression expression)
+        {
+            return ConvertExpression(expression).value;
+        }
+
+        /// <summary>
+        ///     取得值
+        /// </summary>
+        /// <param name="expression">Lambda节点对象</param>
+        /// <returns>计算结果值</returns>
+        private static object GetValue(Expression expression)
+        {
+            var lambda = Expression.Lambda(expression);
+            try
+            {
+                dynamic func = lambda.Compile();
+                return func();
+            }
+            catch (Exception e)
+            {
+                DependencyScope.Logger.Exception(e, expression.ToString());
+                return null;
+            }
         }
 
         string CheckDynamicValue(object vl)
         {
             if (vl == null)
             {
-                return $"?{_condition.AddParameter((object)null)}";
+                return "NULL";
             }
             if (vl is bool b)
             {
@@ -590,59 +720,16 @@ namespace Agebull.EntityModel.MySql
             }
             return $"?{_condition.AddParameter(vl)}";
         }
+
         /// <summary>
-        ///     转换表达式
+        ///     不成文的表达式处理
         /// </summary>
-        /// <param name="expression">常量Lambda对象</param>
-        /// <returns>解释后的SQL文本</returns>
-        private string Convert(ConstantExpression expression)
+        /// <param name="str">有可能不合格的SQL文本</param>
+        /// <returns>正确合格的SQL文本</returns>
+        private string CheckSingle(string str)
         {
-            if (expression.Value == null)
-            {
-                return "NULL";
-            }
-            switch (expression.Type.Name)
-            {
-                case "byte":
-                case "Byte":
-                case "sbyte":
-                case "SByte":
-                case "short":
-                case "Int16":
-                case "ushort":
-                case "UInt16":
-                case "int":
-                case "Int32":
-                case "uint":
-                case "IntPtr":
-                case "UInt32":
-                case "UIntPtr":
-                case "float":
-                case "Float":
-                case "double":
-                case "Double":
-                case "decimal":
-                case "Decimal":
-                case "long":
-                case "Int64":
-                case "ulong":
-                case "UInt64":
-                    return expression.Value.ToString();
-                case "bool":
-                case "Boolean":
-                    return (bool)expression.Value ? "1" : "0";
-                case "char":
-                case "Char":
-                    return ((char)expression.Value) switch
-                    {
-                        '\t' => "'\t'",
-                        '\r' => "'\r'",
-                        '\n' => "'\n'",
-                        _ => $"'{expression.Value}'",
-                    };
-            }
-            var name = _condition.AddParameter(expression.Value);
-            return $"?{name}";
+            return str;//.Contains("(") ? str : $"{str} = 1";
         }
+        #endregion
     }
 }

@@ -9,6 +9,7 @@ using MySqlConnector;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Zeroteam.MessageMVC.EventBus;
@@ -18,8 +19,6 @@ namespace DataAccessTest
 {
     class Program
     {
-        class aaa { }
-
         static async Task Main(string[] args)
         {
             ConfigurationHelper.Flush();
@@ -30,15 +29,24 @@ namespace DataAccessTest
 
             DependencyHelper.Reload();
 
+            await PredicateConvertTest();
 
-            await EntityModelPrepare();
+            //await EntityModelPrepare();
             LoggerExtend.LogDataSql = false;
-            Console.Write("请输入并行数：");
-            var taskCnt = Console.ReadLine();
+            int taskCnt;
+            string cnt;
+            do
+            {
+                Console.Write("请输入并行数或Q结束：");
+                cnt = Console.ReadLine();
+                if (cnt == "Q" || cnt == "q")
+                    return;
+            }
+            while (!int.TryParse(cnt, out taskCnt) || taskCnt <= 0);
             {
                 Console.Write("【EntityModel Read】  ");
                 count = 0;
-                var list = new Task[int.Parse(taskCnt)];
+                var list = new Task[taskCnt];
                 var start = DateTime.Now;
                 for (var idx = 0; idx < list.Length; idx++)
                     list[idx] = EntityModelLoad();
@@ -51,7 +59,7 @@ namespace DataAccessTest
             {
                 Console.Write("【Dapper Read】  ");
                 count = 0;
-                var list = new Task[int.Parse(taskCnt)];
+                var list = new Task[taskCnt];
                 var start = DateTime.Now;
                 for (var idx = 0; idx < list.Length; idx++)
                     list[idx] = DapperLoad();
@@ -66,7 +74,7 @@ namespace DataAccessTest
 
             //    Console.Write("【EntityModel Write】  ");
             //    count = 0;
-            //    var list = new Task[int.Parse(taskCnt)];
+            //    var list = new Task[taskCnt];
             //    var start = DateTime.Now;
             //    for (var idx = 0; idx < list.Length; idx++)
             //        list[idx] = EntityModelTest();
@@ -79,7 +87,7 @@ namespace DataAccessTest
             //{
             //    Console.Write("【Dapper Write】  ");
             //    count = 0;
-            //    var list = new Task[int.Parse(taskCnt)];
+            //    var list = new Task[taskCnt];
             //    var start = DateTime.Now;
             //    for (var idx = 0; idx < list.Length; idx++)
             //        list[idx] = DapperTest();
@@ -91,24 +99,62 @@ namespace DataAccessTest
             //}
         }
         static long count = 0;
+        static async Task PredicateConvertTest()
+        {
+            using var scope = DependencyScope.CreateScope();
+            try
+            {
+                var access = DependencyHelper.ServiceProvider.CreateDataQuery<EventSubscribeEntity>();
+                Console.WriteLine("【IN】");
+                var id = new List<string> { "d" };
+                await access.FirstAsync(p => id.Contains(p.Service));
+                await access.FirstAsync(p => new List<string> { "d" }.Contains(p.Service));
+                await access.FirstAsync(p => new long[] { 1, 2, 3 }.Contains(p.Id));
+                await using var connectionScope = await access.DataBase.CreateConnectionScope();
+                {
+                    Console.WriteLine("【EntityProperty method】");
+                    var pro = access.Option.PropertyMap["EventId"];
+                    await access.FirstAsync(p => pro.IsEquals(1) && pro.Expression(">", 1));
+                }
+                Console.WriteLine("【Ex method】");
+                await access.FirstAsync(p => Ex.Condition("event_id > 0") || p.ApiName.IsNotNull() || "event_id".Expression("=", "0") || "event_id".FieldEquals(0));
+                await access.FirstAsync(p => p.ApiName.IsNull() || "service".LeftLike("0"));
+                await access.FirstAsync(p => p.Id.In(1, 2, 3));
+                Console.WriteLine("【BinaryExpression】");
+                await access.FirstAsync(p => p.ApiName == null || p.EventId > 1);
+                Console.WriteLine("【UnaryExpression】");
+                await access.FirstAsync(p => !(p.ApiName == null) || !p.IsLookUp);
+                Console.WriteLine("【MemberExpression】");
+                await access.FirstAsync(p => p.ApiName.Length == 2 && p.AddDate == DateTime.Now);
+                Console.WriteLine("【Enum】");
+                await access.FirstAsync(p => p.DataState != DataStateType.Delete || p.DataState.HasFlag(DataStateType.Enable));
+                Console.WriteLine("【MethodCallExpression】");
+                var str = " 1 ";
+                await access.FirstAsync(p => p.IsFreeze);
+                await access.FirstAsync(p => p.IsFreeze && p.IsFreeze == true && p.Service.ToUpper() == str.Trim() || Math.Abs(p.Id) == 0 || p.Service.Equals("rr"));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
         static async Task EntityModelPrepare()
         {
             Console.Write("【EntityModel Prepare】");
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataQuery<EventSubscribeEntity>();
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventSubscribeEntity>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 var pro = access.Option.PropertyMap["EventId"];
-                var data = await access.AllAsync(p => pro.Eq("1"));
-                 data = await access.AllAsync(p => access.Option.PropertyMap["EventId"].Eq("1"));
+                var data = await access.FirstAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
-                //await access.InsertAsync(data);
-                //Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
-                //var cnt = await access.UpdateAsync(data);
-                //Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                await access.InsertAsync(data);
+                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                var cnt = await access.UpdateAsync(data);
+                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
 
-                //Console.WriteLine($"update {cnt} records");
+                Console.WriteLine($"update {cnt} records");
             }
             catch (Exception ex)
             {

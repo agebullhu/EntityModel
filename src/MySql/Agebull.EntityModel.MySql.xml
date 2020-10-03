@@ -572,27 +572,6 @@
             <param name="option">设置</param>
             <param name="parameter">关联字段</param>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetName(System.Linq.Expressions.MemberExpression)">
-            <summary>
-                取得名称
-            </summary>
-            <param name="expression">字段或属性对象</param>
-            <returns>名称</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue``1(System.Linq.Expressions.Expression)">
-            <summary>
-                取得值
-            </summary>
-            <param name="expression">Lambda节点对象</param>
-            <returns>计算结果值</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue(System.Linq.Expressions.Expression)">
-            <summary>
-                取得值
-            </summary>
-            <param name="expression">Lambda节点对象</param>
-            <returns>计算结果值</returns>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,System.Linq.Expressions.Expression{``0})">
             <summary>
                 分析Lambda表达式
@@ -645,13 +624,6 @@
             <param name="predicate">Lambda表达式</param>
             <returns>结果条件对象(SQL条件和参数)</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.CheckSingle(System.String)">
-            <summary>
-                不成文的表达式处理
-            </summary>
-            <param name="str">有可能不合格的SQL文本</param>
-            <returns>正确合格的SQL文本</returns>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.ConvertExpression(System.Linq.Expressions.Expression)">
             <summary>
                 转换表达式
@@ -665,13 +637,6 @@
             </summary>
             <param name="expression">二元Lambda对象</param>
             <returns>解释后的SQL文本</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetArguments(System.Linq.Expressions.MethodCallExpression)">
-            <summary>
-                取得方法对象的参数
-            </summary>
-            <param name="expression">方法Lambda对象</param>
-            <returns>参数文本</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert(System.Linq.Expressions.UnaryExpression)">
             <summary>
@@ -700,6 +665,84 @@
             </summary>
             <param name="expression">常量Lambda对象</param>
             <returns>解释后的SQL文本</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetArgument(System.Collections.Generic.IEnumerable{System.Linq.Expressions.Expression})">
+            <summary>
+                取得方法对象的参数
+            </summary>
+            <param name="arguments">方法Lambda对象</param>
+            <returns>参数文本</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetArguments(System.Collections.Generic.IEnumerable{System.Linq.Expressions.Expression})">
+            <summary>
+                取得方法对象的参数
+            </summary>
+            <param name="arguments">方法Lambda对象</param>
+            <returns>参数文本</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetName(System.Linq.Expressions.MemberExpression)">
+            <summary>
+                取得名称
+            </summary>
+            <param name="expression">字段或属性对象</param>
+            <returns>名称</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue``1(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression">Lambda节点对象</param>
+            <returns>计算结果值</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetField(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression">Lambda节点对象</param>
+            <returns>计算结果值</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.TryGetField(System.Linq.Expressions.Expression,System.String@)">
+            <summary>
+                取得字段
+            </summary>
+            <param name="expression">Lambda节点对象</param>
+            <param name="field">字段</param>
+            <returns>计算结果值</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetField(System.Linq.Expressions.MemberExpression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="member">Lambda节点对象</param>
+            <returns>计算结果值</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.ExpressionSql(System.Linq.Expressions.Expression)">
+            <summary>
+                转换表达式
+            </summary>
+            <param name="expression">Lambda对象</param>
+            <returns>解释后的SQL文本</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.ExpressionValue(System.Linq.Expressions.Expression)">
+            <summary>
+                转换表达式
+            </summary>
+            <param name="expression">Lambda对象</param>
+            <returns>解释后的SQL文本</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.GetValue(System.Linq.Expressions.Expression)">
+            <summary>
+                取得值
+            </summary>
+            <param name="expression">Lambda节点对象</param>
+            <returns>计算结果值</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.CheckSingle(System.String)">
+            <summary>
+                不成文的表达式处理
+            </summary>
+            <param name="str">有可能不合格的SQL文本</param>
+            <returns>正确合格的SQL文本</returns>
         </member>
     </members>
 </doc>
