@@ -398,11 +398,13 @@ FROM {Option.ReadTableName}{condition};";
         {
             var sql = new StringBuilder();
             sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
+            sql.Append(Option.Having);
             InjectionLoadCondition(sql, condition);
             if (order != null)
             {
                 sql.Append($"\nORDER BY {order}");
             }
+            sql.Append(Option.GroupFields);
             if (limit != null)
                 sql.Append($"\nLIMIT {limit}");
             sql.Append(';');

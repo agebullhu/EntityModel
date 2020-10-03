@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 5:13:21*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 10:55:24*/
 #region
 using System;
 using System.Collections.Generic;
@@ -78,6 +78,8 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             ReadTableName    = FromSqlCode,
             WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
             LoadFields       = LoadFields,
+            Having           = Having,
+            GroupFields      = GroupFields,
             UpdateFields     = UpdateFields,
             InsertSqlCode    = InsertSqlCode,
             DataStruct       = Struct
@@ -86,12 +88,6 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         #endregion
 
         #region SQL
-
-        /// <summary>
-        /// 读取的字段
-        /// </summary>
-        public const string FromSqlCode = @"tb_event_default
-LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.`event_id` ";
 
         /// <summary>
         /// 读取的字段
@@ -120,9 +116,25 @@ LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.
 ";
 
         /// <summary>
+        /// 汇总条件
+        /// </summary>
+        public const string Having = null;
+
+        /// <summary>
+        /// 分组字段
+        /// </summary>
+        public const string GroupFields = null;
+
+        /// <summary>
+        /// 读取的字段
+        /// </summary>
+        public const string FromSqlCode = @"tb_event_default
+LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.`event_id` ";
+
+        /// <summary>
         /// 更新的字段
         /// </summary>
-        public static string UpdateFields = @"
+        public const string UpdateFields = @"
        `event_name` = ?EventName,
        `event_code` = ?EventCode,
        `version` = ?Version,
@@ -141,7 +153,7 @@ LEFT JOIN`tb_event_subscribe` ON `tb_event_default`.`id` = `tb_event_subscribe`.
         /// <summary>
         /// 写入的Sql
         /// </summary>
-        public static string InsertSqlCode => @"
+        public const string InsertSqlCode = @"
 INSERT INTO `tb_event_default`
 (
     `event_name`,

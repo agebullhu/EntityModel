@@ -114,6 +114,16 @@ namespace Agebull.EntityModel.Common
         public string LoadFields { get; set; }
 
         /// <summary>
+        ///     分组字段
+        /// </summary>
+        public string GroupFields { get; set; }
+
+        /// <summary>
+        ///     汇总条件
+        /// </summary>
+        public string Having { get; set; }
+
+        /// <summary>
         ///     全部更新的SQL语句
         /// </summary>
         public string UpdateFields { get; set; }
@@ -168,11 +178,17 @@ namespace Agebull.EntityModel.Common
 
 
             LoadFields ??= SqlBuilder.BuilderLoadFields();
-            InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
-            DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
-            UpdateFields ??= SqlBuilder.BuilderUpdateFields();
-            UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
-
+            if (!IsQuery)
+            {
+                InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
+                DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+                UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+                UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+            }
+            else
+            {
+                InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
+            }
             ReadPproperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
 
         }

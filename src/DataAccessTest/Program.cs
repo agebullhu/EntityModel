@@ -97,16 +97,16 @@ namespace DataAccessTest
             using var scope = DependencyScope.CreateScope();
             try
             {
-                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultModel>();
+                var access = DependencyHelper.ServiceProvider.CreateDataQuery<EventSubscribeModel>();
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
-                var data = await access.FirstAsync();
+                var data = await access.AllAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
-                await access.InsertAsync(data);
-                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
-                var cnt = await access.UpdateAsync(data);
-                Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                //await access.InsertAsync(data);
+                //Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+                //var cnt = await access.UpdateAsync(data);
+                //Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
 
-                Console.WriteLine($"update {cnt} records");
+                //Console.WriteLine($"update {cnt} records");
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 5:04:31*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 10:20:54*/
 #region
 using System;
 using System.Collections.Generic;
@@ -712,6 +712,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.Option,
                 nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.Option,
                 nameof(EventDefaultModel) => EventDefaultModelDataOperator.Option,
+                nameof(EventSubscribeModel) => EventSubscribeModelDataOperator.Option,
                 _ => null,
             };
         }
@@ -724,6 +725,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 nameof(EventDefaultEntity) => new EventDefaultEntityDataOperator(),
                 nameof(EventSubscribeEntity) => new EventSubscribeEntityDataOperator(),
                 nameof(EventDefaultModel) => new EventDefaultModelDataOperator(),
+                nameof(EventSubscribeModel) => new EventSubscribeModelDataOperator(),
                 _ => null,
             };
         }
@@ -736,6 +738,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 nameof(EventDefaultEntity) => new EventDefaultEntityDataOperator(),
                 nameof(EventSubscribeEntity) => new EventSubscribeEntityDataOperator(),
                 nameof(EventDefaultModel) => new EventDefaultModelDataOperator(),
+                nameof(EventSubscribeModel) => new EventSubscribeModelDataOperator(),
                 _ => null,
             };
         }

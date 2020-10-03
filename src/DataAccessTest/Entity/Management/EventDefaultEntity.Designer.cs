@@ -1,4 +1,4 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 2:37:25*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 11:02:48*/
 #region
 using System;
 using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("id",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("id",  NullValueHandling = NullValueHandling.Ignore)]
         public long Id
         {
             get => this._id;
@@ -90,7 +90,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     true
         /// </example>
-        [JsonProperty("isFreeze",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("isFreeze",  NullValueHandling = NullValueHandling.Ignore)]
         public  bool IsFreeze
         {
             get => this._isFreeze;
@@ -112,7 +112,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     2012-12-21
         /// </example>
-        [JsonProperty("lastModifyDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
+        [JsonProperty("lastModifyDate",  NullValueHandling = NullValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
         public  DateTime LastModifyDate
         {
             get => this._lastModifyDate;
@@ -134,7 +134,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     用户提交时不能为空,后台保存时不能为空,
         /// </value>
-        [JsonProperty("authorId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("authorId",  NullValueHandling = NullValueHandling.Ignore)]
         public  string AuthorId
         {
             get => this._authorId;
@@ -156,7 +156,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("eventName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventName",  NullValueHandling = NullValueHandling.Ignore)]
         public  string EventName
         {
             get => this._eventName;
@@ -178,7 +178,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("dataState",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("dataState",  NullValueHandling = NullValueHandling.Ignore)]
         public  DataStateType DataState
         {
             get => this._dataState;
@@ -200,7 +200,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储32个字符.合理长度应不大于32.
         /// </value>
-        [JsonProperty("lastReviserId",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("lastReviserId",  NullValueHandling = NullValueHandling.Ignore)]
         public  string LastReviserId
         {
             get => this._lastReviserId;
@@ -222,7 +222,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     用户提交时不能为空,后台保存时不能为空,可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("author",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("author",  NullValueHandling = NullValueHandling.Ignore)]
         public  string Author
         {
             get => this._author;
@@ -244,7 +244,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("eventCode",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventCode",  NullValueHandling = NullValueHandling.Ignore)]
         public  string EventCode
         {
             get => this._eventCode;
@@ -266,7 +266,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     2012-12-21
         /// </example>
-        [JsonProperty("addDate",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
+        [JsonProperty("addDate",  NullValueHandling = NullValueHandling.Ignore) , JsonConverter(typeof(MyDateTimeConverter))]
         public  DateTime AddDate
         {
             get => this._addDate;
@@ -288,7 +288,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储16个字符.合理长度应不大于16.
         /// </value>
-        [JsonProperty("version",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("version",  NullValueHandling = NullValueHandling.Ignore)]
         public  string Version
         {
             get => this._version;
@@ -310,7 +310,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("region",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("region",  NullValueHandling = NullValueHandling.Ignore)]
         public  RegionType Region
         {
             get => this._region;
@@ -332,7 +332,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("eventType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("eventType",  NullValueHandling = NullValueHandling.Ignore)]
         public  EventType EventType
         {
             get => this._eventType;
@@ -354,7 +354,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("resultOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("resultOption",  NullValueHandling = NullValueHandling.Ignore)]
         public  ResultOptionType ResultOption
         {
             get => this._resultOption;
@@ -376,7 +376,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <example>
         ///     0
         /// </example>
-        [JsonProperty("successOption",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("successOption",  NullValueHandling = NullValueHandling.Ignore)]
         public  SuccessOptionType SuccessOption
         {
             get => this._successOption;
@@ -398,7 +398,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("app",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("app",  NullValueHandling = NullValueHandling.Ignore)]
         public  string App
         {
             get => this._app;
@@ -420,7 +420,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("classify",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("classify",  NullValueHandling = NullValueHandling.Ignore)]
         public  string Classify
         {
             get => this._classify;
@@ -442,7 +442,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("tag",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("tag",  NullValueHandling = NullValueHandling.Ignore)]
         public  string Tag
         {
             get => this._tag;
@@ -461,7 +461,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <summary>
         ///  事件备注
         /// </summary>
-        [JsonProperty("memo",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("memo",  NullValueHandling = NullValueHandling.Ignore)]
         public  string Memo
         {
             get => this._memo;
@@ -486,7 +486,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("targetType",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("targetType",  NullValueHandling = NullValueHandling.Ignore)]
         public  string TargetType
         {
             get => this._targetType;
@@ -511,7 +511,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("targetName",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("targetName",  NullValueHandling = NullValueHandling.Ignore)]
         public  string TargetName
         {
             get => this._targetName;
@@ -530,7 +530,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <summary>
         ///  目标说明
         /// </summary>
-        [JsonProperty("targetDescription",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("targetDescription",  NullValueHandling = NullValueHandling.Ignore)]
         public  string TargetDescription
         {
             get => this._targetDescription;
@@ -552,7 +552,7 @@ namespace Zeroteam.MessageMVC.EventBus
         /// <value>
         ///     可存储200个字符.合理长度应不大于200.
         /// </value>
-        [JsonProperty("lastReviser",  NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling= DefaultValueHandling.Ignore)]
+        [JsonProperty("lastReviser",  NullValueHandling = NullValueHandling.Ignore)]
         public  string LastReviser
         {
             get => this._lastReviser;

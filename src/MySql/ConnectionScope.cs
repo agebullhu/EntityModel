@@ -65,9 +65,9 @@ namespace Agebull.EntityModel.MySql
         public DbCommand CreateCommand(string sql, DbParameter[] args)
         {
             var cmd = new MySqlCommand(sql, DataBase._connection, DataBase.Transaction);
-
-            foreach (var para in args?.OfType<MySqlParameter>())
-                cmd.Parameters.Add(para);
+            if (args != null)
+                foreach (var para in args.OfType<MySqlParameter>())
+                    cmd.Parameters.Add(para);
             //TraceSql(cmd);
             return cmd;
         }
@@ -90,7 +90,7 @@ namespace Agebull.EntityModel.MySql
             //DataBase.Transaction = await DataBase._connection.BeginTransactionAsync();
             return true;
         }
-        
+
         /// <summary>
         /// 回滚事务
         /// </summary>
