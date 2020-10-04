@@ -37,7 +37,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// “¿¿µ∂‘œÛ
         /// </summary>
         public IServiceProvider ServiceProvider { get; set; }
-        
+
         private DataAccess<TData> _access;
 
         /// <summary>

@@ -42,81 +42,81 @@
         /// <summary>
         ///     成功
         /// </summary>
-        int Success {get;}// 0;
+        int Success { get; }// 0;
 
         /// <summary>
         ///     参数错误
         /// </summary>
-        int ArgumentError {get;}// /*ArgumentError*/-1;
+        int ArgumentError { get; }// /*ArgumentError*/-1;
 
         /// <summary>
         ///     发生处理业务错误
         /// </summary>
-        int BusinessError {get;}// /*BusinessError*/-2;
+        int BusinessError { get; }// /*BusinessError*/-2;
 
         /// <summary>
         ///     发生未处理业务异常
         /// </summary>
-        int BusinessException {get;}// /*BusinessException*/-3;
+        int BusinessException { get; }// /*BusinessException*/-3;
 
         /// <summary>
         ///     发生未处理系统异常
         /// </summary>
-        int UnhandleException {get;}// /*UnhandleException*/-4;
+        int UnhandleException { get; }// /*UnhandleException*/-4;
 
         /// <summary>
         ///     网络错误
         /// </summary>
-        int NetworkError {get;}// /*NetworkError*/-5;
+        int NetworkError { get; }// /*NetworkError*/-5;
 
         /// <summary>
         ///     执行超时
         /// </summary>
-        int TimeOut {get;}// /*TimeOut*/-6;
+        int TimeOut { get; }// /*TimeOut*/-6;
 
         /// <summary>
         ///     拒绝访问
         /// </summary>
-        int DenyAccess {get;}// /*DenyAccess*/-7;
+        int DenyAccess { get; }// /*DenyAccess*/-7;
 
         /// <summary>
         ///     未知的令牌
         /// </summary>
-        int TokenUnknow {get;}// /*TokenUnknow*/-8;
+        int TokenUnknow { get; }// /*TokenUnknow*/-8;
 
         /// <summary>
         ///     令牌过期
         /// </summary>
-        int TokenTimeOut {get;}// /*TokenTimeOut*/-9;
+        int TokenTimeOut { get; }// /*TokenTimeOut*/-9;
 
         /// <summary>
         ///     系统未就绪
         /// </summary>
-        int NoReady {get;}// /*NoReady*/-0xA;
+        int NoReady { get; }// /*NoReady*/-0xA;
 
         /// <summary>
         ///     异常中止
         /// </summary>
-        int Ignore {get;}// /*Ignore*/-0xB;
+        int Ignore { get; }// /*Ignore*/-0xB;
 
         /// <summary>
         ///     重试
         /// </summary>
-        int ReTry {get;}// /*ReTry*/-0xC;
+        int ReTry { get; }// /*ReTry*/-0xC;
 
         /// <summary>
         ///     方法不存在
         /// </summary>
-        int NoFind {get;}// /*NoFind*/-0xD;
+        int NoFind { get; }// /*NoFind*/-0xD;
 
         /// <summary>
         ///     服务不可用
         /// </summary>
-        int Unavailable {get;}// /*Unavailable*/-0xE;
+        int Unavailable { get; }// /*Unavailable*/-0xE;
 
         /// <summary>
         ///     未知结果
         /// </summary>
-        int Unknow {get;}// /*Unknow*/0xF;
+        int Unknow { get; }// /*Unknow*/0xF;
     }
 }

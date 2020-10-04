@@ -709,7 +709,7 @@ namespace Agebull.EntityModel.BusinessLogic
     /// </summary>
     /// <typeparam name="TData">数据对象</typeparam>
     public abstract class BusinessLogicByAudit<TData> : BusinessLogicByAudit<TData, long>
-        where TData : class,  IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
+        where TData : class, IIdentityData<long>, IHistoryData, IAuditData, IStateData, new()
     {
     }
 }

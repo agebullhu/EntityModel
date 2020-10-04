@@ -1,14 +1,12 @@
 ﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 11:04:54*/
 #region
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.MySql;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
-using MySqlConnector;
-
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Interfaces;
-using Agebull.EntityModel.MySql;
 
 
 #endregion
@@ -17,7 +15,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     /// <summary>
     /// 事件订阅
     /// </summary>
-    public sealed class EventSubscribeModelDataOperator : IDataOperator<EventSubscribeModel> , IEntityOperator<EventSubscribeModel>
+    public sealed class EventSubscribeModelDataOperator : IDataOperator<EventSubscribeModel>, IEntityOperator<EventSubscribeModel>
     {
         #region 基本信息
 
@@ -33,15 +31,15 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         public static EntityStruct Struct => _struct ??= new EntityStruct
         {
-            IsIdentity       = false,
-            EntityName       = EventBusDb.EventSubscribe_Struct_.EntityName,
-            Caption          = EventBusDb.EventSubscribe_Struct_.Caption,
-            Description      = EventBusDb.EventSubscribe_Struct_.Description,
-            PrimaryKey       = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
-            ReadTableName    = EventBusDb.EventSubscribe_Struct_.TableName,
-            WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
-            InterfaceFeature = new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
-            Properties       = new List<EntityProperty>
+            IsIdentity = false,
+            EntityName = EventBusDb.EventSubscribe_Struct_.EntityName,
+            Caption = EventBusDb.EventSubscribe_Struct_.Caption,
+            Description = EventBusDb.EventSubscribe_Struct_.Description,
+            PrimaryKey = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
+            ReadTableName = EventBusDb.EventSubscribe_Struct_.TableName,
+            WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
+            InterfaceFeature = new[] { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },
+            Properties = new List<EntityProperty>
             {
                 new EntityProperty(EventBusDb.EventSubscribe_Struct_.Service,0,"Service","tb_event_subscribe","service",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
                 new EntityProperty(EventBusDb.EventSubscribe_Struct_.EventId,1,"EventId","tb_event_subscribe","event_id",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
@@ -54,17 +52,17 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            NoInjection      = false,
-            IsQuery          = true,
+            NoInjection = false,
+            IsQuery = true,
             UpdateByMidified = false,
-            ReadTableName    = FromSqlCode,
-            WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
-            LoadFields       = LoadFields,
-            Having           = Having,
-            GroupFields      = GroupFields,
-            UpdateFields     = UpdateFields,
-            InsertSqlCode    = InsertSqlCode,
-            DataStruct       = Struct
+            ReadTableName = FromSqlCode,
+            WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
+            LoadFields = LoadFields,
+            Having = Having,
+            GroupFields = GroupFields,
+            UpdateFields = UpdateFields,
+            InsertSqlCode = InsertSqlCode,
+            DataStruct = Struct
         };
 
         #endregion
@@ -115,8 +113,8 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <returns>参数</returns>
         public int GetDbType(string property)
         {
-            if(property == null) 
-               return (int)MySqlDbType.VarChar;
+            if (property == null)
+                return (int)MySqlDbType.VarChar;
             switch (property)
             {
                 case "service":
@@ -139,7 +137,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         /// <param name="r">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        public async Task LoadEntity(DbDataReader r,EventSubscribeModel entity)
+        public async Task LoadEntity(DbDataReader r, EventSubscribeModel entity)
         {
             var reader = r as MySqlDataReader;
             if (reader.IsDBNull(0))
@@ -192,7 +190,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 _ => null
             };
         }
-    
+
 
         /// <summary>
         ///     设置属性值
@@ -202,30 +200,30 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <param name="value"></param>
         void IEntityOperator<EventSubscribeModel>.SetValue(EventSubscribeModel entity, string property, object value)
         {
-            if(property == null)
+            if (property == null)
                 return;
-            switch(property.Trim().ToLower())
+            switch (property.Trim().ToLower())
             {
-            case "service":
-                entity.Service = (long)Convert.ToDecimal(value);
-                return;
-            case "eventid":
-                entity.EventId = (long)Convert.ToDecimal(value);
-                return;
-            case "islookup":
-                if (value != null)
-                {
-                    int vl;
-                    if (int.TryParse(value.ToString(), out vl))
+                case "service":
+                    entity.Service = (long)Convert.ToDecimal(value);
+                    return;
+                case "eventid":
+                    entity.EventId = (long)Convert.ToDecimal(value);
+                    return;
+                case "islookup":
+                    if (value != null)
                     {
-                        entity.IsLookUp = vl != 0;
+                        int vl;
+                        if (int.TryParse(value.ToString(), out vl))
+                        {
+                            entity.IsLookUp = vl != 0;
+                        }
+                        else
+                        {
+                            entity.IsLookUp = Convert.ToBoolean(value);
+                        }
                     }
-                    else
-                    {
-                        entity.IsLookUp = Convert.ToBoolean(value);
-                    }
-                }
-                return;
+                    return;
             }
         }
 

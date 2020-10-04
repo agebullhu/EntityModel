@@ -76,7 +76,7 @@ namespace Hpc.Project.ImportSkuCsv
             var results = new List<T>();
             var colunms = new List<string>();
             foreach (var field in lines[0])
-                colunms.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
+                colunms.Add(field.Trim().Replace(" ", "\t").Replace("　", "\t"));
             for (var i = 1; i < lines.Count; i++)
             {
                 var tv = new T();
@@ -105,7 +105,7 @@ namespace Hpc.Project.ImportSkuCsv
 
             var colunms = new List<string>();
             foreach (var field in lines[0])
-                colunms.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
+                colunms.Add(field.Trim().Replace(" ", "\t").Replace("　", "\t"));
             for (var i = 1; i < lines.Count; i++)
             {
                 var tv = new T();
@@ -269,7 +269,7 @@ namespace Hpc.Project.ImportSkuCsv
             if (lines.Count <= 1) return;
             var head = new List<string>();
             foreach (var field in lines[0])
-                head.Add(field.Trim().MulitReplace2("", " ", "　", "\t"));
+                head.Add(field.Trim().Replace(" ", "\t").Replace("　", "\t"));
 
             for (var i = 1; i < lines.Count; i++)
             {

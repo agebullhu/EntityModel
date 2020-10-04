@@ -1,5 +1,4 @@
 
-using Agebull.Common.Base;
 using Agebull.EntityModel.Common;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -17,7 +16,7 @@ namespace Agebull.EntityModel.Excel
     /// </summary>
     /// <typeparam name="TData">数据类型</typeparam>
     /// <typeparam name="TPrimaryKey">主键类型</typeparam>
-    public class ExcelExporter<TData, TPrimaryKey> : ScopeBase
+    public class ExcelExporter<TData, TPrimaryKey>
             where TData : class, new()
     {
         /// <summary>
@@ -202,12 +201,5 @@ namespace Agebull.EntityModel.Excel
             }
         }
 
-        /// <summary>
-        /// 清理资源
-        /// </summary>
-        protected override void OnDispose()
-        {
-            //Book.Dispose();
-        }
     }
 }

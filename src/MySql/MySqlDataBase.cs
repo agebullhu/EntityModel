@@ -8,13 +8,9 @@
 
 #region 引用
 
-using Agebull.Common.Configuration;
-using Agebull.Common.Ioc;
-using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using MySqlConnector;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -31,14 +27,6 @@ namespace Agebull.EntityModel.MySql
     public abstract partial class MySqlDataBase : ParameterCreater, IDataBase
     {
         #region 构造
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        protected MySqlDataBase()
-        {
-            DependencyScope.DisposeFunc.Add(() => _ = DisposeAsync());
-        }
 
         /// <summary>
         /// 数据库类型
@@ -114,9 +102,9 @@ namespace Agebull.EntityModel.MySql
         public Task<IConnectionScope> CreateConnectionScope() => ConnectionScope.CreateScope(this);
 
         /// <summary>
-        /// 连接字符串配置节点名称,用于取出
+        /// 连接字符串
         /// </summary>
-        public string ConnectionStringName { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// 连接对象
@@ -131,7 +119,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (_connection != null/* && _connection.State == ConnectionState.Open*/)
                 return false;
-            _connection = await OpenConnection(ConnectionStringName);
+            _connection = await OpenConnection(ConnectionString);
             return true;
         }
 
@@ -165,30 +153,11 @@ namespace Agebull.EntityModel.MySql
         /// 初始化连接对象
         /// </summary>
         /// <returns></returns>
-        public static async Task<MySqlConnection> OpenConnection(string name)
+        public static async Task<MySqlConnection> OpenConnection(string connectionString)
         {
-            //Console.WriteLine($"【MySqlDataBase.InitConnection】{DateTime.Now}");
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new EntityModelDbException("连接字符串的配置名称不能为空");
-            }
-            var constr = ConfigurationHelper.GetConnectionString(name, null);
-
-            if (string.IsNullOrEmpty(constr))
-            {
-                throw new EntityModelDbException($"无法找到配置名称为{name}的连接字符串");
-            }
-            try
-            {
-                var connection = new MySqlConnection(constr);
-                await connection.OpenAsync();
-                return connection;
-            }
-            catch (Exception exception)
-            {
-                DependencyScope.Logger.Exception(exception);
-            }
-            return null;
+            var connection = new MySqlConnection(connectionString);
+            await connection.OpenAsync();
+            return connection;
         }
 
         /// <summary>
@@ -209,22 +178,21 @@ namespace Agebull.EntityModel.MySql
                 {
                     await connection.CloseAsync();
                 }
-                catch (Exception exception)
+                catch
                 {
-                    DependencyScope.Logger.Exception(exception);
                 }
             }
             try
             {
                 await connection.DisposeAsync();
             }
-            catch (Exception exception)
+            catch
             {
-                DependencyScope.Logger.Exception(exception);
             }
         }
 
         #endregion
+
         #region 析构
 
         /// <summary>
@@ -302,8 +270,6 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public void TraceSql(DbCommand cmd)
         {
-            if (!LoggerExtend.LogDataSql)
-                return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
             var parameters = cmd.Parameters.OfType<MySqlParameter>();

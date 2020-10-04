@@ -1,5 +1,4 @@
-﻿using Agebull.Common.Ioc;
-using Agebull.EntityModel.BusinessLogic;
+﻿using Agebull.EntityModel.BusinessLogic;
 
 namespace ZeroTeam.AspNet.ModelApi
 {

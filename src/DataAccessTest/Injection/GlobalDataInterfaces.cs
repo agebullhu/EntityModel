@@ -431,7 +431,7 @@ namespace Agebull.EntityModel.MySql
                 PropertyFeatrue = PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName = "top_org_id",
-                DbReadWrite = ReadWriteFeatrue.Read ,
+                DbReadWrite = ReadWriteFeatrue.Read,
                 JsonName = "organizationID",
                 CanImport = false,
                 CanExport = false,

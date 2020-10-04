@@ -8,7 +8,6 @@
 
 #region 引用
 
-using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -98,7 +97,7 @@ namespace Agebull.EntityModel.Common
             if (con.Count > 0)
             {
                 condition = string.IsNullOrEmpty(condition)
-                    ? string.Join(" AND ",con)
+                    ? string.Join(" AND ", con)
                     : $"({condition}) AND {string.Join(" AND ", con)}";
             }
         }
@@ -120,8 +119,8 @@ namespace Agebull.EntityModel.Common
             foreach (var trigger in services)
                 trigger.InjectionDeleteCondition(Provider, con);
 
-            return con.Count > 0 
-                ? $"({condition}) {string.Join(" AND ", con)}" 
+            return con.Count > 0
+                ? $"({condition}) {string.Join(" AND ", con)}"
                 : condition;
         }
 

@@ -60,7 +60,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="str"></param>
         /// <param name="des"></param>
         /// <returns></returns>
-        public static bool Expression<T>(this string field,string expression, T value) => true;
+        public static bool Expression<T>(this string field, string expression, T value) => true;
 
         /// <summary>
         /// 用于SQL中的文本字段比较
@@ -82,8 +82,8 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool In<T>(this T field,params T[] values) => true;
-        
+        public static bool In<T>(this T field, params T[] values) => true;
+
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>

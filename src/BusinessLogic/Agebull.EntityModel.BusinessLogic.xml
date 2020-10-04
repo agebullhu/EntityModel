@@ -998,11 +998,6 @@
             <param name="sheet"></param>
             <param name="datas"></param>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.OnDispose">
-            <summary>
-            清理资源
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.Excel.ExcelHelper">
             <summary>
                 报表(Excel)帮助类
@@ -1304,7 +1299,7 @@
                 当前导入的工作表
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.OnDispose">
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.System#IDisposable#Dispose">
             <summary>
             清理资源
             </summary>

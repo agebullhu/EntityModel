@@ -5,7 +5,6 @@ using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
-using MySqlConnector;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

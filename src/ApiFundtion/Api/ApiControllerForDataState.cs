@@ -10,9 +10,7 @@
 
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
@@ -41,7 +39,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public async Task<IApiResult> Reset(string[] selects)
         {
-          await  OnReset();
+            await OnReset();
             return IsFailed
                     ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
                     : ApiResultHelper.Succees();

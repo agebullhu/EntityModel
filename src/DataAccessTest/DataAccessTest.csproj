@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.46" />
     <PackageReference Include="Dapper" Version="2.0.35" />
   </ItemGroup>
 

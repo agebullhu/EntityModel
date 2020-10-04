@@ -8,8 +8,6 @@
 
 #region 引用
 
-using Agebull.Common.Ioc;
-using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using System;
 using System.Collections;
@@ -557,17 +555,10 @@ namespace Agebull.EntityModel.MySql
         private static T GetValue<T>(Expression expression)
         {
             var lambda = Expression.Lambda(expression);
-            try
-            {
-                dynamic func = lambda.Compile();
-                return (T)func();
-            }
-            catch (Exception e)
-            {
-                DependencyScope.Logger.Exception(e, expression.ToString());
-                return default;
-            }
+            dynamic func = lambda.Compile();
+            return (T)func();
         }
+
         /// <summary>
         ///     取得值
         /// </summary>
@@ -659,16 +650,8 @@ namespace Agebull.EntityModel.MySql
         private static object GetValue(Expression expression)
         {
             var lambda = Expression.Lambda(expression);
-            try
-            {
-                dynamic func = lambda.Compile();
-                return func();
-            }
-            catch (Exception e)
-            {
-                DependencyScope.Logger.Exception(e, expression.ToString());
-                return null;
-            }
+            dynamic func = lambda.Compile();
+            return func();
         }
 
         string CheckDynamicValue(object vl)
@@ -712,9 +695,21 @@ namespace Agebull.EntityModel.MySql
 
             if (vl is IEnumerable enumerable)
             {
-                return enumerable.LinkToString("'", "','", "'");
+                StringBuilder sb = new StringBuilder();
+                sb.Append("'");
+                bool first = true;
+                foreach (var v in enumerable)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        sb.Append("','");
+                    sb.Append(v);
+                }
+                sb.Append("'");
+                return sb.ToString();
             }
-            if (vlType.IsValueType && vlType.IsBaseType())
+            if (vlType.IsValueType && vlType.IsGenericType)
             {
                 return $"'{vl}'";
             }

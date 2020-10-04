@@ -1,8 +1,6 @@
-﻿using Agebull.Common.Ioc;
-using Agebull.EntityModel.BusinessLogic;
+﻿using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,7 +27,7 @@ namespace ZeroTeam.AspNet.ModelApi
         protected TBusinessLogic Business => _business ??= new TBusinessLogic
         {
             Context = new BusinessContext(),
-            ServiceProvider = DependencyHelper.ServiceProvider
+            ServiceProvider = HttpContext.RequestServices
         };
 
         /// <summary>

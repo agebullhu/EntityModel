@@ -31,7 +31,7 @@ namespace Agebull.EntityModel.Common
         private string propertyName;
         private string jsonName;
         private string fieldName;
-        private string tableName; 
+        private string tableName;
         private bool? canImport;
         private bool? canExport;
         private ReadWriteFeatrue? dbReadWrite;

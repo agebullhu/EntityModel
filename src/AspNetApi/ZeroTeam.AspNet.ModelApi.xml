@@ -53,21 +53,6 @@
                 返回值
             </summary>
         </member>
-        <member name="T:ZeroTeam.AspNet.ModelApi.DependencyApiResult`1">
-            <summary>
-                API返回数据泛型类
-            </summary>
-        </member>
-        <member name="P:ZeroTeam.AspNet.ModelApi.DependencyApiResult`1.ResultData">
-            <summary>
-                返回值
-            </summary>
-        </member>
-        <member name="M:ZeroTeam.AspNet.ModelApi.DependencyApiResult`1.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
         <member name="T:ZeroTeam.AspNet.ModelApi.ApiResultHelper">
             <summary>API返回基类</summary>
         </member>

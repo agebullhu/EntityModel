@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Agebull.EntityModel.Common
@@ -8,13 +6,11 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 校验节点
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
     public class ValidateResultDictionary
     {
         /// <summary>
         /// 校验结果
         /// </summary>
-        [JsonProperty("results", NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidateResult> Result = new List<ValidateResult>();
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Agebull.EntityModel.Common
@@ -7,30 +6,25 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 校验节点
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
     public class ValidateResult
     {
         /// <summary>
         /// 主键
         /// </summary>
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
 
         /// <summary>
         /// 是否正确
         /// </summary>
-        [JsonProperty("succeed", NullValueHandling = NullValueHandling.Ignore)]
         public bool Succeed => Items.Count == 0 || Items.All(p => p.Succeed || p.Warning);
 
         /// <summary>
         /// 节点
         /// </summary>
-        [JsonProperty("items", NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidateItem> Items = new List<ValidateItem>();
         /// <summary>
         /// 消息
         /// </summary>
-        [JsonProperty("messages", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Messages = new List<string>();
 
         /// <summary>
@@ -39,7 +33,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public override string ToString()
         {
-            return Succeed ? "" : Items.Select(p => $"{p.Caption}:{p.Message}").LinkToString("\r\n");
+            return Succeed ? "" : string.Join("\r\n", Items.Select(p => $"{p.Caption}:{p.Message}"));
         }
 
         /// <summary>
@@ -48,7 +42,9 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public string ToJson()
         {
-            return Succeed ? "{}" : Items.Select(p => $"\"{p.Name}\":\"{p.Message.Replace('\"', '\'') }\"").LinkToString("{", ",", "}");
+            return Succeed
+                ? "{}"
+                : $"{{{string.Join(",", Items.Select(p => $"\"{p.Name}\":\"{p.Message.Replace('\"', '\'') }\""))}}}";
         }
 
         /// <summary>

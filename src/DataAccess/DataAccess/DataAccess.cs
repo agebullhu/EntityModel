@@ -8,10 +8,8 @@
 
 #region ÒýÓÃ
 
-using Agebull.Common.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
@@ -49,19 +47,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<bool> InsertAsync(TEntity entity, bool reload = false)
         {
-            FlowTracer.BeginStepMonitor("InsertInnerAsync");
-            try
-            {
-                if (!await InsertInnerAsync(entity))
-                    return false;
-                if (reload)
-                    await ReLoadInnerAsync(entity);
-                return true;
-            }
-            finally
-            {
-                FlowTracer.EndStepMonitor();
-            }
+            if (!await InsertInnerAsync(entity))
+                return false;
+            if (reload)
+                await ReLoadInnerAsync(entity);
+            return true;
         }
 
         /// <summary>

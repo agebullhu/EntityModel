@@ -8,9 +8,6 @@
 
 #region 引用
 
-using Agebull.Common.Base;
-using Agebull.Common.Ioc;
-using Agebull.Common.Logging;
 using Agebull.EntityModel.Common;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
@@ -27,7 +24,7 @@ namespace Agebull.EntityModel.Excel
     /// <summary>
     ///     Excel导入类
     /// </summary>
-    public class ExcelImporter<TData> : ScopeBase
+    public class ExcelImporter<TData> : IDisposable
         where TData : class, new()
     {
         #region 准备
@@ -215,7 +212,7 @@ namespace Agebull.EntityModel.Excel
         /// <summary>
         /// 清理资源
         /// </summary>
-        protected override void OnDispose()
+        void IDisposable.Dispose()
         {
             //Book.Dispose();
             Stream.Dispose();
@@ -472,7 +469,7 @@ namespace Agebull.EntityModel.Excel
             }
             catch (Exception e)
             {
-                DependencyScope.Logger.Exception(e);
+                Console.WriteLine(e);
             }
         }
 

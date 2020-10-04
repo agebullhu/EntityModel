@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Agebull.EntityModel.Common
 {
@@ -140,7 +139,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        string CreateLoadSql(string condition=null, string order = null, string limit = null);
+        string CreateLoadSql(string condition = null, string order = null, string limit = null);
 
         /// <summary>
         /// 单值读取SQL

@@ -9,7 +9,6 @@
 #region 引用
 
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -38,7 +37,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 连接字符串配置节点名称,用于取出
         /// </summary>
-        string ConnectionStringName { get; }
+        string ConnectionString { get; }
 
         /// <summary>
         /// 构造连接范围对象

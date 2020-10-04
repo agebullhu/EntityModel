@@ -67,11 +67,6 @@
                 表示MySql数据库对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.DataBaseType">
             <summary>
             数据库类型
@@ -120,9 +115,9 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.ConnectionStringName">
+        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.ConnectionString">
             <summary>
-            连接字符串配置节点名称,用于取出
+            连接字符串
             </summary>
         </member>
         <member name="F:Agebull.EntityModel.MySql.MySqlDataBase._connection">
