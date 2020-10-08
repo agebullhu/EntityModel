@@ -1,26 +1,38 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/2 2:10:24*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/7 0:49:52*/
 #region
-using Agebull.EntityModel.BusinessLogic;
-using Agebull.EntityModel.Common;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Configuration;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Runtime.Serialization;
+using System.IO;
+using Newtonsoft.Json;
+
+using Agebull.Common;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.MySql;
+using Agebull.EntityModel.BusinessLogic;
+
+
 using Zeroteam.MessageMVC.EventBus.DataAccess;
 #endregion
 
-namespace Zeroteam.MessageMVC.EventBus.BusinessLogic
+namespace Zeroteam.MessageMVC.EventBus
 {
     /// <summary>
     /// 事件订阅
     /// </summary>
-    public partial class EventSubscribeEntityBusinessLogic : BusinessLogicByStateData<EventSubscribeEntity, long>
+    public partial class EventSubscribeEntityBusinessLogic : BusinessLogicByStateData<EventSubscribeEntity,long>
     {
         /// <summary>
-        ///  构造
+        ///  生成数据访问对象
         /// </summary>
-        public EventSubscribeEntityBusinessLogic(IServiceProvider provider)
-        {
-            ServiceProvider = provider;
-        }
-
         protected sealed override DataAccess<EventSubscribeEntity> CreateAccess()
         {
             return ServiceProvider.CreateDataAccess<EventSubscribeEntity>();

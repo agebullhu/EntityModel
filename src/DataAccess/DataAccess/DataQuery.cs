@@ -1104,7 +1104,7 @@ namespace Agebull.EntityModel.Common
             else if (limit > 500)
                 limit = 500;
 
-            var count = await CountAsync(condition, args);
+            var count = (int)await CountAsync(condition, args);
             var data = await PageDataAsync(page, limit, order, desc, condition, args);
             return new ApiPageData<TEntity>
             {

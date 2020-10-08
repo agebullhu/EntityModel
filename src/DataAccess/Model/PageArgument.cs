@@ -75,13 +75,13 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         ///     总页数
         /// </summary>
         /// <example>999</example>
-        public long PageCount { get; set; }
+        public int PageCount { get; set; }
 
         /// <summary>
         ///     总行数
         /// </summary>
         /// <example>9999</example>
-        public long Total { get; set; }
+        public int Total { get; set; }
 
     }
 

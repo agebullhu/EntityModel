@@ -203,7 +203,7 @@ namespace Agebull.EntityModel.MySql
                 return Option.InsertSqlCode;
             }
             var fields = new StringBuilder();
-            var paras = new StringBuilder();
+            var paras = new StringBuilder('(');
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
@@ -230,7 +230,7 @@ namespace Agebull.EntityModel.MySql
             {
                 paras.Append("\nSELECT @@IDENTITY;");
             }
-            return $"INSERT INTO `{Option.WriteTableName}`({fields})\nVALUES({paras}";
+            return $"INSERT INTO `{Option.WriteTableName}`({fields})\nVALUES{paras}";
         }
 
         /// <summary>

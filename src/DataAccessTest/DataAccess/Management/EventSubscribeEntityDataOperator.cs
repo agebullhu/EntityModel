@@ -1,12 +1,14 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 10:55:22*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/7 1:51:58*/
 #region
-using Agebull.EntityModel.Common;
-using Agebull.EntityModel.MySql;
-using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
+using MySqlConnector;
+
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Interfaces;
+using Agebull.EntityModel.MySql;
 
 
 #endregion
@@ -15,7 +17,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     /// <summary>
     /// 事件订阅
     /// </summary>
-    public sealed class EventSubscribeEntityDataOperator : IDataOperator<EventSubscribeEntity>, IEntityOperator<EventSubscribeEntity>
+    public sealed class EventSubscribeEntityDataOperator : IDataOperator<EventSubscribeEntity> , IEntityOperator<EventSubscribeEntity>
     {
         #region 基本信息
 
@@ -31,15 +33,15 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         public static EntityStruct Struct => _struct ??= new EntityStruct
         {
-            IsIdentity = true,
-            EntityName = EventBusDb.EventSubscribe_Struct_.EntityName,
-            Caption = EventBusDb.EventSubscribe_Struct_.Caption,
-            Description = EventBusDb.EventSubscribe_Struct_.Description,
-            PrimaryKey = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
-            ReadTableName = EventBusDb.EventSubscribe_Struct_.TableName,
-            WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
-            InterfaceFeature = new[] { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },
-            Properties = new List<EntityProperty>
+            IsIdentity       = true,
+            EntityName       = EventBusDb.EventSubscribe_Struct_.EntityName,
+            Caption          = EventBusDb.EventSubscribe_Struct_.Caption,
+            Description      = EventBusDb.EventSubscribe_Struct_.Description,
+            PrimaryKey       = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
+            ReadTableName    = EventBusDb.EventSubscribe_Struct_.TableName,
+            WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
+            InterfaceFeature = new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
+            Properties       = new List<EntityProperty>
             {
                 new EntityProperty(EventBusDb.EventSubscribe_Struct_.Id,0,"Id","tb_event_subscribe","id",ReadWriteFeatrue.Read),
                 new EntityProperty(GlobalDataInterfaces.IStateData.IsFreeze,1,"IsFreeze","tb_event_subscribe","is_freeze",ReadWriteFeatrue.Read),
@@ -66,17 +68,17 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            NoInjection = false,
-            IsQuery = false,
+            NoInjection      = false,
+            IsQuery          = false,
             UpdateByMidified = false,
-            ReadTableName = FromSqlCode,
-            WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
-            LoadFields = LoadFields,
-            Having = Having,
-            GroupFields = GroupFields,
-            UpdateFields = UpdateFields,
-            InsertSqlCode = InsertSqlCode,
-            DataStruct = Struct
+            ReadTableName    = FromSqlCode,
+            WriteTableName   = EventBusDb.EventSubscribe_Struct_.TableName,
+            LoadFields       = LoadFields,
+            Having           = Having,
+            GroupFields      = GroupFields,
+            UpdateFields     = UpdateFields,
+            InsertSqlCode    = InsertSqlCode,
+            DataStruct       = Struct
         };
 
         #endregion
@@ -170,7 +172,8 @@ VALUES
     ?AuthorId,
     ?Author,
     ?AddDate
-);";
+);
+SELECT @@IDENTITY;";
 
         #endregion
 
@@ -183,8 +186,8 @@ VALUES
         /// <returns>参数</returns>
         public int GetDbType(string property)
         {
-            if (property == null)
-                return (int)MySqlDbType.VarChar;
+            if(property == null) 
+               return (int)MySqlDbType.VarChar;
             switch (property)
             {
                 case "id":
@@ -247,7 +250,7 @@ VALUES
         /// </summary>
         /// <param name="r">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        public async Task LoadEntity(DbDataReader r, EventSubscribeEntity entity)
+        public async Task LoadEntity(DbDataReader r,EventSubscribeEntity entity)
         {
             var reader = r as MySqlDataReader;
             entity.Id = await reader.GetFieldValueAsync<long>(0);
@@ -372,7 +375,7 @@ VALUES
                 _ => null
             };
         }
-
+    
 
         /// <summary>
         ///     设置属性值
@@ -382,110 +385,110 @@ VALUES
         /// <param name="value"></param>
         void IEntityOperator<EventSubscribeEntity>.SetValue(EventSubscribeEntity entity, string property, object value)
         {
-            if (property == null)
+            if(property == null)
                 return;
-            switch (property.Trim().ToLower())
+            switch(property.Trim().ToLower())
             {
-                case "id":
-                    entity.Id = (long)Convert.ToDecimal(value);
-                    return;
-                case "eventid":
-                    entity.EventId = (long)Convert.ToDecimal(value);
-                    return;
-                case "service":
-                    entity.Service = value == null ? null : value.ToString();
-                    return;
-                case "islookup":
-                    if (value != null)
+            case "id":
+                entity.Id = (long)Convert.ToDecimal(value);
+                return;
+            case "eventid":
+                entity.EventId = (long)Convert.ToDecimal(value);
+                return;
+            case "service":
+                entity.Service = value == null ? null : value.ToString();
+                return;
+            case "islookup":
+                if (value != null)
+                {
+                    int vl;
+                    if (int.TryParse(value.ToString(), out vl))
                     {
-                        int vl;
-                        if (int.TryParse(value.ToString(), out vl))
-                        {
-                            entity.IsLookUp = vl != 0;
-                        }
-                        else
-                        {
-                            entity.IsLookUp = Convert.ToBoolean(value);
-                        }
+                        entity.IsLookUp = vl != 0;
                     }
-                    return;
-                case "apiname":
-                    entity.ApiName = value == null ? null : value.ToString();
-                    return;
-                case "memo":
-                    entity.Memo = value == null ? null : value.ToString();
-                    return;
-                case "targetname":
-                    entity.TargetName = value == null ? null : value.ToString();
-                    return;
-                case "targettype":
-                    entity.TargetType = value == null ? null : value.ToString();
-                    return;
-                case "targetdescription":
-                    entity.TargetDescription = value == null ? null : value.ToString();
-                    return;
-                case "isfreeze":
-                    if (value != null)
+                    else
                     {
-                        int vl;
-                        if (int.TryParse(value.ToString(), out vl))
-                        {
-                            entity.IsFreeze = vl != 0;
-                        }
-                        else
-                        {
-                            entity.IsFreeze = Convert.ToBoolean(value);
-                        }
+                        entity.IsLookUp = Convert.ToBoolean(value);
                     }
-                    return;
-                case "datastate":
-                    if (value != null)
+                }
+                return;
+            case "apiname":
+                entity.ApiName = value == null ? null : value.ToString();
+                return;
+            case "memo":
+                entity.Memo = value == null ? null : value.ToString();
+                return;
+            case "targetname":
+                entity.TargetName = value == null ? null : value.ToString();
+                return;
+            case "targettype":
+                entity.TargetType = value == null ? null : value.ToString();
+                return;
+            case "targetdescription":
+                entity.TargetDescription = value == null ? null : value.ToString();
+                return;
+            case "isfreeze":
+                if (value != null)
+                {
+                    int vl;
+                    if (int.TryParse(value.ToString(), out vl))
                     {
-                        if (value is int)
+                        entity.IsFreeze = vl != 0;
+                    }
+                    else
+                    {
+                        entity.IsFreeze = Convert.ToBoolean(value);
+                    }
+                }
+                return;
+            case "datastate":
+                if (value != null)
+                {
+                    if(value is int)
+                    {
+                        entity.DataState = (DataStateType)(int)value;
+                    }
+                    else if(value is DataStateType)
+                    {
+                        entity.DataState = (DataStateType)value;
+                    }
+                    else
+                    {
+                        var str = value.ToString();
+                        DataStateType val;
+                        if (DataStateType.TryParse(str, out val))
                         {
-                            entity.DataState = (DataStateType)(int)value;
-                        }
-                        else if (value is DataStateType)
-                        {
-                            entity.DataState = (DataStateType)value;
+                            entity.DataState = val;
                         }
                         else
                         {
-                            var str = value.ToString();
-                            DataStateType val;
-                            if (DataStateType.TryParse(str, out val))
+                            int vl;
+                            if (int.TryParse(str, out vl))
                             {
-                                entity.DataState = val;
-                            }
-                            else
-                            {
-                                int vl;
-                                if (int.TryParse(str, out vl))
-                                {
-                                    entity.DataState = (DataStateType)vl;
-                                }
+                                entity.DataState = (DataStateType)vl;
                             }
                         }
                     }
-                    return;
-                case "lastmodifydate":
-                    entity.LastModifyDate = Convert.ToDateTime(value);
-                    return;
-                case "lastreviserid":
-                    entity.LastReviserId = value == null ? null : value.ToString();
-                    return;
-                case "lastreviser":
-                    entity.LastReviser = value == null ? null : value.ToString();
-                    return;
-                case "authorid":
-                    entity.AuthorId = value == null ? null : value.ToString();
-                    return;
-                case "author":
-                    entity.Author = value == null ? null : value.ToString();
-                    return;
-                case "adddate":
-                    entity.AddDate = Convert.ToDateTime(value);
-                    return;
+                }
+                return;
+            case "lastmodifydate":
+                entity.LastModifyDate = Convert.ToDateTime(value);
+                return;
+            case "lastreviserid":
+                entity.LastReviserId = value == null ? null : value.ToString();
+                return;
+            case "lastreviser":
+                entity.LastReviser = value == null ? null : value.ToString();
+                return;
+            case "authorid":
+                entity.AuthorId = value == null ? null : value.ToString();
+                return;
+            case "author":
+                entity.Author = value == null ? null : value.ToString();
+                return;
+            case "adddate":
+                entity.AddDate = Convert.ToDateTime(value);
+                return;
             }
         }
 

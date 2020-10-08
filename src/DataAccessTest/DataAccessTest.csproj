@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -21,14 +21,21 @@
     <Compile Remove="EventSubscribe.cs" />
     <Compile Remove="EventSubscribe.DataAccessOption.cs" />
     <Compile Remove="EventSubscribe.DataOperator.cs" />
+    <Compile Remove="Test.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.46" />
-    <PackageReference Include="Dapper" Version="2.0.35" />
+    <Content Remove="wwwroot\scripts\extend.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ZeroTeam.MessageMVC.ApiContract" Version="1.0.1.24" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Http" Version="1.0.1.24" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Tools" Version="1.0.1.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApiFundtion\ZeroTeam.MessageMVC.ModelApi.csproj" />
     <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
     <ProjectReference Include="..\Injection\Agebull.EntityModel.Injection.csproj" />
     <ProjectReference Include="..\MySql\Agebull.EntityModel.MySql.csproj" />
@@ -41,7 +48,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entity\" />
+    <None Include="wwwroot\index.js" />
+    <None Include="wwwroot\scripts\extend.js" />
+    <None Include="wwwroot\scripts\object.js" />
   </ItemGroup>
 
 </Project>

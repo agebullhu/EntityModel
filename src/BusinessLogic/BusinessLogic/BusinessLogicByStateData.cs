@@ -49,7 +49,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected override async Task<bool> PrepareDelete(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => id.Equals(p.Id) && !p.IsFreeze))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.DataState != DataStateType.Delete))
                 return await base.PrepareDelete(id);
             Context.LastMessage = "数据已锁定";
             Context.LastState = Context.ArgumentError;
@@ -70,7 +70,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected override async Task<bool> DoDelete(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => p.DataState == DataStateType.Delete && Equals(p.Id, id)))
+            if (await Access.AnyAsync(p => p.DataState == DataStateType.Delete && p.Id.Equals(id)))
                 return await Access.PhysicalDeleteAsync(id);
             return await Access.DeletePrimaryKeyAsync(id);
         }
@@ -162,7 +162,7 @@ namespace Agebull.EntityModel.BusinessLogic
         public virtual Task<bool> Enable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Enable, true,
-                p => Equals(p.Id, id) && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
+                p => p.Id.Equals(id) && (p.DataState == DataStateType.Disable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace Agebull.EntityModel.BusinessLogic
         public virtual Task<bool> Disable(TPrimaryKey id)
         {
             return SetDataState(id, DataStateType.Disable, true,
-                p => Equals(p.Id, id) && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
+                p => p.Id.Equals(id) && (p.DataState == DataStateType.Enable || p.DataState == DataStateType.None));
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public virtual Task<bool> Discard(TPrimaryKey id)
         {
-            return SetDataState(id, DataStateType.Discard, true, p => Equals(p.Id, id) && p.DataState == DataStateType.None);
+            return SetDataState(id, DataStateType.Discard, true, p => p.Id.Equals(id) && p.DataState == DataStateType.None);
         }
 
         /// <summary>

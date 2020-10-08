@@ -228,7 +228,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected override async Task<bool> PrepareDelete(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState == AuditStateType.None))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState == AuditStateType.None))
                 return await base.PrepareDelete(id);
             Context.LastMessage = "仅未进行任何审核操作的数据可以被删除";
             return false;
@@ -252,7 +252,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public override async Task<bool> Reset(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState != AuditStateType.Pass))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return await base.Reset(id);
         }
@@ -263,7 +263,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public override async Task<bool> Disable(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState != AuditStateType.Pass))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return await base.Disable(id);
         }
@@ -272,7 +272,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public override async Task<bool> Discard(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState != AuditStateType.Pass))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return await base.Discard(id);
         }
@@ -281,7 +281,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         public override async Task<bool> Enable(TPrimaryKey id)
         {
-            if (await Access.AnyAsync(p => Equals(p.Id, id) && p.AuditState != AuditStateType.Pass))
+            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState != AuditStateType.Pass))
                 return false;
             return await base.Enable(id);
         }

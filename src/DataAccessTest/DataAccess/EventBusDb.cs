@@ -1,9 +1,13 @@
-﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/3 3:43:45*/
+﻿/*此标记表明此文件可被设计器更新,如果不允许此操作,请删除此行代码.design by:agebull designer date:2020/10/7 1:01:40*/
 #region
+using System;
+using System.Collections.Generic;
+using System.Data;
+using Agebull.Common;
+using Agebull.Common.Configuration;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 #endregion
 
 namespace Zeroteam.MessageMVC.EventBus.DataAccess
@@ -21,8 +25,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             Name = @"EventManagement";
             Caption = @"事件管理";
             Description = @"事件管理";
-
-            ConnectionString = "EventBusDb";
+            ConnectionString = ConfigurationHelper.GetConnectionString("EventBusDb");
         }
     }
 
