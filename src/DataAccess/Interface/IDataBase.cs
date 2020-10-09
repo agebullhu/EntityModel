@@ -8,6 +8,7 @@
 
 #region 引用
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -47,30 +48,6 @@ namespace Agebull.EntityModel.Common
 
         #endregion
 
-        #region 事务
-
-        /// <summary>
-        ///     事务对象
-        /// </summary>
-        DbTransaction Transaction { get; }
-
-        /// <summary>
-        /// 开始一个事务
-        /// </summary>
-        /// <returns></returns>
-        Task<bool> BeginTransaction();
-
-        /// <summary>
-        /// 回滚事务
-        /// </summary>
-        Task Rollback();
-
-        /// <summary>
-        /// 提交事务
-        /// </summary>
-        Task Commit();
-
-        #endregion
         #region 执行
 
         /// <summary>
@@ -99,6 +76,13 @@ namespace Agebull.EntityModel.Common
 
         #region 记录SQL日志
 
+        /// <summary>
+        /// 日志
+        /// </summary>
+        ILogger Logger
+        {
+            get;
+        }
 
         /// <summary>
         ///     记录SQL日志

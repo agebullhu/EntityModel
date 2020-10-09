@@ -394,24 +394,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     条件更新
         /// </summary>
-        /// <param name="field">更新字段</param>
-        /// <param name="value">更新值</param>
-        /// <param name="conditionFiles">条件包含的字段</param>
-        /// <param name="conditionValues">条件包含的值</param>
-        /// <returns>更新行数</returns>
-        /// <remarks>
-        /// 条件中使用AND组合,均为等于
-        /// </remarks>
-        public async Task SaveValueAsync(string field, object value, string[] conditionFiles, object[] conditionValues)
-        {
-            var args = CreateFieldsParameters(conditionFiles, conditionValues);
-            var condition = SqlBuilder.ConcatFieldCondition(true, conditionFiles);
-            await SetValueByConditionAsync(field, value, condition, args);
-        }
-
-        /// <summary>
-        ///     条件更新
-        /// </summary>
         /// <param name="field">字段</param>
         /// <param name="value">值</param>
         /// <param name="condition">更新条件</param>

@@ -9,6 +9,7 @@
     <Compile Remove="Event\EntityEventArgument.cs" />
     <Compile Remove="Event\EntitySubsist.cs" />
     <Compile Remove="IDataUpdateHandler.cs" />
+    <Compile Remove="Injection\DataInterfaceFeatureInjection.cs" />
   </ItemGroup>
 
   <ItemGroup>

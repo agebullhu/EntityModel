@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.Common
     /// 操作注入
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class OperatorInjection<TEntity> : IOperatorInjection<TEntity>
+    public class DefaultOperatorInjection<TEntity> : IOperatorInjection<TEntity>
         where TEntity : class, new()
     {
         #region 构造

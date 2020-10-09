@@ -17,7 +17,7 @@ using static Agebull.EntityModel.MySql.GlobalDataInterfaces;
 using IStateData = Agebull.EntityModel.MySql.GlobalDataInterfaces.IStateData;
 #endregion
 
-namespace Agebull.EntityModel.MySql
+namespace Agebull.EntityModel.Common
 {
 
     /// <summary>
@@ -38,7 +38,16 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public void InjectionQueryCondition<TEntity>(DataAccessProvider<TEntity> provider, List<string> conditions)
             where TEntity : class, new()
-        { }
+        {
+            if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IStateData)))
+            {
+                conditions.Add($"{IStateData.DataState.FieldName} < 255");
+            }
+            if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(GlobalDataInterfaces.ILogicDeleteData)))
+            {
+                conditions.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
+            }
+        }
 
         /// <summary>
         ///     注入数据插入代码
@@ -100,10 +109,10 @@ namespace Agebull.EntityModel.MySql
         ///     注入数据更新代码
         /// </summary>
         /// <param name="provider">当前数据操作适配器</param>
-        /// <param name="condition"></param>
+        /// <param name="conditions"></param>
         /// <param name="valueExpression"></param>
         /// <returns></returns>
-        public void InjectionUpdateCode<TEntity>(DataAccessProvider<TEntity> provider, StringBuilder valueExpression, List<string> condition)
+        public void InjectionUpdateCode<TEntity>(DataAccessProvider<TEntity> provider, StringBuilder valueExpression, List<string> conditions)
             where TEntity : class, new()
         {
             if (provider.Option.DataStruct.InterfaceFeature == null || provider.Option.DataStruct.InterfaceFeature.Length == 0)
@@ -120,12 +129,12 @@ namespace Agebull.EntityModel.MySql
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IStateData)))
             {
-                condition.Add($"{IStateData.IsFreeze.FieldName} = 0");
-                condition.Add($"{IStateData.DataState.FieldName} < 255");
+                conditions.Add($"{IStateData.IsFreeze.FieldName} = 0");
+                conditions.Add($"{IStateData.DataState.FieldName} < 255");
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(GlobalDataInterfaces.ILogicDeleteData)))
             {
-                condition.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
+                conditions.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
             }
         }
 
@@ -142,19 +151,19 @@ namespace Agebull.EntityModel.MySql
         ///     注入数据更新代码
         /// </summary>
         /// <param name="provider">当前数据操作适配器</param>
-        /// <param name="condition"></param>
+        /// <param name="conditions"></param>
         /// <returns></returns>
-        public void InjectionDeleteCondition<TEntity>(DataAccessProvider<TEntity> provider, List<string> condition)
+        public void InjectionDeleteCondition<TEntity>(DataAccessProvider<TEntity> provider, List<string> conditions)
             where TEntity : class, new()
         {
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IStateData)))
             {
-                condition.Add($"{IStateData.IsFreeze.FieldName} = 0");
-                condition.Add($"{IStateData.DataState.FieldName} < 255");
+                conditions.Add($"{IStateData.IsFreeze.FieldName} = 0");
+                conditions.Add($"{IStateData.DataState.FieldName} < 255");
             }
             if (provider.Option.DataStruct.InterfaceFeature.Contains(nameof(GlobalDataInterfaces.ILogicDeleteData)))
             {
-                condition.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
+                conditions.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
             }
         }
     }

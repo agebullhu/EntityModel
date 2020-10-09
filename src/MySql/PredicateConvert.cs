@@ -555,8 +555,8 @@ namespace Agebull.EntityModel.MySql
         private static T GetValue<T>(Expression expression)
         {
             var lambda = Expression.Lambda(expression);
-            dynamic func = lambda.Compile();
-            return (T)func();
+            var func = lambda.Compile();
+            return (T)func.DynamicInvoke();
         }
 
         /// <summary>

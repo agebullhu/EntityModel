@@ -1,5 +1,7 @@
 ﻿using Agebull.Common;
 using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
+using Agebull.EntityModel.MySql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,10 +24,15 @@ namespace ZeroTeam.MessageMVC.ConfigSync
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.BindingMessageMvc();
+
             services.AddTransient<ISerializeProxy, NewtonJsonSerializeProxy>();
             services.AddTransient<IJsonSerializeProxy, NewtonJsonSerializeProxy>();
+
+            services.AddScoped(typeof(IOperatorInjection<>), typeof(OperatorInjection<>));
             services.AddScoped<EventBusDb>();
+
             services.AddMessageMvcHttp();
             services.AddMessageMvc();
         }

@@ -5,9 +5,12 @@ using System.Collections.Generic;
 using System.Data;
 using Agebull.Common;
 using Agebull.Common.Configuration;
+using Agebull.Common.Ioc;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.MySql;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 #endregion
 
 namespace Zeroteam.MessageMVC.EventBus.DataAccess
@@ -20,12 +23,13 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 构造
         /// </summary>
-        public EventBusDb()
+        public EventBusDb(ILogger<EventBusDb> logger, IConfiguration configuration)
         {
             Name = @"EventManagement";
             Caption = @"事件管理";
             Description = @"事件管理";
-            ConnectionString = ConfigurationHelper.GetConnectionString("EventBusDb");
+            ConnectionString = configuration.GetConnectionString("EventBusDb");
+            Logger = logger;
         }
     }
 

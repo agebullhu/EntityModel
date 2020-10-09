@@ -1145,8 +1145,8 @@ namespace Agebull.EntityModel.Common
         public Task<(bool hase, TField value)> LoadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key)
         {
             return LoadValueAsync<TField>(GetPropertyName(field),
-                SqlBuilder.FieldCondition(Option.PrimaryKey),
-                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+                SqlBuilder.Condition(Option.PrimaryKey),
+                ParameterCreater.CreateParameter(Option.PrimaryKey, key));
         }
 
         /// <summary>
@@ -1346,8 +1346,8 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadByForeignKeyAsync(string foreignKey, object key)
         {
-            return LoadDataInnerAsync(SqlBuilder.FieldCondition(foreignKey), null,
-                ParameterCreater.CreateParameter(foreignKey, key, SqlBuilder.GetDbType(foreignKey)));
+            return LoadDataInnerAsync(SqlBuilder.Condition(foreignKey), null,
+                ParameterCreater.CreateParameter(foreignKey, key));
 
         }
 
@@ -1514,7 +1514,7 @@ namespace Agebull.EntityModel.Common
             var fieldName = GetPropertyName(field);
             var convert = SqlBuilder.Compile(condition);
 
-            convert.AddAndCondition(SqlBuilder.Condition(fieldName, "c_vl_"),
+            convert.AddAndCondition(SqlBuilder.Condition(fieldName, "=", "c_vl_"),
                 ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName)));
             return !await ExistAsync(convert.ConditionSql, convert.Parameters);
         }
@@ -1532,7 +1532,7 @@ namespace Agebull.EntityModel.Common
                 return false;
             var fieldName = GetPropertyName(field);
             Debug.Assert(Option.FieldMap.ContainsKey(fieldName));
-            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "=", "c_vl_")} AND {SqlBuilder.Condition(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val)
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
@@ -1548,7 +1548,7 @@ namespace Agebull.EntityModel.Common
             if (Equals(val, default(TValue)))
                 return false;
             var fieldName = GetPropertyName(field);
-            return !await ExistAsync(SqlBuilder.Condition(fieldName, "c_vl_"),
+            return !await ExistAsync(SqlBuilder.Condition(fieldName, "=", "c_vl_"),
                 ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName)));
         }
 
@@ -1562,7 +1562,7 @@ namespace Agebull.EntityModel.Common
         public async Task<bool> IsUniqueAsync<TValue>(string field, TValue val, Expression<Func<TEntity, bool>> condition)
         {
             var convert = SqlBuilder.Compile(condition);
-            convert.AddAndCondition(SqlBuilder.Condition(field, "c_vl_"),
+            convert.AddAndCondition(SqlBuilder.Condition(field, "=", "c_vl_"),
                 ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(field)));
             return !await ExistAsync(convert.ConditionSql, convert.Parameters);
         }
@@ -1576,7 +1576,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="key"></param>
         public async Task<bool> IsUniqueAsync(string field, string val, object key)
         {
-            return !await ExistAsync($"({SqlBuilder.Condition(field, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(field, "=", "c_vl_")} AND {SqlBuilder.Condition(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val)
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
         }
@@ -1589,7 +1589,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="val"></param>
         public async Task<bool> IsUniqueAsync(string field, string val)
         {
-            return !await ExistAsync(SqlBuilder.Condition(field, "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
+            return !await ExistAsync(SqlBuilder.Condition(field, "=", "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
         }
 
         /// <summary>
@@ -1601,7 +1601,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="key"></param>
         public async Task<bool> IsUniqueAsync<TValue>(string fieldName, object val, string key)
         {
-            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "c_vl_")} AND {SqlBuilder.FieldCondition(Option.PrimaryKey, "<>")}"
+            return !await ExistAsync($"({SqlBuilder.Condition(fieldName, "=", "c_vl_")} AND {SqlBuilder.Condition(Option.PrimaryKey, "<>")}"
                 , ParameterCreater.CreateParameter("c_vl_", val, SqlBuilder.GetDbType(fieldName))
                 , ParameterCreater.CreateParameter(Option.PrimaryKey, key));
         }
@@ -1615,7 +1615,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="key"></param>
         public async Task<bool> IsUniqueAsync<TValue>(string fieldName, string val)
         {
-            return !await ExistAsync(SqlBuilder.Condition(fieldName, "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
+            return !await ExistAsync(SqlBuilder.Condition(fieldName, "=", "c_vl_"), ParameterCreater.CreateParameter("c_vl_", val));
         }
         #endregion
     }

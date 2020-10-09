@@ -49,14 +49,9 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         string BuilderDeleteSqlCode();
 
-        /// <summary>
-        ///     物理删除数据
-        /// </summary>
-        string PhysicalDeleteSqlCode(string condition);
-
         #endregion
 
-        #region 动态生成条件节点
+        #region SQL片断
 
         /// <summary>
         ///     主键的条件部分SQL
@@ -71,54 +66,30 @@ namespace Agebull.EntityModel.Common
         int GetDbType(string field);
 
         /// <summary>
-        /// 字段条件
+        /// 条件SQL
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="paraName"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        string Condition(string fieldName, string expression="=", string paraName=null);
+
+        /// <summary>
+        /// 构建排序SQL片断
+        /// </summary>
+        /// <param name="desc"></param>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        string OrderCode(bool desc, string field);
+
+        /// <summary>
+        /// 字段更新
         /// </summary>
         /// <param name="field"></param>
-        /// <param name="expression"></param>
+        /// <param name="value"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        string FieldCondition(string field, string expression = "=");
-
-        /// <summary>
-        /// 字段条件
-        /// </summary>
-        /// <param name="isAnd"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
-        string ConcatFieldCondition(bool isAnd, params string[] fields);
-
-        /// <summary>
-        /// 条件SQL
-        /// </summary>
-        /// <param name="fieldName"></param>
-        /// <param name="paraName"></param>
-        /// <returns></returns>
-        string Condition(string fieldName, string paraName);
-
-        /// <summary>
-        /// 条件SQL
-        /// </summary>
-        /// <param name="fieldName"></param>
-        /// <param name="paraName"></param>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        string Condition(string fieldName, string paraName, string expression);
-
-        /// <summary>
-        /// 字段条件
-        /// </summary>
-        /// <param name="isAnd"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
-        string ConcatCondition(bool isAnd, params (string field, object value)[] fields);
-
-        /// <summary>
-        /// 条件组合
-        /// </summary>
-        /// <param name="isAnd"></param>
-        /// <param name="conditions"></param>
-        /// <returns></returns>
-        string ConcatCondition(bool isAnd, params string[] conditions);
-
+        string FileUpdateSetCode(string field, object value, IList<DbParameter> parameters);
 
         #endregion
 
@@ -169,19 +140,16 @@ namespace Agebull.EntityModel.Common
         string CreatePageSql(int page, int pageSize, string order, bool desc, string condition);
 
         /// <summary>
-        ///  删除SQL
-        /// </summary>
-        /// <param name="convert"></param>
-        /// <returns></returns>
-        string CreateDeleteSql(ConditionItem convert);
-
-        /// <summary>
         /// 删除SQL
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
         string CreateDeleteSql(string condition);
 
+        /// <summary>
+        ///     物理删除数据
+        /// </summary>
+        string PhysicalDeleteSqlCode(string condition);
 
         /// <summary>
         /// 更新SQL
@@ -191,24 +159,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         string CreateUpdateSqlCode(string valueExpression, string condition);
 
-        /// <summary>
-        /// 字段更新
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="value"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        string FileUpdateSetCode(string field, object value, IList<DbParameter> parameters);
-
         #endregion
-
-        /// <summary>
-        /// 构建排序SQL片断
-        /// </summary>
-        /// <param name="desc"></param>
-        /// <param name="field"></param>
-        /// <returns></returns>
-        string OrderCode(bool desc, string field);
 
     }
 

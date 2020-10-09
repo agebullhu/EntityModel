@@ -139,17 +139,6 @@ namespace Agebull.EntityModel.MySql
         /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
         /// <returns>参数</returns>
-        public DbParameter CreateParameter(string parameterName, object value)
-        {
-            return CreateParameter(parameterName, value, ToSqlDbType(value?.GetType().Name));
-        }
-
-        /// <summary>
-        ///     生成Sql参数
-        /// </summary>
-        /// <param name="parameterName">参数名称</param>
-        /// <param name="value">参数值</param>
-        /// <returns>参数</returns>
         public static MySqlParameter CreateParameter(string parameterName, string value)
         {
             MySqlDbType type = MySqlDbType.VarString;

@@ -9,6 +9,7 @@
 #region 引用
 
 using Agebull.EntityModel.Common;
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using System;
 using System.Data;
@@ -52,44 +53,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         internal MySqlTransaction Transaction { get; set; }
 
-        /// <inheritdoc />
-        /// <summary>
-        ///     事务对象
-        /// </summary>
-        DbTransaction IDataBase.Transaction => Transaction;
-
-        /// <summary>
-        /// 开始一个事务
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> BeginTransaction()
-        {
-            if (Transaction != null)
-                return false;
-            await OpenAsync();
-            Transaction = await _connection.BeginTransactionAsync();
-            return true;
-        }
-
-        /// <summary>
-        /// 回滚事务
-        /// </summary>
-        async Task IDataBase.Rollback()
-        {
-            await Transaction?.RollbackAsync();
-            await Transaction?.DisposeAsync().AsTask();
-            Transaction = null;
-        }
-
-        /// <summary>
-        /// 提交事务
-        /// </summary>
-        async Task IDataBase.Commit()
-        {
-            await Transaction?.CommitAsync();
-            await Transaction?.DisposeAsync().AsTask();
-            Transaction = null;
-        }
         #endregion
 
         #region 连接
@@ -145,9 +108,6 @@ namespace Agebull.EntityModel.MySql
             await CloseConnection(con);
         }
 
-        #endregion
-
-        #region 连接
 
         /// <summary>
         /// 初始化连接对象
@@ -262,6 +222,15 @@ namespace Agebull.EntityModel.MySql
         #region SQL日志
 
         /// <summary>
+        /// 日志
+        /// </summary>
+        public ILogger Logger
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         ///     记录SQL日志
         /// </summary>
         /// <returns>操作的第一行第一列或空</returns>
@@ -270,6 +239,8 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public void TraceSql(DbCommand cmd)
         {
+            if (Logger == null || !Logger.IsEnabled(LogLevel.Debug))
+                return;
             StringBuilder code = new StringBuilder();
             code.AppendLine("/***************************************************************/");
             var parameters = cmd.Parameters.OfType<MySqlParameter>();
@@ -285,7 +256,7 @@ namespace Agebull.EntityModel.MySql
                     code.AppendLine($"SET ?{par.ParameterName} = '{par.Value}';");
             }
             code.AppendLine(cmd.CommandText);
-            Console.WriteLine(code.ToString());
+            Logger.LogDebug(code.ToString());
         }
 
         #endregion

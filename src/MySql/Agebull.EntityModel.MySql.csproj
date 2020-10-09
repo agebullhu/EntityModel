@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DataStateTable.cs" />
+    <Compile Remove="MysqlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Agebull.EntityModel.MySql.xml" />

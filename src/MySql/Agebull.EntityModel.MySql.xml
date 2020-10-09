@@ -40,28 +40,6 @@
             提交事务
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.ExecuteAsync(System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                对连接执行SQL 语句并返回受影响的行数。
-            </summary>
-            <param name="sql">SQL语句</param>
-            <param name="args">参数</param>
-            <returns>被影响的行数</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
-            </remarks>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.ConnectionScope.ExecuteScalarAsync(System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
-            </summary>
-            <param name="sql">SQL语句</param>
-            <param name="args">参数</param>
-            <returns>操作的第一行第一列或空</returns>
-            <remarks>
-                注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
-            </remarks>
-        </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlDataBase">
             <summary>
                 表示MySql数据库对象
@@ -85,28 +63,6 @@
         <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.Transaction">
             <summary>
                 事务对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.Agebull#EntityModel#Common#IDataBase#Transaction">
-            <inheritdoc />
-            <summary>
-                事务对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.BeginTransaction">
-            <summary>
-            开始一个事务
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.Agebull#EntityModel#Common#IDataBase#Rollback">
-            <summary>
-            回滚事务
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.Agebull#EntityModel#Common#IDataBase#Commit">
-            <summary>
-            提交事务
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.CreateConnectionScope">
@@ -185,6 +141,11 @@
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
         </member>
+        <member name="P:Agebull.EntityModel.MySql.MySqlDataBase.Logger">
+            <summary>
+            日志
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlDataBase.TraceSql(System.Data.Common.DbCommand)">
             <summary>
                 记录SQL日志
@@ -194,23 +155,12 @@
                 注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
             </remarks>
         </member>
-        <member name="T:Agebull.EntityModel.MySql.MysqlExtensions">
-            <summary>
-            数据访问提供器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MysqlExtensions.CreateDataAccess``3(System.IServiceProvider,Agebull.EntityModel.Common.DataAccessOption)">
-            <summary>
-            构造数据访问对象
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Agebull.EntityModel.MySql.MySqlSqlBuilder`1">
             <summary>
-                Sql实体访问类
+                MySql的SQL语句生成
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.DataBaseType">
+        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#DataBaseType">
             <summary>
             数据库类型
             </summary>
@@ -240,31 +190,38 @@
             驱动提供者信息
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.BuilderLoadFields">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#GetDbType(System.String)">
+            <summary>
+                得到字段的MySqlDbType类型
+            </summary>
+            <param name="field">字段名称</param>
+            <returns>参数</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderLoadFields">
             <summary>
             读取的字段
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.BuilderUpdateFields">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderUpdateFields">
             <summary>
             全量更新的字段
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.BuilderInsertSqlCode">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderInsertSqlCode">
             <summary>
             插入的代码
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.BuilderDeleteSqlCode">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderDeleteSqlCode">
             <summary>
             删除的代码
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FileUpdateSetCode(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#FileUpdateSetCode(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
             <summary>
                 生成单个字段更新的SQL
             </summary>
@@ -273,7 +230,7 @@
             <param name="parameters">参数列表</param>
             <returns>单个字段更新的SQL</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateUpdateSqlCode(System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateUpdateSqlCode(System.String,System.String)">
             <summary>
                 生成更新的SQL
             </summary>
@@ -281,14 +238,14 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateInsertSqlCode(`0)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder{TEntity}#CreateInsertSqlCode(`0)">
             <summary>
                 生成更新的SQL
             </summary>
             <param name="entity">实体</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateUpdateSqlCode(`0,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder{TEntity}#CreateUpdateSqlCode(`0,System.String)">
             <summary>
                 生成更新的SQL
             </summary>
@@ -296,12 +253,7 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FullLoadSqlCode">
-            <summary>
-                删除的SQL语句
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.PrimaryKeyCondition">
+        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#PrimaryKeyCondition">
             <summary>
                 主键的条件部分SQL
             </summary>
@@ -321,7 +273,7 @@
             <param name="condition"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateCollectSql(System.String,System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateCollectSql(System.String,System.String,System.String)">
             <summary>
                 生成汇总的SQL语句
             </summary>
@@ -330,7 +282,7 @@
             <param name="condition">汇总条件</param>
             <returns>汇总的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadValueSql(System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadValueSql(System.String,System.String)">
             <summary>
                 生成载入字段值的SQL语句
             </summary>
@@ -338,7 +290,7 @@
             <param name="condition">条件</param>
             <returns>载入字段值的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadValuesSql(System.String,Agebull.EntityModel.Common.ConditionItem)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadValuesSql(System.String,Agebull.EntityModel.Common.ConditionItem)">
             <summary>
                 生成载入值的SQL
             </summary>
@@ -346,7 +298,7 @@
             <param name="convert">条件</param>
             <returns>载入字段值的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadSql(System.String,System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadSql(System.String,System.String,System.String)">
             <summary>
                 生成载入的SQL语句
             </summary>
@@ -355,7 +307,7 @@
             <param name="limit"></param>
             <returns>载入的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreatePageSql(System.Int32,System.Int32,System.String,System.Boolean,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreatePageSql(System.Int32,System.Int32,System.String,System.Boolean,System.String)">
             <summary>
                 生成分页的SQL
             </summary>
@@ -366,90 +318,17 @@
             <param name="condition">数据条件</param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateDeleteSql(System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateDeleteSql(System.String)">
             <summary>
                 生成删除的SQL语句
             </summary>
             <param name="condition">删除条件</param>
             <returns>删除的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateDeleteSql(Agebull.EntityModel.Common.ConditionItem)">
-            <summary>
-                生成删除的SQL语句
-            </summary>
-            <param name="convert">删除条件</param>
-            <returns>删除的SQL语句</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.PhysicalDeleteSqlCode(System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#PhysicalDeleteSqlCode(System.String)">
             <summary>
                 物理删除数据
             </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FieldCondition(System.String,System.String)">
-            <summary>
-                用在条件中的字段条件
-            </summary>
-            <param name="field">字段</param>
-            <param name="expression">条件表达式</param>
-            <returns>字段条件</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ConcatCondition(System.Boolean,System.String[])">
-            <summary>
-                组合条件SQL
-            </summary>
-            <param name="isAnd">是否用AND组合</param>
-            <param name="conditions">条件</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ConcatCondition(System.Boolean,System.ValueTuple{System.String,System.Object}[])">
-            <summary>
-                连接字段条件SQL
-            </summary>
-            <param name="isAnd">是否用AND组合</param>
-            <param name="fields">生成参数的字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ConcatFieldCondition(System.Boolean,System.String[])">
-            <summary>
-                连接字段条件SQL
-            </summary>
-            <param name="isAnd">是否用AND组合</param>
-            <param name="fields">生成参数的字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#GetDbType(System.String)">
-            <summary>
-                得到字段的MySqlDbType类型
-            </summary>
-            <param name="field">字段名称</param>
-            <returns>参数</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateFieldParameter(System.String)">
-            <summary>
-                生成字段的参数
-            </summary>
-            <param name="field">生成参数的字段</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateFieldParameter(System.String,`0)">
-            <summary>
-                生成字段的参数
-            </summary>
-            <param name="field">生成参数的字段</param>
-            <param name="entity">取值的实体</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreatePimaryKeyParameter">
-            <summary>
-                生成主键字段的参数
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreatePimaryKeyParameter(System.Object)">
-            <summary>
-                生成主键字段的参数
-            </summary>
-            <param name="value">主键值</param>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreatePimaryKeyParameter(`0)">
-            <summary>
-                生成主键字段的参数
-            </summary>
-            <param name="entity">取值的实体</param>
         </member>
         <member name="T:Agebull.EntityModel.MySql.ParameterCreater">
             <summary>
@@ -489,14 +368,6 @@
             </summary>
             <param name="parameterName">参数</param>
             <param name="dbType">对应数据库的DbType，如MysqlDbType</param>
-            <returns>参数</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.Object)">
-            <summary>
-                生成Sql参数
-            </summary>
-            <param name="parameterName">参数名称</param>
-            <param name="value">参数值</param>
             <returns>参数</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.ParameterCreater.CreateParameter(System.String,System.String)">
