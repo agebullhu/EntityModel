@@ -242,7 +242,6 @@ namespace Agebull.EntityModel.MySql
             if (Logger == null || !Logger.IsEnabled(LogLevel.Debug))
                 return;
             StringBuilder code = new StringBuilder();
-            code.AppendLine("/***************************************************************/");
             var parameters = cmd.Parameters.OfType<MySqlParameter>();
             foreach (var par in parameters)
             {
