@@ -261,7 +261,7 @@ namespace Agebull.EntityModel.MySql
                 return null;
             StringBuilder sql = new StringBuilder();
             bool first = true;
-            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
+            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.ColumnName != null))
             {
                 if (data.__status.Status.ModifiedProperties[pro.Key] <= 0 || !FieldMap.ContainsKey(pro.Value.Name))
                     continue;
@@ -281,7 +281,7 @@ namespace Agebull.EntityModel.MySql
         {
             StringBuilder sql = new StringBuilder();
             bool first = true;
-            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.Featrue.HasFlag(PropertyFeatrue.Property)))
+            foreach (var pro in data.__Struct.Properties.Where(p => p.Value.ColumnName != null))
             {
                 if (!FieldMap.ContainsKey(pro.Value.Name))
                     continue;

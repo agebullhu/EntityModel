@@ -25,7 +25,7 @@ namespace Agebull.EntityModel.MySql
             if (DataUpdateHandler.IsType<TEntity>(DataUpdateHandler.TypeofIHistoryData))
             {
                 innerCode.Append($@"
-    `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = {GlobalContext.Current.User.UserId},
+    `{table.FieldDictionary[nameof(IHistoryData.LastReviserId)]}` = '{GlobalContext.Current.User.UserId}',
     `{table.FieldDictionary[nameof(IHistoryData.LastModifyDate)]}` = Now()");
     //            var name = GlobalContext.Current.User.NickName?.Replace('\'', '’');
     //            innerCode.Append($@"

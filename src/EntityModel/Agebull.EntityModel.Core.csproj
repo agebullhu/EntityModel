@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.Core</AssemblyTitle>
-    <Version>4.0.1.5</Version>
+    <Version>4.0.1.9</Version>
     <!--monoandroid60;xamarinios10-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
@@ -93,6 +93,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.15" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.28" />
   </ItemGroup>
 </Project>
