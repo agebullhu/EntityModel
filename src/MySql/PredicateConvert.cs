@@ -326,29 +326,24 @@ namespace Agebull.EntityModel.MySql
                 return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
             }
 
-            if (expression.Method.IsStatic)
+            if (expression.Method.Name == nameof(string.Contains))
             {
-                if (expression.Method.DeclaringType == typeof(Math))
+                string value;
+                string field1;
+                if (expression.Object == null)//扩展方法
                 {
-                    switch (expression.Method.Name)
-                    {
-                        case nameof(Math.Abs):
-                            if (TryGetField(expression.Arguments[0], out var field2))
-                                return $"ABS({field2})";
-                            break;
-                    };
+                    field1 = GetField(expression.Arguments[1]);
+                    value = ExpressionSql(expression.Arguments[0]);
                 }
-                return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
-            }
-            if (expression.Method.DeclaringType == typeof(EntityProperty))
-            {
-                var property = GetValue<EntityProperty>(expression.Object);
-                return expression.Method.Name switch
+                else
                 {
-                    nameof(EntityProperty.IsEquals) => $"`{property.FieldName}` = {ExpressionSql(expression.Arguments[0])}",
-                    nameof(EntityProperty.Expression) => $"`{property.FieldName}` {GetValue(expression.Arguments[0])} {ExpressionSql(expression.Arguments[1])}",
-                    _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
-                };
+                    field1 = GetArguments(expression.Arguments);
+                    value = ExpressionSql(expression.Object);
+                }
+
+                if (!string.IsNullOrWhiteSpace(field1) && !string.IsNullOrWhiteSpace(value))
+                    return $"{field1} IN ({value})";
+                return null;
             }
             if (expression.Method.DeclaringType == typeof(Ex))
             {
@@ -362,6 +357,26 @@ namespace Agebull.EntityModel.MySql
                     nameof(Ex.Condition) => $"{GetValue<string>(expression.Arguments[0])}",
                     nameof(Ex.IsNotNull) => $"{GetField(expression.Arguments[0])} IS NOT NULL",
                     nameof(Ex.IsNull) => $"{GetField(expression.Arguments[0])} IS NULL",
+                    _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                };
+            }
+            if (expression.Method.DeclaringType == typeof(Math))
+            {
+                switch (expression.Method.Name)
+                {
+                    case nameof(Math.Abs):
+                        if (TryGetField(expression.Arguments[0], out var field2))
+                            return $"ABS({field2})";
+                        break;
+                };
+            }
+            if (expression.Method.DeclaringType == typeof(EntityProperty))
+            {
+                var property = GetValue<EntityProperty>(expression.Object);
+                return expression.Method.Name switch
+                {
+                    nameof(EntityProperty.IsEquals) => $"`{property.FieldName}` = {ExpressionSql(expression.Arguments[0])}",
+                    nameof(EntityProperty.Expression) => $"`{property.FieldName}` {GetValue(expression.Arguments[0])} {ExpressionSql(expression.Arguments[1])}",
                     _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                 };
             }
@@ -397,27 +412,7 @@ namespace Agebull.EntityModel.MySql
                     };
                 }
             }
-
-            if (expression.Method.Name == nameof(string.Contains))
-            {
-                string value;
-                string field1;
-                if (expression.Object == null)//扩展方法
-                {
-                    field1 = GetField(expression.Arguments[1]);
-                    value = ExpressionSql(expression.Arguments[0]);
-                }
-                else
-                {
-                    field1 = GetArguments(expression.Arguments);
-                    value = ExpressionSql(expression.Object);
-                }
-
-                if (!string.IsNullOrWhiteSpace(field1) && !string.IsNullOrWhiteSpace(value))
-                    return $"{field1} IN ({value})";
-                return null;
-            }
-            return CheckDynamicValue(GetValue(expression));
+            return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
         }
 
         /// <summary>

@@ -907,6 +907,61 @@
                 未知结果
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Vue.DataItem">
+            <summary>
+            简单的数据节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Text">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.TreeNode">
+            <summary>
+            树节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Label">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Tag">
+            <summary>
+            扩展标签
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.IsLeaf">
+            <summary>
+            是否有子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Children">
+            <summary>
+            子级
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Excel.ExcelExporter`2">
             <summary>
                 Excel导出类
