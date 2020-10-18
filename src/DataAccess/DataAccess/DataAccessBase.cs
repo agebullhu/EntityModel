@@ -26,6 +26,11 @@ namespace Agebull.EntityModel.Common
         #region 构造
 
         /// <summary>
+        /// 实体操作
+        /// </summary>
+        public IEntityOperator<TEntity> EntityOperator => Provider.EntityOperator;
+
+        /// <summary>
         /// 自动构建数据库对象
         /// </summary>
         public IDataOperator<TEntity> DataOperator => Provider.DataOperator;
