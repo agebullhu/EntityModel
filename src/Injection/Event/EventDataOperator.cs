@@ -34,7 +34,7 @@ namespace Agebull.EntityModel.Events
         {
             if (!Provider.Option.CanRaiseEvent)
                 return Task.CompletedTask;
-            return OnStatusChanged(operatorType, EntityEventValueType.EntityJson, entity);
+            return OnEntityCommandSuccess(operatorType, EntityEventValueType.EntityJson, entity);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Agebull.EntityModel.Events
         {
             if (!Provider.Option.CanRaiseEvent)
                 return Task.CompletedTask;
-            return OnStatusChanged(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
+            return OnEntityCommandSuccess(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
         }
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace Agebull.EntityModel.Events
         /// 如果内容为实体,使用JSON序列化,
         /// 如果为批量操作,内容为QueryCondition的JSON序列化
         /// </remarks>
-        async Task OnStatusChanged(DataOperatorType oType, EntityEventValueType valueType, object val)
+        async Task OnEntityCommandSuccess(DataOperatorType oType, EntityEventValueType valueType, object val)
         {
-            var service = Provider.ServiceProvider.GetService<IEntityEventProxy>();
+            var service = Provider.ServiceProvider.GetService<IEntityModelEventProxy>();
             if (service == null)
                 return;
             string value;
@@ -103,7 +103,7 @@ namespace Agebull.EntityModel.Events
                     break;
             }
 
-            await service.OnStatusChanged(Provider.Option.DataStruct.ProjectName, Provider.Option.DataStruct.EntityName, oType, valueType, value);
+            await service.OnEntityCommandSuccess(Provider.Option.DataStruct.ProjectName, Provider.Option.DataStruct.EntityName, oType, valueType, value);
         }
         #endregion
     }

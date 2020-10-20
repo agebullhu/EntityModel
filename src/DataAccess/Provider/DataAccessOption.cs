@@ -10,6 +10,8 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public class DataAccessOption
     {
+        #region 配置项
+
         /// <summary>
         /// 是否查询
         /// </summary>
@@ -69,7 +71,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 可读写的属性
         /// </summary>
-        public EntityProperty[] ReadPproperties { get; protected set; }
+        public List<EntityProperty> ReadProperties { get; protected set; }
 
         /// <summary>
         ///     属性字典
@@ -152,11 +154,14 @@ namespace Agebull.EntityModel.Common
         /// 数据库类型
         /// </summary>
         public DataBaseType DataBaseType => SqlBuilder.DataBaseType;
+        #endregion
+
+        #region 初始化
 
         bool _isInitiated;
 
         /// <summary>
-        /// 构造
+        /// 初始化
         /// </summary>
         public void Initiate()
         {
@@ -175,8 +180,7 @@ namespace Agebull.EntityModel.Common
 
                 FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
             }
-
-
+            ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
             LoadFields ??= SqlBuilder.BuilderLoadFields();
             if (!IsQuery)
             {
@@ -189,9 +193,34 @@ namespace Agebull.EntityModel.Common
             {
                 InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
             }
-            ReadPproperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToArray();
 
         }
+        /// <summary>
+        /// 设置字段
+        /// </summary>
+        /// <param name="fields"></param>
+        public void Select(params string[] fields)
+        {
+            ReadProperties = new List<EntityProperty>();
+            foreach(var field in fields)
+            {
+                if (PropertyMap.TryGetValue(field, out var property))
+                    ReadProperties.Add(property);
+            }
+            LoadFields = SqlBuilder.BuilderLoadFields();
+        }
+
+        /// <summary>
+        /// 设置字段
+        /// </summary>
+        /// <param name="fields"></param>
+        public void SelectAll()
+        {
+            ReadProperties = Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
+            LoadFields = SqlBuilder.BuilderLoadFields();
+        }
+
+        #endregion
 
         #region 迭代
 

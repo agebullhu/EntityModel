@@ -4,96 +4,6 @@
         <name>Agebull.EntityModel.BusinessLogic</name>
     </assembly>
     <members>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessCommandType">
-            <summary>
-            逻辑内部命令类型
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.SetState">
-            <summary>
-            无原因修改状态
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.AddNew">
-            <summary>
-            新增
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Update">
-            <summary>
-            更新
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Enable">
-            <summary>
-            启用
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Disable">
-            <summary>
-            禁用
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Discard">
-            <summary>
-            废弃
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Delete">
-            <summary>
-            删除
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Reset">
-            <summary>
-            重置
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Lock">
-            <summary>
-            锁定
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Unlock">
-            <summary>
-            解锁
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Submit">
-            <summary>
-            提交
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Pullback">
-            <summary>
-            拉回
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Back">
-            <summary>
-            退
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Pass">
-            <summary>
-            通过
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Deny">
-            <summary>
-            否决
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.ReAudit">
-            <summary>
-            重新编辑
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.End">
-            <summary>
-            结束
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2">
             <summary>
             业务逻辑对象基类
@@ -217,46 +127,6 @@
             <param name="isAdd">是否为新增</param>
             <returns>如果为否将阻止后续操作</returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.LastSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PrepareSaveByUser(`0,System.Boolean)">
-            <summary>
-                被用户编辑的数据的保存前操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.LastSavedByUser(`0,System.Boolean)">
-            <summary>
-                被用户编辑的数据的保存前操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnSaving(`0,System.Boolean)">
-            <summary>
-                保存前的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Save(`0)">
             <summary>
                 新增
@@ -272,10 +142,21 @@
                 更新对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnSaved(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PrepareSaveByUser(`0,System.Boolean)">
             <summary>
-                更新对象
+                被用户编辑的数据的保存前操作
             </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.SavedByUser(`0,System.Boolean)">
+            <summary>
+                被用户编辑的数据的保存前操作
+            </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Delete(System.Collections.Generic.IEnumerable{`1})">
             <summary>
@@ -297,33 +178,22 @@
                 删除对象操作
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PrepareDelete(`1)">
+        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.unityStateChanged">
             <summary>
-                删除对象前置处理
+            是否统一处理状态变化
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnDeleted(`1)">
-            <summary>
-                删除对象后置处理
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnInnerCommand(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
             <summary>
                 内部命令执行完成后的处理
             </summary>
             <param name="data">数据</param>
+            <param name="id">数据主键</param>
             <param name="cmd">命令</param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnStateChanged(`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
             <summary>
                 内部命令执行完成后的处理
-            </summary>
-            <param name="id">数据</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnStateChanged(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                状态改变后的统一处理
             </summary>
             <param name="data">数据</param>
             <param name="cmd">命令</param>
@@ -454,16 +324,10 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.PrepareDelete(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoDelete(`1)">
             <summary>
                 删除对象前置处理
             </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ResetState(`1)">
-            <summary>
-                重置数据状态
-            </summary>
-            <param name="id"></param>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Reset(`1)">
             <summary>
@@ -483,11 +347,6 @@
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Enable(`1)">
             <summary>
                 启用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SaveAuditData(`0)">
-            <summary>
-                审核通过
             </summary>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPassInner(`0)">
@@ -600,13 +459,6 @@
             </summary>
             <param name="data"></param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoUnAudit(`0)">
-            <summary>
-                执行反审核的扩展流程
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnUnAudited(`0)">
             <summary>
                 执行反审核完成后
@@ -614,16 +466,9 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoSubmit(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnSubmit(`0)">
             <summary>
                 提交审核
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoBack(`0)">
-            <summary>
-                退回重做
             </summary>
             <param name="data"></param>
             <returns></returns>
@@ -649,26 +494,22 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoAuditDeny(`0)">
-            <summary>
-                执行审核的扩展流程
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoAuditPass(`0)">
-            <summary>
-                执行审核的扩展流程
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnAuditPassed(`0)">
             <summary>
                 执行审核的扩展流程
             </summary>
             <param name="data"></param>
             <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ResetStateFileSqlCode(`0)">
+            <summary>
+                重置状态的SQL语句
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SaveAuditData(`0)">
+            <summary>
+                审核通过
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`1">
             <summary>
@@ -691,54 +532,10 @@
             <param name="isAdd">是否为新增</param>
             <returns>如果为否将阻止后续操作</returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.PrepareDelete(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DoDelete(`1)">
             <summary>
                 删除对象前置处理
             </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.OnDeleted(`1)">
-            <summary>
-                删除对象后置处理
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DoDelete(`1)">
-            <summary>
-                删除对象操作
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.LastSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.unityStateChanged">
-            <summary>
-            是否统一处理状态变化
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.OnStateChanged(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-            </summary>
-            <param name="data">数据</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.OnStateChanged(`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                内部命令执行完成后的处理
-            </summary>
-            <param name="id">数据</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DoStateChanged(`0)">
-            <summary>
-                状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
         </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Reset(`1)">
             <summary>
@@ -766,17 +563,12 @@
                 修改状态
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DeleteSqlCode">
-            <summary>
-                删除的SQL语句
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.ResetStateFileSqlCode(System.Int32,System.Int32)">
-            <summary>
-                重置状态的SQL语句
-            </summary>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,`1)">
+            <summary>
+            修改状态
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
             修改状态
             </summary>

@@ -69,7 +69,7 @@ namespace Agebull.EntityModel.MySql
         {
             var code = new StringBuilder();
             bool first = true;
-            Option.FroeachDbProperties(ReadWriteFeatrue.Read, pro =>
+            foreach (var pro in Option.ReadProperties)
             {
                 if (first)
                     first = false;
@@ -78,9 +78,10 @@ namespace Agebull.EntityModel.MySql
                 code.Append('`');
                 code.Append(pro.FieldName);
                 code.Append('`');
-            });
+            };
             return code.ToString();
         }
+
         /// <summary>
         /// 全量更新的字段
         /// </summary>
@@ -247,7 +248,8 @@ namespace Agebull.EntityModel.MySql
             if (entity is IEditStatus status && status.EditStatusRedorder != null && !status.EditStatusRedorder.IsSetFullModify)
             {
                 var code = new List<string>();
-                Option.FroeachDbProperties(pro =>
+                var properties = Option.Properties;
+                Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
                 {
                     if (pro.Entity == Option.DataStruct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
                         code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");
@@ -473,7 +475,7 @@ FROM {Option.ReadTableName}{condition};";
 
         ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda) => PredicateConvert.Convert(this, Option, lambda);
 
-        ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda)  => PredicateConvert.Convert(this, Option, lambda);
+        ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda) => PredicateConvert.Convert(this, Option, lambda);
 
         #endregion
     }

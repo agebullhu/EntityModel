@@ -47,98 +47,18 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override async Task<bool> PrepareDelete(TPrimaryKey id)
-        {
-            if (await Access.AnyAsync(p => p.Id.Equals(id) && p.DataState != DataStateType.Delete))
-                return await base.PrepareDelete(id);
-            Context.LastMessage = "数据已锁定";
-            Context.LastState = Context.ArgumentError;
-            return false;
-        }
-
-        /// <summary>
-        ///     删除对象后置处理
-        /// </summary>
-        protected override async Task OnDeleted(TPrimaryKey id)
-        {
-            await OnStateChanged(id, BusinessCommandType.Delete);
-            await base.OnDeleted(id);
-        }
-
-        /// <summary>
-        ///     删除对象操作
-        /// </summary>
         protected override async Task<bool> DoDelete(TPrimaryKey id)
         {
+            if (!await Access.AnyAsync(p => p.Id.Equals(id) && p.DataState != DataStateType.Delete))
+            {
+                Context.LastMessage = "数据已锁定";
+                Context.LastState = Context.ArgumentError;
+                return false;
+            }
             if (await Access.AnyAsync(p => p.DataState == DataStateType.Delete && p.Id.Equals(id)))
                 return await Access.PhysicalDeleteAsync(id);
             return await Access.DeletePrimaryKeyAsync(id);
         }
-
-        #endregion
-
-        #region 数据状态修改
-
-        /// <summary>
-        ///     保存完成后的操作
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="isAdd">是否为新增</param>
-        /// <returns>如果为否将阻止后续操作</returns>
-        protected override async Task<bool> LastSaved(TData data, bool isAdd)
-        {
-            await OnStateChanged(data, isAdd ? BusinessCommandType.AddNew : BusinessCommandType.Update);
-            return await base.LastSaved(data, isAdd);
-        }
-
-        /// <summary>
-        /// 是否统一处理状态变化
-        /// </summary>
-        protected bool unityStateChanged = false;
-
-        /// <summary>
-        ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="cmd">命令</param>
-        protected override async Task OnStateChanged(TData data, BusinessCommandType cmd)
-        {
-            if (!unityStateChanged)
-                return;
-            var old = Access.Option.NoInjection;
-            Access.Option.NoInjection = true;
-            try
-            {
-                await DoStateChanged(data);
-                await OnInnerCommand(data, cmd);
-            }
-            finally
-            {
-                Access.Option.NoInjection = old;
-            }
-        }
-
-        /// <summary>
-        ///     内部命令执行完成后的处理
-        /// </summary>
-        /// <param name="id">数据</param>
-        /// <param name="cmd">命令</param>
-        protected sealed override async Task OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
-        {
-            if (!unityStateChanged)
-                return;
-            var data = await Access.LoadByPrimaryKeyAsync(id);
-            if (data == null)
-                return;
-            await OnStateChanged(data, cmd);
-        }
-
-        /// <summary>
-        ///     状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Task DoStateChanged(TData data) => Task.CompletedTask;
 
         #endregion
 
@@ -152,7 +72,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!await ResetState(id))
                 return false;
-            await OnStateChanged(id, BusinessCommandType.SetState);
+            await OnCommandSuccess(default, id, BusinessCommandType.SetState);
             return true;
         }
 
@@ -187,79 +107,62 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected async Task<bool> SetDataState(TPrimaryKey id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
         {
-            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
             if (filter != null && !await Access.AnyAsync(filter))
                 return false;
-            if (filter == null && !await Access.ExistPrimaryKeyAsync(id))
-                return false;
             await SetState(state, isFreeze, id);
-            await OnStateChanged(id, BusinessCommandType.SetState);
-            await connectionScope.Commit();
+            var cmd = state switch
+            {
+                DataStateType.Enable => BusinessCommandType.Enable,
+                DataStateType.Disable => BusinessCommandType.Disable,
+                DataStateType.Discard => BusinessCommandType.Discard,
+                DataStateType.None => BusinessCommandType.Reset,
+                _ => BusinessCommandType.SetState,
+            };
+            if (cmd != BusinessCommandType.SetState)
+                await OnCommandSuccess(default, id, cmd);
             return true;
         }
 
         #endregion
 
-        #region MyRegion
-
-        /// <summary>
-        ///     删除的SQL语句
-        /// </summary>
-        protected string DeleteSqlCode => $@"UPDATE {Access.Option.ReadTableName} SET 
-`{Access.Option.FieldMap[nameof(IStateData.DataState)]}`=255";
-
-        /// <summary>
-        ///     重置状态的SQL语句
-        /// </summary>
-        protected string ResetStateFileSqlCode(int state = 0, int isFreeze = 0) => $@"
-{Access.Option.FieldMap[nameof(IStateData.DataState)]}={state},
-{Access.Option.FieldMap[nameof(IStateData.IsFreeze)]}={isFreeze}";
-
+        #region 修改状态
 
         /// <summary>
         /// 修改状态
         /// </summary>
-        protected virtual async Task<bool> SetState(DataStateType state, bool isFreeze, TPrimaryKey id)
+        protected async Task<bool> SetState(DataStateType state, bool isFreeze, TPrimaryKey id)
         {
-            var para = Access.ParameterCreater.CreateParameter(Access.Option.PrimaryKey,
-                id,
-                Access.SqlBuilder.GetDbType(Access.Option.PrimaryKey));
-
-
-            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
-SET {ResetStateFileSqlCode((int)state, isFreeze ? 1 : 0)} 
-WHERE {Access.SqlBuilder.PrimaryKeyCondition}";
-            return await Access.DataBase.ExecuteAsync(sql, para) == 1;
+            return await Access.SetValueAsync(id,
+                (nameof(IStateData.DataState), state),
+                (nameof(IStateData.IsFreeze), isFreeze)) == 1;
         }
+
+        /// <summary>
+        /// 修改状态
+        /// </summary>
+        protected async Task<bool> SetState(DataStateType state, bool isFreeze, Expression<Func<TData, bool>> lambda)
+        {
+            return await Access.SetValueAsync(lambda,
+                (nameof(IStateData.DataState), state),
+                (nameof(IStateData.IsFreeze), isFreeze)) == 1;
+        }
+
 
 
         /// <summary>
         /// 重置状态
         /// </summary>
-        protected virtual async Task<bool> ResetState(TPrimaryKey id)
+        public Task<bool> ResetState(TPrimaryKey id)
         {
-            var para = Access.ParameterCreater.CreateParameter(Access.Option.PrimaryKey,
-                id,
-                Access.SqlBuilder.GetDbType(Access.Option.PrimaryKey));
-
-            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
-SET {ResetStateFileSqlCode()} 
-WHERE {Access.SqlBuilder.PrimaryKeyCondition}";
-
-            return await Access.DataBase.ExecuteAsync(sql, para) == 1;
+            return SetState(DataStateType.None, false, id);
         }
 
         /// <summary>
         /// 重置状态
         /// </summary>
-        protected virtual async Task<bool> ResetState(Expression<Func<TData, bool>> lambda)
+        public Task<bool> ResetState(Expression<Func<TData, bool>> lambda)
         {
-            var convert = Access.SqlBuilder.Compile(lambda);
-            var sql = $@"UPDATE `{Access.Option.ReadTableName}` 
-SET {ResetStateFileSqlCode()} 
-WHERE {convert.ConditionSql}";
-
-            return await Access.DataBase.ExecuteAsync(sql, convert.Parameters) > 0;
+            return SetState(DataStateType.None, false, lambda);
         }
 
         #endregion

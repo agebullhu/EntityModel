@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using DbOperatorContext = Agebull.EntityModel.Common.DbOperatorContext<System.Data.Common.DbCommand>;
@@ -621,6 +622,20 @@ namespace Agebull.EntityModel.Common
         public async Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
         {
             return await SetValueAsync(condition, null, fields);
+        }
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段与值组合</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        public Task<int> SetValueAsync(object key, params (string field, object value)[] fields)
+        {
+            return SetValueAsync(
+                SqlBuilder.PrimaryKeyCondition, 
+                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)), 
+                fields);
         }
 
         /// <summary>

@@ -223,7 +223,7 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         async Task OnStatusChanged(DataOperatorType oType, EntityEventValueType valueType, object val)
         {
-            var services = Provider.ServiceProvider.GetServices<IEntityEventProxy>().ToArray();
+            var services = Provider.ServiceProvider.GetServices<IEntityModelEventProxy>().ToArray();
             if (services.Length == 0)
                 return;
             string value;
@@ -262,7 +262,7 @@ namespace Agebull.EntityModel.Common
                     break;
             }
             foreach (var service in services)
-                await service.OnStatusChanged(Provider.Option.DataStruct.ProjectName,
+                await service.OnEntityCommandSuccess(Provider.Option.DataStruct.ProjectName,
                     Provider.Option.DataStruct.EntityName, oType, valueType, value);
         }
         #endregion

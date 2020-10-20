@@ -226,25 +226,12 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     删除对象前置处理
         /// </summary>
-        protected override async Task<bool> PrepareDelete(TPrimaryKey id)
+        protected override async Task<bool> DoDelete(TPrimaryKey id)
         {
             if (await Access.AnyAsync(p => p.Id.Equals(id) && p.AuditState == AuditStateType.None))
-                return await base.PrepareDelete(id);
+                return await base.DoDelete(id);
             Context.LastMessage = "仅未进行任何审核操作的数据可以被删除";
             return false;
-        }
-
-        /// <summary>
-        ///     重置数据状态
-        /// </summary>
-        /// <param name="id"></param>
-        protected override Task<bool> ResetState(TPrimaryKey id)
-        {
-
-            //data.AuditState = AuditStateType.None;
-            //data.AuditDate = DateTime.MinValue;
-            //data.AuditorId = null;
-            return base.ResetState(id);
         }
 
         /// <summary>
@@ -290,13 +277,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #region 基本实现
 
-        /// <summary>
-        ///     审核通过
-        /// </summary>
-        protected Task<bool> SaveAuditData(TData data)
-        {
-            return Access.UpdateAsync(data);
-        }
+
         /// <summary>
         ///     审核通过
         /// </summary>
@@ -336,7 +317,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
             await SetAuditState(data, AuditStateType.None, DataStateType.None);
             await SaveAuditData(data);
-            await OnStateChanged(data, BusinessCommandType.Pullback);
+            await OnCommandSuccess(data, default, BusinessCommandType.Pullback);
             return true;
         }
 
@@ -362,12 +343,10 @@ namespace Agebull.EntityModel.BusinessLogic
                     return false;
                 }
                 await SetAuditState(data, AuditStateType.Pass, DataStateType.Enable);
-                await DoAuditPass(data);
             }
             else
             {
-                await SetAuditState(data, AuditStateType.Deny, DataStateType.None);
-                await DoAuditDeny(data);
+                await SetAuditState(data, AuditStateType.Deny, DataStateType.Discard);
             }
             await SaveAuditData(data);
             if (pass)
@@ -378,7 +357,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 await OnAuditDenyed(data);
             }
-            await OnStateChanged(data, pass ? BusinessCommandType.Pass : BusinessCommandType.Deny);
+            await OnCommandSuccess(data, default, pass ? BusinessCommandType.Pass : BusinessCommandType.Deny);
             return true;
         }
 
@@ -393,10 +372,9 @@ namespace Agebull.EntityModel.BusinessLogic
                 return false;
             }
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
-            await DoUnAudit(data);
             await SaveAuditData(data);
             await OnUnAudited(data);
-            await OnStateChanged(data, BusinessCommandType.ReAudit);
+            await OnCommandSuccess(data, default, BusinessCommandType.ReAudit);
             return true;
         }
 
@@ -412,11 +390,10 @@ namespace Agebull.EntityModel.BusinessLogic
                 Context.LastMessage = BackMessage;
                 return false;
             }
-            await DoBack(data);
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
             await SaveAuditData(data);
             await OnBacked(data);
-            await OnStateChanged(data, BusinessCommandType.Back);
+            await OnCommandSuccess(data, default, BusinessCommandType.Back);
             return true;
         }
 
@@ -451,10 +428,10 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 return false;
             }
-            await DoSubmit(data);
             await SetAuditState(data, AuditStateType.Submit, DataStateType.None);
             await SaveAuditData(data);
-            await OnStateChanged(data, BusinessCommandType.Submit);
+            await OnSubmit(data);
+            await OnCommandSuccess(data, default, BusinessCommandType.Submit);
             return true;
         }
 
@@ -492,11 +469,12 @@ namespace Agebull.EntityModel.BusinessLogic
             data.DataState = state;
             return OnAuditStateChanged(data);
         }
+
         /// <summary>
         ///     设置审核状态
         /// </summary>
         /// <param name="data"></param>
-        protected virtual Task OnAuditStateChanged(TData data) => Task.CompletedTask;
+        protected virtual Task OnAuditStateChanged(TData data) => Task.FromResult(true);
 
         /// <summary>
         ///     能否通过审核)的判断
@@ -612,17 +590,6 @@ namespace Agebull.EntityModel.BusinessLogic
         protected virtual Task AuditPrepare(TData data) => Task.CompletedTask;
 
         /// <summary>
-        ///     执行反审核的扩展流程
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Task DoUnAudit(TData data)
-        {
-            data.DataState = DataStateType.None;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
         ///     执行反审核完成后
         /// </summary>
         /// <param name="data"></param>
@@ -635,18 +602,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected virtual Task DoSubmit(TData data) => Task.CompletedTask;
-
-        /// <summary>
-        ///     退回重做
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Task DoBack(TData data)
-        {
-            data.DataState = DataStateType.None;
-            return Task.CompletedTask;
-        }
+        protected virtual Task OnSubmit(TData data) => Task.CompletedTask;
 
         /// <summary>
         ///     退回完成
@@ -677,30 +633,41 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected virtual Task DoAuditDeny(TData data)
-        {
-            data.DataState = DataStateType.Discard;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        ///     执行审核的扩展流程
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Task DoAuditPass(TData data)
-        {
-            data.DataState = DataStateType.Enable;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        ///     执行审核的扩展流程
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
         protected virtual Task OnAuditPassed(TData data) => Task.CompletedTask;
 
+        #endregion
+
+        #region 数据库写入
+
+        /// <summary>
+        ///     重置状态的SQL语句
+        /// </summary>
+        protected string ResetStateFileSqlCode(TData data) => $@"";
+
+        /// <summary>
+        ///     审核通过
+        /// </summary>
+        async Task<bool> SaveAuditData(TData data)
+        {
+            switch (data.AuditState)
+            {
+                case AuditStateType.Pass:
+                case AuditStateType.Deny:
+                    return await Access.SetValueAsync(data.Id,
+                        (nameof(IAuditData.Auditor), data.Auditor),
+                        (nameof(IAuditData.AuditorId), data.AuditorId),
+                        (nameof(IAuditData.AuditState), data.AuditState),
+                        (nameof(IAuditData.AuditDate), data.AuditDate),
+                        (nameof(IStateData.DataState), data.DataState),
+                        (nameof(IStateData.IsFreeze), data.IsFreeze)) == 1;
+            }
+            return await Access.SetValueAsync(data.Id,
+                (nameof(IAuditData.AuditState), data.AuditState),
+                (nameof(IStateData.DataState), data.DataState),
+                (nameof(IStateData.IsFreeze), data.IsFreeze)) == 1;
+
+
+        }
         #endregion
     }
 

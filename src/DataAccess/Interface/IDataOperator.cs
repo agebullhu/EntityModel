@@ -43,7 +43,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">读取数据的实体</param>
         Task LoadEntity(DbDataReader reader, TEntity entity)
         {
-            foreach (var pro in Provider.Option.ReadPproperties)
+            foreach (var pro in Provider.Option.ReadProperties)
             {
                 var val = reader.GetValue(pro.FieldName);
                 if (val == null || val == DBNull.Value)
@@ -68,7 +68,7 @@ namespace Agebull.EntityModel.Common
         {
             cmd.Parameters.Clear();
 
-            foreach (var pro in Provider.Option.ReadPproperties)
+            foreach (var pro in Provider.Option.ReadProperties)
             {
                 cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName,
                             Provider.EntityOperator.GetValue(entity, pro.PropertyName),

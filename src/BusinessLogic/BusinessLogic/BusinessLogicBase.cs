@@ -9,6 +9,7 @@
 #region 引用
 
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using Agebull.EntityModel.Excel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -302,23 +303,93 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <returns>如果为否将阻止后续操作</returns>
         protected virtual async Task<bool> PrepareSave(TData data, bool isAdd)
         {
-            if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsFromClient && !await PrepareSaveByUser(data, isAdd))
+            if (data is IEditStatus status && status.EditStatusRedorder != null &&
+                status.EditStatusRedorder.IsFromClient && !await PrepareSaveByUser(data, isAdd))
                 return false;
-            return await OnSaving(data, isAdd);
+            return true;
+        }
+
+
+        /// <summary>
+        ///     新增
+        /// </summary>
+        public virtual Task<bool> Save(TData data)
+        {
+            return Equals(data.Id, default) ? AddNew(data) : Update(data);
         }
 
         /// <summary>
-        ///     保存完成后的操作
+        ///     新增
         /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="isAdd">是否为新增</param>
-        /// <returns>如果为否将阻止后续操作</returns>
-        protected virtual async Task<bool> LastSaved(TData data, bool isAdd)
+        public virtual async Task<bool> AddNew(TData data)
         {
-            if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsFromClient && !await LastSavedByUser(data, isAdd))
+            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
+            await connectionScope.BeginTransaction();
+            if (!await CanSave(data, true))
+            {
                 return false;
-            return await OnSaved(data, isAdd);
+            }
+
+            if (!await PrepareSave(data, true))
+            {
+                return false;
+            }
+
+            if (!(data is IEditStatus status) || status.EditStatusRedorder == null)
+            {
+                if (!await Access.InsertAsync(data))
+                    return false;
+            }
+            else
+            {
+                if (status.EditStatusRedorder.IsExist)
+                {
+                    if (!await Access.UpdateAsync(data))
+                        return false;
+                }
+                else if (!await Access.InsertAsync(data))
+                    return false;
+                if (status.EditStatusRedorder.IsFromClient && !await SavedByUser(data, true))
+                    return false;
+            }
+
+            await connectionScope.Commit();
+
+            await OnCommandSuccess(data, default, BusinessCommandType.AddNew);
+            return true;
         }
+
+        /// <summary>
+        ///     更新对象
+        /// </summary>
+        public virtual async Task<bool> Update(TData data)
+        {
+            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
+            await connectionScope.BeginTransaction();
+            if (!await CanSave(data, false))
+            {
+                return false;
+            }
+            if (!await PrepareSave(data, false))
+            {
+                return false;
+            }
+            if (!await Access.UpdateAsync(data))
+                return false;
+            if (data is IEditStatus status && status.EditStatusRedorder != null)
+            {
+                if (status.EditStatusRedorder.IsFromClient && !await SavedByUser(data, true))
+                    return false;
+            }
+            await connectionScope.Commit();
+
+            await OnCommandSuccess(data, default, BusinessCommandType.Update);
+            return true;
+        }
+
+        #endregion
+
+        #region 用户提交数据扩展处理
 
         /// <summary>
         ///     被用户编辑的数据的保存前操作
@@ -337,110 +408,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="data">数据</param>
         /// <param name="isAdd">是否为新增</param>
         /// <returns>如果为否将阻止后续操作</returns>
-        protected virtual Task<bool> LastSavedByUser(TData data, bool isAdd)
+        protected virtual Task<bool> SavedByUser(TData data, bool isAdd)
         {
             return Task.FromResult(true);
         }
-
-        /// <summary>
-        ///     保存前的操作
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="isAdd">是否为新增</param>
-        /// <returns>如果为否将阻止后续操作</returns>
-        protected virtual Task<bool> OnSaving(TData data, bool isAdd)
-        {
-            return Task.FromResult(true);
-        }
-
-        /// <summary>
-        ///     保存完成后的操作
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="isAdd">是否为新增</param>
-        /// <returns>如果为否将阻止后续操作</returns>
-        protected virtual Task<bool> OnSaved(TData data, bool isAdd)
-        {
-            return Task.FromResult(true);
-        }
-
-        /// <summary>
-        ///     新增
-        /// </summary>
-        public virtual Task<bool> Save(TData data)
-        {
-            return Equals(data.Id, default) ? AddNew(data) : Update(data);
-        }
-
-        /// <summary>
-        ///     新增
-        /// </summary>
-        public virtual async Task<bool> AddNew(TData data)
-        {
-            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
-            await connectionScope.BeginTransaction();
-            {
-                if (!await CanSave(data, true))
-                {
-                    return false;
-                }
-
-                if (!await PrepareSave(data, true))
-                {
-                    return false;
-                }
-
-                if (data is IEditStatus status && status.EditStatusRedorder != null && status.EditStatusRedorder.IsExist)
-                {
-                    if (!await Access.UpdateAsync(data))
-                        return false;
-                }
-                else if (!await Access.InsertAsync(data))
-                    return false;
-
-                if (!await OnSaved(data, BusinessCommandType.AddNew))
-                    return false;
-            }
-            await connectionScope.Commit();
-            return true;
-        }
-
-        /// <summary>
-        ///     更新对象
-        /// </summary>
-        public virtual async Task<bool> Update(TData data)
-        {
-            await using var connectionScope = await Access.DataBase.CreateConnectionScope();
-            await connectionScope.BeginTransaction();
-            {
-                if (!await CanSave(data, false))
-                {
-                    return false;
-                }
-                if (!await PrepareSave(data, false))
-                {
-                    return false;
-                }
-                if (!await Access.UpdateAsync(data))
-                    return false;
-                if (!await OnSaved(data, BusinessCommandType.Update))
-                    return false;
-            }
-            await connectionScope.Commit();
-            return true;
-        }
-
-        /// <summary>
-        ///     更新对象
-        /// </summary>
-        private async Task<bool> OnSaved(TData data, BusinessCommandType type)
-        {
-            if (!await LastSaved(data, BusinessCommandType.AddNew == type))
-                return false;
-            await OnStateChanged(data, type);
-            return true;
-        }
-
         #endregion
 
         #region 删除
@@ -452,16 +423,13 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             await using var connectionScope = await Access.DataBase.CreateConnectionScope();
             await connectionScope.BeginTransaction();
+            foreach (var id in ids)
             {
-                foreach (var id in ids)
+                if (!await DeleteInner(id))
                 {
-                    if (!await DeleteInner(id))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
-
             await connectionScope.Commit();
             return true;
         }
@@ -487,17 +455,12 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         private async Task<bool> DeleteInner(TPrimaryKey id)
         {
-            if (!await PrepareDelete(id))
-            {
-                return false;
-            }
             if (!await DoDelete(id))
             {
                 Context.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                 return false;
             }
-            await OnDeleted(id);
-            await OnStateChanged(id, BusinessCommandType.Delete);
+            await OnCommandSuccess(default,id, BusinessCommandType.Delete);
             return true;
         }
 
@@ -509,56 +472,62 @@ namespace Agebull.EntityModel.BusinessLogic
             return Access.DeletePrimaryKeyAsync(id);
         }
 
-        /// <summary>
-        ///     删除对象前置处理
-        /// </summary>
-        protected virtual Task<bool> PrepareDelete(TPrimaryKey id)
-        {
-            return Task.FromResult(true);
-        }
-
-        /// <summary>
-        ///     删除对象后置处理
-        /// </summary>
-        protected virtual Task OnDeleted(TPrimaryKey id)
-        {
-            return Task.CompletedTask;
-        }
-
         #endregion
 
         #region 状态处理
 
+        /// <summary>
+        /// 是否统一处理状态变化
+        /// </summary>
+        protected bool unityStateChanged = false;
+
+        /// <summary>
+        ///     内部命令执行完成后的处理
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="id">数据主键</param>
+        /// <param name="cmd">命令</param>
+        protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, BusinessCommandType cmd)
+        {
+            
+            Context.LastState = 0;
+            Context.LastMessage = null;
+
+            var service = ServiceProvider.GetService<IEntityModelEventProxy>();
+            if (service != null)
+                await service.OnBusinessCommandSuccess(
+                    Access.Option.DataStruct.ProjectName,
+                    Access.Option.DataStruct.EntityName,
+                    data, id.ToString(), cmd);
+
+            if (!unityStateChanged)
+                return;
+            if (data == null)
+            {
+                data = await Access.LoadByPrimaryKeyAsync(id);
+                if (data == null)
+                    return;
+            }
+            var old = Access.Option.NoInjection;
+            Access.Option.NoInjection = true;
+            try
+            {
+                await OnCommandSuccess(data, cmd);
+            }
+            finally
+            {
+                Access.Option.NoInjection = old;
+            }
+        }
 
         /// <summary>
         ///     内部命令执行完成后的处理
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="cmd">命令</param>
-        protected virtual Task OnInnerCommand(TData data, BusinessCommandType cmd)
+        protected virtual Task OnCommandSuccess(TData data, BusinessCommandType cmd)
         {
             return Task.CompletedTask;
-        }
-
-
-        /// <summary>
-        ///     内部命令执行完成后的处理
-        /// </summary>
-        /// <param name="id">数据</param>
-        /// <param name="cmd">命令</param>
-        protected virtual Task OnStateChanged(TPrimaryKey id, BusinessCommandType cmd)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        ///     状态改变后的统一处理
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="cmd">命令</param>
-        protected virtual Task OnStateChanged(TData data, BusinessCommandType cmd)
-        {
-            return OnInnerCommand(data, cmd);
         }
 
         #endregion

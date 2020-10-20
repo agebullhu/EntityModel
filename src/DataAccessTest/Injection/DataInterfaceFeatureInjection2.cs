@@ -249,7 +249,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         async Task OnStatusChanged(DataOperatorType oType, EntityEventValueType valueType, object val)
         {
-            var service = Provider.ServiceProvider.GetService<IEntityEventProxy>();
+            var service = Provider.ServiceProvider.GetService<IEntityModelEventProxy>();
             if (service == null)
                 return;
             string value;
@@ -285,7 +285,7 @@ namespace Agebull.EntityModel.MySql
                     value = null;
                     break;
             }
-            await service.OnStatusChanged(Provider.Option.DataStruct.ProjectName,
+            await service.OnEntityCommandSuccess(Provider.Option.DataStruct.ProjectName,
                     Provider.Option.DataStruct.EntityName, oType, valueType, value);
         }
         #endregion
