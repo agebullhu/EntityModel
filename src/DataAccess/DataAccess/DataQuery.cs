@@ -16,6 +16,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.ZeroApis;
 
@@ -326,8 +327,9 @@ namespace Agebull.EntityModel.Common
         public Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda, params string[] orderBys)
         {
             var convert = SqlBuilder.Compile(lambda);
+
             return LoadDataInnerAsync(convert.ConditionSql,
-                orderBys.Length == 0 ? null : string.Join(",", orderBys),
+                orderBys.Length == 0 ? null : string.Join(",", orderBys.Select(p=>Option.FieldMap[p])),
                 convert.Parameters);
         }
 
@@ -341,7 +343,7 @@ namespace Agebull.EntityModel.Common
         {
             var convert = SqlBuilder.Compile(lambda);
             return LoadDataInnerAsync(convert.ConditionSql,
-                orderBys.Length == 0 ? null : string.Join(",", orderBys),
+                orderBys.Length == 0 ? null : string.Join(",", orderBys.Select(p => Option.FieldMap[p])),
                 convert.Parameters);
         }
 
@@ -967,7 +969,8 @@ namespace Agebull.EntityModel.Common
             var results = new List<TEntity>();
             var sql = SqlBuilder.CreatePageSql(page, limit, orderField, desc, condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            {//析构Commad对象，否则连接不可重用
+            {
+                //析构Commad对象，否则连接不可重用
                 await using var cmd = connectionScope.CreateCommand(sql, args);
                 DataBase.TraceSql(cmd);
                 await using var reader = await cmd.ExecuteReaderAsync();

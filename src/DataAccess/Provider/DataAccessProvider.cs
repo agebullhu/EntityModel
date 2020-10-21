@@ -49,4 +49,5 @@ namespace Agebull.EntityModel.Common
         public IOperatorInjection<TEntity> Injection { get; set; }
 
     }
+
 }

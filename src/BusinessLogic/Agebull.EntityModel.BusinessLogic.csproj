@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>5.0.0.23-prerelase</Version>
+    <Version>5.0.0.27-prerelase</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>

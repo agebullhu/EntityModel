@@ -386,26 +386,25 @@ namespace Agebull.EntityModel.MySql
         string ISqlBuilder.CreateLoadValuesSql(string field, ConditionItem convert)
         {
             var condition = InjectionLoadCondition(convert.ConditionSql);
-            return $@"SELECT `{Option.FieldMap[field]}` 
-FROM {Option.ReadTableName}{condition};";
+            return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{condition};";
         }
 
         /// <summary>
         ///     生成载入的SQL语句
         /// </summary>
         /// <param name="condition">数据条件</param>
-        /// <param name="order">排序字段</param>
+        /// <param name="orderSql">排序片断</param>
         /// <param name="limit"></param>
         /// <returns>载入的SQL语句</returns>
-        string ISqlBuilder.CreateLoadSql(string condition, string order, string limit)
+        string ISqlBuilder.CreateLoadSql(string condition, string orderSql, string limit)
         {
             var sql = new StringBuilder();
             sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
             sql.Append(Option.Having);
             InjectionLoadCondition(sql, condition);
-            if (order != null)
+            if (orderSql != null)
             {
-                sql.Append($"\nORDER BY {order}");
+                sql.Append($"\nORDER BY {orderSql}");
             }
             sql.Append(Option.GroupFields);
             if (limit != null)
@@ -429,7 +428,7 @@ FROM {Option.ReadTableName}{condition};";
             sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
             InjectionLoadCondition(sql, condition);
             if (!string.IsNullOrWhiteSpace(orderField))
-                sql.Append($"\nORDER BY `{OrderCode(desc, orderField)}` {(desc ? "DESC" : "ASC")}");
+                sql.Append($"\nORDER BY {OrderCode(desc, orderField)}");
 
             if (pageSize >= 0)
             {

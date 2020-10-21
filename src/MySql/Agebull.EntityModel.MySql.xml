@@ -311,7 +311,7 @@
                 生成载入的SQL语句
             </summary>
             <param name="condition">数据条件</param>
-            <param name="order">排序字段</param>
+            <param name="orderSql">排序片断</param>
             <param name="limit"></param>
             <returns>载入的SQL语句</returns>
         </member>

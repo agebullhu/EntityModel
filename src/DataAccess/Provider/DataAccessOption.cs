@@ -210,7 +210,7 @@ namespace Agebull.EntityModel.Common
         /// 设置字段
         /// </summary>
         /// <param name="fields"></param>
-        public void Select(params string[] fields)
+        internal void Select(string[] fields)
         {
             ReadProperties = new List<EntityProperty>();
             foreach (var field in fields)
@@ -225,7 +225,7 @@ namespace Agebull.EntityModel.Common
         /// 设置字段
         /// </summary>
         /// <param name="fields"></param>
-        public void SelectAll()
+        internal void SelectAll()
         {
             ReadProperties = Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
             LoadFields = SqlBuilder.BuilderLoadFields();

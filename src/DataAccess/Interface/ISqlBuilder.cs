@@ -108,9 +108,10 @@ namespace Agebull.EntityModel.Common
         /// 读取SQL
         /// </summary>
         /// <param name="condition"></param>
-        /// <param name="orderField"></param>
+        /// <param name="orderSql">排序片断</param>
+        /// <param name="limit">行数</param>
         /// <returns></returns>
-        string CreateLoadSql(string condition = null, string orderField = null, string limit = null);
+        string CreateLoadSql(string condition = null, string orderSql = null, string limit = null);
 
         /// <summary>
         /// 单值读取SQL

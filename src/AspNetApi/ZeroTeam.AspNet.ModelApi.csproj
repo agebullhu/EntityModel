@@ -31,7 +31,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>5.0.0.23-prerelase</Version>
+    <Version>5.0.0.27-prerelase</Version>
     <RootNamespace />
     <OutputType>Library</OutputType>
   </PropertyGroup>

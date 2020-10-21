@@ -245,7 +245,7 @@ namespace Agebull.EntityModel.MySql
             var parameters = cmd.Parameters.OfType<MySqlParameter>();
             foreach (var par in parameters)
             {
-                code.AppendLine($"declare ?{par.ParameterName} {par.DbType};");
+                code.AppendLine($"DECLARE ?{par.ParameterName} {par.DbType};");
             }
             foreach (var par in parameters)
             {
