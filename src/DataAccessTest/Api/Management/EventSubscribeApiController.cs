@@ -24,6 +24,7 @@ using ZeroTeam.MessageMVC.ZeroApis;
 
 
 using Zeroteam.MessageMVC.EventBus;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -45,9 +46,10 @@ namespace Zeroteam.MessageMVC.EventBus.WebApi
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="convert">转化器</param>
-        protected override void ReadFormData(EventSubscribeEntity data, FormConvert convert)
+        protected override Task ReadFormData(EventSubscribeEntity data, FormConvert convert)
         {
             DefaultReadFormData(data,convert);
+            return Task.CompletedTask;
         }
 
         #endregion

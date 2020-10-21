@@ -108,9 +108,9 @@ namespace Agebull.EntityModel.Common
         /// 读取SQL
         /// </summary>
         /// <param name="condition"></param>
-        /// <param name="order"></param>
+        /// <param name="orderField"></param>
         /// <returns></returns>
-        string CreateLoadSql(string condition = null, string order = null, string limit = null);
+        string CreateLoadSql(string condition = null, string orderField = null, string limit = null);
 
         /// <summary>
         /// 单值读取SQL
@@ -133,11 +133,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="page"></param>
         /// <param name="pageSize"></param>
-        /// <param name="order"></param>
+        /// <param name="orderField"></param>
         /// <param name="desc"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        string CreatePageSql(int page, int pageSize, string order, bool desc, string condition);
+        string CreatePageSql(int page, int pageSize, string orderField, bool desc, string condition);
 
         /// <summary>
         /// 删除SQL

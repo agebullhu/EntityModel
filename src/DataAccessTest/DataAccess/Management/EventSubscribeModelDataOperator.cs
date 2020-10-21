@@ -35,7 +35,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             EntityName = EventBusDb.EventSubscribe_Struct_.EntityName,
             Caption = EventBusDb.EventSubscribe_Struct_.Caption,
             Description = EventBusDb.EventSubscribe_Struct_.Description,
-            PrimaryKey = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
+            PrimaryProperty = EventBusDb.EventSubscribe_Struct_.PrimaryKey,
             ReadTableName = EventBusDb.EventSubscribe_Struct_.TableName,
             WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
             InterfaceFeature = new[] { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },

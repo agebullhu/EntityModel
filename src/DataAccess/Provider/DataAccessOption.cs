@@ -43,9 +43,9 @@ namespace Agebull.EntityModel.Common
         public EntityStruct DataStruct { get; set; }
 
         /// <summary>
-        ///     主键字段(可动态覆盖PrimaryKey)
+        ///     主键字段(可动态覆盖 PrimaryProperty)
         /// </summary>
-        private string _keyField;
+        private string _primaryProperty;
 
         /// <summary>
         ///     字段字典
@@ -79,12 +79,21 @@ namespace Agebull.EntityModel.Common
         public Dictionary<string, string> FieldMap { get; protected set; }
 
         /// <summary>
-        ///     主键字段
+        ///     主键属性名称
         /// </summary>
-        public string PrimaryKey
+        public string PrimaryProperty
         {
-            get => _keyField ?? DataStruct.PrimaryKey;
-            set => _keyField = value;
+            get => _primaryProperty ?? DataStruct.PrimaryProperty;
+            set => _primaryProperty = value;
+        }
+
+        /// <summary>
+        ///     主键数据库字段名
+        /// </summary>
+        public string PrimaryDbField
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -180,6 +189,8 @@ namespace Agebull.EntityModel.Common
 
                 FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
             }
+            PrimaryDbField = FieldMap[PrimaryProperty];
+
             ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
             LoadFields ??= SqlBuilder.BuilderLoadFields();
             if (!IsQuery)
@@ -202,7 +213,7 @@ namespace Agebull.EntityModel.Common
         public void Select(params string[] fields)
         {
             ReadProperties = new List<EntityProperty>();
-            foreach(var field in fields)
+            foreach (var field in fields)
             {
                 if (PropertyMap.TryGetValue(field, out var property))
                     ReadProperties.Add(property);

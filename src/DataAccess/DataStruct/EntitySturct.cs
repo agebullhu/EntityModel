@@ -50,9 +50,9 @@ namespace Agebull.EntityModel.Common
         public bool IsIdentity { get; set; }
 
         /// <summary>
-        ///     主键名称
+        ///     主键属性名称
         /// </summary>
-        public string PrimaryKey { get; set; }
+        public string PrimaryProperty { get; set; }
 
         /// <summary>
         ///     实现的接口特性

@@ -275,10 +275,15 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     主键的条件部分SQL
         /// </summary>
-        string ISqlBuilder.PrimaryKeyCondition => _primaryKeyCondition ??= ((ISqlBuilder)this).Condition(Option.PrimaryKey);
+        string ISqlBuilder.PrimaryKeyCondition => _primaryKeyCondition ??= ((ISqlBuilder)this).Condition(Option.PrimaryProperty);
 
-
-        string ISqlBuilder.OrderCode(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
+        /// <summary>
+        /// 构建排序SQL片断
+        /// </summary>
+        /// <param name="desc"></param>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public string OrderCode(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
 
         /// <summary>
         ///     查询条件注入
@@ -414,20 +419,17 @@ FROM {Option.ReadTableName}{condition};";
         /// </summary>
         /// <param name="page">页号</param>
         /// <param name="pageSize">每页几行(强制大于0,小于500行)</param>
-        /// <param name="order">排序字段</param>
+        /// <param name="orderField">排序字段</param>
         /// <param name="desc">是否倒序</param>
         /// <param name="condition">数据条件</param>
         /// <returns></returns>
-        string ISqlBuilder.CreatePageSql(int page, int pageSize, string order, bool desc, string condition)
+        string ISqlBuilder.CreatePageSql(int page, int pageSize, string orderField, bool desc, string condition)
         {
             var sql = new StringBuilder();
             sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
             InjectionLoadCondition(sql, condition);
-
-            var orderField = string.IsNullOrWhiteSpace(order) || !Option.FieldMap.ContainsKey(order)
-                ? Option.PrimaryKey
-                : Option.FieldMap[order];
-            sql.Append($"\nORDER BY `{orderField}` {(desc ? "DESC" : "ASC")}");
+            if (!string.IsNullOrWhiteSpace(orderField))
+                sql.Append($"\nORDER BY `{OrderCode(desc, orderField)}` {(desc ? "DESC" : "ASC")}");
 
             if (pageSize >= 0)
             {

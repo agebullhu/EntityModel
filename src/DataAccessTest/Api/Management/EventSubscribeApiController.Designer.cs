@@ -38,7 +38,7 @@ namespace Zeroteam.MessageMVC.EventBus.WebApi
         /// <returns></returns>
         protected override (bool, long) Convert(string value)
         {
-            return long.TryParse(value,out var key) ? (true , key) : (false , key);
+            return long.TryParse(value, out var key) ? (true, key) : (false, key);
         }
 
         /// <summary>
@@ -62,104 +62,104 @@ namespace Zeroteam.MessageMVC.EventBus.WebApi
                                     || p.AuthorId.Contains(value)
                                     || p.Author.Contains(value));
                 else
-RequestArgumentConvert.SetArgument(field,value);
+                    RequestArgumentConvert.SetArgument(field, value);
             }
-            if(RequestArgumentConvert.TryGetIDs("id" , out var id))
+            if (RequestArgumentConvert.TryGetIDs("id", out var id))
             {
                 if (id.Count == 1)
                     filter.AddAnd(p => p.Id == id[0]);
                 else
                     filter.AddAnd(p => id.Contains(p.Id));
             }
-            if(RequestArgumentConvert.TryGet("eventId" , out long eventId))
+            if (RequestArgumentConvert.TryGet("eventId", out long eventId))
             {
                 filter.AddAnd(p => p.EventId == eventId);
             }
-            if(RequestArgumentConvert.TryGet("service" , out string service))
+            if (RequestArgumentConvert.TryGet("service", out string service))
             {
                 filter.AddAnd(p => p.Service.Contains(service));
             }
-            if(RequestArgumentConvert.TryGet("isLookUp" , out bool isLookUp))
+            if (RequestArgumentConvert.TryGet("isLookUp", out bool isLookUp))
             {
                 filter.AddAnd(p => p.IsLookUp == isLookUp);
             }
-            if(RequestArgumentConvert.TryGet("apiName" , out string apiName))
+            if (RequestArgumentConvert.TryGet("apiName", out string apiName))
             {
                 filter.AddAnd(p => p.ApiName.Contains(apiName));
             }
-            if(RequestArgumentConvert.TryGet("memo" , out string memo))
+            if (RequestArgumentConvert.TryGet("memo", out string memo))
             {
                 filter.AddAnd(p => p.Memo.Contains(memo));
             }
-            if(RequestArgumentConvert.TryGet("targetName" , out string targetName))
+            if (RequestArgumentConvert.TryGet("targetName", out string targetName))
             {
                 filter.AddAnd(p => p.TargetName.Contains(targetName));
             }
-            if(RequestArgumentConvert.TryGet("targetType" , out string targetType))
+            if (RequestArgumentConvert.TryGet("targetType", out string targetType))
             {
                 filter.AddAnd(p => p.TargetType.Contains(targetType));
             }
-            if(RequestArgumentConvert.TryGet("targetDescription" , out string targetDescription))
+            if (RequestArgumentConvert.TryGet("targetDescription", out string targetDescription))
             {
                 filter.AddAnd(p => p.TargetDescription.Contains(targetDescription));
             }
-            if(RequestArgumentConvert.TryGet("isFreeze" , out bool isFreeze))
+            if (RequestArgumentConvert.TryGet("isFreeze", out bool isFreeze))
             {
                 filter.AddAnd(p => p.IsFreeze == isFreeze);
             }
-            if(RequestArgumentConvert.TryGetEnum<DataStateType>("dataState" , out DataStateType dataState))
+            if (RequestArgumentConvert.TryGetEnum<DataStateType>("dataState", out DataStateType dataState))
             {
                 filter.AddAnd(p => p.DataState == dataState);
             }
-            if(RequestArgumentConvert.TryGet("lastModifyDate" , out DateTime lastModifyDate))
+            if (RequestArgumentConvert.TryGet("lastModifyDate", out DateTime lastModifyDate))
             {
                 var day = lastModifyDate.Date;
                 var nextDay = day.AddDays(1);
                 filter.AddAnd(p => (p.LastModifyDate >= day && p.LastModifyDate < nextDay));
             }
-            else 
+            else
             {
-                if(RequestArgumentConvert.TryGet("lastModifyDate_begin" , out DateTime lastModifyDate_begin))
+                if (RequestArgumentConvert.TryGet("lastModifyDate_begin", out DateTime lastModifyDate_begin))
                 {
                     var day = lastModifyDate_begin.Date;
                     filter.AddAnd(p => p.LastModifyDate >= day);
                 }
-                if(RequestArgumentConvert.TryGet("lastModifyDate_end" , out DateTime lastModifyDate_end))
+                if (RequestArgumentConvert.TryGet("lastModifyDate_end", out DateTime lastModifyDate_end))
                 {
                     var day = lastModifyDate_end.Date.AddDays(1);
                     filter.AddAnd(p => p.LastModifyDate < day);
                 }
             }
-            if(RequestArgumentConvert.TryGet("lastReviserId" , out string lastReviserId))
+            if (RequestArgumentConvert.TryGet("lastReviserId", out string lastReviserId))
             {
                 filter.AddAnd(p => p.LastReviserId.Contains(lastReviserId));
             }
-            if(RequestArgumentConvert.TryGet("lastReviser" , out string lastReviser))
+            if (RequestArgumentConvert.TryGet("lastReviser", out string lastReviser))
             {
                 filter.AddAnd(p => p.LastReviser.Contains(lastReviser));
             }
-            if(RequestArgumentConvert.TryGet("authorId" , out string authorId))
+            if (RequestArgumentConvert.TryGet("authorId", out string authorId))
             {
                 filter.AddAnd(p => p.AuthorId.Contains(authorId));
             }
-            if(RequestArgumentConvert.TryGet("author" , out string author))
+            if (RequestArgumentConvert.TryGet("author", out string author))
             {
                 filter.AddAnd(p => p.Author.Contains(author));
             }
-            if(RequestArgumentConvert.TryGet("addDate" , out DateTime addDate))
+            if (RequestArgumentConvert.TryGet("addDate", out DateTime addDate))
             {
                 var day = addDate.Date;
                 var nextDay = day.AddDays(1);
                 filter.AddAnd(p => (p.AddDate >= day && p.AddDate < nextDay));
             }
-            else 
+            else
             {
-                if(RequestArgumentConvert.TryGet("addDate_begin" , out DateTime addDate_begin))
+                if (RequestArgumentConvert.TryGet("addDate_begin", out DateTime addDate_begin))
                 {
                     var day = addDate_begin.Date;
                     filter.AddAnd(p => p.AddDate >= day);
                 }
-                if(RequestArgumentConvert.TryGet("addDate_end" , out DateTime addDate_end))
+                if (RequestArgumentConvert.TryGet("addDate_end", out DateTime addDate_end))
                 {
                     var day = addDate_end.Date.AddDays(1);
                     filter.AddAnd(p => p.AddDate < day);
@@ -172,24 +172,24 @@ RequestArgumentConvert.SetArgument(field,value);
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="convert">转化器</param>
-        protected void DefaultReadFormData(EventSubscribeEntity data, FormConvert convert)
+        private void DefaultReadFormData(EventSubscribeEntity data, FormConvert convert)
         {
             //普通字段
-            if(convert.TryGetValue("eventId" , out long EventId))
+            if (convert.TryGetValue("eventId", out long EventId))
                 data.EventId = EventId;
-            if(convert.TryGetValue("service" , out string Service))
+            if (convert.TryGetValue("service", out string Service))
                 data.Service = Service;
-            if(convert.TryGetValue("isLookUp" , out bool IsLookUp))
+            if (convert.TryGetValue("isLookUp", out bool IsLookUp))
                 data.IsLookUp = IsLookUp;
-            if(convert.TryGetValue("apiName" , out string ApiName))
+            if (convert.TryGetValue("apiName", out string ApiName))
                 data.ApiName = ApiName;
-            if(convert.TryGetValue("memo" , out string Memo))
+            if (convert.TryGetValue("memo", out string Memo))
                 data.Memo = Memo;
-            if(convert.TryGetValue("targetName" , out string TargetName))
+            if (convert.TryGetValue("targetName", out string TargetName))
                 data.TargetName = TargetName;
-            if(convert.TryGetValue("targetType" , out string TargetType))
+            if (convert.TryGetValue("targetType", out string TargetType))
                 data.TargetType = TargetType;
-            if(convert.TryGetValue("targetDescription" , out string TargetDescription))
+            if (convert.TryGetValue("targetDescription", out string TargetDescription))
                 data.TargetDescription = TargetDescription;
         }
 

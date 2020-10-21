@@ -116,7 +116,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 status.EditStatusRedorder.IsFromClient = true;
             }
             var convert = new FormConvert();
-            ReadFormData(data, convert);
+            await ReadFormData(data, convert);
             if (convert.Failed)
             {
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, convert.Message);
@@ -145,7 +145,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
 
             data.Id = Convert(id).Item2;
-            ReadFormData(data, convert);
+            await ReadFormData(data, convert);
             if (convert.Failed)
             {
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, convert.Message);
@@ -225,8 +225,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         {
             var page = RequestArgumentConvert.GetInt("_page_", 1);
             var size = RequestArgumentConvert.GetInt("_size_", 20);
-            if (!RequestArgumentConvert.TryGet("_sort_", out string sort) && string.IsNullOrEmpty(sort))
-                sort = Business.Access.Option.PrimaryKey;
+            RequestArgumentConvert.TryGet("_sort_", out string sort);
             var desc = RequestArgumentConvert.TryGet("_order_", out string order) && order?.ToLower() == "desc";
             return Business.PageData(page, size, sort, desc, lambda);
 
@@ -250,7 +249,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         /// <param name="entity">实体</param>
         /// <param name="convert">转化器</param>
-        protected abstract void ReadFormData(TData entity, FormConvert convert);
+        protected abstract Task ReadFormData(TData entity, FormConvert convert);
 
         /// <summary>
         /// 转换方法

@@ -101,7 +101,7 @@ namespace Agebull.EntityModel.Common
                     var key = await cmd.ExecuteScalarAsync();
                     if (key == DBNull.Value || key == null)
                         return false;
-                    Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
+                    Provider.EntityOperator.SetValue(entity, Option.PrimaryProperty, key);
                 }
             }
             await Provider.DataOperator.AfterSave(entity, DataOperatorType.Insert);
@@ -177,9 +177,9 @@ namespace Agebull.EntityModel.Common
             if (entity == null)
                 return false;
             await Provider.DataOperator.BeforeSave(entity, DataOperatorType.Delete);
-            var para = ParameterCreater.CreateParameter(Option.PrimaryKey,
-                Provider.EntityOperator.GetValue(entity, Option.PrimaryKey),
-                SqlBuilder.GetDbType(Option.PrimaryKey));
+            var para = ParameterCreater.CreateParameter(Option.PrimaryProperty,
+                Provider.EntityOperator.GetValue(entity, Option.PrimaryProperty),
+                SqlBuilder.GetDbType(Option.PrimaryProperty));
             var result = await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, para);
             if (result == 0)
                 return false;
@@ -226,7 +226,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         private async Task<bool> SaveInnerAsync(TEntity entity)
         {
-            if (await ExistPrimaryKeyAsync(Provider.EntityOperator.GetValue(entity, Option.PrimaryKey)))
+            if (await ExistPrimaryKeyAsync(Provider.EntityOperator.GetValue(entity, Option.PrimaryProperty)))
             {
                 return await UpdateInnerAsync(entity);
             }
@@ -281,7 +281,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<bool> DeletePrimaryKeyAsync(object key)
         {
-            return 1 == await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            return 1 == await DeleteInnerAsync(SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)));
         }
 
 
@@ -303,7 +303,7 @@ namespace Agebull.EntityModel.Common
         {
             var sql = SqlBuilder.PhysicalDeleteSqlCode(SqlBuilder.PrimaryKeyCondition);
             return 1 == await DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
-                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+                ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)));
         }
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>更新行数</returns>
         public Task<int> SetValueAsync(string field, object value, object key)
         {
-            return SetValueInnerAsync(field, value, SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+            return SetValueInnerAsync(field, value, SqlBuilder.PrimaryKeyCondition, ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)));
         }
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace Agebull.EntityModel.Common
             TField value, TKey key)
         {
             return SetValueInnerAsync(GetPropertyName(fieldExpression), value, SqlBuilder.PrimaryKeyCondition,
-                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)));
+                ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)));
         }
 
         /// <summary>
@@ -384,7 +384,7 @@ namespace Agebull.EntityModel.Common
             var sql = SqlBuilder.CreateUpdateSqlCode(valueExpression, SqlBuilder.PrimaryKeyCondition);
             return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, SqlBuilder.PrimaryKeyCondition, new[]
             {
-                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey))
+                ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty))
             });
         }
 
@@ -634,7 +634,7 @@ namespace Agebull.EntityModel.Common
         {
             return SetValueAsync(
                 SqlBuilder.PrimaryKeyCondition, 
-                ParameterCreater.CreateParameter(Option.PrimaryKey, key, SqlBuilder.GetDbType(Option.PrimaryKey)), 
+                ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)), 
                 fields);
         }
 
@@ -729,7 +729,7 @@ namespace Agebull.EntityModel.Common
                 var key = await context.Command.ExecuteScalarAsync();
                 if (key == DBNull.Value || key == null)
                     return false;
-                Provider.EntityOperator.SetValue(entity, Option.PrimaryKey, key);
+                Provider.EntityOperator.SetValue(entity, Option.PrimaryProperty, key);
             }
             else
             {
