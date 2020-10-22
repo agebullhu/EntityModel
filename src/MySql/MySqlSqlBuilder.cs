@@ -34,10 +34,15 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public IParameterCreater ParameterCreater => Provider.ParameterCreater;
 
+        DataAccessOption _option;
         /// <summary>
         /// Sql语句构造器
         /// </summary>
-        public DataAccessOption Option => Provider.Option;
+        public DataAccessOption Option
+        {
+            get => _option ?? Provider.Option;
+            set => _option = value;
+        }
 
         /// <summary>
         /// Sql语句构造器
@@ -91,20 +96,33 @@ namespace Agebull.EntityModel.MySql
             var fields = new StringBuilder();
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
-           {
-               if (pro.Entity != Option.DataStruct.Name)
-                   return;
-               if (first)
-                   first = false;
-               else
-                   fields.Append(',');
+            {
+                if (pro.Entity != Option.DataStruct.Name)
+                    return;
+                if (first)
+                    first = false;
+                else
+                    fields.Append(',');
 
-               fields.Append('`');
-               fields.Append(pro.FieldName);
-               fields.Append("`=?");
-               fields.Append(pro.PropertyName);
-           });
+                fields.Append('`');
+                fields.Append(pro.FieldName);
+                fields.Append("`=?");
+                fields.Append(pro.PropertyName);
+            });
             return fields.ToString();
+        }
+
+        /// <summary>
+        ///     生成更新的SQL
+        /// </summary>
+        /// <param name="valueExpression">更新表达式(SQL)</param>
+        /// <param name="condition">更新条件</param>
+        /// <returns>更新的SQL</returns>
+        string ISqlBuilder.BuilderUpdateCode(string valueExpression, string condition)
+        {
+            return $@"UPDATE `{Option.WriteTableName}` 
+   SET {valueExpression} 
+ WHERE {condition};";
         }
 
         /// <summary>
@@ -185,7 +203,8 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         string ISqlBuilder.CreateUpdateSqlCode(string valueExpression, string condition)
         {
-            if (!Option.NoInjection && Provider.Injection != null)
+            if ((Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) || Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition)) &&
+                Provider.Injection != null)
             {
                 Provider.Injection.InjectionUpdateCode(ref valueExpression, ref condition);
             }
@@ -201,12 +220,14 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         string ISqlBuilder<TEntity>.CreateInsertSqlCode(TEntity entity)
         {
-            if (Option.NoInjection || Provider.Injection == null)
+            if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
             {
                 return Option.InsertSqlCode;
             }
             var fields = new StringBuilder();
-            var paras = new StringBuilder('(');
+            fields.Append($"INSERT INTO `{Option.WriteTableName}`(");
+            var paras = new StringBuilder();
+            paras.Append("VALUES(");
             bool first = true;
             Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
@@ -228,12 +249,15 @@ namespace Agebull.EntityModel.MySql
             });
 
             Provider.Injection.InjectionInsertCode(fields, paras);
+
+            fields.AppendLine(")");
             paras.Append(");");
             if (Option.DataStruct.IsIdentity)
             {
                 paras.Append("\nSELECT @@IDENTITY;");
             }
-            return $"INSERT INTO `{Option.WriteTableName}`({fields})\nVALUES{paras}";
+            fields.Append(paras);
+            return fields.ToString();
         }
 
         /// <summary>
@@ -328,7 +352,7 @@ namespace Agebull.EntityModel.MySql
                 code.Append(')');
             }
 
-            if (Option.NoInjection || Provider.Injection == null)
+            if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.QueryCondition))
             {
                 return;
             }
@@ -449,7 +473,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>删除的SQL语句</returns>
         string ISqlBuilder.CreateDeleteSql(string condition)
         {
-            if (!Option.NoInjection && Provider.Injection != null)
+            if (Provider.Injection != null && Provider.Option.InjectionLevel.HasFlag(InjectionLevel.DeleteCondition))
                 condition = Provider.Injection.InjectionDeleteCondition(condition);
             return $"{Option.DeleteSqlCode} WHERE {condition};";
         }
@@ -459,7 +483,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         string ISqlBuilder.PhysicalDeleteSqlCode(string condition)
         {
-            if (!Option.NoInjection && Provider.Injection != null)
+            if (Provider.Injection != null && Provider.Option.InjectionLevel.HasFlag(InjectionLevel.DeleteCondition))
                 condition = Provider.Injection.InjectionDeleteCondition(condition);
 
             return $"DELETE FROM `{Option.WriteTableName}` WHERE {condition};";

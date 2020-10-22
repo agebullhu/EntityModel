@@ -2,6 +2,7 @@ using System;
 
 namespace Agebull.EntityModel.Common
 {
+
     /// <summary>
     /// 数据库类型
     /// </summary>

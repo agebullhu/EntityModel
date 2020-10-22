@@ -462,9 +462,6 @@ namespace Agebull.EntityModel.BusinessLogic
                     data.Auditor = Context.NickName;
                     data.AuditorId = Context.UserId;
                     break;
-                case AuditStateType.End:
-                    data.IsFreeze = true;
-                    break;
             }
             data.DataState = state;
             return OnAuditStateChanged(data);
@@ -649,22 +646,30 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         async Task<bool> SaveAuditData(TData data)
         {
+            List<(string field, object value)> fields = new List<(string field, object value)>
+            {
+                (nameof(IAuditData.AuditState), data.AuditState),
+                (nameof(IStateData.DataState), data.DataState),
+            };
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
             switch (data.AuditState)
             {
                 case AuditStateType.Pass:
                 case AuditStateType.Deny:
-                    return await Access.SetValueAsync(data.Id,
-                        (nameof(IAuditData.Auditor), data.Auditor),
-                        (nameof(IAuditData.AuditorId), data.AuditorId),
-                        (nameof(IAuditData.AuditState), data.AuditState),
-                        (nameof(IAuditData.AuditDate), data.AuditDate),
-                        (nameof(IStateData.DataState), data.DataState),
-                        (nameof(IStateData.IsFreeze), data.IsFreeze)) == 1;
+                    fields.Add((nameof(IAuditData.Auditor), data.Auditor));
+                    fields.Add((nameof(IAuditData.AuditorId), data.AuditorId));
+                    fields.Add(("is_freeze", 1));
+                    break;
+                case AuditStateType.Submit:
+                case AuditStateType.End:
+                    fields.Add(("is_freeze", 1));
+                    break;
+                case AuditStateType.None:
+                case AuditStateType.Again:
+                    fields.Add(("is_freeze", 0));
+                    break;
             }
-            return await Access.SetValueAsync(data.Id,
-                (nameof(IAuditData.AuditState), data.AuditState),
-                (nameof(IStateData.DataState), data.DataState),
-                (nameof(IStateData.IsFreeze), data.IsFreeze)) == 1;
+            return await Access.SetValueAsync(data.Id, fields.ToArray()) == 1;
 
 
         }

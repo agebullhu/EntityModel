@@ -21,18 +21,18 @@
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ZeroTeam-Net/MessageMVC.git</RepositoryUrl>
-    
+
     <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    
+
     <Authors>ZeroTeam</Authors>
     <Company>Agebull</Company>
     <Product>ZeroTeam.MessageMVC</Product>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>5.0.0.27-prerelase</Version>
+    <Version>5.0.0.50</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -68,15 +68,15 @@
   <ItemGroup>
     <None Remove="ZeroTeam.MessageMVC.ModelApi.xml" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.31" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.34" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
   </ItemGroup>

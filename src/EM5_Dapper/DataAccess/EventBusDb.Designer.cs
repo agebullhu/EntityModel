@@ -36,7 +36,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 IsIdentity      = true,
                 ReadTableName   = TableName,
                 WriteTableName  = "tb_event_default_test",
-                InterfaceFeature= new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
+                InterfaceFeature= new HashSet<string> {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
                 Properties      = new List<EntityProperty>
                 {
                     new EntityProperty(Id,0,"Id","tb_event_default_test","id",ReadWriteFeatrue.Read),
@@ -435,7 +435,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 IsIdentity      = true,
                 ReadTableName   = TableName,
                 WriteTableName  = "tb_event_subscribe",
-                InterfaceFeature= new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
+                InterfaceFeature= new HashSet<string> { nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
                 Properties      = new List<EntityProperty>
                 {
                     new EntityProperty(Id,0,"Id","tb_event_subscribe","id",ReadWriteFeatrue.Read),

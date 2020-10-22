@@ -193,7 +193,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
         {
-            await using var scope = await ConnectionScope.CreateScope(this);
+            await using var scope = await this.CreateConnectionScope();
             using var cmd = scope.CreateCommand(sql, args);
             TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
@@ -210,7 +210,7 @@ namespace Agebull.EntityModel.MySql
         /// </remarks>
         public async Task<(bool hase, object value)> ExecuteScalarAsync(string sql, params DbParameter[] args)
         {
-            await using var scope = await ConnectionScope.CreateScope(this);
+            await using var scope = await this.CreateConnectionScope();
             await using var cmd = scope.CreateCommand(sql, args);
             TraceSql(cmd);
             var result = await cmd.ExecuteScalarAsync();

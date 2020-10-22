@@ -38,7 +38,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             PrimaryProperty = EventBusDb.EventDefault_Struct_.PrimaryKey,
             ReadTableName = EventBusDb.EventDefault_Struct_.TableName,
             WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
-            InterfaceFeature = new[] { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },
+            InterfaceFeature = new HashSet<string> { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },
             Properties = new List<EntityProperty>
             {
                 new EntityProperty(EventBusDb.EventDefault_Struct_.Id,0,"Id","tb_event_default","id",ReadWriteFeatrue.Read),
@@ -70,7 +70,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            NoInjection = false,
+            InjectionLevel   = InjectionLevel.All,
             IsQuery = false,
             UpdateByMidified = true,
             ReadTableName = FromSqlCode,

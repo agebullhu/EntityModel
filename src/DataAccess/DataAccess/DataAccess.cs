@@ -555,6 +555,10 @@ namespace Agebull.EntityModel.Common
             var sql = SqlBuilder.CreateUpdateSqlCode(SqlBuilder.FileUpdateSetCode(field, value, parameters), condition);
             return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
         }
+        #endregion
+
+        #region 多字段更新
+
 
         /// <summary>
         ///     自定义更新（更新表达式自写）
@@ -621,7 +625,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>更新行数</returns>
         public async Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
         {
-            return await SetValueAsync(condition, null, fields);
+            return await SetMulitValueAsync(condition, null, fields);
         }
 
         /// <summary>
@@ -632,9 +636,9 @@ namespace Agebull.EntityModel.Common
         /// <returns>更新行数</returns>
         public Task<int> SetValueAsync(object key, params (string field, object value)[] fields)
         {
-            return SetValueAsync(
-                SqlBuilder.PrimaryKeyCondition, 
-                ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)), 
+            return SetMulitValueAsync(
+                SqlBuilder.PrimaryKeyCondition,
+                new DbParameter[] { ParameterCreater.CreateParameter(Option.PrimaryProperty, key, SqlBuilder.GetDbType(Option.PrimaryProperty)) },
                 fields);
         }
 
@@ -647,7 +651,20 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetValueAsync(Expression<Func<TEntity, bool>> lambda, params (string field, object value)[] fields)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return SetValueAsync(convert.ConditionSql, convert.Parameters, fields);
+            return SetMulitValueAsync(convert.ConditionSql, convert.Parameters, fields);
+        }
+
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段与值组合</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>更新行数</returns>
+        public Task<int> SetValueAsync(LambdaItem<TEntity> lambda, params (string field, object value)[] fields)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            return SetMulitValueAsync(convert.ConditionSql, convert.Parameters, fields);
         }
 
         /// <summary>
@@ -658,6 +675,18 @@ namespace Agebull.EntityModel.Common
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
         public Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
+        {
+            return SetMulitValueAsync(condition, args, fields);
+        }
+
+        /// <summary>
+        ///     条件更新
+        /// </summary>
+        /// <param name="fields">字段</param>
+        /// <param name="condition">更新条件</param>
+        /// <param name="args">条件参数</param>
+        /// <returns>更新行数</returns>
+        private Task<int> SetMulitValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
         {
             var parameters = new List<DbParameter>();
             if (args != null)

@@ -36,7 +36,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 IsIdentity      = true,
                 ReadTableName   = TableName,
                 WriteTableName  = "tb_event_default",
-                InterfaceFeature= new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
+                InterfaceFeature= new HashSet<string> {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
                 Properties      = new List<EntityProperty>
                 {
                     new EntityProperty(Id,0,"Id","tb_event_default","id",ReadWriteFeatrue.Read),
@@ -448,7 +448,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 IsIdentity      = true,
                 ReadTableName   = TableName,
                 WriteTableName  = "tb_event_subscribe",
-                InterfaceFeature= new[] {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
+                InterfaceFeature= new HashSet<string> { nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
                 Properties      = new List<EntityProperty>
                 {
                     new EntityProperty(Id,0,"Id","tb_event_subscribe","id",ReadWriteFeatrue.Read),
@@ -709,7 +709,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         {
             return typeof(TEntity).Name switch
             {
-                nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.Option,
+                nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.GetOption(),
                 nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.Option,
                 nameof(EventDefaultModel) => EventDefaultModelDataOperator.Option,
                 nameof(EventSubscribeModel) => EventSubscribeModelDataOperator.Option,

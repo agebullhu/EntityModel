@@ -489,7 +489,8 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="cmd">√¸¡Ó</param>
         protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, BusinessCommandType cmd)
         {
-            
+            if (!unityStateChanged)
+                return;
             Context.LastState = 0;
             Context.LastMessage = null;
 
@@ -500,24 +501,14 @@ namespace Agebull.EntityModel.BusinessLogic
                     Access.Option.DataStruct.EntityName,
                     data, id.ToString(), cmd);
 
-            if (!unityStateChanged)
-                return;
             if (data == null)
             {
                 data = await Access.LoadByPrimaryKeyAsync(id);
                 if (data == null)
                     return;
             }
-            var old = Access.Option.NoInjection;
-            Access.Option.NoInjection = true;
-            try
-            {
-                await OnCommandSuccess(data, cmd);
-            }
-            finally
-            {
-                Access.Option.NoInjection = old;
-            }
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
+            await OnCommandSuccess(data, cmd);
         }
 
         /// <summary>

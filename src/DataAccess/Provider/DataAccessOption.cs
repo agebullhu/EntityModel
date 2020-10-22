@@ -28,9 +28,9 @@ namespace Agebull.EntityModel.Common
         public bool CanRaiseEvent { get; set; }
 
         /// <summary>
-        /// 不做代码注入
+        /// 代码注入配置
         /// </summary>
-        public bool NoInjection { get; set; }
+        public InjectionLevel InjectionLevel { get; set; } = InjectionLevel.All;
 
         /// <summary>
         /// 是否自增主键
@@ -167,6 +167,45 @@ namespace Agebull.EntityModel.Common
 
         #region 初始化
 
+        /// <summary>
+        /// 复制
+        /// </summary>
+        /// <returns></returns>
+        public DataAccessOption Copy()
+        {
+            SqlBuilder.Option = this;
+            Initiate();
+            return new DataAccessOption
+            {
+                _isInitiated = true,
+                IsQuery = IsQuery,
+                UpdateByMidified = UpdateByMidified,
+                CanRaiseEvent = CanRaiseEvent,
+                InjectionLevel = InjectionLevel,
+                DataStruct = DataStruct,
+                Properties = Properties,
+                PropertyMap = PropertyMap,
+                ReadProperties = ReadProperties,
+                FieldMap = FieldMap,
+                PrimaryProperty = PrimaryProperty,
+                PrimaryDbField = PrimaryDbField,
+                BaseCondition = BaseCondition,
+                ReadTableName = ReadTableName,
+                WriteTableName = WriteTableName,
+                LoadFields = LoadFields,
+                GroupFields = GroupFields,
+                Having = Having,
+                UpdateFields = UpdateFields,
+                InsertSqlCode = InsertSqlCode,
+                UpdateSqlCode = UpdateSqlCode,
+                DeleteSqlCode = DeleteSqlCode,
+                SqlBuilder = SqlBuilder
+            };
+        }
+
+        /// <summary>
+        /// 初始化标识
+        /// </summary>
         bool _isInitiated;
 
         /// <summary>
@@ -190,22 +229,24 @@ namespace Agebull.EntityModel.Common
                 FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
             }
             PrimaryDbField = FieldMap[PrimaryProperty];
+            if (!FieldMap.ContainsKey("id"))
+                FieldMap["id"] = PrimaryDbField;
 
             ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
             LoadFields ??= SqlBuilder.BuilderLoadFields();
-            if (!IsQuery)
+            if (IsQuery)
+            {
+                InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
+            }
+            else
             {
                 InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
                 DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
                 UpdateFields ??= SqlBuilder.BuilderUpdateFields();
-                UpdateSqlCode ??= SqlBuilder.CreateUpdateSqlCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+                UpdateSqlCode ??= SqlBuilder.BuilderUpdateCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
             }
-            else
-            {
-                InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
-            }
-
         }
+
         /// <summary>
         /// 设置字段
         /// </summary>

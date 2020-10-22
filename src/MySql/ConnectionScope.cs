@@ -45,15 +45,17 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async ValueTask DisposeAsync()
         {
+            if (_hereTransaction)
+            {
+                if (DataBase.TransactionSuccess == null)
+                    await DataBase.Transaction.RollbackAsync();
+                await DataBase.Transaction.DisposeAsync();
+                DataBase.Transaction = null;
+            }
             if (_isHereOpen)
             {
                 _isHereOpen = false;
                 await DataBase.CloseAsync();
-            }
-            if (_hereTransaction)
-            {
-                await DataBase.Transaction.DisposeAsync();
-                DataBase.Transaction = null;
             }
         }
 
@@ -73,6 +75,7 @@ namespace Agebull.EntityModel.MySql
         }
 
         #endregion
+
         #region 事务
 
         bool _hereTransaction;
@@ -86,7 +89,7 @@ namespace Agebull.EntityModel.MySql
             if (DataBase.Transaction != null)
                 return false;
             _hereTransaction = true;
-            DataBase.TransactionSuccess = false;
+            DataBase.TransactionSuccess = null;
             DataBase.Transaction = await DataBase._connection.BeginTransactionAsync();
             return true;
         }
@@ -96,8 +99,10 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task Rollback()
         {
+            if (DataBase.TransactionSuccess == true)
+                return;
             DataBase.TransactionSuccess = false;
-            if (DataBase.Transaction == null)
+            if (DataBase.Transaction != null)
                 await DataBase.Transaction.RollbackAsync();
         }
 
@@ -106,6 +111,8 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async Task Commit()
         {
+            if (DataBase.TransactionSuccess == false)
+                return;
             DataBase.TransactionSuccess = true;
             if (_hereTransaction && DataBase.Transaction != null)
                 await DataBase.Transaction.CommitAsync();

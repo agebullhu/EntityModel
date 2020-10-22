@@ -17,12 +17,5 @@ namespace Agebull.EntityModel.Common
         ///     数据状态
         /// </summary>
         DataStateType DataState { get; set; }
-
-        /// <summary>
-        ///     数据是否已冻结，如果是，则为只读数据
-        /// </summary>
-        /// <value>bool</value>
-        bool IsFreeze { get; set; }
     }
-
 }

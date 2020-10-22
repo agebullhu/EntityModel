@@ -28,33 +28,10 @@ namespace Agebull.EntityModel.BusinessLogic
         #region 数据状态逻辑
 
         /// <summary>
-        ///     是否可以执行保存操作
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="isAdd">是否为新增</param>
-        /// <returns>如果为否将阻止后续操作</returns>
-        protected override async Task<bool> CanSave(TData data, bool isAdd)
-        {
-            if (!await base.CanSave(data, isAdd))
-                return false;
-            if (!data.IsFreeze)
-                return true;
-            Context.LastMessage = "数据已锁定";
-            Context.LastState = Context.ArgumentError;
-            return false;
-        }
-
-        /// <summary>
         ///     删除对象前置处理
         /// </summary>
         protected override async Task<bool> DoDelete(TPrimaryKey id)
         {
-            if (!await Access.AnyAsync(p => p.Id.Equals(id) && p.DataState != DataStateType.Delete))
-            {
-                Context.LastMessage = "数据已锁定";
-                Context.LastState = Context.ArgumentError;
-                return false;
-            }
             if (await Access.AnyAsync(p => p.DataState == DataStateType.Delete && p.Id.Equals(id)))
                 return await Access.PhysicalDeleteAsync(id);
             return await Access.DeletePrimaryKeyAsync(id);
@@ -107,6 +84,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected async Task<bool> SetDataState(TPrimaryKey id, DataStateType state, bool isFreeze, Expression<Func<TData, bool>> filter)
         {
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
             if (filter != null && !await Access.AnyAsync(filter))
                 return false;
             await SetState(state, isFreeze, id);
@@ -132,9 +110,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected async Task<bool> SetState(DataStateType state, bool isFreeze, TPrimaryKey id)
         {
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
             return await Access.SetValueAsync(id,
                 (nameof(IStateData.DataState), state),
-                (nameof(IStateData.IsFreeze), isFreeze)) == 1;
+                ("is_freeze", isFreeze)) == 1;
         }
 
         /// <summary>
@@ -142,9 +121,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// </summary>
         protected async Task<bool> SetState(DataStateType state, bool isFreeze, Expression<Func<TData, bool>> lambda)
         {
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
             return await Access.SetValueAsync(lambda,
                 (nameof(IStateData.DataState), state),
-                (nameof(IStateData.IsFreeze), isFreeze)) == 1;
+                ("is_freeze", isFreeze)) == 1;
         }
 
 

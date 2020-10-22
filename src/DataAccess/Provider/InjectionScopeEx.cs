@@ -3,10 +3,10 @@
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
-    /// 字段选择范围控制
+    /// 注入范围控制
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public static class FieldSelectEx
+    public static class InjectionScopeEx
     {
         /// <summary>
         /// 个性选择字段
@@ -15,38 +15,31 @@ namespace Agebull.EntityModel.Common
         /// <param name="query"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        public static IDisposable SelectField<TEntity>(this DataQuery<TEntity> query, params string[] fields)
+        public static IDisposable InjectionScope<TEntity>(this DataQuery<TEntity> query, InjectionLevel levle)
         where TEntity : class, new()
         {
-            return new FieldSelect<TEntity>(query, fields);
+            return new NoInjectionScope<TEntity>(query, levle);
         }
 
         /// <summary>
         /// 字段选择范围控制
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
-        class FieldSelect<TEntity> : IDisposable
+        class NoInjectionScope<TEntity> : IDisposable
             where TEntity : class, new()
         {
-
-            private readonly IDataOperator<TEntity> backup;
             private readonly DataQuery<TEntity> dataQuery;
-
-            internal FieldSelect(DataQuery<TEntity> query, params string[] fields)
+            private readonly InjectionLevel oldInjection;
+            internal NoInjectionScope(DataQuery<TEntity> query, InjectionLevel levle)
             {
                 dataQuery = query;
-                backup = query.DataOperator;
-                dataQuery.Provider.DataOperator = new DataOperator<TEntity>
-                {
-                    Provider = query.Provider
-                };
-                query.Option.Select(fields);
+                oldInjection = query.Option.InjectionLevel;
+                query.Option.InjectionLevel = levle;
             }
 
             void IDisposable.Dispose()
             {
-                dataQuery.Provider.DataOperator = backup;
-                dataQuery.Option.SelectAll();
+                dataQuery.Option.InjectionLevel = oldInjection;
             }
         }
     }

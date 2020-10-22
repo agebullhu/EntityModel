@@ -524,14 +524,6 @@
             <typeparam name="TData">数据对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.CanSave(`0,System.Boolean)">
-            <summary>
-                是否可以执行保存操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
         <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DoDelete(`1)">
             <summary>
                 删除对象前置处理
@@ -1652,12 +1644,6 @@
             <summary>
                 数据状态
             </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.IStateData.IsFreeze">
-            <summary>
-                数据是否已冻结，如果是，则为只读数据
-            </summary>
-            <value>bool</value>
         </member>
         <member name="T:Agebull.EntityModel.Common.MyDateTimeConverter">
             <summary>

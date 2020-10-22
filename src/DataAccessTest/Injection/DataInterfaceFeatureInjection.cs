@@ -29,7 +29,7 @@ namespace Agebull.EntityModel.MySql
     /// 操作注入
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class OperatorInjection<TEntity> : IOperatorInjection<TEntity>
+    public class DataInterfaceFeatureInjection<TEntity> : IOperatorInjection<TEntity>
         where TEntity : class, new()
     {
         #region 构造
@@ -81,7 +81,9 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public void InjectionQueryCondition(List<string> conditions)
         {
-            if (Provider.Option.NoInjection || Provider.Option.DataStruct.InterfaceFeature == null || Provider.Option.DataStruct.InterfaceFeature.Length == 0)
+            if (Provider.Option.DataStruct.InterfaceFeature == null ||
+                Provider.Option.DataStruct.InterfaceFeature.Count == 0 ||
+                !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.QueryCondition))
                 return;
             if (Provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IStateData)))
             {
@@ -101,7 +103,9 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public void InjectionInsertCode(StringBuilder fields, StringBuilder values)
         {
-            if (Provider.Option.NoInjection || Provider.Option.DataStruct.InterfaceFeature == null || Provider.Option.DataStruct.InterfaceFeature.Length == 0)
+            if (Provider.Option.DataStruct.InterfaceFeature == null ||
+                Provider.Option.DataStruct.InterfaceFeature.Count == 0 ||
+                !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
                 return;
             if (Provider.Option.DataStruct.InterfaceFeature.Contains(nameof(IAuthorData)))
             {
@@ -144,8 +148,13 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public void InjectionUpdateCode(ref string valueExpression, ref string condition)
         {
-            if (Provider.Option.NoInjection || Provider.Option.DataStruct.InterfaceFeature == null || Provider.Option.DataStruct.InterfaceFeature.Length == 0)
+            if (Provider.Option.DataStruct.InterfaceFeature == null ||
+                Provider.Option.DataStruct.InterfaceFeature.Count == 0 ||
+                (!Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) &&
+                !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition)))
+            {
                 return;
+            }
             var val = new StringBuilder();
             var conditions = new List<string>();
 
@@ -168,9 +177,9 @@ namespace Agebull.EntityModel.MySql
             {
                 conditions.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
             }
-            if (val.Length > 0)
+            if (Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) && val.Length > 0)
                 valueExpression += val.ToString();
-            if (conditions.Count > 0)
+            if (Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition) && conditions.Count > 0)
             {
                 condition = string.IsNullOrEmpty(condition)
                     ? string.Join(" AND ", conditions)
@@ -185,7 +194,9 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public string InjectionDeleteCondition(string condition)
         {
-            if (Provider.Option.NoInjection || Provider.Option.DataStruct.InterfaceFeature == null || Provider.Option.DataStruct.InterfaceFeature.Length == 0)
+            if (Provider.Option.DataStruct.InterfaceFeature == null ||
+                Provider.Option.DataStruct.InterfaceFeature.Count == 0 ||
+                !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.DeleteCondition))
                 return condition;
             var conditions = new List<string>();
 
@@ -198,9 +209,12 @@ namespace Agebull.EntityModel.MySql
             {
                 conditions.Add($"{GlobalDataInterfaces.ILogicDeleteData.IsDeleted.FieldName} = 0");
             }
-            return conditions.Count > 0
-                ? $"({condition}) {string.Join(" AND ", conditions)}"
-                : condition;
+
+            if (conditions.Count > 0)
+                return string.IsNullOrEmpty(condition)
+                     ? string.Join(" AND ", conditions)
+                     : $"({condition}) AND {string.Join(" AND ", conditions)}";
+            return condition;
         }
 
         #endregion

@@ -23,6 +23,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         DataBaseType DataBaseType { get; }
 
+        /// <summary>
+        /// 数据访问配置
+        /// </summary>
+        DataAccessOption Option { get; set; }
+
         #region Option对象支持
 
         /// <summary>
@@ -36,6 +41,14 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <returns></returns>
         string BuilderUpdateFields();
+
+        /// <summary>
+        ///     生成更新的SQL
+        /// </summary>
+        /// <param name="valueExpression">更新表达式(SQL)</param>
+        /// <param name="condition">更新条件</param>
+        /// <returns>更新的SQL</returns>
+        string BuilderUpdateCode(string valueExpression, string condition);
 
         /// <summary>
         /// 插入的代码

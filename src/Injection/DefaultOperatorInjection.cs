@@ -36,6 +36,28 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public DataAccessProvider<TEntity> Provider { get; set; }
 
+        /// <summary>
+        /// 能否注入
+        /// </summary>
+        /// <param name="operatorType"></param>
+        private bool CanInject(DataOperatorType operatorType)
+        {
+            switch (operatorType)
+            {
+                case DataOperatorType.Insert:
+                    return Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField);
+                case DataOperatorType.MulitUpdate:
+                case DataOperatorType.Update:
+                    return Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) ||
+                           Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition);
+                case DataOperatorType.MulitDelete:
+                case DataOperatorType.Delete:
+                    return Provider.Option.InjectionLevel.HasFlag(InjectionLevel.DeleteCondition);
+                default:
+                    return false;
+            }
+        }
+
         #endregion
 
         #region 注入
@@ -47,7 +69,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public void InjectionQueryCondition(List<string> conditions)
         {
-            if (Provider.Option.NoInjection)
+            if (!Provider.Option.InjectionLevel.HasFlag(InjectionLevel.QueryCondition))
                 return;
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
@@ -64,7 +86,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public void InjectionInsertCode(StringBuilder fields, StringBuilder values)
         {
-            if (Provider.Option.NoInjection)
+            if (!Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
                 return;
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
@@ -82,7 +104,8 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public void InjectionUpdateCode(ref string valueExpression, ref string condition)
         {
-            if (Provider.Option.NoInjection)
+            if (!Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) &&
+                !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition))
                 return;
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
@@ -92,9 +115,9 @@ namespace Agebull.EntityModel.Common
 
             foreach (var trigger in services)
                 trigger.InjectionUpdateCode(Provider, val, con);
-            if (val.Length > 0)
+            if (Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateField) && val.Length > 0)
                 valueExpression += val.ToString();
-            if (con.Count > 0)
+            if (Provider.Option.InjectionLevel.HasFlag(InjectionLevel.UpdateCondition) && con.Count > 0)
             {
                 condition = string.IsNullOrEmpty(condition)
                     ? string.Join(" AND ", con)
@@ -109,7 +132,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public string InjectionDeleteCondition(string condition)
         {
-            if (Provider.Option.NoInjection)
+            if (!Provider.Option.InjectionLevel.HasFlag(InjectionLevel.DeleteCondition))
                 return condition;
             var services = Provider.ServiceProvider.GetServices<ISqlInjection>().Where(p => p.DataBaseType == Provider.Option.DataBaseType).ToArray();
             if (services.Length == 0)
@@ -119,9 +142,13 @@ namespace Agebull.EntityModel.Common
             foreach (var trigger in services)
                 trigger.InjectionDeleteCondition(Provider, con);
 
-            return con.Count > 0
-                ? $"({condition}) {string.Join(" AND ", con)}"
-                : condition;
+            if (con.Count > 0)
+            {
+                return string.IsNullOrEmpty(condition)
+                    ? string.Join(" AND ", con)
+                    : $"({condition}) AND ({string.Join(" AND ", con)})";
+            }
+            return condition;
         }
 
         #endregion
@@ -135,7 +162,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="operatorType">操作类型</param>
         public async Task BeforeSave(TEntity entity, DataOperatorType operatorType)
         {
-            if (Provider.Option.NoInjection)
+            if (!CanInject(operatorType))
                 return;
             var services = Provider.ServiceProvider.GetServices<IDataUpdateTrigger>().ToArray();
             if (services.Length == 0)
@@ -154,17 +181,29 @@ namespace Agebull.EntityModel.Common
         /// </remarks>
         public async Task AfterSave(TEntity entity, DataOperatorType operatorType)
         {
-            if (Provider.Option.NoInjection)
+            await InjectionAfterSave(entity, operatorType);
+
+            if (Provider.Option.CanRaiseEvent)
+                await OnStatusChanged(operatorType, EntityEventValueType.EntityJson, entity);
+        }
+
+        /// <summary>
+        ///     实体保存完成后期处理(Insert/Update/Delete)
+        /// </summary>
+        /// <param name="entity">实体</param>
+        /// <param name="operatorType">操作类型</param>
+        /// <remarks>
+        ///     对当前对象的属性的更改,请自行保存,否则将丢失
+        /// </remarks>
+        async Task InjectionAfterSave(TEntity entity, DataOperatorType operatorType)
+        {
+            if (!CanInject(operatorType))
                 return;
             var services = Provider.ServiceProvider.GetServices<IDataUpdateTrigger>().ToArray();
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
                 await trigger.AfterSave(Provider, entity, operatorType);
-
-            if (!Provider.Option.CanRaiseEvent)
-                return;
-            await OnStatusChanged(operatorType, EntityEventValueType.EntityJson, entity);
         }
 
         /// <summary>
@@ -175,7 +214,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="operatorType">操作类型</param>
         public async Task BeforeExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter)
         {
-            if (Provider.Option.NoInjection)
+            if (!CanInject(operatorType))
                 return;
             var services = Provider.ServiceProvider.GetServices<IDataUpdateTrigger>().ToArray();
             if (services.Length == 0)
@@ -192,17 +231,27 @@ namespace Agebull.EntityModel.Common
         /// <param name="operatorType">操作类型</param>
         public async Task AfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter)
         {
-            if (Provider.Option.NoInjection)
+            await InjectionAfterExecute(operatorType, condition, parameter);
+
+            if (Provider.Option.CanRaiseEvent)
+                await OnStatusChanged(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
+        }
+
+        /// <summary>
+        ///     更新语句后处理(单个实体操作不引发)
+        /// </summary>
+        /// <param name="condition">执行条件</param>
+        /// <param name="parameter">参数值</param>
+        /// <param name="operatorType">操作类型</param>
+        async Task InjectionAfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter)
+        {
+            if (!CanInject(operatorType))
                 return;
             var services = Provider.ServiceProvider.GetServices<IDataUpdateTrigger>().ToArray();
             if (services.Length == 0)
                 return;
             foreach (var trigger in services)
                 await trigger.AfterExecute(Provider, operatorType, condition, parameter);
-
-            if (!Provider.Option.CanRaiseEvent)
-                return;
-            await OnStatusChanged(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
         }
 
         #endregion

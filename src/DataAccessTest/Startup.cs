@@ -30,7 +30,7 @@ namespace ZeroTeam.MessageMVC.ConfigSync
             services.AddTransient<ISerializeProxy, NewtonJsonSerializeProxy>();
             services.AddTransient<IJsonSerializeProxy, NewtonJsonSerializeProxy>();
 
-            services.AddScoped(typeof(IOperatorInjection<>), typeof(OperatorInjection<>));
+            services.AddScoped(typeof(IOperatorInjection<>), typeof(DataInterfaceFeatureInjection<>));
             services.AddScoped<EventBusDb>();
 
             services.AddMessageMvcHttp();

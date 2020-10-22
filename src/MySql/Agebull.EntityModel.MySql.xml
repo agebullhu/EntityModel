@@ -209,6 +209,14 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderUpdateCode(System.String,System.String)">
+            <summary>
+                生成更新的SQL
+            </summary>
+            <param name="valueExpression">更新表达式(SQL)</param>
+            <param name="condition">更新条件</param>
+            <returns>更新的SQL</returns>
+        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderInsertSqlCode">
             <summary>
             插入的代码

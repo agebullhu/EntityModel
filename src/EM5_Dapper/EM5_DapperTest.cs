@@ -14,7 +14,7 @@ using Zeroteam.MessageMVC.EventBus.DataAccess;
 
 namespace EM5_Dapper
 {
-    internal class Tester
+    internal class EM5_DapperTest
     {
         internal static async Task Test()
         {

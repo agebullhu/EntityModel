@@ -326,6 +326,26 @@ namespace Agebull.EntityModel.MySql
                 return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
             }
 
+            if (expression.Method.Name == nameof(object.Equals))
+            {
+                string left;
+                string right;
+                if (expression.Object == null)//扩展方法
+                {
+                    left = ExpressionSql(expression.Arguments[1]);
+                    right = ExpressionSql(expression.Arguments[0]);
+                }
+                else
+                {
+                    left = ExpressionSql(expression.Object);
+                    right = ExpressionSql(expression.Arguments[0]);
+                }
+
+                if (!string.IsNullOrWhiteSpace(left) && !string.IsNullOrWhiteSpace(right))
+                    return $"{left} = {right}";
+                return null;
+            }
+
             if (expression.Method.Name == nameof(string.Contains))
             {
                 string value;
@@ -598,8 +618,8 @@ namespace Agebull.EntityModel.MySql
         {
             var field = member.Member.Name;
 
-            _option.FieldMap.TryGetValue(field, out field);
-            return $"`{field}`";
+            _option.FieldMap.TryGetValue(field, out var field2);
+            return $"`{field2 ?? field}`";
         }
         string LogicLink => _mergeByAnd ? "AND" : "OR";
         string ToSql((bool toArg, object value) re)
