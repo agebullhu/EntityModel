@@ -716,7 +716,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<DbOperatorContext> BeginInsert()
         {
-            var scope = await DataBase.CreateConnectionScope();
+            await using var scope = await DataBase.CreateConnectionScope();
             var ctx = new DbOperatorContext
             {
                 ConnectionScope = scope,
@@ -793,7 +793,7 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<DbOperatorContext> BeginUpdate()
         {
-            var scope = await DataBase.CreateConnectionScope();
+            await using var scope = await DataBase.CreateConnectionScope();
             var ctx = new DbOperatorContext
             {
                 ConnectionScope = scope,

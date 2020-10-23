@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.50" />
+    <PackageReference Include="Agebull.Common.Extend" Version="4.0.0.51" />
     <PackageReference Include="Dapper" Version="2.0.35" />
   </ItemGroup>
 

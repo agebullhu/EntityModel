@@ -1,5 +1,6 @@
 ﻿using Agebull.Common.Configuration;
 using Agebull.Common.Ioc;
+using Agebull.EntityModel.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,28 @@ namespace EM5_Dapper
         {
             DependencyHelper.AddScoped<EventBusDb>();
             DependencyHelper.Flush();
-            return EntityModelWrite();
+            return SelectFieldTest();
+        }
+
+        static async Task SelectFieldTest()
+        {
+            DependencyHelper.AddScoped<EventBusDb>();
+            DependencyHelper.Flush();
+            using var scope = DependencyScope.CreateScope();
+            try
+            {
+                var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultEntity>();
+                access.SelectField("id", "IsFreeze");
+                await using var connectionScope = await access.DataBase.CreateConnectionScope();
+                await access.FirstAsync(p => p.Id.Equals(12));
+                await access.FirstAsync(p => 12.Equals(p.Id));
+                await access.FirstAsync(p => Equals(p.Id, 12));
+                await access.FirstAsync(p => p.Id == 12);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         static async Task EntityModelWrite()
