@@ -219,7 +219,7 @@
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderInsertSqlCode">
             <summary>
-            插入的代码
+            插入的代码(BUG)
             </summary>
             <returns></returns>
         </member>

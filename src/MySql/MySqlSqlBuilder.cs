@@ -126,7 +126,7 @@ namespace Agebull.EntityModel.MySql
         }
 
         /// <summary>
-        /// 插入的代码
+        /// 插入的代码(BUG)
         /// </summary>
         /// <returns></returns>
         string ISqlBuilder.BuilderInsertSqlCode()
@@ -220,11 +220,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         string ISqlBuilder<TEntity>.CreateInsertSqlCode(TEntity entity)
         {
-            if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
+            //if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
             {
                 return Option.InsertSqlCode;
             }
-            var fields = new StringBuilder();
+            /*var fields = new StringBuilder();
             fields.Append($"INSERT INTO `{Option.WriteTableName}`(");
             var paras = new StringBuilder();
             paras.Append("VALUES(");
@@ -257,7 +257,7 @@ namespace Agebull.EntityModel.MySql
                 paras.Append("\nSELECT @@IDENTITY;");
             }
             fields.Append(paras);
-            return fields.ToString();
+            return fields.ToString();*/
         }
 
         /// <summary>
