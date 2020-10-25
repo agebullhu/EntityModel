@@ -736,6 +736,11 @@
             图标
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Description">
+            <summary>
+            说明
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Vue.TreeNode.IsLeaf">
             <summary>
             是否有子级

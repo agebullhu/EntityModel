@@ -369,12 +369,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>文本</returns>
         public static bool TryGet(string name, out string val, bool trim = true)
         {
-            if (!Arguments.TryGetValue(name, out var value))
+            if (!Arguments.TryGetValue(name, out var value) || string.IsNullOrWhiteSpace(value))
             {
                 val = null;
                 return false;
             }
-            if (trim && value != null)
+            if (trim)
                 val = value.Trim();
             else
                 val = value;
@@ -392,7 +392,8 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public static bool TryGet<T>(string name, Func<string, T> convert, out T? value)
             where T : struct
         {
-            if (!TryGet(name, out string str))
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
             {
                 value = null;
                 return false;
@@ -517,7 +518,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public static bool TryGet(string name, out bool? value)
         {
-            if (!TryGet(name, out string str))
+            if (!Arguments.TryGetValue(name, out var str))
             {
                 value = false;
                 return false;

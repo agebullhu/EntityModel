@@ -40,6 +40,12 @@ namespace Agebull.EntityModel.Vue
         public string Icon { get; set; }
 
         /// <summary>
+        /// 说明
+        /// </summary>
+        [JsonProperty("desc"), JsonPropertyName("desc")]
+        public string Description { get; set; }
+
+        /// <summary>
         /// 是否有子级
         /// </summary>
         [JsonProperty("isLeaf"), JsonPropertyName("isLeaf")]
