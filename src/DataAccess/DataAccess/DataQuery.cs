@@ -334,7 +334,7 @@ namespace Agebull.EntityModel.Common
         {
             var convert = SqlBuilder.Compile(lambda);
             using var fieldScope = DynamicOption(lambda);
-            return await LoadDataInnerAsync(convert.ConditionSql,null, convert.Parameters);
+            return await LoadDataInnerAsync(convert.ConditionSql, null, convert.Parameters);
         }
 
         /// <summary>
@@ -944,7 +944,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<List<TEntity>> LoadDataAsync(int page, int limit, string orderField, string condition, params DbParameter[] args)
         {
-            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(orderField,true), condition, args);
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, true), condition, args);
         }
 
         /// <summary>
@@ -1160,6 +1160,76 @@ namespace Agebull.EntityModel.Common
         #region 单列读取
 
         /// <summary>
+        ///     读取主键
+        /// </summary>
+        public async Task<TField> LoadIdAsync<TField>(string condition, params DbParameter[] args)
+        {
+            var sql = SqlBuilder.CreateLoadSql(Option.PrimaryDbField, condition, null, "1");
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            var (hase, value) = await DataBase.ExecuteScalarAsync(sql, args);
+            return !hase
+                ? default
+                : value == null ? default : (TField)value;
+        }
+
+        /// <summary>
+        ///     读取主键
+        /// </summary>
+        public async Task<TField> LoadIdAsync<TField>(Expression<Func<TEntity, bool>> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            var sql = SqlBuilder.CreateLoadSql(Option.PrimaryDbField, convert.ConditionSql, "1");
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            var (hase, value) = await DataBase.ExecuteScalarAsync(sql, convert.Parameters);
+            return !hase
+                ? default
+                : value == null ? default : (TField)value;
+        }
+
+        /// <summary>
+        ///     读取主键
+        /// </summary>
+        public async Task<List<TField>> LoadIdsAsync<TField>(string condition, params DbParameter[] args)
+        {
+            var sql = SqlBuilder.CreateLoadSql(Option.PrimaryDbField, condition);
+            var values = new List<TField>();
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            {
+                await using var cmd = connectionScope.CreateCommand(sql, args);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    if (!await reader.IsDBNullAsync(0))
+                        values.Add(await reader.GetFieldValueAsync<TField>(0));
+                }
+            }
+            return values;
+        }
+
+        /// <summary>
+        ///     读取主键
+        /// </summary>
+        public async Task<List<TField>> LoadIdsAsync<TField>(Expression<Func<TEntity, bool>> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            var sql = SqlBuilder.CreateLoadSql(Option.PrimaryDbField, convert.ConditionSql, "1");
+            var values = new List<TField>();
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            {
+                await using var cmd = connectionScope.CreateCommand(sql, convert.Parameters);
+                DataBase.TraceSql(cmd);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    if (!await reader.IsDBNullAsync(0))
+                        values.Add(await reader.GetFieldValueAsync<TField>(0));
+                }
+            }
+            return values;
+        }
+
+        /// <summary>
         ///     读取一个字段
         /// </summary>
         /// <param name="field">字段</param>
@@ -1193,7 +1263,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<(bool hase, TField value)> LoadValueAsync<TField>(string field, string condition, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadSql(Option.FieldMap[field], condition);
+            var sql = SqlBuilder.CreateLoadSql(Option.FieldMap[field], condition, null, "1");
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var (hase, value) = await DataBase.ExecuteScalarAsync(sql, args);
             return !hase
