@@ -38,6 +38,36 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 接口
         /// </summary>
-        Interface = 0x4
+        Interface = 0x4,
+
+        /// <summary>
+        /// 外部连接字段
+        /// </summary>
+        LinkField = 0x8,
+
+        /// <summary>
+        /// 主键
+        /// </summary>
+        PrimaryKey = 0x10,
+
+        /// <summary>
+        /// 普通字段：字段、属性
+        /// </summary>
+        General = Field | Property,
+
+        /// <summary>
+        /// 主键：字段、属性、主键
+        /// </summary>
+        PrimaryProperty = Field | Property | PrimaryKey,
+
+        /// <summary>
+        /// 外链：字段、属性、主键
+        /// </summary>
+        OutProperty = Field | Property | LinkField,
+
+        /// <summary>
+        /// 外键：字段、属性、主键、连接字段
+        /// </summary>
+        ForeignKey = Field | Property | LinkField | PrimaryKey,
     }
 }

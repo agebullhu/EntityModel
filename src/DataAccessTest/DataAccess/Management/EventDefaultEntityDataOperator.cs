@@ -73,17 +73,20 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         static DataAccessOption Option = new DataAccessOption
         {
-            InjectionLevel = InjectionLevel.All,
             IsQuery = false,
             UpdateByMidified = true,
-            ReadTableName = FromSqlCode,
-            WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
-            LoadFields = LoadFields,
-            Having = Having,
-            GroupFields = GroupFields,
-            UpdateFields = UpdateFields,
-            InsertSqlCode = InsertSqlCode,
-            DataStruct = Struct
+            DataStruct = Struct,
+            BaseOption = new DynamicOption
+            {
+                InjectionLevel = InjectionLevel.All,
+                ReadTableName = FromSqlCode,
+                WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+                LoadFields = LoadFields,
+                Having = Having,
+                GroupFields = GroupFields,
+                UpdateFields = UpdateFields,
+                InsertSqlCode = InsertSqlCode,
+            }
         };
 
         /// <summary>

@@ -133,10 +133,14 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     载入当前操作的数据
         /// </summary>
-        public async Task<TData> Details(LambdaItem<TData> filter)
+        public async Task<TData> Details(LambdaItem<TData> fiter)
         {
             await using var connectionScope = await Access.DataBase.CreateConnectionScope();
-            var data = await Access.FirstOrDefaultAsync(filter);
+            TData data;
+            {
+                using var fieldScope = Access.DynamicOption(fiter);
+                data = await Access.FirstOrDefaultAsync(fiter);
+            }
             if (data == null)
                 return null;
             await OnDetailsLoaded(data, false);
@@ -180,25 +184,25 @@ namespace Agebull.EntityModel.BusinessLogic
 
         #region 分页读取
 
-
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<ApiPageData<TData>> PageData(PageArgument argument, LambdaItem<TData> lambda)
+        public async Task<ApiPageData<TData>> PageData(PageArgument argument, LambdaItem<TData> fiter)
         {
-            var item = Access.SqlBuilder.Compile(lambda);
-            return PageData(argument.Page, argument.PageSize, argument.Order, argument.Desc, item.ConditionSql, item.Parameters);
+            var item = Access.SqlBuilder.Compile(fiter);
+            using var fieldScope = Access.DynamicOption(fiter);
+            return await PageData(argument.Page, argument.PageSize, argument.Order, argument.Desc, item.ConditionSql, item.Parameters);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<ApiPageData<TData>> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> lambda)
+        public async Task<ApiPageData<TData>> PageData(int page, int limit, string sort, bool desc, LambdaItem<TData> fiter)
         {
-            var item = Access.SqlBuilder.Compile(lambda);
-            return PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
+            var item = Access.SqlBuilder.Compile(fiter);
+            using var fieldScope = Access.DynamicOption(fiter);
+            return await PageData(page, limit, sort, desc, item.ConditionSql, item.Parameters);
         }
-
         /// <summary>
         ///     分页读取
         /// </summary>
@@ -211,8 +215,8 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         ///     取得列表数据
         /// </summary>
-        public async Task<ApiPageData<TData>> PageData(int page, int limit, string sort, bool desc, string condition,
-            params DbParameter[] args)
+        async Task<ApiPageData<TData>> PageData(int page, int limit, string sort, bool desc, string condition,
+            DbParameter[] args)
         {
             await using var connectionScope = await Access.DataBase.CreateConnectionScope();
             var datas = await Access.PageAsync(page, limit, sort, desc, condition, args);
@@ -460,7 +464,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 Context.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                 return false;
             }
-            await OnCommandSuccess(default,id, BusinessCommandType.Delete);
+            await OnCommandSuccess(default, id, BusinessCommandType.Delete);
             return true;
         }
 

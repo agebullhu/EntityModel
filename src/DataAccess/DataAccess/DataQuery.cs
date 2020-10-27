@@ -43,6 +43,49 @@ namespace Agebull.EntityModel.Common
         {
         }
 
+        /// <summary>
+        /// 个性环境
+        /// </summary>
+        /// <returns></returns>
+        public DynamicOptionScope<TEntity> DynamicOption()
+        {
+            return new DynamicOptionScope<TEntity>(this);
+        }
+
+        /// <summary>
+        /// 个性环境
+        /// </summary>
+        /// <returns></returns>
+        public DynamicOptionScope<TEntity> Select(params string[] fields)
+        {
+            var scope = new DynamicOptionScope<TEntity>(this);
+            scope.Select(fields);
+            return scope;
+        }
+
+        /// <summary>
+        /// 个性环境
+        /// </summary>
+        /// <returns></returns>
+        public DynamicOptionScope<TEntity> OrderBy(string orderField, bool asc = true)
+        {
+            var scope = new DynamicOptionScope<TEntity>(this);
+            scope.OrderBy(orderField, asc);
+            return scope;
+        }
+
+        /// <summary>
+        /// 个性环境
+        /// </summary>
+        /// <returns></returns>
+        public DynamicOptionScope<TEntity> DynamicOption(LambdaItem<TEntity> item)
+        {
+            var scope = new DynamicOptionScope<TEntity>(this);
+            scope.Select(item.Fields);
+            scope.OrderBy(item.OrderBy);
+            return scope;
+        }
+
         #endregion
 
         #region 首行
@@ -59,10 +102,11 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<TEntity> FirstAsync(LambdaItem<TEntity> lambda)
+        public async Task<TEntity> FirstAsync(LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return LoadFirstInnerAsync(convert.ConditionSql, convert.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadFirstInnerAsync(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -105,10 +149,11 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         /// <returns>如果有载入首行,否则返回空</returns>
-        public Task<TEntity> FirstOrDefaultAsync(LambdaItem<TEntity> lambda)
+        public async Task<TEntity> FirstOrDefaultAsync(LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return LoadFirstInnerAsync(convert.ConditionSql, convert.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadFirstInnerAsync(convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -273,7 +318,6 @@ namespace Agebull.EntityModel.Common
             return LoadDataInnerAsync(null, null, null);
         }
 
-
         /// <summary>
         ///     读取数据
         /// </summary>
@@ -286,10 +330,11 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda)
+        public async Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return LoadPageDataAsync(1, -1, null, false, convert.ConditionSql, convert.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadDataInnerAsync(convert.ConditionSql,null, convert.Parameters);
         }
 
         /// <summary>
@@ -299,7 +344,7 @@ namespace Agebull.EntityModel.Common
             bool desc)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return LoadPageDataAsync(1, -1, GetPropertyName(orderBy), desc, convert.ConditionSql, convert.Parameters);
+            return LoadDataInnerAsync(convert.ConditionSql, SqlBuilder.OrderCode(GetPropertyName(orderBy), !desc), convert.Parameters);
         }
 
         /// <summary>
@@ -315,22 +360,6 @@ namespace Agebull.EntityModel.Common
             return LoadDataInnerAsync($"({convert1.ConditionSql}) AND ({convert1.ConditionSql})"
                 , null
                 , convert1.Parameters.Union(convert2.Parameters).ToArray());
-        }
-
-
-        /// <summary>
-        ///     读取数据
-        /// </summary>
-        /// <param name="lambda">查询表达式</param>
-        /// <param name="orderBys">排序</param>
-        /// <returns>数据</returns>
-        public Task<List<TEntity>> AllAsync(LambdaItem<TEntity> lambda, params string[] orderBys)
-        {
-            var convert = SqlBuilder.Compile(lambda);
-
-            return LoadDataInnerAsync(convert.ConditionSql,
-                orderBys.Length == 0 ? null : string.Join(",", orderBys.Select(p=>Option.FieldMap[p])),
-                convert.Parameters);
         }
 
         /// <summary>
@@ -855,26 +884,26 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> PageDataAsync(int page, int limit)
+        public Task<List<TEntity>> PageDataAsync(int page, int limit)
         {
-            return await PageDataAsync(page, limit, null, false, null, null);
+            return LoadPageDataAsyncInner(page, limit, null, null, null);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> PageDataAsync(int page, int limit, string condition, params DbParameter[] args)
+        public Task<List<TEntity>> PageDataAsync(int page, int limit, string condition, params DbParameter[] args)
         {
-            return await PageDataAsync(page, limit, null, false, condition, args);
+            return LoadPageDataAsyncInner(page, limit, null, condition, args);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> PageDataAsync(int page, int limit, Expression<Func<TEntity, bool>> lambda)
+        public Task<List<TEntity>> PageDataAsync(int page, int limit, Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageDataAsync(page, limit, null, false, convert.ConditionSql, convert.Parameters);
+            return LoadPageDataAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -883,15 +912,16 @@ namespace Agebull.EntityModel.Common
         public async Task<List<TEntity>> PageDataAsync(int page, int limit, LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return await PageDataAsync(page, limit, null, false, convert.ConditionSql, convert.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadPageDataAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public async Task<List<TEntity>> LoadDataAsync(int page, int limit, string orderField, bool desc, string condition, params DbParameter[] args)
+        public Task<List<TEntity>> LoadDataAsync(int page, int limit, string orderField, bool desc, string condition, params DbParameter[] args)
         {
-            return await PageDataAsync(page, limit, orderField, desc, condition, args);
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, !desc), condition, args);
         }
 
         /// <summary>
@@ -904,7 +934,60 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">查询条件</param>
         /// <param name="args">查询参数</param>
         /// <returns></returns>
+        public Task<List<TEntity>> PageDataAsync(int page, int limit, string orderSql, string condition, params DbParameter[] args)
+        {
+            return LoadPageDataAsyncInner(page, limit, orderSql, condition, args);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public Task<List<TEntity>> LoadDataAsync(int page, int limit, string orderField, string condition, params DbParameter[] args)
+        {
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(orderField,true), condition, args);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
         public Task<List<TEntity>> PageDataAsync(int page, int limit, string orderField, bool desc, string condition, params DbParameter[] args)
+        {
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, !desc), condition, args);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField,
+            Expression<Func<TEntity, bool>> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(GetPropertyName(orderField), true), convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField, bool desc,
+            Expression<Func<TEntity, bool>> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            return LoadPageDataAsyncInner(page, limit, SqlBuilder.OrderCode(GetPropertyName(orderField), !desc), convert.ConditionSql, convert.Parameters);
+        }
+
+        /// <summary>
+        ///     分页读取
+        /// </summary>
+        public async Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, LambdaItem<TEntity> lambda)
+        {
+            var convert = SqlBuilder.Compile(lambda);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadPageDataAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
+        }
+
+
+
+        private async Task<List<TEntity>> LoadPageDataAsyncInner(int page, int limit, string orderSql, string condition, DbParameter[] args)
         {
             if (page <= 0)
                 page = 1;
@@ -914,60 +997,10 @@ namespace Agebull.EntityModel.Common
                 limit = -1;
             else if (limit > 500)
                 limit = 500;
-            return LoadPageDataAsync(page, limit, orderField, desc, condition, args);
-        }
 
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public Task<List<TEntity>> LoadDataAsync(int page, int limit, string orderField, string condition, params DbParameter[] args)
-        {
-            return PageDataAsync(page, limit, orderField, false, condition, args);
-        }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public Task<List<TEntity>> PageDataAsync(int page, int limit, string orderField, string condition, params DbParameter[] args)
-        {
-            return PageDataAsync(page, limit, orderField, false, condition, args);
-        }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField,
-            Expression<Func<TEntity, bool>> lambda)
-        {
-            return PageDataAsync(page, limit, orderField, false, lambda);
-        }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField, bool desc,
-            Expression<Func<TEntity, bool>> lambda)
-        {
-            var convert = SqlBuilder.Compile(lambda);
-            return PageDataAsync(page, limit, GetPropertyName(orderField), desc, convert.ConditionSql, convert.Parameters);
-        }
-
-        /// <summary>
-        ///     分页读取
-        /// </summary>
-        public Task<List<TEntity>> PageDataAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField, bool desc,
-            LambdaItem<TEntity> lambda)
-        {
-            var convert = SqlBuilder.Compile(lambda);
-            return PageDataAsync(page, limit, GetPropertyName(orderField), desc, convert.ConditionSql, convert.Parameters);
-        }
-
-
-
-        protected async Task<List<TEntity>> LoadPageDataAsync(int page, int limit, string orderField, bool desc, string condition, DbParameter[] args)
-        {
             var results = new List<TEntity>();
-            var sql = SqlBuilder.CreatePageSql(page, limit, orderField, desc, condition);
+            var limitSql = limit >= 0 ? $"{(page - 1) * limit},{limit}" : null;
+            var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, condition, orderSql, limitSql);
             await using var connectionScope = await DataBase.CreateConnectionScope();
             {
                 //析构Commad对象，否则连接不可重用
@@ -995,7 +1028,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit)
         {
-            return PageAsync(page, limit, Option.PrimaryDbField, false, null, null);
+            return LoadPageAsyncInner(page, limit, null, null, null);
         }
 
         /// <summary>
@@ -1004,16 +1037,18 @@ namespace Agebull.EntityModel.Common
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return PageAsync(page, limit, Option.PrimaryDbField, false, convert.ConditionSql, convert.Parameters);
+            return LoadPageAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, LambdaItem<TEntity> lambda)
+        public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit, LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return PageAsync(page, limit, Option.PrimaryProperty, false, convert.ConditionSql, convert.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadPageAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
+
         }
 
         /// <summary>
@@ -1021,7 +1056,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string condition, params DbParameter[] args)
         {
-            return PageAsync(page, limit, Option.PrimaryProperty, false, condition, args);
+            return LoadPageAsyncInner(page, limit, null, condition, args);
         }
 
 
@@ -1030,7 +1065,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, string condition, params DbParameter[] args)
         {
-            return PageAsync(page, limit, orderField, false, condition, args);
+            return LoadPageAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, true), condition, args);
         }
 
         /// <summary>
@@ -1039,7 +1074,8 @@ namespace Agebull.EntityModel.Common
         public Task<ApiPageData<TEntity>> PageAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField,
             Expression<Func<TEntity, bool>> lambda)
         {
-            return PageAsync(page, limit, orderField, false, lambda);
+            var convert = SqlBuilder.Compile(lambda);
+            return LoadPageAsyncInner(page, limit, SqlBuilder.OrderCode(GetPropertyName(orderField), false), convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -1049,17 +1085,17 @@ namespace Agebull.EntityModel.Common
             Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return PageAsync(page, limit, GetPropertyName(orderField), desc, convert.ConditionSql, convert.Parameters);
+            return LoadPageAsyncInner(page, limit, SqlBuilder.OrderCode(GetPropertyName(orderField), !desc), convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     分页读取
         /// </summary>
-        public Task<ApiPageData<TEntity>> PageAsync<TField>(int page, int limit, Expression<Func<TEntity, TField>> orderField, bool desc,
-            LambdaItem<TEntity> lambda)
+        public async Task<ApiPageData<TEntity>> PageAsync<TField>(int page, int limit, LambdaItem<TEntity> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return PageAsync(page, limit, GetPropertyName(orderField), desc, convert.ConditionSql, convert.Parameters);
+            using var scope = DynamicOption(lambda);
+            return await LoadPageAsyncInner(page, limit, null, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -1072,10 +1108,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">查询条件</param>
         /// <param name="args">查询参数</param>
         /// <returns></returns>
-        public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, bool desc, LambdaItem<TEntity> lambda)
+        public async Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, bool desc, LambdaItem<TEntity> lambda)
         {
             var item = SqlBuilder.Compile(lambda);
-            return LoadPageAsync(page, limit, orderField, desc, item.ConditionSql, item.Parameters);
+            using var fieldScope = DynamicOption(lambda);
+            return await LoadPageAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, !desc), item.ConditionSql, item.Parameters);
         }
 
         /// <summary>
@@ -1091,12 +1128,11 @@ namespace Agebull.EntityModel.Common
         public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, bool desc, string condition,
             params DbParameter[] args)
         {
-            return LoadPageAsync(page, limit, orderField, desc, condition, args);
+            return LoadPageAsyncInner(page, limit, SqlBuilder.OrderCode(orderField, !desc), condition, args);
         }
 
 
-        protected async Task<ApiPageData<TEntity>> LoadPageAsync(int page, int limit, string orderField, bool desc, string condition,
-            DbParameter[] args)
+        protected async Task<ApiPageData<TEntity>> LoadPageAsyncInner(int page, int limit, string orderSql, string condition, DbParameter[] args)
         {
             if (page <= 0)
                 page = 1;
@@ -1108,7 +1144,7 @@ namespace Agebull.EntityModel.Common
                 limit = 500;
 
             var count = (int)await CountAsync(condition, args);
-            var data = await PageDataAsync(page, limit, orderField, desc, condition, args);
+            var data = await LoadPageDataAsyncInner(page, limit, orderSql, condition, args);
             return new ApiPageData<TEntity>
             {
                 Total = count,
@@ -1157,7 +1193,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<(bool hase, TField value)> LoadValueAsync<TField>(string field, string condition, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadValueSql(field, condition);
+            var sql = SqlBuilder.CreateLoadSql(Option.FieldMap[field], condition);
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var (hase, value) = await DataBase.ExecuteScalarAsync(sql, args);
             return !hase
@@ -1177,7 +1213,7 @@ namespace Agebull.EntityModel.Common
             var field = GetPropertyName(fieldExpression);
             var convert = SqlBuilder.Compile(lambda);
 
-            var sql = SqlBuilder.CreateLoadValuesSql(field, convert);
+            var sql = SqlBuilder.CreateLoadSql(Option.FieldMap[field], convert.ConditionSql);
             var values = new List<TField>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             {
@@ -1202,7 +1238,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>内容</returns>
         public Task<List<TField>> LoadValuesAsync<TField>(Expression<Func<TEntity, TField>> fieldExpression, string condition)
         {
-            return LoadValuesInnerAsync<TField>(GetPropertyName(fieldExpression), condition);
+            return LoadValuesInnerAsync<TField>(Option.FieldMap[GetPropertyName(fieldExpression)], condition);
         }
 
         /// <summary>
@@ -1211,7 +1247,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>数据</returns>
         public Task<List<TField>> LoadValuesAsync<TField>(Expression<Func<TEntity, TField>> fieldExpression, string condition, DbParameter[] args)
         {
-            return LoadValuesInnerAsync<TField>(GetPropertyName(fieldExpression), condition, args);
+            return LoadValuesInnerAsync<TField>(Option.FieldMap[GetPropertyName(fieldExpression)], condition, args);
         }
 
         /// <summary>
@@ -1219,7 +1255,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<(bool hase, object value)> LoadValueAsync(string field, string condition, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadValueSql(field, condition);
+            var sql = SqlBuilder.CreateLoadSql(Option.FieldMap[field], condition, null, "1");
             await using var connectionScope = await DataBase.CreateConnectionScope();
             return await DataBase.ExecuteScalarAsync(sql, args);
         }
@@ -1229,7 +1265,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         protected async Task<List<T>> LoadValuesInnerAsync<T>(string field, string condition, params DbParameter[] args)
         {
-            var sql = SqlBuilder.CreateLoadValueSql(field, condition);
+            var sql = SqlBuilder.CreateLoadSql(field, condition);
             var values = new List<T>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
             await using var cmd = connectionScope.CreateCommand(sql, args);
@@ -1369,7 +1405,7 @@ namespace Agebull.EntityModel.Common
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var para = ParameterCreater.CreateParameter(Option.PrimaryProperty, Provider.EntityOperator.GetValue(entity, Option.PrimaryProperty), SqlBuilder.GetDbType(Option.PrimaryProperty));
-            var sql = SqlBuilder.CreateLoadSql(SqlBuilder.PrimaryKeyCondition, null, null);
+            var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, SqlBuilder.PrimaryKeyCondition, null, null);
             await using var cmd = connectionScope.CreateCommand(sql, para);
             DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
@@ -1393,7 +1429,7 @@ namespace Agebull.EntityModel.Common
         {
             TEntity entity;
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            var sql = SqlBuilder.CreateLoadSql(condition, null, "1");
+            var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, condition, null, "1");
             {
                 await using var cmd = connectionScope.CreateCommand(sql, args);
                 DataBase.TraceSql(cmd);
@@ -1414,7 +1450,7 @@ namespace Agebull.EntityModel.Common
         {
             TEntity entity;
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            var sql = SqlBuilder.CreateLoadSql(condition, null, "1");
+            var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, condition, null, "1");
             {
                 await using var cmd = connectionScope.CreateCommand(sql, args);
                 DataBase.TraceSql(cmd);
@@ -1434,7 +1470,7 @@ namespace Agebull.EntityModel.Common
         {
             var results = new List<TEntity>();
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            var sql = SqlBuilder.CreateLoadSql(condition, orderBy, null);
+            var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, condition, orderBy);
             {
                 await using var cmd = connectionScope.CreateCommand(sql, args);
                 DataBase.TraceSql(cmd);

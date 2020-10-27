@@ -220,11 +220,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns>更新的SQL</returns>
         string ISqlBuilder<TEntity>.CreateInsertSqlCode(TEntity entity)
         {
-            //if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
+            if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
             {
                 return Option.InsertSqlCode;
             }
-            /*var fields = new StringBuilder();
+            var fields = new StringBuilder();
             fields.Append($"INSERT INTO `{Option.WriteTableName}`(");
             var paras = new StringBuilder();
             paras.Append("VALUES(");
@@ -257,7 +257,7 @@ namespace Agebull.EntityModel.MySql
                 paras.Append("\nSELECT @@IDENTITY;");
             }
             fields.Append(paras);
-            return fields.ToString();*/
+            return fields.ToString();
         }
 
         /// <summary>
@@ -294,20 +294,50 @@ namespace Agebull.EntityModel.MySql
 
         #region 载入
 
-        private string _primaryKeyCondition;
+        /// <summary>
+        ///     生成汇总的SQL语句
+        /// </summary>
+        /// <param name="fun">汇总函数名称</param>
+        /// <param name="field">汇总字段</param>
+        /// <param name="condition">汇总条件</param>
+        /// <returns>汇总的SQL语句</returns>
+        string ISqlBuilder.CreateCollectSql(string fun, string field, string condition)
+        {
+            if (field != "*")
+                field = $"`{Option.FieldMap[field]}`";
+            condition = InjectionLoadCondition(condition);
+            return $@"SELECT {fun}({field}) FROM {Option.ReadTableName}{condition};";
+        }
 
         /// <summary>
-        ///     主键的条件部分SQL
+        ///     生成载入字段值的SQL语句
         /// </summary>
-        string ISqlBuilder.PrimaryKeyCondition => _primaryKeyCondition ??= ((ISqlBuilder)this).Condition(Option.PrimaryProperty);
+        /// <param name="fields">字段</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderSql">排序片断</param>
+        /// <param name="limit"></param>
+        /// <returns>载入字段值的SQL语句</returns>
+        string ISqlBuilder.CreateLoadSql(string fields, string condition, string orderSql, string limit)
+        {
+            var sql = new StringBuilder();
+            sql.Append($"SELECT {fields}\nFROM {Option.ReadTableName} {Option.Having}");
 
-        /// <summary>
-        /// 构建排序SQL片断
-        /// </summary>
-        /// <param name="desc"></param>
-        /// <param name="field"></param>
-        /// <returns></returns>
-        public string OrderCode(bool desc, string field) => $"`{Option.FieldMap[field]}` {(desc ? "DESC" : "")}";
+            InjectionLoadCondition(sql, condition);
+            orderSql ??= Option.OrderbyFields;
+            if (orderSql != null)
+            {
+                sql.Append($"\nORDER BY {orderSql}");
+            }
+            sql.Append(Option.GroupFields);
+            if (limit != null)
+                sql.Append($"\nLIMIT {limit}");
+            sql.Append(';');
+            return sql.ToString();
+        }
+
+        #endregion
+
+        #region 注入
 
         /// <summary>
         ///     查询条件注入
@@ -374,94 +404,6 @@ namespace Agebull.EntityModel.MySql
             }
         }
 
-        /// <summary>
-        ///     生成汇总的SQL语句
-        /// </summary>
-        /// <param name="fun">汇总函数名称</param>
-        /// <param name="field">汇总字段</param>
-        /// <param name="condition">汇总条件</param>
-        /// <returns>汇总的SQL语句</returns>
-        string ISqlBuilder.CreateCollectSql(string fun, string field, string condition)
-        {
-            if (field != "*")
-                field = $"`{Option.FieldMap[field]}`";
-            condition = InjectionLoadCondition(condition);
-            return $@"SELECT {fun}({field}) FROM {Option.ReadTableName}{condition};";
-        }
-
-        /// <summary>
-        ///     生成载入字段值的SQL语句
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="condition">条件</param>
-        /// <returns>载入字段值的SQL语句</returns>
-        string ISqlBuilder.CreateLoadValueSql(string field, string condition)
-        {
-            condition = InjectionLoadCondition(condition);
-            return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{condition};";
-        }
-
-        /// <summary>
-        ///     生成载入值的SQL
-        /// </summary>
-        /// <param name="field">字段</param>
-        /// <param name="convert">条件</param>
-        /// <returns>载入字段值的SQL语句</returns>
-        string ISqlBuilder.CreateLoadValuesSql(string field, ConditionItem convert)
-        {
-            var condition = InjectionLoadCondition(convert.ConditionSql);
-            return $@"SELECT `{Option.FieldMap[field]}` FROM {Option.ReadTableName}{condition};";
-        }
-
-        /// <summary>
-        ///     生成载入的SQL语句
-        /// </summary>
-        /// <param name="condition">数据条件</param>
-        /// <param name="orderSql">排序片断</param>
-        /// <param name="limit"></param>
-        /// <returns>载入的SQL语句</returns>
-        string ISqlBuilder.CreateLoadSql(string condition, string orderSql, string limit)
-        {
-            var sql = new StringBuilder();
-            sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
-            sql.Append(Option.Having);
-            InjectionLoadCondition(sql, condition);
-            if (orderSql != null)
-            {
-                sql.Append($"\nORDER BY {orderSql}");
-            }
-            sql.Append(Option.GroupFields);
-            if (limit != null)
-                sql.Append($"\nLIMIT {limit}");
-            sql.Append(';');
-            return sql.ToString();
-        }
-
-        /// <summary>
-        ///     生成分页的SQL
-        /// </summary>
-        /// <param name="page">页号</param>
-        /// <param name="pageSize">每页几行(强制大于0,小于500行)</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="desc">是否倒序</param>
-        /// <param name="condition">数据条件</param>
-        /// <returns></returns>
-        string ISqlBuilder.CreatePageSql(int page, int pageSize, string orderField, bool desc, string condition)
-        {
-            var sql = new StringBuilder();
-            sql.Append($"SELECT {Option.LoadFields}\nFROM {Option.ReadTableName}");
-            InjectionLoadCondition(sql, condition);
-            if (!string.IsNullOrWhiteSpace(orderField))
-                sql.Append($"\nORDER BY {OrderCode(desc, orderField)}");
-
-            if (pageSize >= 0)
-            {
-                sql.Append($"\nLIMIT {(page - 1) * pageSize},{pageSize}");
-            }
-            sql.Append(';');
-            return sql.ToString();
-        }
-
         #endregion
 
         #region 删除
@@ -490,13 +432,24 @@ namespace Agebull.EntityModel.MySql
         }
         #endregion
 
-        #region 字段条件
+        #region 扩展
 
         string ISqlBuilder.Condition(string fieldName, string expression, string paraName) => $"(`{Option.FieldMap[fieldName]}` {expression} ?{paraName ?? fieldName})";
 
-        #endregion
+        private string _primaryKeyCondition;
 
-        #region Expression
+        /// <summary>
+        ///     主键的条件部分SQL
+        /// </summary>
+        string ISqlBuilder.PrimaryKeyCondition => _primaryKeyCondition ??= ((ISqlBuilder)this).Condition(Option.PrimaryProperty);
+
+        /// <summary>
+        /// 构建排序SQL片断
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public string OrderCode(string field, bool asc) => string.IsNullOrEmpty(field) ? null : $"`{Option.FieldMap[field]}`{(asc ? "" : " DESC")}";
 
         ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda) => PredicateConvert.Convert(this, Option, lambda);
 

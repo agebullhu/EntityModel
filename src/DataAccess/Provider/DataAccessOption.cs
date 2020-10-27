@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Common
 {
+
     /// <summary>
     /// 数据载入配置
     /// </summary>
     public class DataAccessOption
     {
-        #region 配置项
+        #region 基本设置
+
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public ISqlBuilder SqlBuilder { get; set; }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => SqlBuilder.DataBaseType;
 
         /// <summary>
         /// 是否查询
@@ -28,11 +41,6 @@ namespace Agebull.EntityModel.Common
         public bool CanRaiseEvent { get; set; }
 
         /// <summary>
-        /// 代码注入配置
-        /// </summary>
-        public InjectionLevel InjectionLevel { get; set; } = InjectionLevel.All;
-
-        /// <summary>
         /// 是否自增主键
         /// </summary>
         public bool IsIdentity => DataStruct.IsIdentity;
@@ -43,25 +51,9 @@ namespace Agebull.EntityModel.Common
         public EntityStruct DataStruct { get; set; }
 
         /// <summary>
-        ///     主键字段(可动态覆盖 PrimaryProperty)
-        /// </summary>
-        private string _primaryProperty;
-
-        /// <summary>
-        ///     字段字典
-        /// </summary>
-        private List<EntityProperty> _properties;
-        private string readTableName;
-        private string writeTableName;
-
-        /// <summary>
         ///     属性
         /// </summary>
-        public List<EntityProperty> Properties
-        {
-            get => _properties ?? DataStruct.Properties;
-            set => _properties = value;
-        }
+        public List<EntityProperty> Properties => DataStruct.Properties;
 
         /// <summary>
         ///     属性字典
@@ -69,14 +61,14 @@ namespace Agebull.EntityModel.Common
         public Dictionary<string, EntityProperty> PropertyMap { get; protected set; }
 
         /// <summary>
-        /// 可读写的属性
-        /// </summary>
-        public List<EntityProperty> ReadProperties { get; protected set; }
-
-        /// <summary>
         ///     属性字典
         /// </summary>
         public Dictionary<string, string> FieldMap { get; protected set; }
+
+        /// <summary>
+        ///     主键字段(可动态覆盖 PrimaryProperty)
+        /// </summary>
+        private string _primaryProperty;
 
         /// <summary>
         ///     主键属性名称
@@ -95,74 +87,86 @@ namespace Agebull.EntityModel.Common
             get;
             set;
         }
+        #endregion
+
+        #region 配置项
+
+
+        /// <summary>
+        /// 基本条件
+        /// </summary>
+        public DynamicOption BaseOption { get; set; }
+
+        /// <summary>
+        /// 基本条件
+        /// </summary>
+        public DynamicOption DynamicOption { get; internal set; }
+
+        /// <summary>
+        /// 代码注入配置
+        /// </summary>
+        public InjectionLevel InjectionLevel => DynamicOption.InjectionLevel;
+
+        /// <summary>
+        /// 可读写的属性
+        /// </summary>
+        public List<EntityProperty> ReadProperties => DynamicOption.ReadProperties;
 
         /// <summary>
         ///     基本查询条件
         /// </summary>
-        public string BaseCondition { get; set; }
+        public string BaseCondition => DynamicOption.BaseCondition;
 
         /// <summary>
         ///     读表名
         /// </summary>
-        public string ReadTableName
-        {
-            get => readTableName ?? DataStruct.ReadTableName;
-            set => readTableName = value;
-        }
+        public string ReadTableName => DynamicOption.ReadTableName;
 
         /// <summary>
         ///     写表名
         /// </summary>
-        public string WriteTableName
-        {
-            get => writeTableName ?? DataStruct.WriteTableName;
-            set => writeTableName = value;
-        }
+        public string WriteTableName => DynamicOption.WriteTableName;
 
         /// <summary>
         ///     全表读取的SQL语句
         /// </summary>
-        public string LoadFields { get; set; }
+        public string LoadFields => DynamicOption.LoadFields;
 
+        /// <summary>
+        ///     排序字段
+        /// </summary>
+        public string OrderbyFields => DynamicOption.OrderbyFields;
+        
         /// <summary>
         ///     分组字段
         /// </summary>
-        public string GroupFields { get; set; }
+        public string GroupFields => DynamicOption.GroupFields;
 
         /// <summary>
         ///     汇总条件
         /// </summary>
-        public string Having { get; set; }
+        public string Having => DynamicOption.Having;
 
         /// <summary>
         ///     全部更新的SQL语句
         /// </summary>
-        public string UpdateFields { get; set; }
+        public string UpdateFields => DynamicOption.UpdateFields;
 
         /// <summary>
         ///     插入的SQL语句
         /// </summary>
-        public string InsertSqlCode { get; set; }
+        public string InsertSqlCode => DynamicOption.InsertSqlCode;
 
         /// <summary>
         ///     全部更新的SQL语句
         /// </summary>
-        public string UpdateSqlCode { get; set; }
+        public string UpdateSqlCode => DynamicOption.UpdateSqlCode;
 
         /// <summary>
         ///     删除的SQL语句
         /// </summary>
-        public string DeleteSqlCode { get; set; }
+        public string DeleteSqlCode => DynamicOption.DeleteSqlCode;
 
-        /// <summary>
-        /// Sql语句构造器
-        /// </summary>
-        public ISqlBuilder SqlBuilder { get; set; }
-
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        public DataBaseType DataBaseType => SqlBuilder.DataBaseType;
         #endregion
 
         #region 初始化
@@ -173,32 +177,21 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public DataAccessOption Copy()
         {
-            SqlBuilder.Option = this;
             Initiate();
+            var option = BaseOption.Copy();
             return new DataAccessOption
             {
                 _isInitiated = true,
+                DynamicOption = option,
+                BaseOption = option,
                 IsQuery = IsQuery,
                 UpdateByMidified = UpdateByMidified,
                 CanRaiseEvent = CanRaiseEvent,
-                InjectionLevel = InjectionLevel,
                 DataStruct = DataStruct,
-                Properties = Properties,
                 PropertyMap = PropertyMap,
-                ReadProperties = ReadProperties,
                 FieldMap = FieldMap,
                 PrimaryProperty = PrimaryProperty,
                 PrimaryDbField = PrimaryDbField,
-                BaseCondition = BaseCondition,
-                ReadTableName = ReadTableName,
-                WriteTableName = WriteTableName,
-                LoadFields = LoadFields,
-                GroupFields = GroupFields,
-                Having = Having,
-                UpdateFields = UpdateFields,
-                InsertSqlCode = InsertSqlCode,
-                UpdateSqlCode = UpdateSqlCode,
-                DeleteSqlCode = DeleteSqlCode,
                 SqlBuilder = SqlBuilder
             };
         }
@@ -216,7 +209,10 @@ namespace Agebull.EntityModel.Common
             if (_isInitiated)
                 return;
             _isInitiated = true;
-
+            SqlBuilder.Option = this;
+            if (BaseOption.InjectionLevel == InjectionLevel.None)
+                BaseOption.InjectionLevel = InjectionLevel.All;
+            DynamicOption = BaseOption;
             FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);
             var properties = Properties;
@@ -231,45 +227,21 @@ namespace Agebull.EntityModel.Common
             PrimaryDbField = FieldMap[PrimaryProperty];
             if (!FieldMap.ContainsKey("id"))
                 FieldMap["id"] = PrimaryDbField;
-
-            ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
-            LoadFields ??= SqlBuilder.BuilderLoadFields();
+            BaseOption.ReadTableName ??= DataStruct.ReadTableName;
+            BaseOption.WriteTableName ??= DataStruct.WriteTableName;
+            BaseOption.ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
+            BaseOption.LoadFields ??= SqlBuilder.BuilderLoadFields();
             if (IsQuery)
             {
-                InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
+                BaseOption.InsertSqlCode = BaseOption.DeleteSqlCode = BaseOption.UpdateFields = BaseOption.UpdateSqlCode = null;
             }
             else
             {
-                InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
-                DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
-                UpdateFields ??= SqlBuilder.BuilderUpdateFields();
-                UpdateSqlCode ??= SqlBuilder.BuilderUpdateCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+                BaseOption.InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
+                BaseOption.DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+                BaseOption.UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+                BaseOption.UpdateSqlCode ??= SqlBuilder.BuilderUpdateCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
             }
-        }
-
-        /// <summary>
-        /// 设置字段
-        /// </summary>
-        /// <param name="fields"></param>
-        internal void Select(string[] fields)
-        {
-            ReadProperties = new List<EntityProperty>();
-            foreach (var field in fields)
-            {
-                if (PropertyMap.TryGetValue(field, out var property))
-                    ReadProperties.Add(property);
-            }
-            LoadFields = SqlBuilder.BuilderLoadFields();
-        }
-
-        /// <summary>
-        /// 设置字段
-        /// </summary>
-        /// <param name="fields"></param>
-        internal void SelectAll()
-        {
-            ReadProperties = Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
-            LoadFields = SqlBuilder.BuilderLoadFields();
         }
 
         #endregion

@@ -91,12 +91,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int64,
                 FieldName      = "id",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read,
                 JsonName       = "id",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"主键",
                 Description    = @"主键"
             };
@@ -113,12 +113,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "event_name",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "eventName",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件名称",
                 Description    = @"事件名称"
             };
@@ -135,12 +135,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "event_code",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "eventCode",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件编码",
                 Description    = @"事件编码"
             };
@@ -157,12 +157,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "version",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "version",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"版本号",
                 Description    = @"版本号"
             };
@@ -179,12 +179,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int32,
                 FieldName      = "region",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "region",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"领域范围",
                 Description    = @"领域范围"
             };
@@ -201,12 +201,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int32,
                 FieldName      = "event_type",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "eventType",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件类型",
                 Description    = @"事件类型"
             };
@@ -223,12 +223,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int32,
                 FieldName      = "result_option",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "resultOption",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"处理结果",
                 Description    = @"处理结果"
             };
@@ -245,12 +245,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int32,
                 FieldName      = "success_option",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "successOption",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"成功判断",
                 Description    = @"成功判断"
             };
@@ -267,12 +267,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "app",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "app",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"所属应用",
                 Description    = @"所属应用"
             };
@@ -289,12 +289,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "classify",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "classify",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件分类",
                 Description    = @"事件分类"
             };
@@ -311,12 +311,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "tag",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "tag",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件标签",
                 Description    = @"事件标签"
             };
@@ -333,12 +333,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Text,
                 FieldName      = "memo",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "memo",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"事件备注",
                 Description    = @"事件备注"
             };
@@ -355,12 +355,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "target_type",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetType",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"目标类型",
                 Description    = @"*表示所有类型"
             };
@@ -377,12 +377,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "target_name",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetName",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"目标名称",
                 Description    = @"*表示所有目标"
             };
@@ -399,12 +399,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Text,
                 FieldName      = "target_description",
-                TableName      = "tb_event_default_test",
+                //TableName      = "tb_event_default_test",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetDescription",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventDefault",
+                //Entity = "EventDefault",
                 Caption        = @"目标说明",
                 Description    = @"目标说明"
             };
@@ -497,12 +497,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int64,
                 FieldName      = "id",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read,
                 JsonName       = "id",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"主键",
                 Description    = @"主键"
             };
@@ -519,12 +519,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Int64,
                 FieldName      = "event_id",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "eventId",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"事件标识",
                 Description    = @"事件标识"
             };
@@ -541,12 +541,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "service",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "service",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"所属服务",
                 Description    = @"所属服务"
             };
@@ -563,12 +563,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Byte,
                 FieldName      = "is_look_up",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "isLookUp",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"是否查阅服务",
                 Description    = @"如为查阅服务，则发送后不处理与等待结果"
             };
@@ -585,12 +585,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "api_name",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "apiName",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"接口名称",
                 Description    = @"接口名称"
             };
@@ -607,12 +607,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Text,
                 FieldName      = "memo",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "memo",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"订阅备注",
                 Description    = @"订阅备注"
             };
@@ -629,12 +629,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "target_name",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetName",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"目标名称",
                 Description    = @"*表示所有目标"
             };
@@ -651,12 +651,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.VarString,
                 FieldName      = "target_type",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetType",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"目标类型",
                 Description    = @"*表示所有类型"
             };
@@ -673,12 +673,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 PropertyFeatrue= PropertyFeatrue.Property | PropertyFeatrue.Field | PropertyFeatrue.Property,
                 DbType         = (int)MySqlConnector.MySqlDbType.Text,
                 FieldName      = "target_description",
-                TableName      = "tb_event_subscribe",
+                //TableName      = "tb_event_subscribe",
                 DbReadWrite    = ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update,
                 JsonName       = "targetDescription",
                 CanImport      = false,
                 CanExport      = false,
-                Entity         = "EventSubscribe",
+                //Entity = "EventSubscribe",
                 Caption        = @"目标说明",
                 Description    = @"目标说明"
             };

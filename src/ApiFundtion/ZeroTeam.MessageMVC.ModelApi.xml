@@ -76,6 +76,11 @@
                 取得列表数据
             </summary>
         </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetQueryFilter">
+            <summary>
+                读取查询条件
+            </summary>
+        </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 读取查询条件

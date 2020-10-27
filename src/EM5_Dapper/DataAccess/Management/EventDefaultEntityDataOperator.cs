@@ -36,7 +36,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             EntityName       = EventBusDb.EventDefault_Struct_.EntityName,
             Caption          = EventBusDb.EventDefault_Struct_.Caption,
             Description      = EventBusDb.EventDefault_Struct_.Description,
-            PrimaryProperty       = EventBusDb.EventDefault_Struct_.PrimaryKey,
+            PrimaryProperty  = EventBusDb.EventDefault_Struct_.PrimaryKey,
             ReadTableName    = EventBusDb.EventDefault_Struct_.TableName,
             WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
             InterfaceFeature = new HashSet<string> {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
@@ -52,17 +52,20 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         internal static DataAccessOption Option = new DataAccessOption
         {
-            InjectionLevel   = InjectionLevel.All,
             IsQuery          = false,
             UpdateByMidified = false,
-            ReadTableName    = FromSqlCode,
-            WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
-            LoadFields       = LoadFields,
-            Having           = Having,
-            GroupFields      = GroupFields,
-            UpdateFields     = UpdateFields,
-            InsertSqlCode    = InsertSqlCode,
-            DataStruct       = Struct
+            DataStruct       = Struct,
+            BaseOption= new DynamicOption
+            {
+                InjectionLevel = InjectionLevel.All,
+                ReadTableName = FromSqlCode,
+                WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+                LoadFields = LoadFields,
+                Having = Having,
+                GroupFields = GroupFields,
+                UpdateFields = UpdateFields,
+                InsertSqlCode = InsertSqlCode,
+            }
         };
 
         #endregion

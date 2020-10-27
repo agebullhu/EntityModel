@@ -38,6 +38,26 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 更新
         /// </summary>
-        Update = 0x4
+        Update = 0x4,
+
+        /// <summary>
+        /// 所有
+        /// </summary>
+        All = Read | Insert | Update,
+
+        /// <summary>
+        /// 读与插入
+        /// </summary>
+        ReadInsert = Read | Insert,
+
+        /// <summary>
+        /// 读与更新
+        /// </summary>
+        ReadUpdate = Read | Update,
+
+        /// <summary>
+        /// 插入与更新
+        /// </summary>
+        Write = Insert | Update
     }
 }

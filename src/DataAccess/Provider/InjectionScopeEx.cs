@@ -34,12 +34,12 @@ namespace Agebull.EntityModel.Common
             {
                 dataQuery = query;
                 oldInjection = query.Option.InjectionLevel;
-                query.Option.InjectionLevel = levle;
+                query.Option.DynamicOption.InjectionLevel = levle;
             }
 
             void IDisposable.Dispose()
             {
-                dataQuery.Option.InjectionLevel = oldInjection;
+                dataQuery.Option.DynamicOption.InjectionLevel = oldInjection;
             }
         }
     }

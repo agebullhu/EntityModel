@@ -43,7 +43,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "auditState",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuditData",
+                //Entity = "IAuditData",
                 Caption = @"审核状态",
                 Description = @"审核状态"
             };
@@ -64,7 +64,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "auditDate",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuditData",
+                //Entity = "IAuditData",
                 Caption = @"审核时间",
                 Description = @"审核时间"
             };
@@ -85,7 +85,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "auditorId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuditData",
+                //Entity = "IAuditData",
                 Caption = @"审核人标识",
                 Description = @"审核人标识"
             };
@@ -106,7 +106,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "auditor",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuditData",
+                //Entity = "IAuditData",
                 Caption = @"审核人",
                 Description = @"审核人"
             };
@@ -135,7 +135,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "authorId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuthorData",
+                //Entity = "IAuthorData",
                 Caption = @"制作人标识",
                 Description = @"制作人标识"
             };
@@ -156,7 +156,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "author",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuthorData",
+                //Entity = "IAuthorData",
                 Caption = @"制作人",
                 Description = @"制作人"
             };
@@ -177,7 +177,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "addDate",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IAuthorData",
+                //Entity = "IAuthorData",
                 Caption = @"制作时间",
                 Description = @"制作时间"
             };
@@ -206,7 +206,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "departmentId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IDepartmentData",
+                //Entity = "IDepartmentData",
                 Caption = @"部门数据边界",
                 Description = @"部门数据边界"
             };
@@ -227,7 +227,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "departmentCode",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IDepartmentData",
+                //Entity = "IDepartmentData",
                 Caption = @"部门查找代码",
                 Description = @"部门查找代码"
             };
@@ -256,7 +256,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "linkEntityType",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IEntityLink",
+                //Entity = "IEntityLink",
                 Caption = @"连接类型",
                 Description = @"连接类型"
             };
@@ -277,7 +277,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "linkEntityId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IEntityLink",
+                //Entity = "IEntityLink",
                 Caption = @"关联标识",
                 Description = @"关联标识"
             };
@@ -306,7 +306,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "lastModifyDate",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IHistoryData",
+                //Entity = "IHistoryData",
                 Caption = @"最后修改日期",
                 Description = @"最后修改日期"
             };
@@ -327,7 +327,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "lastReviserId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IHistoryData",
+                //Entity = "IHistoryData",
                 Caption = @"最后修改者标识",
                 Description = @"最后修改者标识"
             };
@@ -348,7 +348,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "lastReviser",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IHistoryData",
+                //Entity = "IHistoryData",
                 Caption = @"最后修改者",
                 Description = @"最后修改者"
             };
@@ -377,7 +377,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "parentId",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IInnerTree",
+                //Entity = "IInnerTree",
                 Caption = @"上级标识",
                 Description = @"上级标识"
             };
@@ -406,7 +406,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "isDeleted",
                 CanImport = false,
                 CanExport = false,
-                Entity = "ILogicDeleteData",
+                //Entity = "ILogicDeleteData",
                 Caption = @"逻辑删除标识",
                 Description = @"逻辑删除标识"
             };
@@ -435,7 +435,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "organizationID",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IOrganizationData",
+                //Entity = "IOrganizationData",
                 Caption = @"组织数据边界",
                 Description = @"组织数据边界"
             };
@@ -464,7 +464,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "isFreeze",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IStateData",
+                //Entity = "IStateData",
                 Caption = @"冻结更新",
                 Description = @"无论在什么数据状态,一旦设置且保存后,数据将不再允许执行Update的操作,作为Update的统一开关.取消的方法是单独设置这个字段的值"
             };
@@ -485,7 +485,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "dataState",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IStateData",
+                //Entity = "IStateData",
                 Caption = @"数据状态",
                 Description = @"数据状态"
             };
@@ -514,7 +514,7 @@ namespace Agebull.EntityModel.MySql
                 JsonName = "dataVersion",
                 CanImport = false,
                 CanExport = false,
-                Entity = "IVersionData",
+                //Entity = "IVersionData",
                 Caption = @"数据版本号",
                 Description = @"数据版本号"
             };

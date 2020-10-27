@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     关联字段
         /// </summary>
-        private readonly DataAccessOption _option;
+        private DataAccessOption _option;
 
         /// <summary>
         ///     结果条件节点
@@ -42,24 +42,8 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         private bool _mergeByAnd;
 
-        /// <summary>
-        /// 具体数据库对象
-        /// </summary>
-        public IParameterCreater ParameterCreater { get; set; }
-
         #endregion
-        #region Cotr
-
-        /// <summary>
-        ///     构造
-        /// </summary>
-        /// <param name="option">设置</param>
-        /// <param name="parameter">关联字段</param>
-        PredicateConvert(IParameterCreater parameter, DataAccessOption option)
-        {
-            ParameterCreater = parameter;
-            _option = option;
-        }
+        #region 静态调用
 
         /// <summary>
         ///     分析Lambda表达式
@@ -71,28 +55,12 @@ namespace Agebull.EntityModel.MySql
         /// <returns>结果条件对象(SQL条件和参数)</returns>
         public static ConditionItem Convert<T>(IParameterCreater parameter, DataAccessOption option, Expression<T> predicate)
         {
-            var convert = new PredicateConvert(parameter, option);
-            return convert.Convert(predicate);
-        }
-
-        /// <summary>
-        ///     分析Lambda表达式
-        /// </summary>
-        /// <typeparam name="T">方法类型</typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="option">设置</param>
-        /// <param name="predicate">Lambda表达式</param>
-        /// <param name="condition">之前已解析的条件,可为空</param>
-        /// <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
-        /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public static void Convert<T>(IParameterCreater parameter, DataAccessOption option, Expression<T> predicate, ConditionItem condition, bool mergeByAnd = true)
-        {
-            var convert = new PredicateConvert(parameter, option)
+            var convert = new PredicateConvert
             {
-                _condition = condition,
-                _mergeByAnd = mergeByAnd
+                _option = option,
+                _condition = new ConditionItem { ParameterCreater = parameter }
             };
-            convert.Convert(predicate);
+            return convert.Convert(predicate);
         }
 
         /// <summary>
@@ -122,11 +90,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns>结果条件对象(SQL条件和参数)</returns>
         static ConditionItem Convert<T>(IParameterCreater parameter, DataAccessOption option, LambdaItem<T> filter, ConditionItem condition, bool mergeByAnd)
         {
-            var root = new PredicateConvert(parameter, option)
+            var root = new PredicateConvert
             {
-                ParameterCreater = parameter,
-                _condition = condition,
-                _mergeByAnd = mergeByAnd
+                _option = option,
+                _mergeByAnd = mergeByAnd,
+                _condition = condition
             };
             if (filter.Root != null)
             {
@@ -161,12 +129,8 @@ namespace Agebull.EntityModel.MySql
         /// <typeparam name="T">方法类型</typeparam>
         /// <param name="predicate">Lambda表达式</param>
         /// <returns>结果条件对象(SQL条件和参数)</returns>
-        public ConditionItem Convert<T>(Expression<T> predicate)
+        ConditionItem Convert<T>(Expression<T> predicate)
         {
-            if (_condition == null)
-            {
-                _condition = new ConditionItem { ParameterCreater = ParameterCreater };
-            }
             var old = _condition.ConditionSql;
             var sql = ExpressionSql(predicate.Body);
             if (sql != null)

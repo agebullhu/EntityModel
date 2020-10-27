@@ -28,7 +28,7 @@ namespace EM5_Dapper
             try
             {
                 var access = DependencyHelper.ServiceProvider.CreateDataAccess<EventDefaultEntity>();
-                access.SelectField("id", "IsFreeze");
+                access.Select("id", "IsFreeze");
                 await using var connectionScope = await access.DataBase.CreateConnectionScope();
                 await access.FirstAsync(p => p.Id.Equals(12));
                 await access.FirstAsync(p => 12.Equals(p.Id));

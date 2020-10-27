@@ -20,8 +20,18 @@ namespace Agebull.EntityModel.Common
     ///     烂姆达条件节点
     /// </summary>
     /// <typeparam name="TEntity">数据类型</typeparam>
-    public sealed class LambdaItem<TEntity>
+    public class LambdaItem<TEntity>
     {
+        /// <summary>
+        ///  查询字段，为空表示全量字段
+        /// </summary>
+        public IEnumerable<string> Fields { get; set; }
+
+        /// <summary>
+        ///  排序字段，为空表示无
+        /// </summary>
+        public Dictionary<string, bool> OrderBy { get; set; }
+
         /// <summary>
         ///     与关联的其它表达式
         /// </summary>
@@ -36,7 +46,6 @@ namespace Agebull.EntityModel.Common
         ///     主条件
         /// </summary>
         public Expression<Func<TEntity, bool>> Root { get; set; }
-
 
         /// <summary>
         ///     根条件

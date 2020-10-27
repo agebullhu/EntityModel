@@ -85,15 +85,15 @@ namespace Agebull.EntityModel.Common
         /// <param name="paraName"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        string Condition(string fieldName, string expression="=", string paraName=null);
+        string Condition(string fieldName, string expression = "=", string paraName = null);
 
         /// <summary>
         /// 构建排序SQL片断
         /// </summary>
-        /// <param name="desc"></param>
+        /// <param name="asc"></param>
         /// <param name="field"></param>
         /// <returns></returns>
-        string OrderCode(bool desc, string field);
+        string OrderCode(string field, bool asc);
 
         /// <summary>
         /// 字段更新
@@ -118,40 +118,14 @@ namespace Agebull.EntityModel.Common
         string CreateCollectSql(string fun, string field, string condition);
 
         /// <summary>
-        /// 读取SQL
+        /// 自定义字段读取SQL
         /// </summary>
+        /// <param name="fields">字段</param>
         /// <param name="condition"></param>
         /// <param name="orderSql">排序片断</param>
         /// <param name="limit">行数</param>
         /// <returns></returns>
-        string CreateLoadSql(string condition = null, string orderSql = null, string limit = null);
-
-        /// <summary>
-        /// 单值读取SQL
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        string CreateLoadValueSql(string field, string condition);
-
-        /// <summary>
-        /// 单值读取SQL
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="convert"></param>
-        /// <returns></returns>
-        string CreateLoadValuesSql(string field, ConditionItem convert);
-
-        /// <summary>
-        /// 分页SQL
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderField"></param>
-        /// <param name="desc"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        string CreatePageSql(int page, int pageSize, string orderField, bool desc, string condition);
+        string CreateLoadSql(string fields, string condition, string orderSqll = null, string limit = null);
 
         /// <summary>
         /// 删除SQL
@@ -209,6 +183,5 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="lambda">查询表达式</param>
         ConditionItem Compile(LambdaItem<TEntity> lambda);
-
     }
 }

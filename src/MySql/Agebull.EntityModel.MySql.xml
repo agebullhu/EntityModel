@@ -261,18 +261,24 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#PrimaryKeyCondition">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateCollectSql(System.String,System.String,System.String)">
             <summary>
-                主键的条件部分SQL
+                生成汇总的SQL语句
             </summary>
+            <param name="fun">汇总函数名称</param>
+            <param name="field">汇总字段</param>
+            <param name="condition">汇总条件</param>
+            <returns>汇总的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.OrderCode(System.Boolean,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadSql(System.String,System.String,System.String,System.String)">
             <summary>
-            构建排序SQL片断
+                生成载入字段值的SQL语句
             </summary>
-            <param name="desc"></param>
-            <param name="field"></param>
-            <returns></returns>
+            <param name="fields">字段</param>
+            <param name="condition">条件</param>
+            <param name="orderSql">排序片断</param>
+            <param name="limit"></param>
+            <returns>载入字段值的SQL语句</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.InjectionLoadCondition(System.String)">
             <summary>
@@ -289,51 +295,6 @@
             <param name="condition"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateCollectSql(System.String,System.String,System.String)">
-            <summary>
-                生成汇总的SQL语句
-            </summary>
-            <param name="fun">汇总函数名称</param>
-            <param name="field">汇总字段</param>
-            <param name="condition">汇总条件</param>
-            <returns>汇总的SQL语句</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadValueSql(System.String,System.String)">
-            <summary>
-                生成载入字段值的SQL语句
-            </summary>
-            <param name="field">字段</param>
-            <param name="condition">条件</param>
-            <returns>载入字段值的SQL语句</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadValuesSql(System.String,Agebull.EntityModel.Common.ConditionItem)">
-            <summary>
-                生成载入值的SQL
-            </summary>
-            <param name="field">字段</param>
-            <param name="convert">条件</param>
-            <returns>载入字段值的SQL语句</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadSql(System.String,System.String,System.String)">
-            <summary>
-                生成载入的SQL语句
-            </summary>
-            <param name="condition">数据条件</param>
-            <param name="orderSql">排序片断</param>
-            <param name="limit"></param>
-            <returns>载入的SQL语句</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreatePageSql(System.Int32,System.Int32,System.String,System.Boolean,System.String)">
-            <summary>
-                生成分页的SQL
-            </summary>
-            <param name="page">页号</param>
-            <param name="pageSize">每页几行(强制大于0,小于500行)</param>
-            <param name="orderField">排序字段</param>
-            <param name="desc">是否倒序</param>
-            <param name="condition">数据条件</param>
-            <returns></returns>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateDeleteSql(System.String)">
             <summary>
                 生成删除的SQL语句
@@ -345,6 +306,19 @@
             <summary>
                 物理删除数据
             </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#PrimaryKeyCondition">
+            <summary>
+                主键的条件部分SQL
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.OrderCode(System.String,System.Boolean)">
+            <summary>
+            构建排序SQL片断
+            </summary>
+            <param name="field"></param>
+            <param name="asc"></param>
+            <returns></returns>
         </member>
         <member name="T:Agebull.EntityModel.MySql.ParameterCreater">
             <summary>
@@ -442,18 +416,6 @@
                 与上一次解释的条件用AND方式组合(否则为OR组合)
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.PredicateConvert.ParameterCreater">
-            <summary>
-            具体数据库对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.#ctor(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption)">
-            <summary>
-                构造
-            </summary>
-            <param name="option">设置</param>
-            <param name="parameter">关联字段</param>
-        </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,System.Linq.Expressions.Expression{``0})">
             <summary>
                 分析Lambda表达式
@@ -462,18 +424,6 @@
             <param name="parameter"></param>
             <param name="option">设置</param>
             <param name="predicate">Lambda表达式</param>
-            <returns>结果条件对象(SQL条件和参数)</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,System.Linq.Expressions.Expression{``0},Agebull.EntityModel.Common.ConditionItem,System.Boolean)">
-            <summary>
-                分析Lambda表达式
-            </summary>
-            <typeparam name="T">方法类型</typeparam>
-            <param name="parameter"></param>
-            <param name="option">设置</param>
-            <param name="predicate">Lambda表达式</param>
-            <param name="condition">之前已解析的条件,可为空</param>
-            <param name="mergeByAnd">与前面的条件(condition中已存在的)是用与还是或组合</param>
             <returns>结果条件对象(SQL条件和参数)</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.PredicateConvert.Convert``1(Agebull.EntityModel.Common.IParameterCreater,Agebull.EntityModel.Common.DataAccessOption,Agebull.EntityModel.Common.LambdaItem{``0})">

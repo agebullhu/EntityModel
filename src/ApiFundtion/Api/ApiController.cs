@@ -62,9 +62,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult<ApiPageData<TData>>> List()
         {
             GlobalContext.Current.Status.Feature = 1;
-            var filter = new LambdaItem<TData>();
-            GetQueryFilter(filter);
-
+            var filter = GetQueryFilter();
             var data = await GetListData(filter);
             GlobalContext.Current.Status.Feature = 0;
             return IsFailed
@@ -79,8 +77,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
         public async Task<IApiResult<TData>> QueryFirst()
         {
-            var filter = new LambdaItem<TData>();
-            GetQueryFilter(filter);
+            var filter = GetQueryFilter();
             var data = await Business.Details(filter);
             return IsFailed
                     ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
@@ -184,8 +181,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult> Export(TData args)
         {
             GlobalContext.Current.Status.Feature = 1;
-            var filter = new LambdaItem<TData>();
-            GetQueryFilter(filter);
+            var filter = GetQueryFilter();
             var res = await Business.Export(filter);
             GlobalContext.Current.Status.Feature = 0;
             return ApiResultHelper.Succees(res);
@@ -228,12 +224,39 @@ namespace ZeroTeam.MessageMVC.ModelApi
             RequestArgumentConvert.TryGet("_sort_", out string sort);
             var desc = RequestArgumentConvert.TryGet("_order_", out string order) && order?.ToLower() == "desc";
             return Business.PageData(page, size, sort, desc, lambda);
-
         }
 
         #endregion
 
         #region 虚方法
+
+        /// <summary>
+        ///     读取查询条件
+        /// </summary>
+        LambdaItem<TData> GetQueryFilter()
+        {
+            //if (RequestArgumentConvert.TryGet("_value_", out string value) && !string.IsNullOrEmpty(value))
+            //{
+            //    var field = RequestArgumentConvert.GetString("_field_");
+            //    if (field != "_any_")
+            //        RequestArgumentConvert.SetArgument(field, value);
+            //}
+            var filter = new LambdaItem<TData>();
+            if (RequestArgumentConvert.TryGet("_filters_", out string f))
+            {
+                var fields = f.Split(new char[] { '[', ',', ']' }, StringSplitOptions.RemoveEmptyEntries);
+                if (fields.Length > 0)
+                    filter.Fields = fields;
+            }
+            //if (RequestArgumentConvert.TryGet("_orderbys_", out string orderby))
+            //{
+            //    var fields = f.Split(new char[] { '[', ',', ']' }, StringSplitOptions.RemoveEmptyEntries);
+            //    if (fields.Length > 0)
+            //        filter.Fields = fields;
+            //}
+            GetQueryFilter(filter);
+            return filter;
+        }
 
         /// <summary>
         ///     读取查询条件
