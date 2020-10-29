@@ -692,40 +692,22 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     partial class DataAccessProviderHelper
     {
         
-        static DataAccessOption GetOption<TEntity>()
+        static DataAccessOption GetOption(string name)
         {
-            return typeof(TEntity).Name switch
+            return name switch
             {
-                nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.Option,
-                nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.Option,
-                nameof(EventDefaultModel) => EventDefaultModelDataOperator.Option,
-                nameof(EventSubscribeModel) => EventSubscribeModelDataOperator.Option,
+                nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.GetOption(),
+                nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.GetOption(),
                 _ => null,
             };
         }
 
-        static object GetDataOperator<TEntity>()
-            where TEntity : class, new()
+        static object GetOperator(string name)
         {
-            return typeof(TEntity).Name switch
+            return name switch
             {
                 nameof(EventDefaultEntity) => new EventDefaultEntityDataOperator(),
-                nameof(EventSubscribeEntity) => new EventSubscribeEntityDataOperator(),
-                nameof(EventDefaultModel) => new EventDefaultModelDataOperator(),
-                nameof(EventSubscribeModel) => new EventSubscribeModelDataOperator(),
-                _ => null,
-            };
-        }
-
-        static object GetEntityOperator<TEntity>()
-            where TEntity : class, new()
-        {
-            return typeof(TEntity).Name switch
-            {
-                nameof(EventDefaultEntity) => new EventDefaultEntityDataOperator(),
-                nameof(EventSubscribeEntity) => new EventSubscribeEntityDataOperator(),
-                nameof(EventDefaultModel) => new EventDefaultModelDataOperator(),
-                nameof(EventSubscribeModel) => new EventSubscribeModelDataOperator(),
+                nameof(EventSubscribeEntity) => new  EventSubscribeEntityDataOperator(),
                 _ => null,
             };
         }

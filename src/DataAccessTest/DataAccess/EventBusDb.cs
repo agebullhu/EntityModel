@@ -64,8 +64,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             provider.SqlBuilder.Provider = provider;
             if (provider.Injection != null)
                 provider.Injection.Provider = provider;
-            provider.Option.SqlBuilder = provider.SqlBuilder;
-            provider.Option.Initiate();
+
             return new DataAccess<TEntity>(provider);
         }
 
@@ -90,8 +89,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             provider.SqlBuilder.Provider = provider;
             if (provider.Injection != null)
                 provider.Injection.Provider = provider;
-            provider.Option.SqlBuilder = provider.SqlBuilder;
-            provider.Option.Initiate();
+
             return new DataQuery<TEntity>(provider);
         }
     }

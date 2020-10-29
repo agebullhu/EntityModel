@@ -21,7 +21,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     ///     表明是一个数据操作对象
     /// </summary>
-    public interface IDataOperator<TEntity> : IOperatorExtension<TEntity>
+    public interface IDataOperator<TEntity> : IDataAccessTool<TEntity>
         where TEntity : class, new()
     {
         /// <summary>
@@ -84,9 +84,13 @@ namespace Agebull.EntityModel.Common
         /// <returns>返回真说明要取主键</returns>
         void CreateEntityParameter(DbCommand cmd)
         {
-            Provider.Option.FroeachDbProperties(ReadWriteFeatrue.Read,
-                pro => cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName, pro.DbType))
-            );
+            var properties = Provider.Option.Properties;
+
+            foreach (var pro in properties)
+            {
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read))
+                    cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName, pro.DbType));
+            }
         }
 
         /// <summary>
@@ -97,12 +101,14 @@ namespace Agebull.EntityModel.Common
         /// <returns>返回真说明要取主键</returns>
         void SetParameterValue(TEntity data, DbCommand cmd)
         {
-            Provider.Option.FroeachDbProperties(pro =>
-            {
-                cmd.Parameters[pro.PropertyName].Value = Provider.EntityOperator.GetValue(data, pro.PropertyName) ?? DBNull.Value;
-            });
-        }
+            var properties = Provider.Option.Properties;
 
+            foreach (var pro in properties)
+            {
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field))
+                    cmd.Parameters[pro.PropertyName].Value = Provider.EntityOperator.GetValue(data, pro.PropertyName) ?? DBNull.Value;
+            }
+        }
     }
 
 

@@ -35,7 +35,7 @@ namespace Agebull.EntityModel.MySql
             if (dataBase._connection == null)
             {
                 scope._isHereOpen = true;
-                await dataBase.OpenAsync();
+                dataBase._connection = await MySqlDataBase.OpenConnection(dataBase.ConnectionString);
             }
             return scope;
         }

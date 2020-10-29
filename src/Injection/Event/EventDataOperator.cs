@@ -34,7 +34,7 @@ namespace Agebull.EntityModel.Events
         {
             if (!Provider.Option.CanRaiseEvent)
                 return Task.CompletedTask;
-            return OnEntityCommandSuccess(operatorType, EntityEventValueType.EntityJson, entity);
+            return OnEntityCommandSuccess(operatorType, EntityEventValueType.Entity, entity);
         }
 
         /// <summary>
@@ -43,11 +43,26 @@ namespace Agebull.EntityModel.Events
         /// <param name="condition">执行条件</param>
         /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public Task AfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter)
+        public Task AfterExecute(DataOperatorType operatorType, string sql, string condition, DbParameter[] parameter)
         {
             if (!Provider.Option.CanRaiseEvent)
                 return Task.CompletedTask;
-            return OnEntityCommandSuccess(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
+            var queryCondition = new MulitCondition
+            {
+                SQL = sql,
+                Condition = condition,
+                Parameters = new ConditionParameter[parameter.Length]
+            };
+            for (int i = 0; i < parameter.Length; i++)
+            {
+                queryCondition.Parameters[i] = new ConditionParameter
+                {
+                    Name = parameter[i].ParameterName,
+                    Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
+                    Type = parameter[i].DbType
+                };
+            }
+            return OnEntityCommandSuccess(operatorType, EntityEventValueType.CustomSQL, queryCondition);
         }
 
         /// <summary>
@@ -67,42 +82,7 @@ namespace Agebull.EntityModel.Events
             var service = Provider.ServiceProvider.GetService<IEntityModelEventProxy>();
             if (service == null)
                 return;
-            string value;
-            switch (valueType)
-            {
-                case EntityEventValueType.EntityJson:
-                    value = JsonConvert.SerializeObject(val);
-                    break;
-                case EntityEventValueType.Key:
-                case EntityEventValueType.Keys:
-                    value = val.ToString();
-                    break;
-                case EntityEventValueType.QueryCondition:
-                    {
-                        var arg = val as Tuple<string, DbParameter[]>;
-                        var parameter = arg.Item2;
-                        var queryCondition = new MulitCondition
-                        {
-                            Condition = arg.Item1,
-                            Parameters = new ConditionParameter[parameter.Length]
-                        };
-                        for (int i = 0; i < parameter.Length; i++)
-                        {
-                            queryCondition.Parameters[i] = new ConditionParameter
-                            {
-                                Name = parameter[i].ParameterName,
-                                Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
-                                Type = parameter[i].DbType
-                            };
-                        }
-                        value = JsonConvert.SerializeObject(queryCondition);
-                    }
-                    break;
-                default:
-                    value = null;
-                    break;
-            }
-
+            var value = JsonConvert.SerializeObject(val);
             await service.OnEntityCommandSuccess(Provider.Option.DataStruct.ProjectName, Provider.Option.DataStruct.EntityName, oType, valueType, value);
         }
         #endregion

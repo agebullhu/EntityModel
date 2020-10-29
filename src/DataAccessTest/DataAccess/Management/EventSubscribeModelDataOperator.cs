@@ -22,14 +22,14 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<EventSubscribeModel> Provider { get; set; }
+        public IDataAccessProvider<EventSubscribeModel> Provider { get; set; }
 
         static EntityStruct _struct;
 
         /// <summary>
         /// 实体结构
         /// </summary>
-        public static EntityStruct Struct => _struct ??= new EntityStruct
+        public static EntityStruct Struct = new EntityStruct
         {
             IsIdentity = false,
             EntityName = EventBusDb.EventSubscribe_Struct_.EntityName,
@@ -50,23 +50,33 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 配置信息
         /// </summary>
-        internal static DataAccessOption Option = new DataAccessOption
+        static DataTableOption TableOption = new DataTableOption
         {
-            IsQuery = true,
-            UpdateByMidified = false,
+            IsQuery = false,
+            UpdateByMidified = true,
+            SqlBuilder = new MySqlSqlBuilder<EventDefaultEntity>(),
             DataStruct = Struct,
-            BaseOption = new DynamicOption
-            {
-                InjectionLevel = InjectionLevel.All,
-                ReadTableName = FromSqlCode,
-                WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
-                LoadFields = LoadFields,
-                Having = Having,
-                GroupFields = GroupFields,
-                UpdateFields = UpdateFields,
-                InsertSqlCode = InsertSqlCode,
-            }
+            InjectionLevel = InjectionLevel.All,
+            ReadTableName = FromSqlCode,
+            WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+            LoadFields = LoadFields,
+            Having = Having,
+            GroupFields = GroupFields,
+            UpdateFields = UpdateFields,
+            InsertSqlCode = InsertSqlCode,
         };
+
+        static EventSubscribeModelDataOperator()
+        {
+            TableOption.Initiate();
+        }
+
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        internal static DataAccessOption GetOption() => new DataAccessOption(TableOption);
+
+
 
         #endregion
 

@@ -72,13 +72,6 @@ namespace Agebull.EntityModel.Common
         string PrimaryKeyCondition { get; }
 
         /// <summary>
-        ///     得到字段的MySqlDbType类型
-        /// </summary>
-        /// <param name="field">字段名称</param>
-        /// <returns>参数</returns>
-        int GetDbType(string field);
-
-        /// <summary>
         /// 条件SQL
         /// </summary>
         /// <param name="fieldName"></param>
@@ -154,7 +147,7 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 表示Sql生成器
     /// </summary>
-    public interface ISqlBuilder<TEntity> : ISqlBuilder, IDataAccessTool<TEntity>
+    public interface ISqlBuilder<TEntity> : ISqlBuilder, IParameterCreater, IDataAccessTool<TEntity>
         where TEntity : class, new()
     {
         /// <summary>

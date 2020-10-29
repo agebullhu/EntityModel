@@ -23,14 +23,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<EventSubscribeEntity> Provider { get; set; }
-
-        static EntityStruct _struct;
+        public IDataAccessProvider<EventSubscribeEntity> Provider { get; set; }
 
         /// <summary>
         /// 实体结构
         /// </summary>
-        public static EntityStruct Struct => _struct ??= new EntityStruct
+        readonly static EntityStruct Struct = new EntityStruct
         {
             IsIdentity = true,
             EntityName = EventBusDb.EventSubscribe_Struct_.EntityName,
@@ -65,13 +63,16 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 配置信息
         /// </summary>
-        internal static DataAccessOption Option = new DataAccessOption
+        readonly static DataTableOption TableOption;
+
+        static EventSubscribeEntityDataOperator()
         {
-            IsQuery = false,
-            UpdateByMidified = false,
-            DataStruct = Struct,
-            BaseOption = new DynamicOption
+            TableOption = new DataTableOption
             {
+                IsQuery = false,
+                UpdateByMidified = false,
+                SqlBuilder = new MySqlSqlBuilder<EventSubscribeEntity>(),
+                DataStruct = Struct,
                 InjectionLevel = InjectionLevel.All,
                 ReadTableName = FromSqlCode,
                 WriteTableName = EventBusDb.EventSubscribe_Struct_.TableName,
@@ -80,8 +81,16 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 GroupFields = GroupFields,
                 UpdateFields = UpdateFields,
                 InsertSqlCode = InsertSqlCode,
-            }
-        };
+            };
+            TableOption.Initiate();
+        }
+
+
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        public static DataAccessOption GetOption() => new DataAccessOption(TableOption);
+
 
         #endregion
 
@@ -256,57 +265,57 @@ SELECT @@IDENTITY;";
         {
             var reader = r as MySqlDataReader;
             entity.Id = await reader.GetFieldValueAsync<long>(0);
-            if (reader.IsDBNull(1))
+            if (await reader.IsDBNullAsync(1))
                 entity.EventId = default;
             else
                 entity.EventId = await reader.GetFieldValueAsync<long>(1);
-            if (reader.IsDBNull(2))
+            if (await reader.IsDBNullAsync(2))
                 entity.Service = null;
             else
                 entity.Service = await reader.GetFieldValueAsync<string>(2);
-            if (reader.IsDBNull(3))
+            if (await reader.IsDBNullAsync(3))
                 entity.IsLookUp = default;
             else
                 entity.IsLookUp = await reader.GetFieldValueAsync<bool>(3);
-            if (reader.IsDBNull(4))
+            if (await reader.IsDBNullAsync(4))
                 entity.ApiName = null;
             else
                 entity.ApiName = await reader.GetFieldValueAsync<string>(4);
-            if (reader.IsDBNull(5))
+            if (await reader.IsDBNullAsync(5))
                 entity.Memo = null;
             else
                 entity.Memo = await reader.GetFieldValueAsync<string>(5);
-            if (reader.IsDBNull(6))
+            if (await reader.IsDBNullAsync(6))
                 entity.TargetName = null;
             else
                 entity.TargetName = await reader.GetFieldValueAsync<string>(6);
-            if (reader.IsDBNull(7))
+            if (await reader.IsDBNullAsync(7))
                 entity.TargetType = null;
             else
                 entity.TargetType = await reader.GetFieldValueAsync<string>(7);
-            if (reader.IsDBNull(8))
+            if (await reader.IsDBNullAsync(8))
                 entity.TargetDescription = null;
             else
                 entity.TargetDescription = await reader.GetFieldValueAsync<string>(8);
             entity.IsFreeze = await reader.GetFieldValueAsync<bool>(9);
             entity.DataState = (DataStateType)(await reader.GetFieldValueAsync<int>(10));
-            if (reader.IsDBNull(11))
+            if (await reader.IsDBNullAsync(11))
                 entity.LastModifyDate = default;
             else
                 entity.LastModifyDate = await reader.GetFieldValueAsync<DateTime>(11);
-            if (reader.IsDBNull(12))
+            if (await reader.IsDBNullAsync(12))
                 entity.LastReviserId = null;
             else
                 entity.LastReviserId = await reader.GetFieldValueAsync<string>(12);
-            if (reader.IsDBNull(13))
+            if (await reader.IsDBNullAsync(13))
                 entity.LastReviser = null;
             else
                 entity.LastReviser = await reader.GetFieldValueAsync<string>(13);
-            if (reader.IsDBNull(14))
+            if (await reader.IsDBNullAsync(14))
                 entity.AuthorId = null;
             else
                 entity.AuthorId = await reader.GetFieldValueAsync<string>(14);
-            if (reader.IsDBNull(15))
+            if (await reader.IsDBNullAsync(15))
                 entity.Author = null;
             else
                 entity.Author = await reader.GetFieldValueAsync<string>(15);
@@ -398,13 +407,12 @@ SELECT @@IDENTITY;";
                     entity.EventId = (long)Convert.ToDecimal(value);
                     return;
                 case "service":
-                    entity.Service = value == null ? null : value.ToString();
+                    entity.Service = value?.ToString();
                     return;
                 case "islookup":
                     if (value != null)
                     {
-                        int vl;
-                        if (int.TryParse(value.ToString(), out vl))
+                        if (int.TryParse(value.ToString(), out int vl))
                         {
                             entity.IsLookUp = vl != 0;
                         }
@@ -415,25 +423,24 @@ SELECT @@IDENTITY;";
                     }
                     return;
                 case "apiname":
-                    entity.ApiName = value == null ? null : value.ToString();
+                    entity.ApiName = value?.ToString();
                     return;
                 case "memo":
-                    entity.Memo = value == null ? null : value.ToString();
+                    entity.Memo = value?.ToString();
                     return;
                 case "targetname":
-                    entity.TargetName = value == null ? null : value.ToString();
+                    entity.TargetName = value?.ToString();
                     return;
                 case "targettype":
-                    entity.TargetType = value == null ? null : value.ToString();
+                    entity.TargetType = value?.ToString();
                     return;
                 case "targetdescription":
-                    entity.TargetDescription = value == null ? null : value.ToString();
+                    entity.TargetDescription = value?.ToString();
                     return;
                 case "isfreeze":
                     if (value != null)
                     {
-                        int vl;
-                        if (int.TryParse(value.ToString(), out vl))
+                        if (int.TryParse(value.ToString(), out int vl))
                         {
                             entity.IsFreeze = vl != 0;
                         }
@@ -446,29 +453,24 @@ SELECT @@IDENTITY;";
                 case "datastate":
                     if (value != null)
                     {
-                        if (value is int)
+                        if (value is int @int)
                         {
-                            entity.DataState = (DataStateType)(int)value;
+                            entity.DataState = (DataStateType)@int;
                         }
-                        else if (value is DataStateType)
+                        else if (value is DataStateType type)
                         {
-                            entity.DataState = (DataStateType)value;
+                            entity.DataState = type;
                         }
                         else
                         {
                             var str = value.ToString();
-                            DataStateType val;
-                            if (DataStateType.TryParse(str, out val))
+                            if (Enum.TryParse(str, out DataStateType val))
                             {
                                 entity.DataState = val;
                             }
-                            else
+                            else if (int.TryParse(str, out int vl))
                             {
-                                int vl;
-                                if (int.TryParse(str, out vl))
-                                {
-                                    entity.DataState = (DataStateType)vl;
-                                }
+                                entity.DataState = (DataStateType)vl;
                             }
                         }
                     }
@@ -477,16 +479,16 @@ SELECT @@IDENTITY;";
                     entity.LastModifyDate = Convert.ToDateTime(value);
                     return;
                 case "lastreviserid":
-                    entity.LastReviserId = value == null ? null : value.ToString();
+                    entity.LastReviserId = value?.ToString();
                     return;
                 case "lastreviser":
-                    entity.LastReviser = value == null ? null : value.ToString();
+                    entity.LastReviser = value?.ToString();
                     return;
                 case "authorid":
-                    entity.AuthorId = value == null ? null : value.ToString();
+                    entity.AuthorId = value?.ToString();
                     return;
                 case "author":
-                    entity.Author = value == null ? null : value.ToString();
+                    entity.Author = value?.ToString();
                     return;
                 case "adddate":
                     entity.AddDate = Convert.ToDateTime(value);

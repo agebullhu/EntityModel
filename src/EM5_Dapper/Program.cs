@@ -26,8 +26,8 @@ namespace EM5_Dapper
                 builder.AddConsole();
             }));
 
-            //await EM5_DapperTest.Test();
-            await LambdaTest.Test();
+            await EM5_DapperTest.Test();
+            //await LambdaTest.Test();
         }
 
     }

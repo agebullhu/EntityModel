@@ -21,7 +21,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     Sql实体访问类
     /// </summary>
-    public class ParameterCreater : SimpleConfig, IParameterCreater
+    public class ParameterCreater : IParameterCreater
     {
         /// <summary>
         ///     生成Sql参数

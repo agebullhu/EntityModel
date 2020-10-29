@@ -706,6 +706,45 @@
             名称
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgumentEx">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Vue.IdArgumentEx.ToArgument(System.Int64)">
+            <summary>
+            到参数
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Vue.IdArgumentEx.ToArgument``1(``0)">
+            <summary>
+            到参数
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgument">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.IdArgument.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgument`1">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.IdArgument`1.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Vue.TreeNode">
             <summary>
             树节点

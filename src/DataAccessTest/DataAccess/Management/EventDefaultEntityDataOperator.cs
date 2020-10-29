@@ -24,7 +24,7 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<EventDefaultEntity> Provider { get; set; }
+        public IDataAccessProvider<EventDefaultEntity> Provider { get; set; }
 
         /// <summary>
         /// 实体结构
@@ -67,32 +67,34 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             }
         };
 
-
         /// <summary>
         /// 配置信息
         /// </summary>
-        static DataAccessOption Option = new DataAccessOption
+        static DataTableOption TableOption = new DataTableOption
         {
             IsQuery = false,
             UpdateByMidified = true,
+            SqlBuilder = new MySqlSqlBuilder<EventDefaultEntity>(),
             DataStruct = Struct,
-            BaseOption = new DynamicOption
-            {
-                InjectionLevel = InjectionLevel.All,
-                ReadTableName = FromSqlCode,
-                WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
-                LoadFields = LoadFields,
-                Having = Having,
-                GroupFields = GroupFields,
-                UpdateFields = UpdateFields,
-                InsertSqlCode = InsertSqlCode,
-            }
+            InjectionLevel = InjectionLevel.All,
+            ReadTableName = FromSqlCode,
+            WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+            LoadFields = LoadFields,
+            Having = Having,
+            GroupFields = GroupFields,
+            UpdateFields = UpdateFields,
+            InsertSqlCode = InsertSqlCode,
         };
+
+        static EventDefaultEntityDataOperator()
+        {
+            TableOption.Initiate();
+        }
 
         /// <summary>
         /// 配置信息
         /// </summary>
-        internal static DataAccessOption GetOption() => Option.Copy();
+        internal static DataAccessOption GetOption() => new DataAccessOption(TableOption);
 
         #endregion
 

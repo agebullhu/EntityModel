@@ -56,10 +56,11 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
         /// </summary>
+        /// <param name="sql">SQL</param>
         /// <param name="condition">执行条件</param>
         /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        Task AfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter) => Task.CompletedTask;
+        Task AfterExecute(DataOperatorType operatorType, string sql, string condition, DbParameter[] parameter) => Task.CompletedTask;
 
     }
 }

@@ -11,24 +11,13 @@
         None,
 
         /// <summary>
-        ///     实例的Json数据
+        /// 实体
         /// </summary>
-        EntityJson,
+        Entity,
 
         /// <summary>
-        ///     主键数据
+        /// 自定义SQL操作
         /// </summary>
-        Key,
-
-        /// <summary>
-        ///     主键列表
-        /// </summary>
-        Keys,
-
-        /// <summary>
-        ///     查询条件
-        /// </summary>
-        QueryCondition
+        CustomSQL
     }
-
 }

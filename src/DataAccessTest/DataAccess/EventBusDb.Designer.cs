@@ -710,9 +710,9 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
             return typeof(TEntity).Name switch
             {
                 nameof(EventDefaultEntity) => EventDefaultEntityDataOperator.GetOption(),
-                nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.Option,
-                nameof(EventDefaultModel) => EventDefaultModelDataOperator.Option,
-                nameof(EventSubscribeModel) => EventSubscribeModelDataOperator.Option,
+                nameof(EventSubscribeEntity) => EventSubscribeEntityDataOperator.GetOption(),
+                nameof(EventDefaultModel) => EventDefaultModelDataOperator.GetOption(),
+                nameof(EventSubscribeModel) => EventSubscribeModelDataOperator.GetOption(),
                 _ => null,
             };
         }

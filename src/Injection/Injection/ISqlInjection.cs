@@ -22,7 +22,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="provider">当前数据操作适配器</param>
         /// <param name="conditions">附加的条件集合</param>
         /// <returns></returns>
-        void InjectionQueryCondition<TEntity>(DataAccessProvider<TEntity> provider, List<string> conditions)
+        void InjectionQueryCondition<TEntity>(IDataAccessProvider<TEntity> provider, List<string> conditions)
             where TEntity : class, new()
         { }
 
@@ -32,7 +32,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="fields"></param>
         /// <param name="values"></param>
         /// <returns></returns>
-        void InjectionInsertCode<TEntity>(DataAccessProvider<TEntity> provider, StringBuilder fields, StringBuilder values) where TEntity : class, new()
+        void InjectionInsertCode<TEntity>(IDataAccessProvider<TEntity> provider, StringBuilder fields, StringBuilder values) where TEntity : class, new()
         { }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition"></param>
         /// <param name="valueExpression"></param>
         /// <returns></returns>
-        void InjectionUpdateCode<TEntity>(DataAccessProvider<TEntity> provider, StringBuilder valueExpression, List<string> condition)
+        void InjectionUpdateCode<TEntity>(IDataAccessProvider<TEntity> provider, StringBuilder valueExpression, List<string> condition)
             where TEntity : class, new()
         { }
 
@@ -52,7 +52,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="provider">当前数据操作适配器</param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        void InjectionDeleteCondition<TEntity>(DataAccessProvider<TEntity> provider, List<string> condition)
+        void InjectionDeleteCondition<TEntity>(IDataAccessProvider<TEntity> provider, List<string> condition)
             where TEntity : class, new()
         { }
 

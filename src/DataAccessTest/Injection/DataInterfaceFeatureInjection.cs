@@ -37,7 +37,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 依赖对象
         /// </summary>
-        public DataAccessProvider<TEntity> Provider { get; set; }
+        public IDataAccessProvider<TEntity> Provider { get; set; }
 
         void AddValue<T>(StringBuilder fields, StringBuilder values, PropertyDefault field, T value)
         {
@@ -233,7 +233,7 @@ namespace Agebull.EntityModel.MySql
         {
             if (!Provider.Option.CanRaiseEvent)
                 return;
-            await OnStatusChanged(operatorType, EntityEventValueType.EntityJson, entity);
+            await OnStatusChanged(operatorType, EntityEventValueType.Entity, entity);
         }
 
         /// <summary>
@@ -242,11 +242,26 @@ namespace Agebull.EntityModel.MySql
         /// <param name="condition">执行条件</param>
         /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        public async Task AfterExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter)
+        public async Task AfterExecute(DataOperatorType operatorType, string sql, string condition, DbParameter[] parameter)
         {
             if (!Provider.Option.CanRaiseEvent)
                 return;
-            await OnStatusChanged(operatorType, EntityEventValueType.QueryCondition, (condition, parameter));
+            var queryCondition = new MulitCondition
+            {
+                SQL = sql,
+                Condition = condition,
+                Parameters = new ConditionParameter[parameter.Length]
+            };
+            for (int i = 0; i < parameter.Length; i++)
+            {
+                queryCondition.Parameters[i] = new ConditionParameter
+                {
+                    Name = parameter[i].ParameterName,
+                    Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
+                    Type = parameter[i].DbType
+                };
+            }
+            await OnStatusChanged(operatorType, EntityEventValueType.CustomSQL, queryCondition);
         }
 
         /// <summary>
@@ -266,41 +281,9 @@ namespace Agebull.EntityModel.MySql
             var service = Provider.ServiceProvider.GetService<IEntityModelEventProxy>();
             if (service == null)
                 return;
-            string value;
-            switch (valueType)
-            {
-                case EntityEventValueType.EntityJson:
-                    value = JsonConvert.SerializeObject(val);
-                    break;
-                case EntityEventValueType.Key:
-                case EntityEventValueType.Keys:
-                    value = val.ToString();
-                    break;
-                case EntityEventValueType.QueryCondition:
-                    var arg = val as Tuple<string, DbParameter[]>;
-                    var parameter = arg.Item2;
-                    var queryCondition = new MulitCondition
-                    {
-                        Condition = arg.Item1,
-                        Parameters = new ConditionParameter[parameter.Length]
-                    };
-                    for (int i = 0; i < parameter.Length; i++)
-                    {
-                        queryCondition.Parameters[i] = new ConditionParameter
-                        {
-                            Name = parameter[i].ParameterName,
-                            Value = parameter[i].Value == DBNull.Value ? null : parameter[i].Value.ToString(),
-                            Type = parameter[i].DbType
-                        };
-                    }
-                    value = JsonConvert.SerializeObject(queryCondition);
-                    break;
-                default:
-                    value = null;
-                    break;
-            }
             await service.OnEntityCommandSuccess(Provider.Option.DataStruct.ProjectName,
-                    Provider.Option.DataStruct.EntityName, oType, valueType, value);
+                    Provider.Option.DataStruct.EntityName, oType, valueType,
+                    val != null ? JsonConvert.SerializeObject(val) : null);
         }
         #endregion
     }

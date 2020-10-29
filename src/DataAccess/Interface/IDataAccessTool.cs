@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        DataAccessProvider<TEntity> Provider { get; set; }
+        IDataAccessProvider<TEntity> Provider { get; set; }
 
     }
 }

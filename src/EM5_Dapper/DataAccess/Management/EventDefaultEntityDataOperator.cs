@@ -16,31 +16,34 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
     /// <summary>
     /// 事件定义
     /// </summary>
-    public sealed class EventDefaultEntityDataOperator : IDataOperator<EventDefaultEntity> , IEntityOperator<EventDefaultEntity>
+    public sealed class EventDefaultEntityDataOperator : IDataOperator<EventDefaultEntity>, IEntityOperator<EventDefaultEntity>
     {
         #region 基本信息
 
         /// <summary>
+        /// 单例
+        /// </summary>
+        public static EventDefaultEntityDataOperator Instance = new EventDefaultEntityDataOperator();
+
+        /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<EventDefaultEntity> Provider { get; set; }
-
-        static EntityStruct _struct;
+        public IDataAccessProvider<EventDefaultEntity> Provider { get; set; }
 
         /// <summary>
         /// 实体结构
         /// </summary>
-        public static EntityStruct Struct => _struct ??= new EntityStruct
+        readonly static EntityStruct Struct = new EntityStruct
         {
-            IsIdentity       = true,
-            EntityName       = EventBusDb.EventDefault_Struct_.EntityName,
-            Caption          = EventBusDb.EventDefault_Struct_.Caption,
-            Description      = EventBusDb.EventDefault_Struct_.Description,
-            PrimaryProperty  = EventBusDb.EventDefault_Struct_.PrimaryKey,
-            ReadTableName    = EventBusDb.EventDefault_Struct_.TableName,
-            WriteTableName   = EventBusDb.EventDefault_Struct_.TableName,
-            InterfaceFeature = new HashSet<string> {nameof(GlobalDataInterfaces.IStateData),nameof(GlobalDataInterfaces.IHistoryData),nameof(GlobalDataInterfaces.IAuthorData)},
-            Properties       = new List<EntityProperty>
+            IsIdentity = true,
+            EntityName = EventBusDb.EventDefault_Struct_.EntityName,
+            Caption = EventBusDb.EventDefault_Struct_.Caption,
+            Description = EventBusDb.EventDefault_Struct_.Description,
+            PrimaryProperty = EventBusDb.EventDefault_Struct_.PrimaryKey,
+            ReadTableName = EventBusDb.EventDefault_Struct_.TableName,
+            WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+            InterfaceFeature = new HashSet<string> { nameof(GlobalDataInterfaces.IStateData), nameof(GlobalDataInterfaces.IHistoryData), nameof(GlobalDataInterfaces.IAuthorData) },
+            Properties = new List<EntityProperty>
             {
                 new EntityProperty(EventBusDb.EventDefault_Struct_.Id,0,"Id","tb_event_default_test","id",ReadWriteFeatrue.Read),
                 new EntityProperty(EventBusDb.EventDefault_Struct_.EventName,4,"EventName","tb_event_default_test","event_name",ReadWriteFeatrue.Read | ReadWriteFeatrue.Insert | ReadWriteFeatrue.Update),
@@ -50,13 +53,16 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 配置信息
         /// </summary>
-        internal static DataAccessOption Option = new DataAccessOption
+        readonly static DataTableOption TableOption;
+
+        static EventDefaultEntityDataOperator()
         {
-            IsQuery          = false,
-            UpdateByMidified = false,
-            DataStruct       = Struct,
-            BaseOption= new DynamicOption
+            TableOption = new DataTableOption
             {
+                IsQuery = false,
+                SqlBuilder = new MySqlSqlBuilder<EventDefaultEntity>(),
+                UpdateByMidified = false,
+                DataStruct = Struct,
                 InjectionLevel = InjectionLevel.All,
                 ReadTableName = FromSqlCode,
                 WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
@@ -64,9 +70,16 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
                 Having = Having,
                 GroupFields = GroupFields,
                 UpdateFields = UpdateFields,
-                InsertSqlCode = InsertSqlCode,
-            }
-        };
+                InsertSqlCode = InsertSqlCode
+            };
+            TableOption.Initiate();
+        }
+
+
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        public static DataAccessOption GetOption() => new DataAccessOption(TableOption);
 
         #endregion
 
@@ -124,8 +137,8 @@ SELECT @@IDENTITY;";
         /// <returns>参数</returns>
         public int GetDbType(string property)
         {
-            if(property == null) 
-               return (int)MySqlDbType.VarChar;
+            if (property == null)
+                return (int)MySqlDbType.VarChar;
             switch (property)
             {
                 case "id":
@@ -202,7 +215,7 @@ SELECT @@IDENTITY;";
         /// </summary>
         /// <param name="r">数据读取器</param>
         /// <param name="entity">读取数据的实体</param>
-        public async Task LoadEntity(DbDataReader r,EventDefaultEntity entity)
+        public async Task LoadEntity(DbDataReader r, EventDefaultEntity entity)
         {
             var reader = r as MySqlDataReader;
             entity.Id = await reader.GetFieldValueAsync<long>(0);
@@ -267,7 +280,7 @@ SELECT @@IDENTITY;";
                 _ => null
             };
         }
-    
+
 
         /// <summary>
         ///     设置属性值
@@ -277,225 +290,214 @@ SELECT @@IDENTITY;";
         /// <param name="value"></param>
         void IEntityOperator<EventDefaultEntity>.SetValue(EventDefaultEntity entity, string property, object value)
         {
-            if(property == null)
+            if (property == null)
                 return;
-            switch(property.Trim().ToLower())
+            switch (property.Trim().ToLower())
             {
-            case "id":
-                entity.Id = (long)Convert.ToDecimal(value);
-                return;
-            case "eventname":
-                entity.EventName = value == null ? null : value.ToString();
-                return;
-            case "eventcode":
-                entity.EventCode = value == null ? null : value.ToString();
-                return;
-            case "version":
-                entity.Version = value == null ? null : value.ToString();
-                return;
-            case "region":
-                if (value != null)
-                {
-                    if(value is int)
+                case "id":
+                    entity.Id = (long)value;
+                    return;
+                case "eventname":
+                    entity.EventName = (string)value;
+                    return;
+                case "eventcode":
+                    entity.EventCode = value?.ToString();
+                    return;
+                case "version":
+                    entity.Version = value?.ToString();
+                    return;
+                case "region":
+                    if (value != null)
                     {
-                        entity.Region = (RegionType)(int)value;
-                    }
-                    else if(value is RegionType)
-                    {
-                        entity.Region = (RegionType)value;
-                    }
-                    else
-                    {
-                        var str = value.ToString();
-                        RegionType val;
-                        if (RegionType.TryParse(str, out val))
+                        if (value is int @int)
                         {
-                            entity.Region = val;
+                            entity.Region = (RegionType)@int;
+                        }
+                        else if (value is RegionType type)
+                        {
+                            entity.Region = type;
                         }
                         else
                         {
-                            int vl;
-                            if (int.TryParse(str, out vl))
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out RegionType val))
                             {
-                                entity.Region = (RegionType)vl;
+                                entity.Region = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.Region = (RegionType)vl;
+                                }
                             }
                         }
                     }
-                }
-                return;
-            case "eventtype":
-                if (value != null)
-                {
-                    if(value is int)
+                    return;
+                case "eventtype":
+                    if (value != null)
                     {
-                        entity.EventType = (EventType)(int)value;
-                    }
-                    else if(value is EventType)
-                    {
-                        entity.EventType = (EventType)value;
-                    }
-                    else
-                    {
-                        var str = value.ToString();
-                        EventType val;
-                        if (EventType.TryParse(str, out val))
+                        if (value is int @int)
                         {
-                            entity.EventType = val;
+                            entity.EventType = (EventType)@int;
+                        }
+                        else if (value is EventType type)
+                        {
+                            entity.EventType = type;
                         }
                         else
                         {
-                            int vl;
-                            if (int.TryParse(str, out vl))
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out EventType val))
                             {
-                                entity.EventType = (EventType)vl;
+                                entity.EventType = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.EventType = (EventType)vl;
+                                }
                             }
                         }
                     }
-                }
-                return;
-            case "resultoption":
-                if (value != null)
-                {
-                    if(value is int)
+                    return;
+                case "resultoption":
+                    if (value != null)
                     {
-                        entity.ResultOption = (ResultOptionType)(int)value;
-                    }
-                    else if(value is ResultOptionType)
-                    {
-                        entity.ResultOption = (ResultOptionType)value;
-                    }
-                    else
-                    {
-                        var str = value.ToString();
-                        ResultOptionType val;
-                        if (ResultOptionType.TryParse(str, out val))
+                        if (value is int @int)
                         {
-                            entity.ResultOption = val;
+                            entity.ResultOption = (ResultOptionType)@int;
+                        }
+                        else if (value is ResultOptionType type)
+                        {
+                            entity.ResultOption = type;
                         }
                         else
                         {
-                            int vl;
-                            if (int.TryParse(str, out vl))
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out ResultOptionType val))
                             {
-                                entity.ResultOption = (ResultOptionType)vl;
+                                entity.ResultOption = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.ResultOption = (ResultOptionType)vl;
+                                }
                             }
                         }
                     }
-                }
-                return;
-            case "successoption":
-                if (value != null)
-                {
-                    if(value is int)
+                    return;
+                case "successoption":
+                    if (value != null)
                     {
-                        entity.SuccessOption = (SuccessOptionType)(int)value;
-                    }
-                    else if(value is SuccessOptionType)
-                    {
-                        entity.SuccessOption = (SuccessOptionType)value;
-                    }
-                    else
-                    {
-                        var str = value.ToString();
-                        SuccessOptionType val;
-                        if (SuccessOptionType.TryParse(str, out val))
+                        if (value is int @int)
                         {
-                            entity.SuccessOption = val;
+                            entity.SuccessOption = (SuccessOptionType)@int;
+                        }
+                        else if (value is SuccessOptionType type)
+                        {
+                            entity.SuccessOption = type;
                         }
                         else
                         {
-                            int vl;
-                            if (int.TryParse(str, out vl))
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out SuccessOptionType val))
                             {
-                                entity.SuccessOption = (SuccessOptionType)vl;
+                                entity.SuccessOption = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.SuccessOption = (SuccessOptionType)vl;
+                                }
                             }
                         }
                     }
-                }
-                return;
-            case "app":
-                entity.App = value == null ? null : value.ToString();
-                return;
-            case "classify":
-                entity.Classify = value == null ? null : value.ToString();
-                return;
-            case "tag":
-                entity.Tag = value == null ? null : value.ToString();
-                return;
-            case "memo":
-                entity.Memo = value == null ? null : value.ToString();
-                return;
-            case "targettype":
-                entity.TargetType = value == null ? null : value.ToString();
-                return;
-            case "targetname":
-                entity.TargetName = value == null ? null : value.ToString();
-                return;
-            case "targetdescription":
-                entity.TargetDescription = value == null ? null : value.ToString();
-                return;
-            case "isfreeze":
-                if (value != null)
-                {
-                    int vl;
-                    if (int.TryParse(value.ToString(), out vl))
+                    return;
+                case "app":
+                    entity.App = value?.ToString();
+                    return;
+                case "classify":
+                    entity.Classify = value?.ToString();
+                    return;
+                case "tag":
+                    entity.Tag = value?.ToString();
+                    return;
+                case "memo":
+                    entity.Memo = value?.ToString();
+                    return;
+                case "targettype":
+                    entity.TargetType = value?.ToString();
+                    return;
+                case "targetname":
+                    entity.TargetName = value?.ToString();
+                    return;
+                case "targetdescription":
+                    entity.TargetDescription = value?.ToString();
+                    return;
+                case "isfreeze":
+                    if (value != null)
                     {
-                        entity.IsFreeze = vl != 0;
-                    }
-                    else
-                    {
-                        entity.IsFreeze = Convert.ToBoolean(value);
-                    }
-                }
-                return;
-            case "datastate":
-                if (value != null)
-                {
-                    if(value is int)
-                    {
-                        entity.DataState = (DataStateType)(int)value;
-                    }
-                    else if(value is DataStateType)
-                    {
-                        entity.DataState = (DataStateType)value;
-                    }
-                    else
-                    {
-                        var str = value.ToString();
-                        DataStateType val;
-                        if (DataStateType.TryParse(str, out val))
+                        if (int.TryParse(value.ToString(), out int vl))
                         {
-                            entity.DataState = val;
+                            entity.IsFreeze = vl != 0;
                         }
                         else
                         {
-                            int vl;
-                            if (int.TryParse(str, out vl))
+                            entity.IsFreeze = Convert.ToBoolean(value);
+                        }
+                    }
+                    return;
+                case "datastate":
+                    if (value != null)
+                    {
+                        if (value is int @int)
+                        {
+                            entity.DataState = (DataStateType)@int;
+                        }
+                        else if (value is DataStateType)
+                        {
+                            entity.DataState = (DataStateType)value;
+                        }
+                        else
+                        {
+                            var str = value.ToString();
+                            if (Enum.TryParse(str, out DataStateType val))
                             {
-                                entity.DataState = (DataStateType)vl;
+                                entity.DataState = val;
+                            }
+                            else
+                            {
+                                if (int.TryParse(str, out int vl))
+                                {
+                                    entity.DataState = (DataStateType)vl;
+                                }
                             }
                         }
                     }
-                }
-                return;
-            case "lastmodifydate":
-                entity.LastModifyDate = Convert.ToDateTime(value);
-                return;
-            case "lastreviserid":
-                entity.LastReviserId = value == null ? null : value.ToString();
-                return;
-            case "lastreviser":
-                entity.LastReviser = value == null ? null : value.ToString();
-                return;
-            case "authorid":
-                entity.AuthorId = value == null ? null : value.ToString();
-                return;
-            case "author":
-                entity.Author = value == null ? null : value.ToString();
-                return;
-            case "adddate":
-                entity.AddDate = Convert.ToDateTime(value);
-                return;
+                    return;
+                case "lastmodifydate":
+                    entity.LastModifyDate = Convert.ToDateTime(value);
+                    return;
+                case "lastreviserid":
+                    entity.LastReviserId = value?.ToString();
+                    return;
+                case "lastreviser":
+                    entity.LastReviser = value?.ToString();
+                    return;
+                case "authorid":
+                    entity.AuthorId = value?.ToString();
+                    return;
+                case "author":
+                    entity.Author = value?.ToString();
+                    return;
+                case "adddate":
+                    entity.AddDate = Convert.ToDateTime(value);
+                    return;
             }
         }
 

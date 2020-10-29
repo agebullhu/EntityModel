@@ -17,7 +17,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="entity">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
         /// <returns></returns>
-        Task BeforeSave<TEntity>(DataAccessProvider<TEntity> provider, TEntity entity, DataOperatorType operatorType)
+        Task BeforeSave<TEntity>(IDataAccessProvider<TEntity> provider, TEntity entity, DataOperatorType operatorType)
             where TEntity : class, new() => Task.CompletedTask;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="provider">当前数据操作适配器</param>
         /// <param name="entity">保存的对象</param>
         /// <param name="operatorType">操作类型</param>
-        Task AfterSave<TEntity>(DataAccessProvider<TEntity> provider, TEntity entity, DataOperatorType operatorType)
+        Task AfterSave<TEntity>(IDataAccessProvider<TEntity> provider, TEntity entity, DataOperatorType operatorType)
             where TEntity : class, new() => Task.CompletedTask;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        Task BeforeExecute<TEntity>(DataAccessProvider<TEntity> provider, DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
+        Task BeforeExecute<TEntity>(IDataAccessProvider<TEntity> provider, DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
              where TEntity : class, new() => Task.CompletedTask;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">执行条件</param>
         /// <param name="args">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        Task AfterExecute<TEntity>(DataAccessProvider<TEntity> provider, DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
+        Task AfterExecute<TEntity>(IDataAccessProvider<TEntity> provider, DataOperatorType operatorType, string condition, IEnumerable<DbParameter> args)
              where TEntity : class, new() => Task.CompletedTask;
     }
 

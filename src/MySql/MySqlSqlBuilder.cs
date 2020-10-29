@@ -24,16 +24,6 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         DataBaseType ISqlBuilder.DataBaseType => DataBaseType.MySql;
 
-        /// <summary>
-        /// 自动构建数据库对象
-        /// </summary>
-        public IDataOperator<TEntity> DataOperator => Provider.DataOperator;
-
-        /// <summary>
-        /// 参数构造
-        /// </summary>
-        public IParameterCreater ParameterCreater => Provider.ParameterCreater;
-
         DataAccessOption _option;
         /// <summary>
         /// Sql语句构造器
@@ -52,18 +42,21 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<TEntity> Provider { get; set; }
+        public IDataAccessProvider<TEntity> Provider { get; set; }
 
         #region 数据结构支持
 
         /// <summary>
-        ///     得到字段的MySqlDbType类型
+        /// 迭代循环属性
         /// </summary>
-        /// <param name="field">字段名称</param>
-        /// <returns>参数</returns>
-        int ISqlBuilder.GetDbType(string field)
+        void FroeachDbProperties(ReadWriteFeatrue readWrite, Action<EntityProperty> action)
         {
-            return DataOperator.GetDbType(field);
+            var properties = Option.Properties;
+            foreach (var pro in properties)
+            {
+                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
+                    action(pro);
+            }
         }
 
         /// <summary>
@@ -95,7 +88,7 @@ namespace Agebull.EntityModel.MySql
         {
             var fields = new StringBuilder();
             bool first = true;
-            Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
+            FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
             {
                 if (pro.Entity != Option.DataStruct.Name)
                     return;
@@ -134,7 +127,7 @@ namespace Agebull.EntityModel.MySql
             var fields = new StringBuilder();
             var paras = new StringBuilder();
             bool first = true;
-            Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
+            FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
                 if (pro.Entity != Option.DataStruct.Name)
                     return;
@@ -185,7 +178,7 @@ namespace Agebull.EntityModel.MySql
             if (value is string || value is Guid || value is DateTime || value is byte[])
             {
                 var name = "v_" + field;
-                parameters.Add(CreateParameter(name, value, (MySqlDbType)DataOperator.GetDbType(field)));
+                parameters.Add(new MySqlParameter(name, value));
                 return $"`{field}` = ?{name}";
             }
             if (value is bool bl)
@@ -229,7 +222,7 @@ namespace Agebull.EntityModel.MySql
             var paras = new StringBuilder();
             paras.Append("VALUES(");
             bool first = true;
-            Option.FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
+            FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
                 if (pro.Entity != Option.DataStruct.Name)
                     return;
@@ -273,7 +266,7 @@ namespace Agebull.EntityModel.MySql
             {
                 var code = new List<string>();
                 var properties = Option.Properties;
-                Option.FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
+                FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
                 {
                     if (pro.Entity == Option.DataStruct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
                         code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");

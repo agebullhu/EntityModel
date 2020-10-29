@@ -22,14 +22,12 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<EventDefaultModel> Provider { get; set; }
-
-        static EntityStruct _struct;
+        public IDataAccessProvider<EventDefaultModel> Provider { get; set; }
 
         /// <summary>
         /// 实体结构
         /// </summary>
-        public static EntityStruct Struct => _struct ??= new EntityStruct
+        readonly static EntityStruct Struct = new EntityStruct
         {
             IsIdentity = true,
             EntityName = EventBusDb.EventDefault_Struct_.EntityName,
@@ -68,23 +66,31 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// <summary>
         /// 配置信息
         /// </summary>
-        internal static DataAccessOption Option = new DataAccessOption
+        readonly static DataTableOption TableOption;
+
+        static EventDefaultModelDataOperator()
         {
-            IsQuery = false,
-            UpdateByMidified = true,
-            DataStruct = Struct,
-            BaseOption = new DynamicOption
+            TableOption = new DataTableOption
             {
-            InjectionLevel   = InjectionLevel.All,
-            ReadTableName = FromSqlCode,
-            WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
-            LoadFields = LoadFields,
-            Having = Having,
-            GroupFields = GroupFields,
-            UpdateFields = UpdateFields,
-            InsertSqlCode = InsertSqlCode,
-            }
-        };
+                IsQuery = false,
+                UpdateByMidified = true,
+                DataStruct = Struct,
+                InjectionLevel = InjectionLevel.All,
+                ReadTableName = FromSqlCode,
+                WriteTableName = EventBusDb.EventDefault_Struct_.TableName,
+                LoadFields = LoadFields,
+                Having = Having,
+                GroupFields = GroupFields,
+                UpdateFields = UpdateFields,
+                InsertSqlCode = InsertSqlCode
+            };
+            TableOption.Initiate();
+        }
+
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        internal static DataAccessOption GetOption() => new DataAccessOption(TableOption);
 
         #endregion
 

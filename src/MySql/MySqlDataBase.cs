@@ -25,7 +25,7 @@ namespace Agebull.EntityModel.MySql
     /// <summary>
     ///     表示MySql数据库对象
     /// </summary>
-    public abstract partial class MySqlDataBase : ParameterCreater, IDataBase
+    public abstract partial class MySqlDataBase : SimpleConfig, IDataBase
     {
         #region 构造
 

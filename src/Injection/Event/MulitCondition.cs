@@ -6,6 +6,10 @@
     public class MulitCondition
     {
         /// <summary>
+        /// SQL语句
+        /// </summary>
+        public string SQL { get; set; }
+        /// <summary>
         /// 条件
         /// </summary>
         public string Condition { get; set; }

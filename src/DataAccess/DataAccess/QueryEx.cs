@@ -33,8 +33,8 @@ namespace Agebull.EntityModel.Common
             {
                 Provider = query.Provider
             };
-            if (Query.Option.DynamicOption == Query.Option.BaseOption)
-                Query.Option.DynamicOption = Query.Option.BaseOption.Copy();
+            if (Query.Option.DynamicOption == Query.Option.TableOption)
+                Query.Option.DynamicOption = Query.Option.TableOption.Copy();
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Agebull.EntityModel.Common
         void IDisposable.Dispose()
         {
             Query.Provider.DataOperator = backup;
-            Query.Option.DynamicOption = Query.Option.BaseOption;
+            Query.Option.DynamicOption = Query.Option.TableOption;
         }
 
 

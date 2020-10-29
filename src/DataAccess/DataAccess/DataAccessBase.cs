@@ -53,13 +53,13 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 驱动提供者信息
         /// </summary>
-        public DataAccessProvider<TEntity> Provider { get; }
+        public IDataAccessProvider<TEntity> Provider { get; }
 
         /// <summary>
         /// 构造
         /// </summary>
         /// <param name="provider"></param>
-        protected DataAccessBase(DataAccessProvider<TEntity> provider)
+        protected DataAccessBase(IDataAccessProvider<TEntity> provider)
         {
             Provider = provider;
         }
@@ -101,7 +101,7 @@ namespace Agebull.EntityModel.Common
                 throw new ArgumentException(@"值的长度和字段长度必须一致", nameof(values));
             var res = new DbParameter[fields.Length];
             for (var i = 0; i < fields.Length; i++)
-                res[i] = ParameterCreater.CreateParameter(fields[i], values[i], SqlBuilder.GetDbType(fields[i]));
+                res[i] = ParameterCreater.CreateParameter(fields[i], values[i], DataOperator.GetDbType(fields[i]));
             return res;
         }
 

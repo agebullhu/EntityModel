@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Common
 {
-
     /// <summary>
-    /// 数据载入配置
+    /// 数据表配置
     /// </summary>
-    public class DataAccessOption
+    public class DataTableOption : DynamicOption
     {
         #region 基本设置
-
 
         /// <summary>
         /// Sql语句构造器
@@ -31,19 +27,14 @@ namespace Agebull.EntityModel.Common
         public bool IsQuery { get; set; }
 
         /// <summary>
-        /// 按修改更新
-        /// </summary>
-        public bool UpdateByMidified { get; set; }
-
-        /// <summary>
         /// 是否允许全局事件(如全局事件器,则永为否)
         /// </summary>
         public bool CanRaiseEvent { get; set; }
 
         /// <summary>
-        /// 是否自增主键
+        /// 按修改更新
         /// </summary>
-        public bool IsIdentity => DataStruct.IsIdentity;
+        public bool UpdateByMidified { get; set; }
 
         /// <summary>
         /// 表配置
@@ -51,9 +42,19 @@ namespace Agebull.EntityModel.Common
         public EntityStruct DataStruct { get; set; }
 
         /// <summary>
+        /// 是否自增主键
+        /// </summary>
+        public bool IsIdentity => DataStruct.IsIdentity;
+
+        /// <summary>
         ///     属性
         /// </summary>
         public List<EntityProperty> Properties => DataStruct.Properties;
+
+        /// <summary>
+        ///     主键属性名称
+        /// </summary>
+        public string PrimaryProperty => DataStruct.PrimaryProperty;
 
         /// <summary>
         ///     属性字典
@@ -66,20 +67,6 @@ namespace Agebull.EntityModel.Common
         public Dictionary<string, string> FieldMap { get; protected set; }
 
         /// <summary>
-        ///     主键字段(可动态覆盖 PrimaryProperty)
-        /// </summary>
-        private string _primaryProperty;
-
-        /// <summary>
-        ///     主键属性名称
-        /// </summary>
-        public string PrimaryProperty
-        {
-            get => _primaryProperty ?? DataStruct.PrimaryProperty;
-            set => _primaryProperty = value;
-        }
-
-        /// <summary>
         ///     主键数据库字段名
         /// </summary>
         public string PrimaryDbField
@@ -89,13 +76,141 @@ namespace Agebull.EntityModel.Common
         }
         #endregion
 
-        #region 配置项
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public void Initiate()
+        {
+            SqlBuilder.Option = new DataAccessOption
+            {
+                DynamicOption = this,
+                TableOption = this
+            };
 
+            if (InjectionLevel == InjectionLevel.None)
+                InjectionLevel = InjectionLevel.All;
+
+            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);
+            var properties = Properties;
+            foreach (var pro in properties)
+            {
+                if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
+                    continue;
+                PropertyMap[pro.FieldName] = PropertyMap[pro.PropertyName] = pro;
+
+                FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
+            }
+            PrimaryDbField = FieldMap[PrimaryProperty];
+            if (!FieldMap.ContainsKey("id"))
+                FieldMap["id"] = PrimaryDbField;
+            ReadTableName ??= DataStruct.ReadTableName;
+            WriteTableName ??= DataStruct.WriteTableName;
+            ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
+            LoadFields ??= SqlBuilder.BuilderLoadFields();
+            if (IsQuery)
+            {
+                InsertSqlCode = DeleteSqlCode = UpdateFields = UpdateSqlCode = null;
+            }
+            else
+            {
+                InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
+                DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
+                UpdateFields ??= SqlBuilder.BuilderUpdateFields();
+                UpdateSqlCode ??= SqlBuilder.BuilderUpdateCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 数据载入配置
+    /// </summary>
+    public class DataAccessOption
+    {
+        /// <summary>
+        /// 构造
+        /// </summary>
+        public DataAccessOption()
+        {
+
+        }
 
         /// <summary>
-        /// 基本条件
+        /// 构造
         /// </summary>
-        public DynamicOption BaseOption { get; set; }
+        public DataAccessOption(DataTableOption option)
+        {
+            DynamicOption = TableOption = option;
+        }
+        #region 基本设置
+
+        /// <summary>
+        /// Sql语句构造器
+        /// </summary>
+        public ISqlBuilder SqlBuilder => TableOption.SqlBuilder;
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public DataBaseType DataBaseType => TableOption.DataBaseType;
+
+        /// <summary>
+        /// 是否查询
+        /// </summary>
+        public bool IsQuery => TableOption.IsQuery;
+
+        /// <summary>
+        /// 按修改更新
+        /// </summary>
+        public bool UpdateByMidified => TableOption.UpdateByMidified;
+
+        /// <summary>
+        /// 是否允许全局事件(如全局事件器,则永为否)
+        /// </summary>
+        public bool CanRaiseEvent => TableOption.CanRaiseEvent;
+
+        /// <summary>
+        /// 是否自增主键
+        /// </summary>
+        public bool IsIdentity => TableOption.IsIdentity;
+
+        /// <summary>
+        /// 表配置
+        /// </summary>
+        public EntityStruct DataStruct => TableOption.DataStruct;
+
+        /// <summary>
+        ///     属性
+        /// </summary>
+        public List<EntityProperty> Properties => TableOption.Properties;
+
+        /// <summary>
+        ///     属性字典
+        /// </summary>
+        public Dictionary<string, EntityProperty> PropertyMap => TableOption.PropertyMap;
+
+        /// <summary>
+        ///     属性字典
+        /// </summary>
+        public Dictionary<string, string> FieldMap => TableOption.FieldMap;
+
+        /// <summary>
+        ///     主键属性名称
+        /// </summary>
+        public string PrimaryProperty => TableOption.PrimaryProperty;
+
+        /// <summary>
+        ///     主键数据库字段名
+        /// </summary>
+        public string PrimaryDbField => TableOption.PrimaryDbField;
+        #endregion
+
+        #region 配置项
+
+        /// <summary>
+        /// 表配置
+        /// </summary>
+        public DataTableOption TableOption { get; set; }
 
         /// <summary>
         /// 基本条件
@@ -136,7 +251,7 @@ namespace Agebull.EntityModel.Common
         ///     排序字段
         /// </summary>
         public string OrderbyFields => DynamicOption.OrderbyFields;
-        
+
         /// <summary>
         ///     分组字段
         /// </summary>
@@ -177,146 +292,13 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public DataAccessOption Copy()
         {
-            Initiate();
-            var option = BaseOption.Copy();
             return new DataAccessOption
             {
-                _isInitiated = true,
-                DynamicOption = option,
-                BaseOption = option,
-                IsQuery = IsQuery,
-                UpdateByMidified = UpdateByMidified,
-                CanRaiseEvent = CanRaiseEvent,
-                DataStruct = DataStruct,
-                PropertyMap = PropertyMap,
-                FieldMap = FieldMap,
-                PrimaryProperty = PrimaryProperty,
-                PrimaryDbField = PrimaryDbField,
-                SqlBuilder = SqlBuilder
+                TableOption = TableOption,
+                DynamicOption = TableOption
             };
         }
-
-        /// <summary>
-        /// 初始化标识
-        /// </summary>
-        bool _isInitiated;
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        public void Initiate()
-        {
-            if (_isInitiated)
-                return;
-            _isInitiated = true;
-            SqlBuilder.Option = this;
-            if (BaseOption.InjectionLevel == InjectionLevel.None)
-                BaseOption.InjectionLevel = InjectionLevel.All;
-            DynamicOption = BaseOption;
-            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);
-            var properties = Properties;
-            foreach (var pro in properties)
-            {
-                if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
-                    continue;
-                PropertyMap[pro.FieldName] = PropertyMap[pro.PropertyName] = pro;
-
-                FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
-            }
-            PrimaryDbField = FieldMap[PrimaryProperty];
-            if (!FieldMap.ContainsKey("id"))
-                FieldMap["id"] = PrimaryDbField;
-            BaseOption.ReadTableName ??= DataStruct.ReadTableName;
-            BaseOption.WriteTableName ??= DataStruct.WriteTableName;
-            BaseOption.ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
-            BaseOption.LoadFields ??= SqlBuilder.BuilderLoadFields();
-            if (IsQuery)
-            {
-                BaseOption.InsertSqlCode = BaseOption.DeleteSqlCode = BaseOption.UpdateFields = BaseOption.UpdateSqlCode = null;
-            }
-            else
-            {
-                BaseOption.InsertSqlCode ??= SqlBuilder.BuilderInsertSqlCode();
-                BaseOption.DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();
-                BaseOption.UpdateFields ??= SqlBuilder.BuilderUpdateFields();
-                BaseOption.UpdateSqlCode ??= SqlBuilder.BuilderUpdateCode(UpdateFields, SqlBuilder.PrimaryKeyCondition);
-            }
-        }
-
         #endregion
 
-        #region 迭代
-
-        /// <summary>
-        /// 迭代循环属性
-        /// </summary>
-        public void FroeachProperties(PropertyFeatrue propertyFeatrue, Action<EntityProperty> action)
-        {
-            var properties = Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(propertyFeatrue))
-                    action(pro);
-            }
-        }
-
-        /// <summary>
-        /// 迭代循环属性
-        /// </summary>
-        public void FroeachProperties(PropertyFeatrue propertyFeatrue, ReadWriteFeatrue readWrite, Action<EntityProperty> action)
-        {
-            var properties = Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(propertyFeatrue) && pro.DbReadWrite.HasFlag(readWrite))
-                    action(pro);
-            }
-        }
-
-        /// <summary>
-        /// 迭代循环属性
-        /// </summary>
-        public void FroeachDbProperties(Action<EntityProperty> action)
-        {
-            var properties = Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field))
-                    action(pro);
-            }
-        }
-
-        /// <summary>
-        /// 迭代循环属性
-        /// </summary>
-        public void FroeachDbProperties(ReadWriteFeatrue readWrite, Action<EntityProperty> action)
-        {
-            var properties = Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
-                    action(pro);
-            }
-        }
-
-        /// <summary>
-        /// 迭代循环属性
-        /// </summary>
-        public async Task FroeachDbProperties(ReadWriteFeatrue readWrite, Func<EntityProperty, Task> action)
-        {
-            var properties = Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
-                    await action(pro);
-            }
-        }
-        #endregion
     }
 }

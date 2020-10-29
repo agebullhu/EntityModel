@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataAccess\Management\EventDefaultModelDataOperator.cs" />
+    <Compile Remove="DataAccess\Management\EventSubscribeModelDataOperator.cs" />
+    <Compile Remove="LambdaTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="appsettings.json" />
   </ItemGroup>
 

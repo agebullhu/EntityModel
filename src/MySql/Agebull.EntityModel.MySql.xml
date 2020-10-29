@@ -165,16 +165,6 @@
             数据库类型
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.DataOperator">
-            <summary>
-            自动构建数据库对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.ParameterCreater">
-            <summary>
-            参数构造
-            </summary>
-        </member>
         <member name="P:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Option">
             <summary>
             Sql语句构造器
@@ -190,12 +180,10 @@
             驱动提供者信息
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#GetDbType(System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.FroeachDbProperties(Agebull.EntityModel.Common.ReadWriteFeatrue,System.Action{Agebull.EntityModel.Common.EntityProperty})">
             <summary>
-                得到字段的MySqlDbType类型
+            迭代循环属性
             </summary>
-            <param name="field">字段名称</param>
-            <returns>参数</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#BuilderLoadFields">
             <summary>
