@@ -30,7 +30,7 @@ namespace Agebull.EntityModel.Common
         public PropertyFeatrue PropertyFeatrue { get; set; }
 
         /// <summary>
-        ///     属性实现对应的接口
+        ///     属性实现对应的实体
         /// </summary>
         public string Entity { get; set; }
 

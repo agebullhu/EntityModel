@@ -38,6 +38,11 @@ namespace Agebull.EntityModel.Common
         All = QueryCondition | InsertField | UpdateField | UpdateCondition | DeleteCondition,
 
         /// <summary>
+        /// 无插入
+        /// </summary>
+        NoInsert = QueryCondition | UpdateField | UpdateCondition | DeleteCondition,
+
+        /// <summary>
         /// 限制查询与写入条件
         /// </summary>
         OnlyCondition = QueryCondition | UpdateCondition,

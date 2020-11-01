@@ -65,9 +65,8 @@ namespace Agebull.EntityModel.Excel
         /// </summary>
         /// <param name="lambda">查询条件</param>
         /// <param name="name"></param>
-        /// <param name="path"></param>
         /// <returns>数据</returns>
-        public async Task<byte[]> ExportExcelAsync(LambdaItem<TData> lambda, string name, string path)
+        public async Task<byte[]> ExportExcelAsync(LambdaItem<TData> lambda, string name)
         {
             Book = new XSSFWorkbook();
             var sheet = Book.CreateSheet(name);

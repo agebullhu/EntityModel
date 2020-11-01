@@ -989,14 +989,14 @@ namespace Agebull.EntityModel.Common
 
         public async Task<List<TEntity>> LoadPageData(int page, int limit, string orderSql, string condition, DbParameter[] args)
         {
-            //if (page <= 0)
-            //    page = 1;
-            //if (limit == 0)
-            //    limit = 20;
-            //else if (limit == 9999)
-            //    limit = -1;
-            //else if (limit > 500)
-            //    limit = 500;
+            if (page <= 0)
+                page = 1;
+            if (limit == 0)
+                limit = 20;
+            else if (limit == 9999)
+                limit = -1;
+            else if (limit > 500)
+                limit = 500;
 
             var results = new List<TEntity>();
             var limitSql = limit > 0 ? $"{(page - 1) * limit},{limit}" : null;
@@ -1008,7 +1008,7 @@ namespace Agebull.EntityModel.Common
                 await cmd.PrepareAsync();
                 DataBase.TraceSql(cmd);
                 await using var reader = await cmd.ExecuteReaderAsync();
-                
+
                 while (await reader.ReadAsync())
                 {
                     results.Add(await LoadEntityAsync(reader));
@@ -1128,14 +1128,13 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">查询条件</param>
         /// <param name="args">查询参数</param>
         /// <returns></returns>
-        public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, bool desc, string condition,
-            params DbParameter[] args)
+        public Task<ApiPageData<TEntity>> PageAsync(int page, int limit, string orderField, bool desc, string condition,params DbParameter[] args)
         {
             return LoadPage(page, limit, SqlBuilder.OrderCode(orderField, !desc), condition, args);
         }
 
 
-        public async Task<ApiPageData<TEntity>> LoadPage(int page, int limit, string orderSql = null, string condition = null, DbParameter[] args=null)
+        public async Task<ApiPageData<TEntity>> LoadPage(int page, int limit, string orderSql = null, string condition = null, DbParameter[] args = null)
         {
             var count = (int)await CountAsync(condition, args);
             var data = await LoadPageData(page, limit, orderSql, condition, args);
@@ -1145,7 +1144,11 @@ namespace Agebull.EntityModel.Common
                 Rows = data,
                 Page = page,
                 PageSize = limit,
-                PageCount = limit > 0 ? (count / limit + ((count % limit) > 0 ? 1 : 0)) : 1
+                PageCount = count == 0
+                    ? 0
+                    : limit <= 0
+                        ? 1
+                        : (count / limit) + ((count % limit) <= 0 ? 1 : 0)
             };
         }
 
@@ -1470,7 +1473,7 @@ namespace Agebull.EntityModel.Common
             await using var connectionScope = await DataBase.CreateConnectionScope();
             var para = ParameterCreater.CreateParameter(Option.PrimaryProperty, Provider.EntityOperator.GetValue(entity, Option.PrimaryProperty), DataOperator.GetDbType(Option.PrimaryProperty));
             var sql = SqlBuilder.CreateLoadSql(Option.LoadFields, SqlBuilder.PrimaryKeyCondition, null, null);
-            await using var cmd = connectionScope.CreateCommand(sql, para);
+            await using var cmd = connectionScope.CreateCommand(sql, new[] { para });
             DataBase.TraceSql(cmd);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (!await reader.ReadAsync())

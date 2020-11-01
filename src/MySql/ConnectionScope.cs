@@ -1,6 +1,7 @@
 ﻿using Agebull.EntityModel.Common;
 using MySqlConnector;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,7 +65,7 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成命令
         /// </summary>
-        public DbCommand CreateCommand(string sql, DbParameter[] args)
+        public DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args)
         {
             var cmd = new MySqlCommand(sql, DataBase._connection, DataBase.Transaction);
             if (args != null)

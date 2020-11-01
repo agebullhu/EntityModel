@@ -81,6 +81,12 @@
                 读取查询条件
             </summary>
         </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetCustomFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+        </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
             <summary>
                 读取查询条件

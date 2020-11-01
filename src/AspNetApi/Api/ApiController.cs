@@ -151,7 +151,7 @@ namespace ZeroTeam.AspNet.ModelApi
         public async Task<ApiResult> Export([FromBody] Dictionary<string, string> args)
         {
             var filter = GetQueryFilter(args);
-            var res = await Business.Export(filter);
+            var res = await Business.Export(Business.Access.Option.DataStruct.Caption,filter);
             return ApiResultHelper.Succees(res);
         }
 

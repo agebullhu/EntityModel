@@ -224,8 +224,6 @@ namespace Agebull.EntityModel.MySql
             bool first = true;
             FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
-                if (pro.Entity != Option.DataStruct.Name)
-                    return;
                 if (first)
                     first = false;
                 else

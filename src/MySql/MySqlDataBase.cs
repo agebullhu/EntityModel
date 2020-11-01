@@ -12,6 +12,7 @@ using Agebull.EntityModel.Common;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -191,9 +192,9 @@ namespace Agebull.EntityModel.MySql
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        public async Task<int> ExecuteAsync(string sql, params DbParameter[] args)
+        public async Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args)
         {
-            await using var scope = await this.CreateConnectionScope();
+            await using var scope = await CreateConnectionScope();
             using var cmd = scope.CreateCommand(sql, args);
             TraceSql(cmd);
             return await cmd.ExecuteNonQueryAsync();
@@ -203,15 +204,15 @@ namespace Agebull.EntityModel.MySql
         ///     执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
         /// </summary>
         /// <param name="sql">SQL语句</param>
-        /// <param name="args">参数</param>
+        /// <param name="parameters">参数</param>
         /// <returns>操作的第一行第一列或空</returns>
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        public async Task<(bool hase, object value)> ExecuteScalarAsync(string sql, params DbParameter[] args)
+        public async Task<(bool hase, object value)> ExecuteScalarAsync(string sql, IEnumerable<DbParameter> parameters)
         {
-            await using var scope = await this.CreateConnectionScope();
-            await using var cmd = scope.CreateCommand(sql, args);
+            await using var scope = await CreateConnectionScope();
+            await using var cmd = scope.CreateCommand(sql, parameters);
             TraceSql(cmd);
             var result = await cmd.ExecuteScalarAsync();
             return (result != null, result == DBNull.Value ? null : result);

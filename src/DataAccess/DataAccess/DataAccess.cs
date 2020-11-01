@@ -307,8 +307,8 @@ namespace Agebull.EntityModel.Common
         public async Task<bool> PhysicalDeleteAsync(object key)
         {
             var sql = SqlBuilder.PhysicalDeleteSqlCode(SqlBuilder.PrimaryKeyCondition);
-            return 1 == await DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
-                ParameterCreater.CreateParameter(Option.PrimaryProperty, key));
+            return 1 == await UpdateValue(DataOperatorType.MulitDelete, sql, SqlBuilder.PrimaryKeyCondition,
+                new[] { ParameterCreater.CreateParameter(Option.PrimaryProperty, key) });
         }
 
         /// <summary>
@@ -322,30 +322,30 @@ namespace Agebull.EntityModel.Common
             if (string.IsNullOrEmpty(convert.ConditionSql))
                 throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
             var sql = SqlBuilder.PhysicalDeleteSqlCode(convert.ConditionSql);
-            return DoUpdateValueAsync(DataOperatorType.MulitDelete, sql, convert.ConditionSql, convert.Parameters);
+            return UpdateValue(DataOperatorType.MulitDelete, sql, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
         ///     条件删除
         /// </summary>
-        public Task<int> DeleteAsync(string condition, params DbParameter[] args)
+        public Task<int> DeleteAsync(string condition, params DbParameter[] parameters)
         {
             //throw new EntityModelDbException("批量删除功能被禁用");
             if (string.IsNullOrWhiteSpace(condition))
                 throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
-            return DeleteInnerAsync(condition, args);
+            return DeleteInnerAsync(condition, parameters);
         }
 
         /// <summary>
         ///     删除
         /// </summary>
-        private Task<int> DeleteInnerAsync(string condition, params DbParameter[] args)
+        private Task<int> DeleteInnerAsync(string condition, params DbParameter[] parameters)
         {
             if (string.IsNullOrEmpty(condition))
                 throw new EntityModelDbException(@"删除条件不能为空,因为不允许执行全表删除");
 
-            return DoUpdateValueAsync(DataOperatorType.MulitDelete, SqlBuilder.CreateDeleteSql(condition),
-                SqlBuilder.PrimaryKeyCondition, args);
+            return UpdateValue(DataOperatorType.MulitDelete, SqlBuilder.CreateDeleteSql(condition),
+                SqlBuilder.PrimaryKeyCondition, parameters);
         }
 
         #endregion
@@ -387,7 +387,7 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetCoustomValueAsync<TKey>(string valueExpression, TKey key)
         {
             var sql = SqlBuilder.CreateUpdateSqlCode(valueExpression, SqlBuilder.PrimaryKeyCondition);
-            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, SqlBuilder.PrimaryKeyCondition, new[]
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, SqlBuilder.PrimaryKeyCondition, new[]
             {
                 ParameterCreater.CreateParameter(Option.PrimaryProperty, key)
             });
@@ -405,9 +405,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string field, object value, string condition, params DbParameter[] args)
+        public Task<int> SetValueAsync(string field, object value, string condition, params DbParameter[] parameters)
         {
-            return await SetValueByConditionAsync(field, value, condition, args);
+            return SetValueByConditionAsync(field, value, condition, parameters);
         }
 
         /// <summary>
@@ -418,10 +418,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(Expression<Func<TEntity, bool>> field, bool value, string condition,
-            params DbParameter[] args)
+        public Task<int> SetValueAsync(Expression<Func<TEntity, bool>> field, bool value, string condition,
+            params DbParameter[] parameters)
         {
-            return await SetValueByConditionAsync(GetPropertyName(field), value ? 0 : 1, condition, args);
+            return SetValueByConditionAsync(GetPropertyName(field), value ? 0 : 1, condition, parameters);
         }
 
         /// <summary>
@@ -432,10 +432,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(Expression<Func<TEntity, Enum>> field, Enum value, string condition,
-            params DbParameter[] args)
+        public Task<int> SetValueAsync(Expression<Func<TEntity, Enum>> field, Enum value, string condition,
+            params DbParameter[] parameters)
         {
-            return await SetValueByConditionAsync(GetPropertyName(field), Convert.ToInt32(value), condition, args);
+            return SetValueByConditionAsync(GetPropertyName(field), Convert.ToInt32(value), condition, parameters);
         }
 
         /// <summary>
@@ -446,11 +446,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value,
-            string condition,
-            params DbParameter[] args)
+        public Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value,
+            string condition, params DbParameter[] parameters)
         {
-            return await SetValueByConditionAsync(GetPropertyName(field), value, condition, args);
+            return SetValueByConditionAsync(GetPropertyName(field), value, condition, parameters);
         }
 
 
@@ -460,10 +459,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="field">字段</param>
         /// <param name="value">值</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value)
+        public Task<int> SetValueAsync<TField>(Expression<Func<TEntity, TField>> field, TField value)
         {
-            return await SetValueByConditionAsync(GetPropertyName(field), value, "-1", null);
+            return SetValueByConditionAsync(GetPropertyName(field), value, "-1", null);
         }
+
         /// <summary>
         ///     条件更新实体中已记录更新部分
         /// </summary>
@@ -474,7 +474,7 @@ namespace Agebull.EntityModel.Common
         {
             var convert = SqlBuilder.Compile(lambda);
             string sql = SqlBuilder.CreateUpdateSqlCode(entity, convert.ConditionSql);
-            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, convert.ConditionSql, convert.Parameters);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -488,8 +488,7 @@ namespace Agebull.EntityModel.Common
             Expression<Func<TEntity, bool>> lambda)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return SetValueByConditionAsync(GetPropertyName(field), value, convert.ConditionSql,
-                convert.Parameters);
+            return SetValueByConditionAsync(GetPropertyName(field), value, convert.ConditionSql,convert.Parameters);
         }
 
         /// <summary>
@@ -500,10 +499,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private Task<int> SetValueByConditionAsync(string field, object value, string condition,
-            params DbParameter[] args)
+        private Task<int> SetValueByConditionAsync(string field, object value, string condition,params DbParameter[] parameters)
         {
-            return DoUpdateValueAsync(field, value, condition, args);
+            return DoUpdateValueAsync(field, value, condition, parameters);
         }
 
         /// <summary>
@@ -514,10 +512,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private Task<int> SetValueInnerAsync(string field, object value, string condition,
-            params DbParameter[] args)
+        private Task<int> SetValueInnerAsync(string field, object value, string condition,params DbParameter[] parameters)
         {
-            return DoUpdateValueAsync(field, value, condition, args);
+            return DoUpdateValueAsync(field, value, condition, parameters);
         }
 
         /// <summary>
@@ -528,17 +525,17 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private async Task<int> DoUpdateValueAsync(DataOperatorType operatorType, string sql, string condition, params DbParameter[] args)
+        private async Task<int> UpdateValue(DataOperatorType operatorType, string sql, string condition, IEnumerable<DbParameter> parameters)
         {
             if (sql == null)
                 return -1;
             if (Provider.Injection != null)
-                await Provider.Injection.BeforeExecute(operatorType, condition, args);
-            var cnt = await DataBase.ExecuteAsync(sql, args);
+                await Provider.Injection.BeforeExecute(operatorType, condition, parameters);
+            var cnt = await DataBase.ExecuteAsync(sql, parameters);
             if (cnt <= 0)
                 return 0;
             if (Provider.Injection != null)
-                await Provider.Injection.AfterExecute(operatorType, sql, condition, args);
+                await Provider.Injection.AfterExecute(operatorType, sql, condition, parameters);
             return cnt;
         }
 
@@ -550,15 +547,15 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private Task<int> DoUpdateValueAsync(string field, object value, string condition, DbParameter[] args)
+        private Task<int> DoUpdateValueAsync(string field, object value, string condition, DbParameter[] parameter)
         {
             field = Option.FieldMap[field];
 
             var parameters = new List<DbParameter>();
-            if (args != null)
-                parameters.AddRange(args);
+            if (parameters != null)
+                parameters.AddRange(parameter);
             var sql = SqlBuilder.CreateUpdateSqlCode(SqlBuilder.FileUpdateSetCode(field, value, parameters), condition);
-            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, condition, parameters);
         }
         #endregion
 
@@ -574,7 +571,8 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetValueAsync(string expression, LambdaItem<TEntity> condition)
         {
             var convert = SqlBuilder.Compile(condition);
-            return SetMulitValueAsync(expression, convert.ConditionSql, convert.Parameters);
+            var sql = SqlBuilder.CreateUpdateSqlCode(expression, convert.ConditionSql);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -586,7 +584,8 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetValueAsync(string expression, Expression<Func<TEntity, bool>> condition)
         {
             var convert = SqlBuilder.Compile(condition);
-            return SetMulitValueAsync(expression, convert.ConditionSql, convert.Parameters);
+            var sql = SqlBuilder.CreateUpdateSqlCode(expression, convert.ConditionSql);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, convert.ConditionSql, convert.Parameters);
         }
 
         /// <summary>
@@ -596,29 +595,10 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">条件</param>
         /// <param name="args">参数</param>
         /// <returns>更新行数</returns>
-        public Task<int> SetMulitValueAsync(string expression, Expression<Func<TEntity, bool>> condition,
-            params DbParameter[] args)
-        {
-            var convert = SqlBuilder.Compile(condition);
-            var arg = new List<DbParameter>();
-            if (convert.HaseParameters)
-                arg.AddRange(convert.DbParameter);
-            if (args.Length > 0)
-                arg.AddRange(args);
-            return SetMulitValueAsync(expression, convert.ConditionSql, arg.ToArray());
-        }
-
-        /// <summary>
-        ///     自定义更新（更新表达式自写）
-        /// </summary>
-        /// <param name="expression">更新SQL表达式</param>
-        /// <param name="condition">条件</param>
-        /// <param name="args">参数</param>
-        /// <returns>更新行数</returns>
-        public Task<int> SetMulitValueAsync(string expression, string condition, DbParameter[] args)
+        public Task<int> SetMulitValueAsync(string expression, string condition,params DbParameter[] parameters)
         {
             var sql = SqlBuilder.CreateUpdateSqlCode(expression, condition);
-            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, condition, parameters);
         }
 
 
@@ -628,9 +608,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="fields">字段与值组合</param>
         /// <param name="condition">条件</param>
         /// <returns>更新行数</returns>
-        public async Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
+        public Task<int> SetValueAsync(string condition, params (string field, object value)[] fields)
         {
-            return await SetMulitValueAsync(condition, null, fields);
+            return SetMulitValue(condition, null, fields);
         }
 
         /// <summary>
@@ -641,7 +621,7 @@ namespace Agebull.EntityModel.Common
         /// <returns>更新行数</returns>
         public Task<int> SetValueAsync(object key, params (string field, object value)[] fields)
         {
-            return SetMulitValueAsync(
+            return SetMulitValue(
                 SqlBuilder.PrimaryKeyCondition,
                 new DbParameter[] { ParameterCreater.CreateParameter(Option.PrimaryProperty, key) },
                 fields);
@@ -656,7 +636,7 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetValueAsync(Expression<Func<TEntity, bool>> lambda, params (string field, object value)[] fields)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return SetMulitValueAsync(convert.ConditionSql, convert.Parameters, fields);
+            return SetMulitValue(convert.ConditionSql, convert.Parameters, fields);
         }
 
 
@@ -669,7 +649,7 @@ namespace Agebull.EntityModel.Common
         public Task<int> SetValueAsync(LambdaItem<TEntity> lambda, params (string field, object value)[] fields)
         {
             var convert = SqlBuilder.Compile(lambda);
-            return SetMulitValueAsync(convert.ConditionSql, convert.Parameters, fields);
+            return SetMulitValue(convert.ConditionSql, convert.Parameters, fields);
         }
 
         /// <summary>
@@ -679,9 +659,9 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        public Task<int> SetValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
+        public Task<int> SetValueAsync(string condition, DbParameter[] parameters, IEnumerable<(string field, object value)> fields)
         {
-            return SetMulitValueAsync(condition, args, fields);
+            return SetMulitValue(condition, parameters, fields);
         }
 
         /// <summary>
@@ -691,11 +671,11 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">更新条件</param>
         /// <param name="args">条件参数</param>
         /// <returns>更新行数</returns>
-        private Task<int> SetMulitValueAsync(string condition, DbParameter[] args, IEnumerable<(string field, object value)> fields)
+        private Task<int> SetMulitValue(string condition, DbParameter[] parameter, IEnumerable<(string field, object value)> fields)
         {
             var parameters = new List<DbParameter>();
-            if (args != null)
-                parameters.AddRange(args);
+            if (parameter != null)
+                parameters.AddRange(parameter);
             bool first = true;
             var code = new StringBuilder();
             foreach (var field in fields)
@@ -708,7 +688,7 @@ namespace Agebull.EntityModel.Common
             }
 
             var sql = SqlBuilder.CreateUpdateSqlCode(code.ToString(), condition);
-            return DoUpdateValueAsync(DataOperatorType.MulitUpdate, sql, condition, args);
+            return UpdateValue(DataOperatorType.MulitUpdate, sql, condition, parameters);
 
         }
         #endregion
@@ -758,7 +738,7 @@ namespace Agebull.EntityModel.Common
         {
             if (Provider.Injection != null)
                 await Provider.Injection.BeforeSave(entity, DataOperatorType.Insert);
-            DataOperator.SetParameterValue(entity, context.Command);
+            DataOperator.SetEntityParameter(context.Command, entity);
             if (Option.IsIdentity)
             {
                 var key = await context.Command.ExecuteScalarAsync();
@@ -836,7 +816,7 @@ namespace Agebull.EntityModel.Common
         {
             if (Provider.Injection != null)
                 await Provider.Injection.BeforeSave(entity, DataOperatorType.Update);
-            DataOperator.SetParameterValue(entity, context.Command);
+            DataOperator.SetEntityParameter( context.Command, entity);
             var res = await context.Command.ExecuteNonQueryAsync();
             if (res == 0)
                 return false;

@@ -88,7 +88,7 @@ namespace Agebull.EntityModel.Common
             };
 
             if (InjectionLevel == InjectionLevel.None)
-                InjectionLevel = InjectionLevel.All;
+                InjectionLevel = InjectionLevel.NoInsert;
 
             FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);

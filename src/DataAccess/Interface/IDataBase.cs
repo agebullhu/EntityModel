@@ -10,6 +10,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -59,7 +60,7 @@ namespace Agebull.EntityModel.Common
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?序号的形式访问参数
         /// </remarks>
-        Task<int> ExecuteAsync(string sql, params DbParameter[] args);
+        Task<int> ExecuteAsync(string sql, IEnumerable<DbParameter> args);
 
         /// <summary>
         ///     执行查询，并返回查询所返回的结果集中第一行的第一列。忽略其他列或行。
@@ -70,7 +71,7 @@ namespace Agebull.EntityModel.Common
         /// <remarks>
         ///     注意,如果有参数时,都是匿名参数,请使用?的形式访问参数
         /// </remarks>
-        Task<(bool hase, object value)> ExecuteScalarAsync(string sql, params DbParameter[] args);
+        Task<(bool hase, object value)> ExecuteScalarAsync(string sql, IEnumerable<DbParameter> args);
 
         #endregion
 

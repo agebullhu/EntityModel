@@ -182,7 +182,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         {
             GlobalContext.Current.Status.Feature = 1;
             var filter = GetQueryFilter();
-            var res = await Business.Export(filter);
+            var res = await Business.Export(Business.Access.Option.DataStruct.Caption, filter);
             GlobalContext.Current.Status.Feature = 0;
             return ApiResultHelper.Succees(res);
         }
@@ -254,8 +254,18 @@ namespace ZeroTeam.MessageMVC.ModelApi
             //    if (fields.Length > 0)
             //        filter.Fields = fields;
             //}
+            GetCustomFilter(filter);
             GetQueryFilter(filter);
             return filter;
+        }
+
+        /// <summary>
+        ///     读取查询条件
+        /// </summary>
+        /// <param name="filter">筛选器</param>
+        protected virtual void GetCustomFilter(LambdaItem<TData> filter)
+        {
+
         }
 
         /// <summary>

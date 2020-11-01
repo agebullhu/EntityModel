@@ -18,8 +18,8 @@ namespace HY.GameApi.Model
         public PropertyChangingEventArgsEx(string propertyIndex, object oldValue, object newValue)
             : base(propertyIndex)
         {
-            this.OldValue = oldValue;
-            this.NewValue = newValue;
+            OldValue = oldValue;
+            NewValue = newValue;
         }
 
         /// <summary>

@@ -92,23 +92,6 @@ namespace Agebull.EntityModel.Common
                     cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName, pro.DbType));
             }
         }
-
-        /// <summary>
-        /// 设置插入数据的命令
-        /// </summary>
-        /// <param name="data">实体对象</param>
-        /// <param name="cmd">命令</param>
-        /// <returns>返回真说明要取主键</returns>
-        void SetParameterValue(TEntity data, DbCommand cmd)
-        {
-            var properties = Provider.Option.Properties;
-
-            foreach (var pro in properties)
-            {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field))
-                    cmd.Parameters[pro.PropertyName].Value = Provider.EntityOperator.GetValue(data, pro.PropertyName) ?? DBNull.Value;
-            }
-        }
     }
 
 

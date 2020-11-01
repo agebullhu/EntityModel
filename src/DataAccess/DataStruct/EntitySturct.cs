@@ -32,7 +32,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     实体名称
         /// </summary>
-        public string EntityName { get => Name; set => Name = value; }
+        public string EntityName { get; set; }
 
         /// <summary>
         ///     读表名

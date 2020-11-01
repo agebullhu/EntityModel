@@ -11,6 +11,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -51,7 +52,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">执行条件</param>
         /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        Task BeforeExecute(DataOperatorType operatorType, string condition, DbParameter[] parameter) => Task.CompletedTask;
+        Task BeforeExecute(DataOperatorType operatorType, string condition, IEnumerable<DbParameter> parameter) => Task.CompletedTask;
 
         /// <summary>
         ///     更新语句后处理(单个实体操作不引发)
@@ -60,7 +61,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="condition">执行条件</param>
         /// <param name="parameter">参数值</param>
         /// <param name="operatorType">操作类型</param>
-        Task AfterExecute(DataOperatorType operatorType, string sql, string condition, DbParameter[] parameter) => Task.CompletedTask;
+        Task AfterExecute(DataOperatorType operatorType, string sql, string condition, IEnumerable<DbParameter> parameter) => Task.CompletedTask;
 
     }
 }

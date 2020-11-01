@@ -237,9 +237,10 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <summary>
         /// 导出到Excel
         /// </summary>
+        /// <param name="title"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<(string name, string mime, byte[] bytes)> Export(LambdaItem<TData> filter)
+        public async Task<(string name, string mime, byte[] bytes)> Export(string title, LambdaItem<TData> filter)
         {
             var exporter = new ExcelExporter<TData, TPrimaryKey>
             {
@@ -247,11 +248,12 @@ namespace Agebull.EntityModel.BusinessLogic
                 OnDataLoad = OnListLoaded
             };
             var data = new TData();
-            var bytes = await exporter.ExportExcelAsync(filter, Access.Option.DataStruct.ImportName, null);
-            return ($"OrderAddress-{DateTime.Now:yyyyMMDDHHmmSS}",
+            var bytes = await exporter.ExportExcelAsync(filter, Access.Option.DataStruct.Caption);
+            return ($"{title}-{DateTime.Now:yyyyMMDDHHmmSS}",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 bytes);
         }
+
         /// <summary>
         /// 导出到Excel
         /// </summary>
