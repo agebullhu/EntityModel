@@ -130,18 +130,19 @@ namespace ZeroTeam.MessageMVC.ModelApi
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public async Task<IApiResult<TData>> Update(TData arg)
         {
-            var data = new TData();
+            var convert = new FormConvert();
+            if (!convert.Arguments.TryGetValue("id", out var id))
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
 
+
+            var data = Business.Access.Option.UpdateByMidified
+                ? await Business.Access.LoadByPrimaryKeyAsync(Convert(id).Item2)
+                : new TData();
             if (data is IEditStatus status && status.EditStatusRedorder != null)
             {
                 status.EditStatusRedorder.IsExist = true;
                 status.EditStatusRedorder.IsFromClient = true;
             }
-            var convert = new FormConvert();
-            if (!convert.Arguments.TryGetValue("id", out var id))
-                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
-
-            data.Id = Convert(id).Item2;
             await ReadFormData(data, convert);
             if (convert.Failed)
             {

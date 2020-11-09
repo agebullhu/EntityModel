@@ -46,10 +46,9 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            if (_hereTransaction)
+            if (_hereTransaction&& DataBase.TransactionSuccess == null)
             {
-                if (DataBase.TransactionSuccess == null)
-                    await DataBase.Transaction.RollbackAsync();
+                await DataBase.Transaction.RollbackAsync();
                 await DataBase.Transaction.DisposeAsync();
                 DataBase.Transaction = null;
             }
@@ -104,7 +103,11 @@ namespace Agebull.EntityModel.MySql
                 return;
             DataBase.TransactionSuccess = false;
             if (DataBase.Transaction != null)
+            {
                 await DataBase.Transaction.RollbackAsync();
+                await DataBase.Transaction.DisposeAsync();
+                DataBase.Transaction = null;
+            }
         }
 
         /// <summary>
@@ -116,7 +119,11 @@ namespace Agebull.EntityModel.MySql
                 return;
             DataBase.TransactionSuccess = true;
             if (_hereTransaction && DataBase.Transaction != null)
+            {
                 await DataBase.Transaction.CommitAsync();
+                await DataBase.Transaction.DisposeAsync();
+                DataBase.Transaction = null;
+            }
         }
         #endregion
 

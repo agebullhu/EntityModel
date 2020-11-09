@@ -1014,11 +1014,6 @@ namespace Agebull.EntityModel.Common
                     results.Add(await LoadEntityAsync(reader));
                 }
             }
-            if (Provider.Injection != null)
-                foreach (var entity in results)
-                {
-                    await Provider.Injection.AfterLoad(entity);
-                }
             return results;
         }
 
@@ -1506,8 +1501,6 @@ namespace Agebull.EntityModel.Common
                     return null;
                 entity = await LoadEntityAsync(reader);
             }
-            if (Provider.Injection != null)
-                await Provider.Injection.AfterLoad(entity);
             return entity;
         }
 
@@ -1528,8 +1521,6 @@ namespace Agebull.EntityModel.Common
                     return null;
                 entity = await LoadEntityAsync(reader);
             }
-            if (Provider.Injection != null)
-                await Provider.Injection.AfterLoad(entity);
             return entity;
         }
 
@@ -1549,9 +1540,6 @@ namespace Agebull.EntityModel.Common
                 while (await reader.ReadAsync())
                     results.Add(await LoadEntityAsync(reader));
             }
-            if (Provider.Injection != null)
-                foreach (var entity in results)
-                    await Provider.Injection.AfterLoad(entity);
             return results;
         }
 
@@ -1571,9 +1559,6 @@ namespace Agebull.EntityModel.Common
                     results.Add(await LoadEntityAsync(reader));
                 }
             }
-            if (Provider.Injection != null)
-                foreach (var entity in results)
-                    await Provider.Injection.AfterLoad(entity);
             return results;
         }
 
@@ -1604,6 +1589,10 @@ namespace Agebull.EntityModel.Common
         {
             var entity = new TEntity();
             await DataOperator.LoadEntity(reader, entity);
+            if (entity is IEditStatus status)
+                status.SetUnModify();
+            if (Provider.Injection != null)
+                await Provider.Injection.AfterLoad(entity);
             return entity;
         }
 

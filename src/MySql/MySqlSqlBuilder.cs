@@ -442,9 +442,11 @@ namespace Agebull.EntityModel.MySql
         /// <returns></returns>
         public string OrderCode(string field, bool asc) => string.IsNullOrEmpty(field) ? null : $"`{Option.FieldMap[field]}`{(asc ? "" : " DESC")}";
 
-        ConditionItem ISqlBuilder<TEntity>.Compile(Expression<Func<TEntity, bool>> lambda) => PredicateConvert.Convert(this, Option, lambda);
+        ///<inheritdoc/>
+        public ConditionItem Compile(Expression<Func<TEntity, bool>> lambda) => PredicateConvert.Convert(this, Option, lambda);
 
-        ConditionItem ISqlBuilder<TEntity>.Compile(LambdaItem<TEntity> lambda) => PredicateConvert.Convert(this, Option, lambda);
+        ///<inheritdoc/>
+        public ConditionItem Compile(LambdaItem<TEntity> lambda) => PredicateConvert.Convert(this, Option, lambda);
 
         #endregion
     }

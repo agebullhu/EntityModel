@@ -43,6 +43,7 @@ namespace Agebull.EntityModel.MySql
         private bool _mergeByAnd;
 
         #endregion
+
         #region 静态调用
 
         /// <summary>
@@ -147,6 +148,7 @@ namespace Agebull.EntityModel.MySql
             return _condition;
         }
         #endregion
+
         #region 转换表达式
 
         /// <summary>
@@ -305,43 +307,42 @@ namespace Agebull.EntityModel.MySql
                     right = ExpressionSql(expression.Arguments[0]);
                 }
 
-                if (!string.IsNullOrWhiteSpace(left) && !string.IsNullOrWhiteSpace(right))
+                if (left != null && right != null)
                     return $"{left} = {right}";
+                else if (left == null)
+                    return $"{right} IS NULL";
+                else if (right == null)
+                    return $"{left} IS NULL";
                 return null;
             }
 
             if (expression.Method.Name == nameof(string.Contains))
             {
-                string value;
-                string field1;
-                if (expression.Object == null)//扩展方法
+                if (expression.Object != null)//扩展方法
                 {
-                    field1 = GetField(expression.Arguments[1]);
-                    value = ExpressionSql(expression.Arguments[0]);
+                    var (toArg, value) = ConvertExpression(expression.Object);
+                    var b = ConvertExpression(expression.Arguments[0]);
+                    return $"{value} LIKE CONCAT('%',{b.value}, '%')";
                 }
                 else
                 {
-                    field1 = GetArguments(expression.Arguments);
-                    value = ExpressionSql(expression.Object);
+                    throw new Exception("Contains方法表示的意图过于模糊，请使用LambdaEx的In扩展方法表达In意图，用Like、LeftLike、RightLike方法表达你的Like意图");
                 }
-
-                if (!string.IsNullOrWhiteSpace(field1) && !string.IsNullOrWhiteSpace(value))
-                    return $"{field1} IN ({value})";
-                return null;
             }
-            if (expression.Method.DeclaringType == typeof(Ex))
+            if (expression.Method.DeclaringType == typeof(LambdaEx))
             {
                 return expression.Method.Name switch
                 {
-                    nameof(Ex.In) => $"{GetField(expression.Arguments[0])} IN ({ExpressionSql(expression.Arguments[1])})",
-                    nameof(Ex.Like) => $"{GetField(expression.Arguments[0])} LIKE CONCAT('%',{ExpressionSql(expression.Arguments[1])}, '%')",
-                    nameof(Ex.LeftLike) => $"{GetField(expression.Arguments[0])} LIKE CONCAT({ExpressionSql(expression.Arguments[1])}, '%')",
-                    nameof(Ex.FieldEquals) => $"{GetField(expression.Arguments[0])} = {ExpressionSql(expression.Arguments[1])}",
-                    nameof(Ex.Expression) => $"{GetField(expression.Arguments[0])} {ExpressionValue(expression.Arguments[1])} {ExpressionValue(expression.Arguments[2])}",
-                    nameof(Ex.Condition) => $"{GetValue<string>(expression.Arguments[0])}",
-                    nameof(Ex.IsNotNull) => $"{GetField(expression.Arguments[0])} IS NOT NULL",
-                    nameof(Ex.IsNull) => $"{GetField(expression.Arguments[0])} IS NULL",
-                    _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                    nameof(LambdaEx.In) => $"{GetField(expression.Arguments[0])} IN ({ExpressionSql(expression.Arguments[1])})",
+                    nameof(LambdaEx.Like) => $"{GetField(expression.Arguments[0])} LIKE CONCAT('%',{ExpressionSql(expression.Arguments[1])}, '%')",
+                    nameof(LambdaEx.LeftLike) => $"{GetField(expression.Arguments[0])} LIKE CONCAT({ExpressionSql(expression.Arguments[1])}, '%')",
+                    nameof(LambdaEx.RightLike) => $"{GetField(expression.Arguments[0])} LIKE CONCAT('%',{ExpressionSql(expression.Arguments[1])})",
+                    nameof(LambdaEx.FieldEquals) => $"{GetField(expression.Arguments[0])} = {ExpressionSql(expression.Arguments[1])}",
+                    nameof(LambdaEx.Expression) => $"{GetField(expression.Arguments[0])} {ExpressionValue(expression.Arguments[1])} {ExpressionValue(expression.Arguments[2])}",
+                    nameof(LambdaEx.Condition) => $"{GetValue<string>(expression.Arguments[0])}",
+                    nameof(LambdaEx.IsNotNull) => $"{GetField(expression.Arguments[0])} IS NOT NULL",
+                    nameof(LambdaEx.IsNull) => $"{GetField(expression.Arguments[0])} IS NULL",
+                    _ => throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                 };
             }
             if (expression.Method.DeclaringType == typeof(Math))
@@ -354,6 +355,7 @@ namespace Agebull.EntityModel.MySql
                         break;
                 };
             }
+
             if (expression.Method.DeclaringType == typeof(EntityProperty))
             {
                 var property = GetValue<EntityProperty>(expression.Object);
@@ -364,15 +366,9 @@ namespace Agebull.EntityModel.MySql
                     _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                 };
             }
+
             if (TryGetField(expression.Object, out var field))
             {
-                if (expression.Method.Name == nameof(object.Equals))
-                {
-                    string value = GetArgument(expression.Arguments);
-                    if (value == null)
-                        return $"{field} IS NULL";
-                    return $"{field} = {value}";
-                }
                 if (expression.Method.DeclaringType == typeof(string))
                 {
                     return expression.Method.Name switch
@@ -384,7 +380,7 @@ namespace Agebull.EntityModel.MySql
                         nameof(string.TrimStart) => $"LTRIM({field})",
                         nameof(string.TrimEnd) => $"RTRIM({field})",
                         nameof(string.Replace) => $"REPLACE({field},{GetArguments(expression.Arguments)})",
-                        _ => CheckDynamicValue(GetValue(expression))//($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
+                        _ => throw new ArgumentException($"不支持方法:{expression.Method.DeclaringType.FullName}.{expression.Method.Name}"),
                     };
                 }
                 if (expression.Method.DeclaringType == typeof(Enum))
@@ -396,7 +392,7 @@ namespace Agebull.EntityModel.MySql
                     };
                 }
             }
-            return CheckDynamicValue(GetValue(expression));//($"不支持方法:{expression.Method.Name}");
+            return CheckDynamicValue(GetValue(expression));
         }
 
         /// <summary>
@@ -551,8 +547,8 @@ namespace Agebull.EntityModel.MySql
                     ? (string)Convert(constant).value
                     : GetValue<string>(expression);
 
-            _option.FieldMap.TryGetValue(field, out field);
-            return $"`{field}`";
+            _option.FieldMap.TryGetValue(field, out var field2);
+            return $"`{field2 ?? field}`";
         }
 
         /// <summary>

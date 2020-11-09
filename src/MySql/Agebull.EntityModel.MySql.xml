@@ -308,6 +308,12 @@
             <param name="asc"></param>
             <returns></returns>
         </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Compile(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Compile(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <inheritdoc/>
+        </member>
         <member name="T:Agebull.EntityModel.MySql.ParameterCreater">
             <summary>
                 Sql实体访问类

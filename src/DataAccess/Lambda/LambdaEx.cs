@@ -11,12 +11,15 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Agebull.EntityModel.Common
 {
     /// <summary>
     ///     用于SQL解析
     /// </summary>
-    public static class Ex
+    public static class LambdaEx
     {
         /// <summary>
         /// 用于SQL中的后部Like,如[field] like 'abc%',以使用索引
@@ -44,6 +47,21 @@ namespace Agebull.EntityModel.Common
             return str.Length == des.Length
                 ? string.Equals(str, des, System.StringComparison.OrdinalIgnoreCase)
                 : string.Equals(str.Substring(0, des.Length), des, System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// 用于SQL中的后部Like,如[field] like 'abc%',以使用索引
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="des"></param>
+        /// <returns></returns>
+        public static bool RightLike(this string str, string des)
+        {
+            if (string.IsNullOrEmpty(str) || string.IsNullOrEmpty(des) || str.Length <= des.Length)
+                return false;
+            return str.Length == des.Length
+                ? string.Equals(str, des, System.StringComparison.OrdinalIgnoreCase)
+                : string.Equals(str.PadRight(des.Length), des, System.StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -75,20 +93,27 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool IsNull(this string field) => true;
+        public static bool In<T>(this T field, params T[] values) => values.Contains(field);
 
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool In<T>(this T field, params T[] values) => true;
+        public static bool In<T>(this T field, IEnumerable<T> values) => values.Contains(field);
 
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool IsNotNull(this string field) => true;
+        public static bool IsNull(this string field) => string.IsNullOrEmpty(field);
+
+        /// <summary>
+        /// 用于SQL中的文本字段比较
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static bool IsNotNull(this string field) => !string.IsNullOrEmpty(field);
     }
 }
