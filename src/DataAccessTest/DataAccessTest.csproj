@@ -30,9 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.ApiContract" Version="1.0.1.51" />
-    <PackageReference Include="ZeroTeam.MessageMVC.Http" Version="1.0.1.51" />
-    <PackageReference Include="ZeroTeam.MessageMVC.Tools" Version="1.0.1.51" />
+    <PackageReference Include="ZeroTeam.MessageMVC.ApiContract" Version="1.0.1.85" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Http" Version="1.0.1.85" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Tools" Version="1.0.1.85" />
   </ItemGroup>
 
   <ItemGroup>

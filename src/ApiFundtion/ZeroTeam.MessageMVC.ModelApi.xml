@@ -593,16 +593,6 @@
             构造
             </summary>
         </member>
-        <member name="P:ZeroTeam.MessageMVC.ModelApi.ModelApiController.UserInfo">
-            <summary>
-            当前登录用户
-            </summary>
-        </member>
-        <member name="P:ZeroTeam.MessageMVC.ModelApi.ModelApiController.Message">
-            <summary>
-            原始调用帧消息
-            </summary>
-        </member>
         <member name="P:ZeroTeam.MessageMVC.ModelApi.ModelApiController.IsFailed">
             <summary>
                 是否操作失败
@@ -613,11 +603,6 @@
                 设置当前操作失败
             </summary>
             <param name="message"></param>
-        </member>
-        <member name="P:ZeroTeam.MessageMVC.ModelApi.ModelApiController.UserIsLogin">
-            <summary>
-                当前用户是否已登录成功
-            </summary>
         </member>
         <member name="T:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert">
             <summary>
@@ -1092,6 +1077,16 @@
         <member name="T:ZeroTeam.MessageMVC.ModelApi.BusinessContext">
             <summary>
             业务上下文
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.BusinessContext.#ctor">
+            <summary>
+                最后一个的操作消息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LoginUser">
+            <summary>
+                当前登录用户
             </summary>
         </member>
         <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LastMessage">

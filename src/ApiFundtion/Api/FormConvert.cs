@@ -77,7 +77,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     参数
         /// </summary>
-        internal readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
+        internal readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.ExtensionDictionary;
 
         /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充

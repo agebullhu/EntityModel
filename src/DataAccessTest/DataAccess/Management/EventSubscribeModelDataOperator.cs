@@ -24,8 +24,6 @@ namespace Zeroteam.MessageMVC.EventBus.DataAccess
         /// </summary>
         public IDataAccessProvider<EventSubscribeModel> Provider { get; set; }
 
-        static EntityStruct _struct;
-
         /// <summary>
         /// 实体结构
         /// </summary>

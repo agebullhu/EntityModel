@@ -19,7 +19,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     参数
         /// </summary>
-        static Dictionary<string, string> Arguments => GlobalContext.Current.Message.Dictionary;
+        static Dictionary<string, string> Arguments => GlobalContext.Current.Message.ExtensionDictionary;
 
         #endregion
 

@@ -12,6 +12,19 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     最后一个的操作消息
         /// </summary>
+        public BusinessContext()
+        {
+            LoginUser = GlobalContext.Get<IUser>();
+        }
+
+        /// <summary>
+        ///     当前登录用户
+        /// </summary>
+        public IUser LoginUser { get; }
+
+        /// <summary>
+        ///     最后一个的操作消息
+        /// </summary>
         public string LastMessage
         {
             get => GlobalContext.Current.Status.LastMessage;
@@ -32,17 +45,15 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         public bool IsFailed => GlobalContext.Current.Status.IsFailed;
 
-
+        /// <summary>
+        /// 当前登录用户
+        /// </summary>
+        public string UserId => LoginUser?.UserId;
 
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        public string UserId => GlobalContext.Current.User.UserId;
-
-        /// <summary>
-        /// 当前登录用户
-        /// </summary>
-        public string NickName => GlobalContext.Current.User.NickName;
+        public string NickName => LoginUser?.NickName;
 
         /// <summary>
         ///     正在排队
