@@ -46,7 +46,7 @@ namespace Agebull.EntityModel.MySql
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            if (_hereTransaction&& DataBase.TransactionSuccess == null)
+            if ((_isHereOpen || _hereTransaction) && DataBase.Transaction != null && DataBase.TransactionSuccess == null)
             {
                 await DataBase.Transaction.RollbackAsync();
                 await DataBase.Transaction.DisposeAsync();

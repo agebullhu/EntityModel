@@ -27,9 +27,14 @@ namespace Agebull.EntityModel.Common
         public bool IsQuery { get; set; }
 
         /// <summary>
-        /// 是否允许全局事件(如全局事件器,则永为否)
+        /// 是否允许数据变更事件
         /// </summary>
-        public bool CanRaiseEvent { get; set; }
+        public bool CanRaiseEvent => EventLevel > EventEventLevel.None;
+
+        /// <summary>
+        /// 事件参数等级
+        /// </summary>
+        public EventEventLevel EventLevel { get; set; }
 
         /// <summary>
         /// 按修改更新
@@ -123,6 +128,25 @@ namespace Agebull.EntityModel.Common
     }
 
     /// <summary>
+    /// 实体事件层级
+    /// </summary>
+    public enum EventEventLevel
+    {
+        /// <summary>
+        /// 无事件
+        /// </summary>
+        None,
+        /// <summary>
+        /// 仅事件名称,无参数
+        /// </summary>
+        Simple,
+        /// <summary>
+        /// 事件名称+参数
+        /// </summary>
+        Details
+    }
+
+    /// <summary>
     /// 数据载入配置
     /// </summary>
     public class DataAccessOption
@@ -168,6 +192,11 @@ namespace Agebull.EntityModel.Common
         /// 是否允许全局事件(如全局事件器,则永为否)
         /// </summary>
         public bool CanRaiseEvent => TableOption.CanRaiseEvent;
+
+        /// <summary>
+        /// 事件参数等级
+        /// </summary>
+        public EventEventLevel EventLevel => TableOption.EventLevel;
 
         /// <summary>
         /// 是否自增主键

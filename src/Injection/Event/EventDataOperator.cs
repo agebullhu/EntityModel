@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Agebull.EntityModel.Events
 {
+
     /// <summary>
     ///     表明是一个数据操作对象
     /// </summary>

@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>5.0.0.94</Version>
+    <Version>5.0.0.104</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>

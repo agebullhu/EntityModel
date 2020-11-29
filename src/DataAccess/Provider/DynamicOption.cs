@@ -92,6 +92,7 @@ namespace Agebull.EntityModel.Common
                 ReadTableName = ReadTableName,
                 WriteTableName = WriteTableName,
                 LoadFields = LoadFields,
+                OrderbyFields = OrderbyFields,
                 GroupFields = GroupFields,
                 Having = Having,
                 UpdateFields = UpdateFields,
@@ -103,4 +104,5 @@ namespace Agebull.EntityModel.Common
 
         #endregion
     }
+
 }

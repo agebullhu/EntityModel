@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>5.0.0.94</Version>
+    <Version>5.0.0.104</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Event\EntityEventArgument.cs" />
     <Compile Remove="Event\EntitySubsist.cs" />
     <Compile Remove="IDataUpdateHandler.cs" />
     <Compile Remove="Injection\DataInterfaceFeatureInjection.cs" />
