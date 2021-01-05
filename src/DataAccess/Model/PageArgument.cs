@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,26 +7,32 @@ namespace ZeroTeam.MessageMVC.ZeroApis
     /// <summary>
     ///     分页请求的参数
     /// </summary>
+    [JsonObject]
     public class PageArgument //: IApiArgument
     {
+
         /// <summary>
         ///     页号
         /// </summary>
+        [JsonProperty("_page_")]
         public int Page { get; set; }
 
         /// <summary>
         ///     每页行数
         /// </summary>
+        [JsonProperty("_size_")]
         public int PageSize { get; set; }
 
         /// <summary>
         ///     排序
         /// </summary>
+        [JsonProperty("_sort_")]
         public string Order { get; set; }
 
         /// <summary>
         ///     反序
         /// </summary>
+        [JsonProperty("_sort_")]
         public bool Desc { get; set; }
 
 

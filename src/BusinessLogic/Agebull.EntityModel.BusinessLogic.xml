@@ -179,24 +179,12 @@
                 删除对象操作
             </summary>
         </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.unityStateChanged">
-            <summary>
-            是否统一处理状态变化
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.Events.DataCommandType)">
             <summary>
                 内部命令执行完成后的处理
             </summary>
             <param name="data">数据</param>
             <param name="id">数据主键</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                内部命令执行完成后的处理
-            </summary>
-            <param name="data">数据</param>
             <param name="cmd">命令</param>
         </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`1">

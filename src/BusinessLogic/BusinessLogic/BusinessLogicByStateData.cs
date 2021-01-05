@@ -9,6 +9,7 @@
 #region ÒýÓÃ
 
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Agebull.EntityModel.BusinessLogic
         {
             if (!await ResetState(id))
                 return false;
-            await OnCommandSuccess(default, id, BusinessCommandType.SetState);
+            await OnCommandSuccess(default, id, DataCommandType.SetState);
             return true;
         }
 
@@ -90,17 +91,16 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetState(state, isFreeze, id);
             var cmd = state switch
             {
-                DataStateType.Enable => BusinessCommandType.Enable,
-                DataStateType.Disable => BusinessCommandType.Disable,
-                DataStateType.Discard => BusinessCommandType.Discard,
-                DataStateType.None => BusinessCommandType.Reset,
-                _ => BusinessCommandType.SetState,
+                DataStateType.Enable => DataCommandType.Enable,
+                DataStateType.Disable => DataCommandType.Disable,
+                DataStateType.Discard => DataCommandType.Discard,
+                DataStateType.None => DataCommandType.Reset,
+                _ => DataCommandType.SetState,
             };
-            if (cmd != BusinessCommandType.SetState)
-                await OnCommandSuccess(default, id, cmd);
+            if (cmd != DataCommandType.SetState && Access.Provider.Option.CanRaiseEvent)
+                await OnCommandSuccess(await Access.LoadByPrimaryKeyAsync(id), id, cmd);
             return true;
         }
-
         #endregion
 
         #region ÐÞ¸Ä×´Ì¬

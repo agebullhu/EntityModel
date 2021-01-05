@@ -8,40 +8,26 @@
 
 namespace Agebull.EntityModel.Common
 {
-
     /// <summary>
-    ///     数据操作状态
+    /// 数据事件类型
     /// </summary>
-    public enum DataOperatorType
+    public enum DataEventType
     {
         /// <summary>
-        ///     未知
+        /// 不确定,即可忽略的
         /// </summary>
-        None,
-
+        None = 0x0,
         /// <summary>
-        ///     新增
+        /// 实体事件
         /// </summary>
-        Insert,
-
+        Entity = 0x1,
         /// <summary>
-        ///     更新
+        /// 数据状态
         /// </summary>
-        Update,
-
+        DataState = 0x22,
         /// <summary>
-        ///     删除
+        /// 审核
         /// </summary>
-        Delete,
-
-        /// <summary>
-        ///     批量更新
-        /// </summary>
-        MulitUpdate,
-
-        /// <summary>
-        ///     批量删除
-        /// </summary>
-        MulitDelete
+        Audit = 0x4
     }
 }

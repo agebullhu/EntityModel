@@ -9,6 +9,7 @@
 #region ÒýÓÃ
 
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Events;
 using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -317,7 +318,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
             await SetAuditState(data, AuditStateType.None, DataStateType.None);
             await SaveAuditData(data);
-            await OnCommandSuccess(data, default, BusinessCommandType.Pullback);
+            await OnCommandSuccess(data, default, DataCommandType.Pullback);
             return true;
         }
 
@@ -357,7 +358,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 await OnAuditDenyed(data);
             }
-            await OnCommandSuccess(data, default, pass ? BusinessCommandType.Pass : BusinessCommandType.Deny);
+            await OnCommandSuccess(data, default, pass ? DataCommandType.Pass : DataCommandType.Deny);
             return true;
         }
 
@@ -374,7 +375,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
             await SaveAuditData(data);
             await OnUnAudited(data);
-            await OnCommandSuccess(data, default, BusinessCommandType.ReAudit);
+            await OnCommandSuccess(data, default, DataCommandType.ReAudit);
             return true;
         }
 
@@ -393,7 +394,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
             await SaveAuditData(data);
             await OnBacked(data);
-            await OnCommandSuccess(data, default, BusinessCommandType.Back);
+            await OnCommandSuccess(data, default, DataCommandType.Back);
             return true;
         }
 
@@ -431,7 +432,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Submit, DataStateType.None);
             await SaveAuditData(data);
             await OnSubmit(data);
-            await OnCommandSuccess(data, default, BusinessCommandType.Submit);
+            await OnCommandSuccess(data, default, DataCommandType.Submit);
             return true;
         }
 

@@ -1,81 +1,81 @@
-namespace Agebull.EntityModel.BusinessLogic
+namespace Agebull.EntityModel.Events
 {
     /// <summary>
     /// 逻辑内部命令类型
     /// </summary>
-    public enum BusinessCommandType
+    public enum DataCommandType
     {
-        /// <summary>
-        /// 无原因修改状态
-        /// </summary>
-        SetState,
         /// <summary>
         /// 新增
         /// </summary>
-        AddNew,
+        AddNew=1,
         /// <summary>
         /// 更新
         /// </summary>
-        Update,
+        Update=2,
+        /// <summary>
+        /// 无原因修改状态
+        /// </summary>
+        SetState = 0x100,
         /// <summary>
         /// 启用
         /// </summary>
-        Enable,
+        Enable = 0x101,
         /// <summary>
         /// 禁用
         /// </summary>
-        Disable,
+        Disable = 0x102,
         /// <summary>
         /// 废弃
         /// </summary>
-        Discard,
+        Discard = 0x103,
         /// <summary>
         /// 删除
         /// </summary>
-        Delete,
+        Delete = 0x104,
         /// <summary>
         /// 重置
         /// </summary>
-        Reset,
+        Reset = 0x105,
         /// <summary>
         /// 锁定
         /// </summary>
-        Lock,
+        Lock = 0x106,
         /// <summary>
         /// 解锁
         /// </summary>
-        Unlock,
+        Unlock = 0x107,
         /// <summary>
         /// 提交
         /// </summary>
-        Submit,
+        Submit = 0x200,
         /// <summary>
         /// 拉回
         /// </summary>
-        Pullback,
+        Pullback = 0x201,
         /// <summary>
         /// 退
         /// </summary>
-        Back,
+        Back = 0x202,
         /// <summary>
         /// 通过
         /// </summary>
-        Pass,
+        Pass = 0x203,
         /// <summary>
         /// 否决
         /// </summary>
-        Deny,
+        Deny = 0x204,
         /// <summary>
         /// 重新编辑
         /// </summary>
-        ReAudit,
+        ReAudit = 0x205,
         /// <summary>
         /// 结束
         /// </summary>
-        End,
+        End = 0x206,
         /// <summary>
         /// 自定义
         /// </summary>
-        Custom
+        Custom = 0xFFFFFF
     }
 }

@@ -361,7 +361,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
             await connectionScope.Commit();
 
-            await OnCommandSuccess(data, default, BusinessCommandType.AddNew);
+            await OnCommandSuccess(data, default, DataCommandType.AddNew);
             return true;
         }
 
@@ -389,7 +389,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             await connectionScope.Commit();
 
-            await OnCommandSuccess(data, default, BusinessCommandType.Update);
+            await OnCommandSuccess(data, default, DataCommandType.Update);
             return true;
         }
 
@@ -466,7 +466,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 Context.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                 return false;
             }
-            await OnCommandSuccess(default, id, BusinessCommandType.Delete);
+            await OnCommandSuccess(default, id, DataCommandType.Delete);
             return true;
         }
 
@@ -483,50 +483,21 @@ namespace Agebull.EntityModel.BusinessLogic
         #region 状态处理
 
         /// <summary>
-        /// 是否统一处理状态变化
-        /// </summary>
-        protected bool unityStateChanged = false;
-
-        /// <summary>
         ///     内部命令执行完成后的处理
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="id">数据主键</param>
         /// <param name="cmd">命令</param>
-        protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, BusinessCommandType cmd)
+        protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, DataCommandType cmd)
         {
-            if (!unityStateChanged)
+            if (!Access.Provider.Option.CanRaiseEvent)
                 return;
+            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
+
             Context.LastState = 0;
             Context.LastMessage = null;
-
-            var service = ServiceProvider.GetService<IEntityModelEventProxy>();
-            if (service != null)
-                await service.OnBusinessCommandSuccess(
-                    Access.Option.DataStruct.ProjectName,
-                    Access.Option.DataStruct.EntityName,
-                    data, id.ToString(), cmd);
-
-            if (data == null)
-            {
-                data = await Access.LoadByPrimaryKeyAsync(id);
-                if (data == null)
-                    return;
-            }
-            using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
-            await OnCommandSuccess(data, cmd);
+            await Access.Provider.Injection.AfterCommand(data, id.ToString(), cmd);
         }
-
-        /// <summary>
-        ///     内部命令执行完成后的处理
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="cmd">命令</param>
-        protected virtual Task OnCommandSuccess(TData data, BusinessCommandType cmd)
-        {
-            return Task.CompletedTask;
-        }
-
         #endregion
     }
 

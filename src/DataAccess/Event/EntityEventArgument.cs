@@ -9,10 +9,17 @@ namespace Agebull.EntityModel.Events
     public class EntityEventArgument
     {
         /// <summary>
+        /// 事件类型
+        /// </summary>
+        [JsonProperty("eType")]
+        public DataEventType EventType { get; set; }
+
+        /// <summary>
         /// 操作类型
         /// </summary>
         [JsonProperty("oType")]
-        public DataOperatorType OperatorType { get; set; }
+        public string OperatorType { get; set; }
+
         /// <summary>
         /// 值类型
         /// </summary>
