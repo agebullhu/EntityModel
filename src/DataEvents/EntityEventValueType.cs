@@ -1,4 +1,4 @@
-﻿namespace Agebull.EntityModel.Events
+﻿namespace Agebull.EntityModel.DataEvents
 {
     /// <summary>
     ///     数据事件内容类型

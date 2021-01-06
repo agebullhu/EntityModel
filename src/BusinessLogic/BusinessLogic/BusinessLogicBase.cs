@@ -9,7 +9,7 @@
 #region 引用
 
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
+using Agebull.EntityModel.DataEvents;
 using Agebull.EntityModel.Excel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -361,7 +361,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
             await connectionScope.Commit();
 
-            await OnCommandSuccess(data, default, DataCommandType.AddNew);
+            await OnCommandSuccess(data, default, DataOperatorType.Insert);
             return true;
         }
 
@@ -389,7 +389,7 @@ namespace Agebull.EntityModel.BusinessLogic
             }
             await connectionScope.Commit();
 
-            await OnCommandSuccess(data, default, DataCommandType.Update);
+            await OnCommandSuccess(data, default, DataOperatorType.Update);
             return true;
         }
 
@@ -466,7 +466,7 @@ namespace Agebull.EntityModel.BusinessLogic
                 Context.LastMessage = $"主键值为({id})的数据不存在,删除失败";
                 return false;
             }
-            await OnCommandSuccess(default, id, DataCommandType.Delete);
+            await OnCommandSuccess(default, id, DataOperatorType.Delete);
             return true;
         }
 
@@ -488,7 +488,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="data">数据</param>
         /// <param name="id">数据主键</param>
         /// <param name="cmd">命令</param>
-        protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, DataCommandType cmd)
+        protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, DataOperatorType cmd)
         {
             if (!Access.Provider.Option.CanRaiseEvent)
                 return;

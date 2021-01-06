@@ -3,13 +3,23 @@ using System.Threading.Tasks;
 using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 
-namespace Agebull.EntityModel.Events
+namespace Agebull.EntityModel.DataEvents
 {
     /// <summary>
     /// 数据事件处理器接口定义
     /// </summary>
-    public interface IEntityEventHandler<TEntity> where TEntity : class
+    public interface IEntityEventHandler
     {
+        /// <summary>
+        /// 项目名称
+        /// </summary>
+        string Project { get; }
+
+        /// <summary>
+        /// 实体名称
+        /// </summary>
+        string[] EntityNames { get;}
+
         /// <summary>
         /// 数据事件处理
         /// </summary>
@@ -35,7 +45,7 @@ namespace Agebull.EntityModel.Events
         /// <param name="argument">参数</param>
         Task OnEnitty(EntityEventArgument argument)
         {
-            var dataOperator = Enum.Parse<DataOperatorType>(argument.OperatorType);
+            //var dataOperator = Enum.Parse<DataOperatorType>(argument.OperatorType);
             return Task.CompletedTask;
         }
 
@@ -45,8 +55,6 @@ namespace Agebull.EntityModel.Events
         /// <param name="argument">参数</param>
         Task OnState(EntityEventArgument argument)
         {
-            var cmd = Enum.Parse<DataCommandType>(argument.OperatorType);
-            var ent = JsonConvert.DeserializeObject<TEntity>(argument.Value);
             return Task.CompletedTask;
         }
 
@@ -56,8 +64,8 @@ namespace Agebull.EntityModel.Events
         /// <param name="argument">参数</param>
         Task OnAudit(EntityEventArgument argument)
         {
-            var cmd = Enum.Parse<DataCommandType>(argument.OperatorType);
-            var ent = JsonConvert.DeserializeObject<TEntity>(argument.Value);
+            //var cmd = Enum.Parse<DataCommandType>(argument.OperatorType);
+            //var ent = JsonConvert.DeserializeObject<TEntity>(argument.Value);
             return Task.CompletedTask;
         }
     }

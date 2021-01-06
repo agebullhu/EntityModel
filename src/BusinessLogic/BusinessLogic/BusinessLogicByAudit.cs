@@ -9,7 +9,7 @@
 #region ÒýÓÃ
 
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.Events;
+using Agebull.EntityModel.DataEvents;
 using Agebull.EntityModel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -318,7 +318,7 @@ namespace Agebull.EntityModel.BusinessLogic
 
             await SetAuditState(data, AuditStateType.None, DataStateType.None);
             await SaveAuditData(data);
-            await OnCommandSuccess(data, default, DataCommandType.Pullback);
+            await OnCommandSuccess(data, default, DataOperatorType.Pullback);
             return true;
         }
 
@@ -358,7 +358,7 @@ namespace Agebull.EntityModel.BusinessLogic
             {
                 await OnAuditDenyed(data);
             }
-            await OnCommandSuccess(data, default, pass ? DataCommandType.Pass : DataCommandType.Deny);
+            await OnCommandSuccess(data, default, pass ? DataOperatorType.Pass : DataOperatorType.Deny);
             return true;
         }
 
@@ -375,7 +375,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
             await SaveAuditData(data);
             await OnUnAudited(data);
-            await OnCommandSuccess(data, default, DataCommandType.ReAudit);
+            await OnCommandSuccess(data, default, DataOperatorType.ReAudit);
             return true;
         }
 
@@ -394,7 +394,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Again, DataStateType.None);
             await SaveAuditData(data);
             await OnBacked(data);
-            await OnCommandSuccess(data, default, DataCommandType.Back);
+            await OnCommandSuccess(data, default, DataOperatorType.Back);
             return true;
         }
 
@@ -432,7 +432,7 @@ namespace Agebull.EntityModel.BusinessLogic
             await SetAuditState(data, AuditStateType.Submit, DataStateType.None);
             await SaveAuditData(data);
             await OnSubmit(data);
-            await OnCommandSuccess(data, default, DataCommandType.Submit);
+            await OnCommandSuccess(data, default, DataOperatorType.Submit);
             return true;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace Agebull.EntityModel.Events
+﻿namespace Agebull.EntityModel.DataEvents
 {
     /// <summary>
     /// 查询参数

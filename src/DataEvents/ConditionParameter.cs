@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Agebull.EntityModel.Events
+namespace Agebull.EntityModel.DataEvents
 {
     /// <summary>
     /// 参数节点

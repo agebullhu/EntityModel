@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using ZeroTeam.MessageMVC.ZeroApis;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 #pragma warning disable IDE0060 // 删除未使用的参数
 namespace ZeroTeam.AspNet.ModelApi

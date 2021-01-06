@@ -1,7 +1,7 @@
 ﻿using Agebull.EntityModel.Common;
 using Newtonsoft.Json;
 
-namespace Agebull.EntityModel.Events
+namespace Agebull.EntityModel.DataEvents
 {
     /// <summary>
     /// 数据事件参数
@@ -18,7 +18,7 @@ namespace Agebull.EntityModel.Events
         /// 操作类型
         /// </summary>
         [JsonProperty("oType")]
-        public string OperatorType { get; set; }
+        public DataOperatorType OperatorType { get; set; }
 
         /// <summary>
         /// 值类型

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
     <SccProjectName>SAK</SccProjectName>
@@ -8,32 +8,32 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>ZeroTeam.MessageMVC之实体操作Api基础</Description>
-    <AssemblyTitle>ZeroTeam.AspNet.ModelApi</AssemblyTitle>
+    <Description>Agebull.EntityModel数据事件支持</Description>
+    <AssemblyTitle>Agebull.EntityModel.DataEvents</AssemblyTitle>
+
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName></AssemblyName>
-    <PackageId>ZeroTeam.AspNet.ModelApi</PackageId>
-    <PackageTags>ZeroTeam.AspNet.ModelApi</PackageTags>
+    <PackageId>Agebull.EntityModel.DataEvents</PackageId>
+    <PackageTags>Agebull.EntityModel.DataEvents</PackageTags>
 
     <PackageProjectUrl>https://github.com/ZeroTeam-Net/MessageMVC</PackageProjectUrl>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ZeroTeam-Net/MessageMVC.git</RepositoryUrl>
-    
+
     <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    
+
     <Authors>ZeroTeam</Authors>
     <Company>Agebull</Company>
-    <Product>Agebull.EntityModel</Product>
+    <Product>ZeroTeam.MessageMVC</Product>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
-    <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
+    <PackageReleaseNotes>Agebull.EntityModel数据事件支持</PackageReleaseNotes>
     <Version>5.0.1.7</Version>
     <RootNamespace />
-    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -44,26 +44,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
-    <DocumentationFile>ZeroTeam.AspNet.ModelApi.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
-    <DocumentationFile>ZeroTeam.AspNet.ModelApi.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <Compile Remove="Api\DataExtendChecker.cs" />
-    <Compile Remove="Api\FormConvert.cs" />
-    <Compile Remove="Api\ModelApiController.cs" />
-    <Compile Remove="Api\RequestArgumentConvert.cs" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Core" Version="1.0.1.110" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ZeroTeam.AspNet.ModelApi.xml" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
-  </ItemGroup>
+
 </Project>

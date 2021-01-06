@@ -11,7 +11,6 @@
 
 #endregion
 
-using Agebull.EntityModel.Events;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -73,7 +72,7 @@ namespace Agebull.EntityModel.Common
         /// <param name="object">实体</param>
         /// <param name="id">主键</param>
         /// <param name="cmd">命令</param>
-        Task AfterCommand(TEntity entity, string id, DataCommandType cmd) => Task.CompletedTask;
+        Task AfterCommand(TEntity entity, string id, DataOperatorType cmd) => Task.CompletedTask;
 
     }
 }

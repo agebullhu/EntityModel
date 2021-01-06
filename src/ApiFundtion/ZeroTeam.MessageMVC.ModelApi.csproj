@@ -28,11 +28,11 @@
 
     <Authors>ZeroTeam</Authors>
     <Company>Agebull</Company>
-    <Product>ZeroTeam.MessageMVC</Product>
+    <Product>Agebull.EntityModel</Product>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>5.0.0.105</Version>
+    <Version>5.0.1.7</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -74,7 +74,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.0.1.110" />
     <PackageReference Include="ZeroTeam.MessageMVC.Tools" Version="1.0.1.110" />
   </ItemGroup>
 

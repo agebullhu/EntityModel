@@ -179,7 +179,7 @@
                 删除对象操作
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.Events.DataCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.Common.DataOperatorType)">
             <summary>
                 内部命令执行完成后的处理
             </summary>

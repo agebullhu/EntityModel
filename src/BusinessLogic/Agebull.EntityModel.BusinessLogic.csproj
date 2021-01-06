@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>5.0.0.108</Version>
+    <Version>5.0.1.7</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>
@@ -49,6 +49,6 @@
     <None Remove="Agebull.EntityModel.BusinessLogic.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
+    <ProjectReference Include="..\DataEvents\Agebull.EntityModel.DataEvents.csproj" />
   </ItemGroup>
 </Project>
