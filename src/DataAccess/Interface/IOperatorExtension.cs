@@ -67,9 +67,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 业务操作命令事件
         /// </summary>
-        /// <param name="database">数据库</param>
         /// <param name="entity">实体</param>
-        /// <param name="object">实体</param>
         /// <param name="id">主键</param>
         /// <param name="cmd">命令</param>
         Task AfterCommand(TEntity entity, string id, DataOperatorType cmd) => Task.CompletedTask;

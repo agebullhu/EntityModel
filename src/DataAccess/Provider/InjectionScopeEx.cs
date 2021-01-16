@@ -5,7 +5,6 @@ namespace Agebull.EntityModel.Common
     /// <summary>
     /// 注入范围控制
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     public static class InjectionScopeEx
     {
         /// <summary>
@@ -13,7 +12,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="query"></param>
-        /// <param name="fields"></param>
+        /// <param name="levle"></param>
         /// <returns></returns>
         public static IDisposable InjectionScope<TEntity>(this DataQuery<TEntity> query, InjectionLevel levle)
         where TEntity : class, new()

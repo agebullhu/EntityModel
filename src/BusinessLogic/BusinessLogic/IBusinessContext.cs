@@ -5,7 +5,6 @@
     /// </summary>
     public interface IBusinessContext
     {
-
         /// <summary>
         ///     最后一个的操作消息
         /// </summary>

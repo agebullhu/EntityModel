@@ -73,9 +73,7 @@ namespace Agebull.EntityModel.MySql
                     first = false;
                 else
                     code.Append(',');
-                code.Append('`');
-                code.Append(pro.FieldName);
-                code.Append('`');
+                code.Append($"`{pro.TableName}`.`{pro.FieldName}`");
             };
             return code.ToString();
         }
@@ -170,9 +168,9 @@ namespace Agebull.EntityModel.MySql
         /// <param name="value">值</param>
         /// <param name="parameters">参数列表</param>
         /// <returns>单个字段更新的SQL</returns>
-        string ISqlBuilder.FileUpdateSetCode(string field, object value, IList<DbParameter> parameters)
+        string ISqlBuilder.FieldUpdateSetCode(string field, object value, IList<DbParameter> parameters)
         {
-            field = Option.FieldMap[field];
+            field = Option.PropertyMap[field].FieldName;
             if (value == null)
                 return $"`{field}` = NULL";
             if (value is string || value is Guid || value is DateTime || value is byte[])
@@ -186,6 +184,19 @@ namespace Agebull.EntityModel.MySql
             else if (value is Enum)
                 value = Convert.ToInt32(value);
             return $"`{field}` = {value}";
+        }
+
+        /// <summary>
+        /// 字段累加更新
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        string ISqlBuilder.FieldAddCode(string field, object value, IList<DbParameter> parameters)
+        {
+            var pro = Option.PropertyMap[field];
+            return $"`{pro.FieldName}` = `{pro.FieldName}` + {value}";
         }
 
         /// <summary>
@@ -260,13 +271,13 @@ namespace Agebull.EntityModel.MySql
         string ISqlBuilder<TEntity>.CreateUpdateSqlCode(TEntity entity, string condition)
         {
             string valueExpression;
-            if (entity is IEditStatus status && status.EditStatusRedorder != null && !status.EditStatusRedorder.IsSetFullModify)
+            if (entity is IEditStatus status && status.EditStatusRecorder != null && !status.EditStatusRecorder.IsSetFullModify)
             {
                 var code = new List<string>();
                 var properties = Option.Properties;
                 FroeachDbProperties(ReadWriteFeatrue.Update, pro =>
                 {
-                    if (pro.Entity == Option.DataStruct.Name && status.EditStatusRedorder.IsChanged(pro.PropertyName))
+                    if (pro.Entity == Option.DataStruct.Name && status.EditStatusRecorder.IsChanged(pro.PropertyName))
                         code.Add($"`{pro.FieldName}` = ?{pro.PropertyName}");
                 });
                 if (code.Count == 0)
@@ -295,7 +306,10 @@ namespace Agebull.EntityModel.MySql
         string ISqlBuilder.CreateCollectSql(string fun, string field, string condition)
         {
             if (field != "*")
-                field = $"`{Option.FieldMap[field]}`";
+            {
+                var pro = Option.PropertyMap[field];
+                field = $"`{pro.TableName}`.`{pro.FieldName}`";
+            }
             condition = InjectionLoadCondition(condition);
             return $@"SELECT {fun}({field}) FROM {Option.ReadTableName}{condition};";
         }
@@ -308,7 +322,7 @@ namespace Agebull.EntityModel.MySql
         /// <param name="orderSql">排序片断</param>
         /// <param name="limit"></param>
         /// <returns>载入字段值的SQL语句</returns>
-        string ISqlBuilder.CreateLoadSql(string fields, string condition, string orderSql, string limit)
+        string CreateLoadSql(string fields, string condition, string orderSql, string limit)
         {
             var sql = new StringBuilder();
             sql.Append($"SELECT {fields}\nFROM {Option.ReadTableName} {Option.Having}");
@@ -326,6 +340,33 @@ namespace Agebull.EntityModel.MySql
             return sql.ToString();
         }
 
+        /// <summary>
+        ///     生成载入字段值的SQL语句
+        /// </summary>
+        /// <param name="fields">字段</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderSql">排序片断</param>
+        /// <param name="limit"></param>
+        /// <returns>载入字段值的SQL语句</returns>
+        string ISqlBuilder.CreateFullLoadSql(string fields, string condition, string orderSql, string limit)
+        {
+            return CreateLoadSql( fields,  condition,  orderSql,  limit);
+        }
+
+        /// <summary>
+        ///     生成载入字段值的SQL语句
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderSql">排序片断</param>
+        /// <param name="limit"></param>
+        /// <returns>载入字段值的SQL语句</returns>
+        string ISqlBuilder.CreateSingleLoadSql(string field, string condition, string orderSql, string limit)
+        {
+            var pro = Option.PropertyMap[field];
+            return CreateLoadSql($"`{pro.TableName}`.`{pro.FieldName}`", condition, orderSql, limit);
+        }
+        
         #endregion
 
         #region 注入
@@ -425,7 +466,11 @@ namespace Agebull.EntityModel.MySql
 
         #region 扩展
 
-        string ISqlBuilder.Condition(string fieldName, string expression, string paraName) => $"(`{Option.FieldMap[fieldName]}` {expression} ?{paraName ?? fieldName})";
+        string ISqlBuilder.Condition(string field, string expression, string paraName)
+        {
+            var pro = Option.PropertyMap[field];
+            return $"(`{pro.TableName}`.`{pro.FieldName}` {expression} ?{paraName ?? pro.PropertyName})";
+        }
 
         private string _primaryKeyCondition;
 
@@ -440,7 +485,31 @@ namespace Agebull.EntityModel.MySql
         /// <param name="field"></param>
         /// <param name="asc"></param>
         /// <returns></returns>
-        public string OrderCode(string field, bool asc) => string.IsNullOrEmpty(field) ? null : $"`{Option.FieldMap[field]}`{(asc ? "" : " DESC")}";
+        public string OrderCode(string field, bool asc)
+        {
+            if (string.IsNullOrEmpty(field))
+                return null;
+            var pro = Option.PropertyMap[field];
+            return $"`{pro.TableName}`.`{pro.FieldName}` {(asc ? "ASC" : "DESC")}";
+        }
+
+        /// <summary>
+        /// 构建排序SQL片断
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public string OrderCode(string[] fields)
+        {
+            if (fields == null || fields.Length == 0)
+                return null;
+            var code = new StringBuilder();
+            foreach(var field in fields)
+            {
+                var pro = Option.PropertyMap[field];
+                code.Append($"`{pro.TableName}`.`{pro.FieldName}`");
+            }
+            return code.ToString();
+        }
 
         ///<inheritdoc/>
         public ConditionItem Compile(Expression<Func<TEntity, bool>> lambda) => PredicateConvert.Convert(this, Option, lambda);

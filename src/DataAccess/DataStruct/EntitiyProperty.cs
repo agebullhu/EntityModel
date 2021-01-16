@@ -38,20 +38,37 @@ namespace Agebull.EntityModel.Common
         private PropertyFeatrue? property;
 
 
-        //基础定义
+        /// <summary>
+        /// 基础定义
+        /// </summary>
         readonly PropertyDefault propertyDefault;
-
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="default"></param>
         public EntityProperty(PropertyDefault @default)
         {
             propertyDefault = @default;
         }
-
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="default"></param>
+        /// <param name="idx"></param>
         public EntityProperty(PropertyDefault @default, int idx)
         {
             propertyDefault = @default;
             Index = idx;
         }
-
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="default"></param>
+        /// <param name="idx"></param>
+        /// <param name="newName"></param>
+        /// <param name="newTable"></param>
+        /// <param name="newField"></param>
+        /// <param name="readWrite"></param>
         public EntityProperty(PropertyDefault @default, int idx, string newName, string newTable, string newField, ReadWriteFeatrue readWrite)
         {
             Index = idx;
@@ -61,7 +78,16 @@ namespace Agebull.EntityModel.Common
             dbReadWrite = readWrite;
             propertyDefault = @default;
         }
-
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="default"></param>
+        /// <param name="idx"></param>
+        /// <param name="newName"></param>
+        /// <param name="newTable"></param>
+        /// <param name="newField"></param>
+        /// <param name="readWrite"></param>
+        /// <param name="propertyFeatrue"></param>
         public EntityProperty(PropertyDefault @default, int idx, string newName, string newTable, string newField, ReadWriteFeatrue readWrite, PropertyFeatrue propertyFeatrue)
         {
             Index = idx;
@@ -179,8 +205,8 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="des"></param>
+        /// <param name="expression"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public bool Expression<T>(string expression, T value) => true;
     }

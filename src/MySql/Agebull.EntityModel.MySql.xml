@@ -217,7 +217,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#FileUpdateSetCode(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#FieldUpdateSetCode(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
             <summary>
                 生成单个字段更新的SQL
             </summary>
@@ -225,6 +225,15 @@
             <param name="value">值</param>
             <param name="parameters">参数列表</param>
             <returns>单个字段更新的SQL</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#FieldAddCode(System.String,System.Object,System.Collections.Generic.IList{System.Data.Common.DbParameter})">
+            <summary>
+            字段累加更新
+            </summary>
+            <param name="field"></param>
+            <param name="value"></param>
+            <param name="parameters"></param>
+            <returns></returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateUpdateSqlCode(System.String,System.String)">
             <summary>
@@ -258,11 +267,31 @@
             <param name="condition">汇总条件</param>
             <returns>汇总的SQL语句</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateLoadSql(System.String,System.String,System.String,System.String)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.CreateLoadSql(System.String,System.String,System.String,System.String)">
             <summary>
                 生成载入字段值的SQL语句
             </summary>
             <param name="fields">字段</param>
+            <param name="condition">条件</param>
+            <param name="orderSql">排序片断</param>
+            <param name="limit"></param>
+            <returns>载入字段值的SQL语句</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateFullLoadSql(System.String,System.String,System.String,System.String)">
+            <summary>
+                生成载入字段值的SQL语句
+            </summary>
+            <param name="fields">字段</param>
+            <param name="condition">条件</param>
+            <param name="orderSql">排序片断</param>
+            <param name="limit"></param>
+            <returns>载入字段值的SQL语句</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateSingleLoadSql(System.String,System.String,System.String,System.String)">
+            <summary>
+                生成载入字段值的SQL语句
+            </summary>
+            <param name="field">字段</param>
             <param name="condition">条件</param>
             <param name="orderSql">排序片断</param>
             <param name="limit"></param>
@@ -306,6 +335,13 @@
             </summary>
             <param name="field"></param>
             <param name="asc"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.OrderCode(System.String[])">
+            <summary>
+            构建排序SQL片断
+            </summary>
+            <param name="fields"></param>
             <returns></returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Compile(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">

@@ -10,6 +10,7 @@
 
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Vue;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.Context;
@@ -37,11 +38,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("state/reset")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Reset(string[] selects)
+        public async Task<IApiResult> Reset(IdsArgument<TPrimaryKey> args)
         {
             await OnReset();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -50,11 +51,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("state/discard")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Discard(string[] selects)
+        public async Task<IApiResult> Discard(IdsArgument<TPrimaryKey> args)
         {
             await OnDiscard();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -63,11 +64,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("state/disable")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Disable(string[] selects)
+        public async Task<IApiResult> Disable(IdsArgument<TPrimaryKey> args)
         {
             await OnDisable();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -76,11 +77,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("state/enable")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Enable(string[] selects)
+        public async Task<IApiResult> Enable(IdsArgument<TPrimaryKey> args)
         {
             await OnEnable();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -100,7 +101,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
 
             if (!await Business.LoopIds(ids, Business.Reset))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
 
             if (!await Business.LoopIds(ids, Business.Discard))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
 
             if (!await Business.LoopIds(ids, Business.Enable))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -145,7 +146,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
 
             if (!await Business.LoopIds(ids, Business.Disable))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         #endregion

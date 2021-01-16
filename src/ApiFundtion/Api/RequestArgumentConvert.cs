@@ -99,7 +99,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public static string GetString(string name)
         {
             Arguments.TryGetValue(name, out var value);
-            return value;
+            return value?.Trim();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return def;
             if (string.IsNullOrWhiteSpace(value))
                 return def;
-            return convert(value);
+            return convert(value.Trim());
         }
 
         /// <summary>
@@ -365,19 +365,15 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         /// <param name="name">参数名称</param>
         /// <param name="val">结果值</param>
-        /// <param name="trim">是否清除首尾空白</param>
         /// <returns>文本</returns>
-        public static bool TryGet(string name, out string val, bool trim = true)
+        public static bool TryGet(string name, out string val)
         {
             if (!Arguments.TryGetValue(name, out var value) || string.IsNullOrWhiteSpace(value))
             {
                 val = null;
                 return false;
             }
-            if (trim)
-                val = value.Trim();
-            else
-                val = value;
+            val = value.Trim();
             return true;
         }
 
@@ -408,73 +404,6 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 }
                 value = convert(str);
                 return true;
-            }
-            catch
-            {
-                value = default;
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="convert">转换方法</param>
-        /// <param name="value">参数值</param>
-        /// <param name="hase">参数是否存在</param>
-        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        internal static bool TryGet<T>(string name, Func<string, T> convert, out T value, out bool hase)
-        {
-            hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
-            {
-                value = default;
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return false;
-            }
-            try
-            {
-                value = convert(str.Trim());
-                return true;
-            }
-            catch
-            {
-                value = default;
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="convert">转换方法</param>
-        /// <param name="value">参数值</param>
-        /// <param name="hase">参数是否存在</param>
-        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        internal static bool TryGet<T>(string name, Func<string, (bool state, T value)> convert, out T value, out bool hase)
-        {
-            hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
-            {
-                value = default;
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return false;
-            }
-            try
-            {
-                var re = convert(str.Trim());
-                value = re.value;
-                return re.state;
             }
             catch
             {

@@ -34,6 +34,12 @@ namespace Agebull.EntityModel.Vue
         public string Tag { get; set; }
 
         /// <summary>
+        /// 扩展信息
+        /// </summary>
+        [JsonProperty("ext"), JsonPropertyName("ext")]
+        public string Ext { get; set; }
+
+        /// <summary>
         /// 图标
         /// </summary>
         [JsonProperty("icon"), JsonPropertyName("icon")]

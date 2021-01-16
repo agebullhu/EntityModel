@@ -9,6 +9,10 @@ namespace Agebull.EntityModel.Common
     /// </summary>
     public class DataTableOption : DynamicOption
     {
+        /// <summary>
+        /// ID名称
+        /// </summary>
+        public const string ID = "id";
         #region 基本设置
 
         /// <summary>
@@ -66,19 +70,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Dictionary<string, EntityProperty> PropertyMap { get; protected set; }
 
-        /// <summary>
-        ///     属性字典
-        /// </summary>
-        public Dictionary<string, string> FieldMap { get; protected set; }
 
-        /// <summary>
-        ///     主键数据库字段名
-        /// </summary>
-        public string PrimaryDbField
-        {
-            get;
-            set;
-        }
         #endregion
 
         /// <summary>
@@ -95,20 +87,20 @@ namespace Agebull.EntityModel.Common
             if (InjectionLevel == InjectionLevel.None)
                 InjectionLevel = InjectionLevel.NoInsert;
 
-            FieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             PropertyMap = new Dictionary<string, EntityProperty>(StringComparer.OrdinalIgnoreCase);
             var properties = Properties;
             foreach (var pro in properties)
             {
                 if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
                     continue;
+                if(pro.TableName == null)
+                    pro.TableName = DataStruct.ReadTableName;
                 PropertyMap[pro.FieldName] = PropertyMap[pro.PropertyName] = pro;
-
-                FieldMap[pro.PropertyName] = FieldMap[pro.FieldName] = pro.FieldName;
             }
-            PrimaryDbField = FieldMap[PrimaryProperty];
-            if (!FieldMap.ContainsKey("id"))
-                FieldMap["id"] = PrimaryDbField;
+
+            if (!PropertyMap.ContainsKey(ID))
+                PropertyMap[ID] = PropertyMap[PrimaryProperty];
+
             ReadTableName ??= DataStruct.ReadTableName;
             WriteTableName ??= DataStruct.WriteTableName;
             ReadProperties ??= Properties.Where(pro => pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(ReadWriteFeatrue.Read)).ToList();
@@ -218,20 +210,12 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Dictionary<string, EntityProperty> PropertyMap => TableOption.PropertyMap;
 
-        /// <summary>
-        ///     属性字典
-        /// </summary>
-        public Dictionary<string, string> FieldMap => TableOption.FieldMap;
 
         /// <summary>
         ///     主键属性名称
         /// </summary>
         public string PrimaryProperty => TableOption.PrimaryProperty;
 
-        /// <summary>
-        ///     主键数据库字段名
-        /// </summary>
-        public string PrimaryDbField => TableOption.PrimaryDbField;
         #endregion
 
         #region 配置项

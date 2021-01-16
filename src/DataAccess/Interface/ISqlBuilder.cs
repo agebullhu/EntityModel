@@ -89,13 +89,29 @@ namespace Agebull.EntityModel.Common
         string OrderCode(string field, bool asc);
 
         /// <summary>
+        /// 构建排序SQL片断
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        string OrderCode(string[] fields);
+
+        /// <summary>
         /// 字段更新
         /// </summary>
         /// <param name="field"></param>
         /// <param name="value"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        string FileUpdateSetCode(string field, object value, IList<DbParameter> parameters);
+        string FieldUpdateSetCode(string field, object value, IList<DbParameter> parameters);
+
+        /// <summary>
+        /// 字段累加更新
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        string FieldAddCode(string field, object value, IList<DbParameter> parameters);
 
         #endregion
 
@@ -118,7 +134,17 @@ namespace Agebull.EntityModel.Common
         /// <param name="orderSql">排序片断</param>
         /// <param name="limit">行数</param>
         /// <returns></returns>
-        string CreateLoadSql(string fields, string condition, string orderSqll = null, string limit = null);
+        string CreateFullLoadSql(string fields, string condition, string orderSql = null, string limit = null);
+
+        /// <summary>
+        /// 自定义字段读取SQL
+        /// </summary>
+        /// <param name="fields">字段</param>
+        /// <param name="condition"></param>
+        /// <param name="orderSql">排序片断</param>
+        /// <param name="limit">行数</param>
+        /// <returns></returns>
+        string CreateSingleLoadSql(string fields, string condition, string orderSql = null, string limit = null);
 
         /// <summary>
         /// 删除SQL

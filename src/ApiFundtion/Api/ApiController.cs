@@ -1,6 +1,7 @@
 ﻿using Agebull.Common.Ioc;
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
+using Agebull.EntityModel.Vue;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,10 +14,36 @@ namespace ZeroTeam.MessageMVC.ModelApi
     /// <summary>
     ///     自动实现基本增删改查API页面的基类
     /// </summary>
-    public abstract class ApiController<TData, TPrimaryKey, TBusinessLogic> : ModelApiController
+    public abstract class ApiController<TData, TPrimaryKey, TBusinessLogic> : IApiController
         where TData : class, IIdentityData<TPrimaryKey>, new()
         where TBusinessLogic : BusinessLogicBase<TData, TPrimaryKey>, new()
     {
+        #region Business.Context
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        protected ApiController()
+        {
+            Business.Context.LastState = OperatorStatusCode.Success;
+        }
+
+        /// <summary>
+        ///     是否操作失败
+        /// </summary>
+        protected internal bool IsFailed => Business.Context.LastState != OperatorStatusCode.Success;
+
+        /// <summary>
+        ///     设置当前操作失败
+        /// </summary>
+        /// <param name="message"></param>
+        protected internal void SetFailed(string message)
+        {
+            Business.Context.LastState = OperatorStatusCode.BusinessError;
+            Business.Context.LastMessage = message;
+        }
+        #endregion
+
         #region 基础变量
 
         private TBusinessLogic _business;
@@ -37,8 +64,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     检查值的唯一性
         /// </summary>
+        /// <param name="field">检查的字段</param>
+        /// <param name="value">检查的值</param>
+        /// <param name="id">应排除的ID，即不检查自身</param>
         [Route("edit/unique")]
-        [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
+        [ApiOption(ApiOption.Public | ApiOption.Readonly)]
         public async Task<IApiResult> Unique(string field, string value, TPrimaryKey id)
         {
             var result = id.Equals(default)
@@ -59,14 +89,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns></returns>
         [Route("edit/list")]
         [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult<ApiPageData<TData>>> List()
+        public async Task<IApiResult<ApiPageData<TData>>> List(TData args)
         {
-            GlobalContext.Current.Status.Feature = 1;
             var filter = GetQueryFilter();
             var data = await GetListData(filter);
-            GlobalContext.Current.Status.Feature = 0;
             return IsFailed
-                ? ApiResultHelper.State<ApiPageData<TData>>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                ? ApiResultHelper.State<ApiPageData<TData>>(Business.Context.LastState, Business.Context.LastMessage)
                 : ApiResultHelper.Succees(data);
         }
 
@@ -75,27 +103,28 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("edit/first")]
         [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult<TData>> QueryFirst()
+        public async Task<IApiResult<TData>> QueryFirst(TData args)
         {
             var filter = GetQueryFilter();
             var data = await Business.Details(filter);
             return IsFailed
-                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees(data);
         }
 
         /// <summary>
         ///     单条详细数据
         /// </summary>
+        /// <param name="arg">查询参数</param>
         [Route("edit/details")]
         [ApiOption(ApiOption.Public | ApiOption.Readonly | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult<TData>> Details()
+        public async Task<IApiResult<TData>> Details(IdArgument<TPrimaryKey> arg)
         {
             if (!RequestArgumentConvert.TryGetId<TData, TPrimaryKey>(Convert, out TPrimaryKey id))
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
             var data = await Business.Details(id);
             return IsFailed
-                    ? ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees(data);
         }
 
@@ -107,10 +136,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult<TData>> AddNew(TData arg)
         {
             var data = new TData();
-            if (data is IEditStatus status && status.EditStatusRedorder != null)
+            if (data is IEditStatus status && status.EditStatusRecorder != null)
             {
-                status.EditStatusRedorder.IsExist = false;
-                status.EditStatusRedorder.IsFromClient = true;
+                status.EditStatusRecorder.IsExist = false;
+                status.EditStatusRecorder.IsFromClient = true;
             }
             var convert = new FormConvert();
             await ReadFormData(data, convert);
@@ -120,7 +149,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
             return await Business.AddNew(data)
                     ? ApiResultHelper.Succees(data)
-                    : ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage);
+                    : ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage);
         }
 
         /// <summary>
@@ -130,19 +159,20 @@ namespace ZeroTeam.MessageMVC.ModelApi
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public async Task<IApiResult<TData>> Update(TData arg)
         {
-            var convert = new FormConvert();
-            if (!convert.Arguments.TryGetValue("id", out var id))
+            if (!RequestArgumentConvert.TryGet("id", out string id))
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
-
-
+            var key = Convert(id).Item2;
             var data = Business.Access.Option.UpdateByMidified
-                ? await Business.Access.LoadByPrimaryKeyAsync(Convert(id).Item2)
-                : new TData();
-            if (data is IEditStatus status && status.EditStatusRedorder != null)
+                ? new TData { Id = key}
+                : await Business.Access.LoadByPrimaryKeyAsync(key);
+
+            var convert = new FormConvert();
+            if (data is IEditStatus status && status.EditStatusRecorder != null)
             {
-                status.EditStatusRedorder.IsExist = true;
-                status.EditStatusRedorder.IsFromClient = true;
+                status.EditStatusRecorder.IsExist = true;
+                status.EditStatusRecorder.IsFromClient = true;
             }
+            
             await ReadFormData(data, convert);
             if (convert.Failed)
             {
@@ -150,7 +180,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
             return await Business.Update(data)
                     ? ApiResultHelper.Succees(data)
-                    : ApiResultHelper.State<TData>(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage);
+                    : ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage);
 
         }
 
@@ -159,7 +189,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("edit/delete")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Delete()
+        public async Task<IApiResult> Delete(IdsArgument<TPrimaryKey> args)
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -167,7 +197,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
             return await Business.Delete(ids)
                     ? ApiResultHelper.Succees()
-                    : ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage);
+                    : ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage);
         }
 
         /// <summary>
@@ -181,10 +211,8 @@ namespace ZeroTeam.MessageMVC.ModelApi
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
         public async Task<IApiResult> Export(TData args)
         {
-            GlobalContext.Current.Status.Feature = 1;
             var filter = GetQueryFilter();
             var res = await Business.Export(Business.Access.Option.DataStruct.Caption, filter);
-            GlobalContext.Current.Status.Feature = 0;
             return ApiResultHelper.Succees(res);
         }
 
@@ -195,12 +223,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// 参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
         /// </remarks>
         /// <returns></returns>
-        [Obsolete]
         [Route("import/xlsx")]
-        [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult<byte[]>> Import(byte[] stream)
+        [ApiOption(ApiOption.Public)]
+        public async Task<IApiResult<byte[]>> Import(byte[] file)
         {
-            var (success, state) = await Business.Import(stream);
+            var (success, state) = await Business.Import(file);
             var result = ApiResultHelper.Succees(state);
             if (!success)
             {

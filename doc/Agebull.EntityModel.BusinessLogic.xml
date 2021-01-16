@@ -774,6 +774,11 @@
             扩展标签
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Ext">
+            <summary>
+            扩展信息
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.Vue.TreeNode.Icon">
             <summary>
             图标

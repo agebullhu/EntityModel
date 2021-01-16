@@ -25,11 +25,14 @@ namespace Agebull.EntityModel.DataEvents
         /// </summary>
         Task<bool> IAutoRegister.AutoRegist(IServiceCollection services)
         {
+            var receiver = DependencyHelper.GetService<INetEvent>();
+            if (receiver == null)
+                return Task.FromResult(false);
             var service = new ZeroService
             {
                 IsAutoService = true,
                 ServiceName = "DataEvent",
-                Receiver = DependencyHelper.GetService<INetEvent>(),
+                Receiver = receiver,
                 Serialize = new NewtonJsonSerializeProxy()
             } as IService;
             service.RegistWildcardAction(new ApiActionInfo

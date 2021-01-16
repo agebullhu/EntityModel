@@ -31,7 +31,6 @@ namespace ZeroTeam.AspNet.ModelApi
         public bool IsFailed => LastState != Success;
 
 
-
         /// <summary>
         /// 当前登录用户
         /// </summary>

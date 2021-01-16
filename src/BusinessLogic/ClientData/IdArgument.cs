@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Agebull.EntityModel.Vue
@@ -29,10 +30,24 @@ namespace Agebull.EntityModel.Vue
     public class IdArgument
     {
         /// <summary>
-        /// 名称
+        /// 主键
         /// </summary>
+        /// <example>1</example>
         [JsonProperty("id"), JsonPropertyName("id")]
         public long Id { get; set; }
+    }
+
+    /// <summary>
+    /// ID参数
+    /// </summary>
+    public class IdsArgument<TType>
+    {
+        /// <summary>
+        /// 选择的主键，用逗号连接
+        /// </summary>
+        /// <example>1</example>
+        [JsonProperty("selects"), JsonPropertyName("selects")]
+        public List<TType> Selects { get; set; }
     }
 
     /// <summary>
@@ -41,8 +56,9 @@ namespace Agebull.EntityModel.Vue
     public class IdArgument<TType>
     {
         /// <summary>
-        /// 名称
+        /// 主键
         /// </summary>
+        /// <example>1</example>
         [JsonProperty("id"), JsonPropertyName("id")]
         public TType Id { get; set; }
     }

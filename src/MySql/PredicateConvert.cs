@@ -510,6 +510,7 @@ namespace Agebull.EntityModel.MySql
         }
 
         #endregion
+
         #region Helper
 
         /// <summary>
@@ -546,9 +547,10 @@ namespace Agebull.EntityModel.MySql
                 : expression is ConstantExpression constant
                     ? (string)Convert(constant).value
                     : GetValue<string>(expression);
-
-            _option.FieldMap.TryGetValue(field, out var field2);
-            return $"`{field2 ?? field}`";
+            if (!_option.PropertyMap.TryGetValue(field, out var pro))
+                throw new ArgumentOutOfRangeException($"属性{field}不是一个表字段");
+            
+            return $"`{pro.TableName}`.`{pro.FieldName}`";
         }
 
         /// <summary>
@@ -559,14 +561,17 @@ namespace Agebull.EntityModel.MySql
         /// <returns>计算结果值</returns>
         private bool TryGetField(Expression expression, out string field)
         {
-            field = expression is MemberExpression member
+            var name = expression is MemberExpression member
                 ? member.Member.Name
                 : expression is ConstantExpression constant
                     ? (string)Convert(constant).value
                     : GetValue<string>(expression);
-            if (!_option.FieldMap.TryGetValue(field, out field))
+            if (!_option.PropertyMap.TryGetValue(name, out var pro))
+            {
+                field = null;
                 return false;
-            field = $"`{field}`";
+            }
+            field = $"`{pro.TableName}`.`{pro.FieldName}`";
             return true;
         }
         /// <summary>
@@ -577,9 +582,10 @@ namespace Agebull.EntityModel.MySql
         private string GetField(MemberExpression member)
         {
             var field = member.Member.Name;
+            if (!_option.PropertyMap.TryGetValue(field, out var pro))
+                throw new ArgumentOutOfRangeException($"属性{field}不是一个表字段");
 
-            _option.FieldMap.TryGetValue(field, out var field2);
-            return $"`{field2 ?? field}`";
+            return $"`{pro.TableName}`.`{pro.FieldName}`";
         }
         string LogicLink => _mergeByAnd ? "AND" : "OR";
         string ToSql((bool toArg, object value) re)

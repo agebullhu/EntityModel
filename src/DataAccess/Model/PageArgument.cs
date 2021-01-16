@@ -32,7 +32,7 @@ namespace ZeroTeam.MessageMVC.ZeroApis
         /// <summary>
         ///     ·´Ðò
         /// </summary>
-        [JsonProperty("_sort_")]
+        [JsonProperty("_order_")]
         public bool Desc { get; set; }
 
 

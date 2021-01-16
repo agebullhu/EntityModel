@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>5.0.1.7</Version>
+    <Version>5.0.1.23</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;monitor</DefineConstants>
+    <DocumentationFile>../../doc/Agebull.EntityModel.DataAccess.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>../../doc/Agebull.EntityModel.DataAccess.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

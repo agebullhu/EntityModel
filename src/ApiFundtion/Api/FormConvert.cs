@@ -73,12 +73,6 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
         #region 基本操作
 
-
-        /// <summary>
-        ///     参数
-        /// </summary>
-        internal readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.ExtensionDictionary;
-
         /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充
         /// </summary>
@@ -86,22 +80,16 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <param name="convert">转换方法</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        bool TryGet<T>(string name, Func<string, T> convert, out T value)
+        public bool TryGet<T>(string name, Func<string, T> convert, out T value)
         {
-            var hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
+            if (!RequestArgumentConvert.TryGet(name, out string str))
             {
                 value = default;
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return true;
-            }
             try
             {
-                value = convert(str.Trim());
+                value = convert(str);
                 return true;
             }
             catch
@@ -121,23 +109,17 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <param name="convert">转换方法</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        bool TryGet<T>(string name, Func<string, T> convert, out T? value)
+        public bool TryGetNullable<T>(string name, Func<string, T> convert, out T? value)
             where T : struct
         {
-            var hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
+            if (!RequestArgumentConvert.TryGet(name, out string str))
             {
-                value = null;
+                value = default;
                 return false;
-            }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = null;
-                return true;
             }
             try
             {
-                value = convert(str.Trim());
+                value = convert(str);
                 return true;
             }
             catch
@@ -161,13 +143,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out string value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
-            {
-                value = default;
-                return false;
-            }
-            value = str;
-            return true;
+            return RequestArgumentConvert.TryGet(field, out value);
         }
 
         /// <summary>
@@ -191,7 +167,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public bool TryGetEnum<TEnum>(string field, out TEnum? value)
             where TEnum : struct
         {
-            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
+            return TryGetNullable(field, str => Enum.Parse<TEnum>(str, true), out value);
         }
 
         /// <summary>
@@ -213,7 +189,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out byte? value)
         {
-            return TryGet(field, byte.Parse, out value);
+            return TryGetNullable(field, byte.Parse, out value);
         }
 
         /// <summary>
@@ -235,7 +211,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out sbyte? value)
         {
-            return TryGet(field, sbyte.Parse, out value);
+            return TryGetNullable(field, sbyte.Parse, out value);
         }
 
         /// <summary>
@@ -257,7 +233,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out short? value)
         {
-            return TryGet(field, short.Parse, out value);
+            return TryGetNullable(field, short.Parse, out value);
         }
 
         /// <summary>
@@ -279,7 +255,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ushort? value)
         {
-            return TryGet(field, ushort.Parse, out value);
+            return TryGetNullable(field, ushort.Parse, out value);
         }
 
         /// <summary>
@@ -316,7 +292,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out bool? value)
         {
-            return TryGet(field, str =>
+            return TryGetNullable(field, str =>
             {
                 switch (str.ToLower())
                 {
@@ -353,7 +329,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out int? value)
         {
-            return TryGet(field, int.Parse, out value);
+            return TryGetNullable(field, int.Parse, out value);
         }
 
         /// <summary>
@@ -375,7 +351,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out uint? value)
         {
-            return TryGet(field, uint.Parse, out value);
+            return TryGetNullable(field, uint.Parse, out value);
         }
 
         /// <summary>
@@ -397,7 +373,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out long? value)
         {
-            return TryGet(field, long.Parse, out value);
+            return TryGetNullable(field, long.Parse, out value);
         }
 
         /// <summary>
@@ -419,7 +395,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ulong? value)
         {
-            return TryGet(field, ulong.Parse, out value);
+            return TryGetNullable(field, ulong.Parse, out value);
         }
 
         /// <summary>
@@ -441,7 +417,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out float? value)
         {
-            return TryGet(field, float.Parse, out value);
+            return TryGetNullable(field, float.Parse, out value);
         }
 
         /// <summary>
@@ -463,7 +439,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out double? value)
         {
-            return TryGet(field, double.Parse, out value);
+            return TryGetNullable(field, double.Parse, out value);
         }
 
         /// <summary>
@@ -485,7 +461,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out DateTime? value)
         {
-            return TryGet(field, DateTime.Parse, out value);
+            return TryGetNullable(field, DateTime.Parse, out value);
         }
 
         /// <summary>
@@ -507,7 +483,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out decimal? value)
         {
-            return TryGet(field, decimal.Parse, out value);
+            return TryGetNullable(field, decimal.Parse, out value);
         }
         /// <summary>
         /// 字段值转换
@@ -528,7 +504,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out Guid? value)
         {
-            return TryGet(field, Guid.Parse, out value);
+            return TryGetNullable(field, Guid.Parse, out value);
         }
 
 
@@ -540,16 +516,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<int> value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
+            if (!RequestArgumentConvert.TryGet(field, out string str))
             {
                 value = default;
                 return false;
             }
             value = new List<int>();
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return true;
-            }
             var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var word in words)
             {
@@ -562,7 +534,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 Failed = true;
                 return false;
             }
-            return true;
+            return value.Count > 0;
         }
 
         /// <summary>
@@ -573,16 +545,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<long> value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
+            if (!RequestArgumentConvert.TryGet(field, out string str))
             {
                 value = default;
                 return false;
             }
             value = new List<long>();
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return true;
-            }
             var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var word in words)
             {
@@ -595,7 +563,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 Failed = true;
                 return false;
             }
-            return true;
+            return value.Count > 0;
         }
 
         /// <summary>

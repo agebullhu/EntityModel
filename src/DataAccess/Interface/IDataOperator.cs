@@ -79,7 +79,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 设置插入数据的命令
         /// </summary>
-        /// <param name="entity">实体对象</param>
         /// <param name="cmd">命令</param>
         /// <returns>返回真说明要取主键</returns>
         void CreateEntityParameter(DbCommand cmd)
@@ -92,6 +91,17 @@ namespace Agebull.EntityModel.Common
                     cmd.Parameters.Add(Provider.ParameterCreater.CreateParameter(pro.PropertyName, pro.DbType));
             }
         }
+        /// <summary>
+        ///     实体保存完成后期处理(Insert/Update/Delete)
+        /// </summary>
+        /// <param name="entityAccess">当前数据访问对象</param>
+        /// <param name="entity">实体</param>
+        /// <param name="operatorType">操作类型</param>
+        /// <remarks>
+        ///     对当前对象的属性的更改,请自行保存,否则将丢失
+        /// </remarks>
+        Task AfterSave(DataAccess<TEntity> entityAccess, TEntity entity, DataOperatorType operatorType) => Task.CompletedTask;
+
     }
 
 
@@ -104,6 +114,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     得到字段的值
         /// </summary>
+        /// <param name="entity"> 实体 </param>
         /// <param name="field"> 字段的名字 </param>
         /// <returns> 字段的值 </returns>
         object GetValue(TEntity entity, string field);
@@ -111,6 +122,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     配置字段的值
         /// </summary>
+        /// <param name="entity"> 实体 </param>
         /// <param name="field"> 字段的名字 </param>
         /// <param name="value"> 字段的值 </param>
         void SetValue(TEntity entity, string field, object value);

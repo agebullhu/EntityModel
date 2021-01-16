@@ -9,14 +9,16 @@ namespace Agebull.EntityModel.Vue
     public class DataItem
     {
         /// <summary>
-        /// 名称
+        /// ID
         /// </summary>
+        /// <example>1</example>
         [JsonProperty("id"), JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// 名称
         /// </summary>
+        /// <example>名称</example>
         [JsonProperty("text"), JsonPropertyName("text")]
         public string Text { get; set; }
     }

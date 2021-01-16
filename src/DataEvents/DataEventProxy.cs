@@ -1,17 +1,8 @@
 ﻿/*design by:agebull designer date:2021/1/5 16:33:03*/
 using System.Threading.Tasks;
-using Agebull.EntityModel.DataEvents;
-using ZeroTeam.MessageMVC.ZeroApis;
-using Agebull.Common.Ioc;
 using System.Collections.Generic;
 using System;
-using Agebull.Common.Configuration;
-using Agebull.Common.Logging;
-using ZeroTeam.MessageMVC.Services;
 using ZeroTeam.MessageMVC.Messages;
-using ZeroTeam.MessageMVC;
-using ZeroTeam.MessageMVC.Documents;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Agebull.EntityModel.DataEvents
 {

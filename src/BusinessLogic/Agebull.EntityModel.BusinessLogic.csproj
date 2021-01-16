@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>5.0.1.7</Version>
+    <Version>5.0.1.23</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>
@@ -26,13 +26,19 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
+    <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
+    <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Json\**" />
+    <EmbeddedResource Remove="Json\**" />
+    <None Remove="Json\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="BusinessLogic\StatusCode.cs" />
@@ -40,13 +46,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.5.1" />
+    <PackageReference Include="NPOI" Version="2.5.2" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Agebull.EntityModel.BusinessLogic.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Agebull.EntityModel.BusinessLogic.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataEvents\Agebull.EntityModel.DataEvents.csproj" />

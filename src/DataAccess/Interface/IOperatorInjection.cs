@@ -32,6 +32,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     注入数据更新代码
         /// </summary>
+        /// <param name="valueExpression"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
         void InjectionUpdateCode(ref string valueExpression, ref string condition) { }

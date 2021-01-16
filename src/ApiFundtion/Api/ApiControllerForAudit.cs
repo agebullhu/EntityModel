@@ -11,6 +11,7 @@
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Interfaces;
+using Agebull.EntityModel.Vue;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.Context;
@@ -35,11 +36,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/deny")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> AuditDeny()
+        public async Task<IApiResult> AuditDeny(IdsArgument<TPrimaryKey> args)
         {
             await OnAuditDeny();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -48,12 +49,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/pullback")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Pullback()
+        public async Task<IApiResult> Pullback(IdsArgument<TPrimaryKey> args)
         {
 
             await OnPullback();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -62,12 +63,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/submit")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> SubmitAudit()
+        public async Task<IApiResult> SubmitAudit(IdsArgument<TPrimaryKey> args)
         {
 
             await OnSubmitAudit();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -76,7 +77,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/validate")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Validate()
+        public async Task<IApiResult> Validate(IdsArgument<TPrimaryKey> args)
         {
             if (!RequestArgumentConvert.TryGetIDs("selects", Convert, out List<TPrimaryKey> ids))
             {
@@ -85,7 +86,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
             await DoValidate(ids);
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -95,12 +96,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/pass")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> AuditPass()
+        public async Task<IApiResult> AuditPass(IdsArgument<TPrimaryKey> args)
         {
-
             await OnAuditPass();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -109,11 +109,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         [Route("audit/redo")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> UnAudit()
+        public async Task<IApiResult> UnAudit(IdsArgument<TPrimaryKey> args)
         {
             await OnUnAudit();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -123,11 +123,11 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
         [Route("audit/back")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> BackAudit()
+        public async Task<IApiResult> BackAudit(IdsArgument<TPrimaryKey> args)
         {
             await OnBackAudit();
             return IsFailed
-                    ? ApiResultHelper.State(GlobalContext.Current.Status.LastState, GlobalContext.Current.Status.LastMessage)
+                    ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
                     : ApiResultHelper.Succees();
         }
 
@@ -148,7 +148,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             if (!await DoValidate(ids))
                 return;
             if (!await Business.Submit(ids))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
 
         }
 
@@ -163,7 +163,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return;
             }
             if (!await Business.Back(ids))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return;
             }
             if (!await Business.UnAudit(ids))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -192,12 +192,12 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
             if (!await DoValidate(ids))
             {
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
                 return;
             }
             var result = await Business.AuditPass(ids);
             if (!result)
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         private async Task<bool> DoValidate(IEnumerable<TPrimaryKey> ids)
@@ -207,7 +207,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
             if (message.Result.Count > 0)
             {
-                GlobalContext.Current.Status.LastMessage = message.ToString();
+                Business.Context.LastMessage = message.ToString();
             }
             return succeed;
         }
@@ -224,7 +224,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             }
 
             if (!await Business.Pullback(ids))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return;
             }
             if (!await Business.AuditDeny(ids))
-                GlobalContext.Current.Status.LastState = OperatorStatusCode.BusinessError;
+                Business.Context.LastState = OperatorStatusCode.BusinessError;
         }
         #endregion
 

@@ -40,8 +40,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 个性选择字段
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="query"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
         public void Select(params string[] fields)
@@ -54,8 +52,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 个性选择字段
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="query"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
         public void Select(IEnumerable<string> fields)
@@ -67,9 +63,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 个性选择字段
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="query"></param>
-        /// <param name="fields"></param>
+        /// <param name="orderbys"></param>
         /// <returns></returns>
         public void OrderBy(Dictionary<string, bool> orderbys)
         {
@@ -89,7 +83,8 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 设置排序
         /// </summary>
-        /// <param name="orderbys"></param>
+        /// <param name="orderField"></param>
+        /// <param name="asc"></param>
         public void OrderBy(string orderField, bool asc=true)
         {
             DynamicOption.OrderbyFields = Query.SqlBuilder.OrderCode(orderField, asc);
@@ -105,8 +100,6 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 个性选择字段
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="query"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
         void SelectFields(IEnumerable<string> fields)

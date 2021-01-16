@@ -67,24 +67,24 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="des"></param>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public static bool FieldEquals<T>(this string field, T value) => true;
 
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="des"></param>
+        /// <param name="field"></param>
+        /// <param name="expression"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public static bool Expression<T>(this string field, string expression, T value) => true;
 
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="des"></param>
+        /// <param name="condition"></param>
         /// <returns></returns>
         public static bool Condition(this string condition) => true;
 
@@ -92,6 +92,7 @@ namespace Agebull.EntityModel.Common
         /// 用于SQL中的文本字段比较
         /// </summary>
         /// <param name="field"></param>
+        /// <param name="values"></param>
         /// <returns></returns>
         public static bool In<T>(this T field, params T[] values) => values.Contains(field);
 
@@ -99,6 +100,7 @@ namespace Agebull.EntityModel.Common
         /// 用于SQL中的文本字段比较
         /// </summary>
         /// <param name="field"></param>
+        /// <param name="values"></param>
         /// <returns></returns>
         public static bool In<T>(this T field, IEnumerable<T> values) => values.Contains(field);
 
