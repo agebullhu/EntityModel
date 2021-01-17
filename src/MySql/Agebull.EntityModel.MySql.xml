@@ -243,11 +243,10 @@
             <param name="condition">更新条件</param>
             <returns>更新的SQL</returns>
         </member>
-        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder{TEntity}#CreateInsertSqlCode(`0)">
+        <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder#CreateInsertSqlCode">
             <summary>
                 生成更新的SQL
             </summary>
-            <param name="entity">实体</param>
             <returns>更新的SQL</returns>
         </member>
         <member name="M:Agebull.EntityModel.MySql.MySqlSqlBuilder`1.Agebull#EntityModel#Common#ISqlBuilder{TEntity}#CreateUpdateSqlCode(`0,System.String)">

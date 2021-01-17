@@ -54,7 +54,9 @@ namespace Agebull.EntityModel.MySql
             var properties = Option.Properties;
             foreach (var pro in properties)
             {
-                if (pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) && pro.DbReadWrite.HasFlag(readWrite))
+                if (pro.TableName == Option.WriteTableName &&
+                    pro.DbReadWrite.HasFlag(readWrite) &&
+                    pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) )
                     action(pro);
             }
         }
@@ -120,10 +122,10 @@ namespace Agebull.EntityModel.MySql
         /// 插入的代码(BUG)
         /// </summary>
         /// <returns></returns>
-        string ISqlBuilder.BuilderInsertSqlCode()
+        (string fielsd, string values) ISqlBuilder.BuilderInsertSqlCode()
         {
             var fields = new StringBuilder();
-            var paras = new StringBuilder();
+            var values = new StringBuilder();
             bool first = true;
             FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
             {
@@ -133,22 +135,22 @@ namespace Agebull.EntityModel.MySql
                     first = false;
                 else
                 {
-                    paras.Append(',');
+                    values.Append(',');
                     fields.Append(',');
                 }
                 fields.Append('`');
                 fields.Append(pro.FieldName);
                 fields.Append('`');
 
-                paras.Append('?');
-                paras.Append(pro.PropertyName);
+                values.Append('?');
+                values.Append(pro.PropertyName);
             });
-            paras.Append(");");
+            values.Append(");");
             if (Option.DataStruct.IsIdentity)
             {
-                paras.Append("\nSELECT @@IDENTITY;");
+                values.Append("\nSELECT @@IDENTITY;");
             }
-            return $"INSERT INTO `{Option.DataStruct.WriteTableName}`({fields})\nVALUES({paras}";
+            return (fields.ToString(),values.ToString());
         }
 
         /// <summary>
@@ -220,45 +222,51 @@ namespace Agebull.EntityModel.MySql
         /// <summary>
         ///     生成更新的SQL
         /// </summary>
-        /// <param name="entity">实体</param>
         /// <returns>更新的SQL</returns>
-        string ISqlBuilder<TEntity>.CreateInsertSqlCode(TEntity entity)
+        string ISqlBuilder.CreateInsertSqlCode()
         {
-            if (Provider.Injection == null || !Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
-            {
-                return Option.InsertSqlCode;
-            }
             var fields = new StringBuilder();
             fields.Append($"INSERT INTO `{Option.WriteTableName}`(");
-            var paras = new StringBuilder();
-            paras.Append("VALUES(");
-            bool first = true;
-            FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
+            var values = new StringBuilder();
+            values.Append("VALUES(");
+            if(string.IsNullOrWhiteSpace(Provider.Option.InsertFieldCode))
             {
-                if (first)
-                    first = false;
-                else
+                fields.Append(Provider.Option.InsertFieldCode);
+                values.Append(Provider.Option.InsertValueCode);
+            }
+            else
+            {
+                bool first = true;
+                FroeachDbProperties(ReadWriteFeatrue.Insert, pro =>
                 {
-                    paras.Append(',');
-                    fields.Append(',');
-                }
-                fields.Append('`');
-                fields.Append(pro.FieldName);
-                fields.Append('`');
+                    if (first)
+                        first = false;
+                    else
+                    {
+                        values.Append(',');
+                        fields.Append(',');
+                    }
+                    fields.Append('`');
+                    fields.Append(pro.FieldName);
+                    fields.Append('`');
 
-                paras.Append('?');
-                paras.Append(pro.PropertyName);
-            });
+                    values.Append('?');
+                    values.Append(pro.PropertyName);
+                });
+            }
 
-            Provider.Injection.InjectionInsertCode(fields, paras);
-
-            fields.AppendLine(")");
-            paras.Append(");");
+            if (Provider.Injection != null && Provider.Option.InjectionLevel.HasFlag(InjectionLevel.InsertField))
+            {
+                Provider.Injection.InjectionInsertCode(fields, values);
+            }
+            values.Append(");");
             if (Option.DataStruct.IsIdentity)
             {
-                paras.Append("\nSELECT @@IDENTITY;");
+                values.Append("\nSELECT @@IDENTITY;");
             }
-            fields.Append(paras);
+
+            fields.AppendLine(")");
+            fields.Append(values);
             return fields.ToString();
         }
 

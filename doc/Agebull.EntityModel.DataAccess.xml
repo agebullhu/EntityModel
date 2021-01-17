@@ -2305,6 +2305,12 @@
             <param name="parameters"></param>
             <returns></returns>
         </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlBuilder.CreateInsertSqlCode">
+            <summary>
+                生成插入的SQL
+            </summary>
+            <returns>更新的SQL</returns>
+        </member>
         <member name="M:Agebull.EntityModel.Common.ISqlBuilder.CreateCollectSql(System.String,System.String,System.String)">
             <summary>
             汇总SQL
@@ -2358,13 +2364,6 @@
             <summary>
             表示Sql生成器
             </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateInsertSqlCode(`0)">
-            <summary>
-                生成插入的SQL
-            </summary>
-            <param name="entity">实体</param>
-            <returns>更新的SQL</returns>
         </member>
         <member name="M:Agebull.EntityModel.Common.ISqlBuilder`1.CreateUpdateSqlCode(`0,System.String)">
             <summary>
@@ -2904,96 +2903,6 @@
                 说明
             </summary>
         </member>
-        <member name="T:Agebull.EntityModel.Common.DataTableOption">
-            <summary>
-            数据表配置
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.DataTableOption.ID">
-            <summary>
-            ID名称
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.SqlBuilder">
-            <summary>
-            Sql语句构造器
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.DataBaseType">
-            <summary>
-            数据库类型
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.IsQuery">
-            <summary>
-            是否查询
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.CanRaiseEvent">
-            <summary>
-            是否允许数据变更事件
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.EventLevel">
-            <summary>
-            事件参数等级
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.UpdateByMidified">
-            <summary>
-            按修改更新
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.DataStruct">
-            <summary>
-            表配置
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.IsIdentity">
-            <summary>
-            是否自增主键
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.Properties">
-            <summary>
-                属性
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.PrimaryProperty">
-            <summary>
-                主键属性名称
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.Common.DataTableOption.PropertyMap">
-            <summary>
-                属性字典
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.Common.DataTableOption.Initiate">
-            <summary>
-            初始化
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.Common.EventEventLevel">
-            <summary>
-            实体事件层级
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.EventEventLevel.None">
-            <summary>
-            无事件
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.EventEventLevel.Simple">
-            <summary>
-            仅事件名称,无参数
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.Common.EventEventLevel.Details">
-            <summary>
-            事件名称+参数
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.Common.DataAccessOption">
             <summary>
             数据载入配置
@@ -3124,7 +3033,12 @@
                 全部更新的SQL语句
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.DataAccessOption.InsertSqlCode">
+        <member name="P:Agebull.EntityModel.Common.DataAccessOption.InsertFieldCode">
+            <summary>
+                插入的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataAccessOption.InsertValueCode">
             <summary>
                 插入的SQL语句
             </summary>
@@ -3206,6 +3120,76 @@
             驱动提供者信息
             </summary>
         </member>
+        <member name="T:Agebull.EntityModel.Common.DataTableOption">
+            <summary>
+            数据表配置
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataTableOption.ID">
+            <summary>
+            ID名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.SqlBuilder">
+            <summary>
+            Sql语句构造器
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.IsQuery">
+            <summary>
+            是否查询
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.CanRaiseEvent">
+            <summary>
+            是否允许数据变更事件
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.EventLevel">
+            <summary>
+            事件参数等级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.UpdateByMidified">
+            <summary>
+            按修改更新
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.DataStruct">
+            <summary>
+            表配置
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.IsIdentity">
+            <summary>
+            是否自增主键
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.Properties">
+            <summary>
+                属性
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.PrimaryProperty">
+            <summary>
+                主键属性名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DataTableOption.PropertyMap">
+            <summary>
+                属性字典
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataTableOption.Initiate">
+            <summary>
+            初始化
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.DynamicOption">
             <summary>
             动态配置
@@ -3261,7 +3245,12 @@
                 全部更新的SQL语句
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.Common.DynamicOption.InsertSqlCode">
+        <member name="P:Agebull.EntityModel.Common.DynamicOption.InsertFieldCode">
+            <summary>
+                插入的SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.DynamicOption.InsertValueCode">
             <summary>
                 插入的SQL语句
             </summary>
@@ -3281,6 +3270,26 @@
             复制
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.EventEventLevel">
+            <summary>
+            实体事件层级
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.EventEventLevel.None">
+            <summary>
+            无事件
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.EventEventLevel.Simple">
+            <summary>
+            仅事件名称,无参数
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.EventEventLevel.Details">
+            <summary>
+            事件名称+参数
+            </summary>
         </member>
         <member name="T:Agebull.EntityModel.Common.InjectionScopeEx">
             <summary>

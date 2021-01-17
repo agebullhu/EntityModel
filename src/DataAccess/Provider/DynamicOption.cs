@@ -62,7 +62,12 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     插入的SQL语句
         /// </summary>
-        public string InsertSqlCode { get; set; }
+        public string InsertFieldCode { get; set; }
+
+        /// <summary>
+        ///     插入的SQL语句
+        /// </summary>
+        public string InsertValueCode { get; set; }
 
         /// <summary>
         ///     全部更新的SQL语句
@@ -96,7 +101,8 @@ namespace Agebull.EntityModel.Common
                 GroupFields = GroupFields,
                 Having = Having,
                 UpdateFields = UpdateFields,
-                InsertSqlCode = InsertSqlCode,
+                InsertFieldCode = InsertFieldCode,
+                InsertValueCode = InsertValueCode,
                 UpdateSqlCode = UpdateSqlCode,
                 DeleteSqlCode = DeleteSqlCode
             };

@@ -86,7 +86,7 @@ namespace Agebull.EntityModel.Common
             if (Provider.Injection != null)
                 await Provider.Injection.BeforeSave(entity, DataOperatorType.Insert);
             {
-                var sql = SqlBuilder.CreateInsertSqlCode(entity);
+                var sql = SqlBuilder.CreateInsertSqlCode();
                 await using var cmd = connectionScope.CreateCommand(sql);
 
                 DataOperator.SetEntityParameter(cmd, entity);
@@ -758,13 +758,14 @@ namespace Agebull.EntityModel.Common
         public async Task<DbOperatorContext> BeginInsert()
         {
             await using var scope = await DataBase.CreateConnectionScope();
+            var sql = SqlBuilder.CreateInsertSqlCode();
             var ctx = new DbOperatorContext
             {
                 ConnectionScope = scope,
-                Command = scope.CreateCommand(Option.InsertSqlCode)
+                Command = scope.CreateCommand(sql)
             };
             DataOperator.CreateEntityParameter(ctx.Command);
-            ctx.Command.CommandText = Option.InsertSqlCode;
+            ctx.Command.CommandText = sql;
             await ctx.Command.PrepareAsync();
             return ctx;
         }
@@ -775,9 +776,10 @@ namespace Agebull.EntityModel.Common
         /// <returns></returns>
         public async Task<DbOperatorContext> BeginInsert(IConnectionScope scope)
         {
+            var sql = SqlBuilder.CreateInsertSqlCode();
             var ctx = new DbOperatorContext
             {
-                Command = scope.CreateCommand(Option.InsertSqlCode)
+                Command = scope.CreateCommand(sql)
             };
             DataOperator.CreateEntityParameter(ctx.Command);
             await ctx.Command.PrepareAsync();

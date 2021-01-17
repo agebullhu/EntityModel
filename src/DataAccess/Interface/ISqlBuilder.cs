@@ -54,7 +54,7 @@ namespace Agebull.EntityModel.Common
         /// 插入的代码
         /// </summary>
         /// <returns></returns>
-        string BuilderInsertSqlCode();
+        (string fielsd, string values) BuilderInsertSqlCode();
 
         /// <summary>
         /// 删除的代码
@@ -118,6 +118,12 @@ namespace Agebull.EntityModel.Common
         #region 完整SQL生成
 
         /// <summary>
+        ///     生成插入的SQL
+        /// </summary>
+        /// <returns>更新的SQL</returns>
+        string CreateInsertSqlCode();
+
+        /// <summary>
         /// 汇总SQL
         /// </summary>
         /// <param name="fun"></param>
@@ -176,13 +182,6 @@ namespace Agebull.EntityModel.Common
     public interface ISqlBuilder<TEntity> : ISqlBuilder, IParameterCreater, IDataAccessTool<TEntity>
         where TEntity : class, new()
     {
-        /// <summary>
-        ///     生成插入的SQL
-        /// </summary>
-        /// <param name="entity">实体</param>
-        /// <returns>更新的SQL</returns>
-        public string CreateInsertSqlCode(TEntity entity);
-
         /// <summary>
         ///     生成更新的SQL
         /// </summary>
