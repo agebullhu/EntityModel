@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>业务逻辑基础定义</Description>
     <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
-    <Version>5.0.1.26</Version>
+    <Version>5.0.3.0</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>
@@ -16,35 +16,29 @@
     <IncludeSource>false</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    
     <Authors>Agebull</Authors>
     <Company>Agebull</Company>
     <Product>Agebull.EntityModel.BusinessLogic</Product>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Json\**" />
     <EmbeddedResource Remove="Json\**" />
     <None Remove="Json\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="BusinessLogic\StatusCode.cs" />
     <Compile Remove="IDataExtendChecker.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="NPOI" Version="2.5.2" />
   </ItemGroup>

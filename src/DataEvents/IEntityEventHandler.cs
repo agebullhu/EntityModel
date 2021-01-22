@@ -29,7 +29,7 @@ namespace Agebull.EntityModel.DataEvents
             switch (argument.EventType)
             {
                 case DataEventType.Entity:
-                    return OnEnitty(argument);
+                    return OnEntity(argument);
                 case DataEventType.DataState:
                     return OnState(argument);
                 case DataEventType.Audit:
@@ -43,7 +43,7 @@ namespace Agebull.EntityModel.DataEvents
         /// 实体事件
         /// </summary>
         /// <param name="argument">参数</param>
-        Task OnEnitty(EntityEventArgument argument)
+        Task OnEntity(EntityEventArgument argument)
         {
             //var dataOperator = Enum.Parse<DataOperatorType>(argument.OperatorType);
             return Task.CompletedTask;

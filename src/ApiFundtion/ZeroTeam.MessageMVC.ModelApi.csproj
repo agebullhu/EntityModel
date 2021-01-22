@@ -32,7 +32,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>5.0.1.26</Version>
+    <Version>5.0.3.0</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -67,10 +67,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Tools" Version="1.0.1.143" />
   </ItemGroup>
 
   <ItemGroup>

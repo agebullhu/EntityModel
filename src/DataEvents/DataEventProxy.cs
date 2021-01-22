@@ -32,9 +32,9 @@ namespace Agebull.EntityModel.DataEvents
 
         internal static Task OnEvent(IInlineMessage message, ISerializeProxy serialize, object _)
         {
-            if (!maps.TryGetValue(message.ApiName, out var func))
+            if (!maps.TryGetValue(message.Method, out var func))
                 return Task.CompletedTask;
-            var argument = JsonHelper.DeserializeObject<EntityEventArgument>(message.Content);
+            var argument = JsonHelper.DeserializeObject<EntityEventArgument>(message.Argument);
             var handler = func();
             return handler.OnEvent(argument);
         }

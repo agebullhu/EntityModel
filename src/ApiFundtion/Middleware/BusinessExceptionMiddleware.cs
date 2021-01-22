@@ -14,6 +14,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
     /// </summary>
     public class BusinessExceptionMiddleware : IMessageMiddleware
     {
+
         /// <summary>
         /// 层级
         /// </summary>
@@ -34,7 +35,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns></returns>
         Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, Exception exception, object tag)
         {
-            DependencyScope.Logger.Exception(exception);
+            DependencyRun.Logger.Exception(exception);
             FlowTracer.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
             CheckException(message, exception);
