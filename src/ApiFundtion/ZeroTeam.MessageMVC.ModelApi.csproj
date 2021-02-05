@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>ZeroTeam.MessageMVC之实体操作Api基础</Description>
+    <AssemblyTitle>ZeroTeam.MessageMVC.ModelApi</AssemblyTitle>
+
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName></AssemblyName>
+    <PackageId>ZeroTeam.MessageMVC.ModelApi</PackageId>
+    <PackageTags>ZeroTeam.MessageMVC.ModelApi</PackageTags>
+
+    <PackageProjectUrl>https://github.com/ZeroTeam-Net/MessageMVC</PackageProjectUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/ZeroTeam-Net/MessageMVC.git</RepositoryUrl>
+
+    <IncludeSource>false</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <Authors>ZeroTeam</Authors>
+    <Company>Agebull</Company>
+    <Product>Agebull.EntityModel</Product>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <Copyright />
+    <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
+    <Version>5.0.4.22</Version>
+    <RootNamespace />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+    <DocumentationFile>../../doc/ZeroTeam.MessageMVC.ModelApi.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
+    <DocumentationFile>../../doc/ZeroTeam.MessageMVC.ModelApi.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ApiBack\**" />
+    <Compile Remove="WebSeitch\**" />
+    <EmbeddedResource Remove="ApiBack\**" />
+    <EmbeddedResource Remove="WebSeitch\**" />
+    <None Remove="ApiBack\**" />
+    <None Remove="WebSeitch\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\DataExtendChecker.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\Agebull.EntityModel.BusinessLogic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ZeroTeam.MessageMVC.ModelApi.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

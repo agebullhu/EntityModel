@@ -7,17 +7,13 @@ using ZeroTeam.MessageMVC.Messages;
 using ZeroTeam.MessageMVC.Services;
 using ZeroTeam.MessageMVC.ZeroApis;
 
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
-    /// 日志处理中间件
+    /// 业务异常中间件
     /// </summary>
     public class BusinessExceptionMiddleware : IMessageMiddleware
     {
-        /// <summary>
-        /// 当前处理器
-        /// </summary>
-        public MessageProcessor Processor { get; set; }
 
         /// <summary>
         /// 层级
@@ -39,7 +35,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns></returns>
         Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, Exception exception, object tag)
         {
-            DependencyScope.Logger.Exception(exception);
+            ScopeRuner.ScopeLogger.Exception(exception);
             FlowTracer.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
             CheckException(message, exception);

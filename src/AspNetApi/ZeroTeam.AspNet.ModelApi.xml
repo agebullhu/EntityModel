@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZeroTeam.AspNet.ModelApi</name>
+    </assembly>
+    <members>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiResult">
+            <summary>
+                API状态返回接口实现
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult.Success">
+            <summary>
+                成功或失败标记
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult.Code">
+            <summary>
+                错误码
+            </summary>
+            <remarks>
+                参见 ErrorCode 说明
+            </remarks>
+            <example>-1</example>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult.Message">
+            <summary>
+                提示信息
+            </summary>
+            <remarks>
+             说明错误的原因
+            </remarks>
+            <example>你的数据不正确</example>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult.InnerMessage">
+            <summary>
+                内部提示信息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult.Exception">
+            <summary>
+            异常
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiResult`1">
+            <summary>
+                API返回数据泛型类
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiResult`1.ResultData">
+            <summary>
+                返回值
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiResultHelper">
+            <summary>API返回基类</summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.Succees">
+            <summary>
+                生成一个成功的标准返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State(System.Int32)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State(System.Int32,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State(System.Int32,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State(System.Int32,System.String,System.String,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <param name="guide">错误指导</param>
+            <param name="describe">错误解释</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State(System.Int32,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <param name="point">错误点</param>
+            <param name="guide">错误指导</param>
+            <param name="describe">错误解释</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.Succees``1(``0)">
+            <summary>
+                生成一个成功的标准返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State``1(System.Int32)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State``1(System.Int32,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State``1(System.Int32,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State``1(System.Int32,System.String,System.String,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <param name="guide">错误指导</param>
+            <param name="describe">错误解释</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.State``1(System.Int32,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+                生成一个包含状态码的标准返回
+            </summary>
+            <param name="code">状态码</param>
+            <param name="message">提示消息</param>
+            <param name="innerMessage">内部说明</param>
+            <param name="point">错误点</param>
+            <param name="guide">错误指导</param>
+            <param name="describe">错误解释</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.FromContext``1(Agebull.EntityModel.BusinessLogic.IBusinessContext)">
+            <summary>
+                取出上下文中的返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiResultHelper.FromContext(Agebull.EntityModel.BusinessLogic.IBusinessContext)">
+            <summary>
+                取出上下文中的返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiController`3">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiController`3.Business">
+            <summary>
+                业务逻辑对象
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.ApiController`3.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.SetFailed(System.String)">
+            <summary>
+                设置当前操作失败
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Unique(System.String,System.String,`1)">
+            <summary>
+                检查值的唯一性
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.List(ZeroTeam.MessageMVC.ZeroApis.PageArgument,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+                列表数据
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.QueryFirst(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+                单条数据查询
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Details(`1)">
+            <summary>
+                单条详细数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.AddNew(`0)">
+            <summary>
+                新增数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Update(`0)">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Delete(System.Collections.Generic.List{`1})">
+            <summary>
+                删除多条数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Export(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+                导出到Excel
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.Import(System.Byte[])">
+            <summary>
+                从Excep导入
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.GetQueryFilter(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="args">筛选器</param>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.AuditDeny(System.Collections.Generic.List{`1})">
+            <summary>
+                审核不通过
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.Pullback(System.Collections.Generic.List{`1})">
+            <summary>
+                拉回已提交的审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.SubmitAudit(System.Collections.Generic.List{`1})">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.Validate(System.Collections.Generic.List{`1})">
+            <summary>
+                校验审核数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.AuditPass(System.Collections.Generic.List{`1})">
+            <summary>
+                审核通过
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.UnAudit(System.Collections.Generic.List{`1})">
+            <summary>
+                重新审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.BackAudit(System.Collections.Generic.List{`1})">
+            <summary>
+                退回(审核)
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiControllerForAudit`2">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3">
+            <summary>
+                支持数据状态的启用禁用方法的页面的基类
+            </summary>
+            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
+            <typeparam name="TBusinessLogic">业务对象</typeparam>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3.Reset(System.Collections.Generic.List{`1})">
+            <summary>
+                重置数据状态
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3.Discard(System.Collections.Generic.List{`1})">
+            <summary>
+                废弃数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3.Disable(System.Collections.Generic.List{`1})">
+            <summary>
+                禁用数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3.Enable(System.Collections.Generic.List{`1})">
+            <summary>
+                启用数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.AspNet.ModelApi.ApiControllerForDataState`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+            <param name="field">字段</param>
+            <param name="value">值</param>
+        </member>
+        <member name="T:ZeroTeam.AspNet.ModelApi.BusinessContext">
+            <summary>
+            业务上下文
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.LastMessage">
+            <summary>
+                最后一个的操作消息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.LastState">
+            <summary>
+                最后操作的操作状态
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.UserId">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.NickName">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.Success">
+            <summary>
+                成功
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.ArgumentError">
+            <summary>
+                参数错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.BusinessError">
+            <summary>
+                发生处理业务错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.BusinessException">
+            <summary>
+                发生未处理业务异常
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.UnhandleException">
+            <summary>
+                发生未处理系统异常
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.NetworkError">
+            <summary>
+                网络错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.TimeOut">
+            <summary>
+                执行超时
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.DenyAccess">
+            <summary>
+                拒绝访问
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.TokenUnknow">
+            <summary>
+                未知的令牌
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.TokenTimeOut">
+            <summary>
+                令牌过期
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.NoReady">
+            <summary>
+                系统未就绪
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.Ignore">
+            <summary>
+                异常中止
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.ReTry">
+            <summary>
+                重试
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.NoFind">
+            <summary>
+                方法不存在
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.Unavailable">
+            <summary>
+                服务不可用
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.AspNet.ModelApi.BusinessContext.Unknow">
+            <summary>
+                未知结果
+            </summary>
+        </member>
+    </members>
+</doc>

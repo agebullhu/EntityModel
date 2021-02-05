@@ -8,16 +8,14 @@
 
 #region 引用
 
-using Agebull.EntityModel.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     ///     FORM对象转化辅助类
@@ -25,20 +23,6 @@ namespace Agebull.MicroZero.ZeroApis
     public class FormConvert
     {
         #region 基本属性
-
-        /// <summary>
-        /// 构造
-        /// </summary>
-        /// <param name="data"></param>
-        public FormConvert(EditDataObject data)
-        {
-            Data = data;
-        }
-
-        /// <summary>
-        ///     读取过程的错误消息记录
-        /// </summary>
-        public EditDataObject Data { get; }
 
         /// <summary>
         ///     是否更新状态
@@ -51,9 +35,10 @@ namespace Agebull.MicroZero.ZeroApis
         public bool Failed { get; set; }
 
         /// <summary>
-        ///     字段
+        ///     参数
         /// </summary>
-        private readonly Dictionary<string, string> _messages = new Dictionary<string, string>();
+        readonly Dictionary<string, string> Messages = new Dictionary<string, string>();
+
 
         /// <summary>
         /// 设置错误字段
@@ -62,10 +47,10 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="msg"></param>
         private void AddMessage(string field, string msg)
         {
-            if (_messages.TryGetValue(field, out var val))
-                _messages[field] = $"{val};{msg}";
+            if (Messages.TryGetValue(field, out var val))
+                Messages[field] = $"{val};{msg}";
             else
-                _messages.Add(field, msg);
+                Messages.Add(field, msg);
         }
 
 
@@ -77,10 +62,9 @@ namespace Agebull.MicroZero.ZeroApis
             get
             {
                 StringBuilder msg = new StringBuilder();
-                foreach (var kv in _messages)
+                foreach (var kv in Messages)
                 {
-                    var field = Data.__Struct.Properties.Values.FirstOrDefault(p => p.JsonName == kv.Key)?.Caption ?? kv.Key;
-                    msg.AppendLine($"{field} : {kv.Value}");
+                    msg.AppendLine($"{kv.Key} : {kv.Value}");
                 }
                 return msg.ToString();
             }
@@ -90,11 +74,28 @@ namespace Agebull.MicroZero.ZeroApis
 
         #region 基本操作
 
-
         /// <summary>
         ///     参数
         /// </summary>
-        private readonly Dictionary<string, string> Arguments = GlobalContext.Current.Message.Dictionary;
+        Dictionary<string, string> Arguments => GlobalContext.Current.Message.ExtensionDictionary;
+
+
+        /// <summary>
+        ///     获取参数(文本)
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="val">结果值</param>
+        /// <returns>文本</returns>
+        bool TryGet(string name, out string val)
+        {
+            if (!Arguments.TryGetValue(name, out var value))
+            {
+                val = null;
+                return false;
+            }
+            val = string.IsNullOrWhiteSpace(value) ? null : value?.Trim();
+            return true;
+        }
 
         /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充
@@ -103,22 +104,16 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="convert">转换方法</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        bool TryGet<T>(string name, Func<string, T> convert, out T value)
+        public bool TryGet<T>(string name, Func<string, T> convert, out T value)
         {
-            var hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
+            if (!TryGet(name, out string str))
             {
                 value = default;
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return true;
-            }
             try
             {
-                value = convert(str.Trim());
+                value = convert(str);
                 return true;
             }
             catch
@@ -138,23 +133,22 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="convert">转换方法</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        bool TryGet<T>(string name, Func<string, T> convert, out T? value)
+        public bool TryGetNullable<T>(string name, Func<string, T> convert, out T? value)
             where T : struct
         {
-            var hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
+            if (!TryGet(name, out string str))
             {
-                value = null;
+                value = default;
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(str))
+            if(str == null)
             {
                 value = null;
                 return true;
             }
             try
             {
-                value = convert(str.Trim());
+                value = convert(str);
                 return true;
             }
             catch
@@ -178,13 +172,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out string value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
-            {
-                value = default;
-                return false;
-            }
-            value = str;
-            return true;
+            return TryGet(field, out value);
         }
 
         /// <summary>
@@ -208,7 +196,7 @@ namespace Agebull.MicroZero.ZeroApis
         public bool TryGetEnum<TEnum>(string field, out TEnum? value)
             where TEnum : struct
         {
-            return TryGet(field, str => Enum.Parse<TEnum>(str, true), out value);
+            return TryGetNullable(field, str => Enum.Parse<TEnum>(str, true), out value);
         }
 
         /// <summary>
@@ -230,7 +218,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out byte? value)
         {
-            return TryGet(field, byte.Parse, out value);
+            return TryGetNullable(field, byte.Parse, out value);
         }
 
         /// <summary>
@@ -252,7 +240,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out sbyte? value)
         {
-            return TryGet(field, sbyte.Parse, out value);
+            return TryGetNullable(field, sbyte.Parse, out value);
         }
 
         /// <summary>
@@ -274,7 +262,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out short? value)
         {
-            return TryGet(field, short.Parse, out value);
+            return TryGetNullable(field, short.Parse, out value);
         }
 
         /// <summary>
@@ -296,7 +284,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ushort? value)
         {
-            return TryGet(field, ushort.Parse, out value);
+            return TryGetNullable(field, ushort.Parse, out value);
         }
 
         /// <summary>
@@ -333,7 +321,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out bool? value)
         {
-            return TryGet(field, str =>
+            return TryGetNullable(field, str =>
             {
                 switch (str.ToLower())
                 {
@@ -370,7 +358,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out int? value)
         {
-            return TryGet(field, int.Parse, out value);
+            return TryGetNullable(field, int.Parse, out value);
         }
 
         /// <summary>
@@ -392,7 +380,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out uint? value)
         {
-            return TryGet(field, uint.Parse, out value);
+            return TryGetNullable(field, uint.Parse, out value);
         }
 
         /// <summary>
@@ -414,7 +402,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out long? value)
         {
-            return TryGet(field, long.Parse, out value);
+            return TryGetNullable(field, long.Parse, out value);
         }
 
         /// <summary>
@@ -436,7 +424,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out ulong? value)
         {
-            return TryGet(field, ulong.Parse, out value);
+            return TryGetNullable(field, ulong.Parse, out value);
         }
 
         /// <summary>
@@ -458,7 +446,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out float? value)
         {
-            return TryGet(field, float.Parse, out value);
+            return TryGetNullable(field, float.Parse, out value);
         }
 
         /// <summary>
@@ -480,7 +468,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out double? value)
         {
-            return TryGet(field, double.Parse, out value);
+            return TryGetNullable(field, double.Parse, out value);
         }
 
         /// <summary>
@@ -502,7 +490,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out DateTime? value)
         {
-            return TryGet(field, DateTime.Parse, out value);
+            return TryGetNullable(field, DateTime.Parse, out value);
         }
 
         /// <summary>
@@ -524,7 +512,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out decimal? value)
         {
-            return TryGet(field, decimal.Parse, out value);
+            return TryGetNullable(field, decimal.Parse, out value);
         }
         /// <summary>
         /// 字段值转换
@@ -545,7 +533,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out Guid? value)
         {
-            return TryGet(field, Guid.Parse, out value);
+            return TryGetNullable(field, Guid.Parse, out value);
         }
 
 
@@ -557,16 +545,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<int> value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
+            if (!TryGet(field, out string str))
             {
                 value = default;
                 return false;
             }
             value = new List<int>();
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return true;
-            }
             var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var word in words)
             {
@@ -579,7 +563,7 @@ namespace Agebull.MicroZero.ZeroApis
                 Failed = true;
                 return false;
             }
-            return true;
+            return value.Count > 0;
         }
 
         /// <summary>
@@ -590,16 +574,12 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<long> value)
         {
-            if (!Arguments.TryGetValue(field, out var str))
+            if (!TryGet(field, out string str))
             {
                 value = default;
                 return false;
             }
             value = new List<long>();
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return true;
-            }
             var words = str.Split(new char[] { '[', ']', '\'', '\"', ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var word in words)
             {
@@ -612,7 +592,7 @@ namespace Agebull.MicroZero.ZeroApis
                 Failed = true;
                 return false;
             }
-            return true;
+            return value.Count > 0;
         }
 
         /// <summary>

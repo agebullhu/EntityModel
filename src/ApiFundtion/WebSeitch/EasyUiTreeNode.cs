@@ -164,7 +164,7 @@ namespace Agebull.EntityModel.EasyUI
         ///     表格树的下级
         /// </summary>
         [JsonIgnore]
-        public List<EasyUiTreeNode> Children => _children ?? (_children = new List<EasyUiTreeNode>());
+        public List<EasyUiTreeNode> Children => _children ??= new List<EasyUiTreeNode>();
 
         /// <summary>
         ///     表格树关闭状态
@@ -212,7 +212,7 @@ namespace Agebull.EntityModel.EasyUI
         ///     表格树的下级
         /// </summary>
         [JsonIgnore]
-        public List<EasyUiTreeNode<TData>> Children => _children ?? (_children = new List<EasyUiTreeNode<TData>>());
+        public List<EasyUiTreeNode<TData>> Children => _children ??= new List<EasyUiTreeNode<TData>>();
 
         /// <summary>
         ///     表格树关闭状态
