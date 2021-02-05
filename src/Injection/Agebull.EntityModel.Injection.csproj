@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>5.0.0.109</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Event\EntitySubsist.cs" />
+    <Compile Remove="IDataUpdateHandler.cs" />
+    <Compile Remove="Injection\DataInterfaceFeatureInjection.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

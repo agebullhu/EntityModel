@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>业务逻辑基础定义</Description>
+    <AssemblyTitle>Agebull.EntityModel.BusinessLogic</AssemblyTitle>
+    <Version>5.0.3.34</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Agebull.EntityModel.BusinessLogic</AssemblyName>
+    <PackageId>Agebull.EntityModel.BusinessLogic</PackageId>
+    <PackageTags>Agebull.EntityModel.BusinessLogic</PackageTags>
+    <PackageProjectUrl>https://github.com/agebullhu/EntityModel</PackageProjectUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>Agebull</Authors>
+    <Company>Agebull</Company>
+    <Product>Agebull.EntityModel.BusinessLogic</Product>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>../../doc/Agebull.EntityModel.BusinessLogic.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Json\**" />
+    <EmbeddedResource Remove="Json\**" />
+    <None Remove="Json\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="BusinessLogic\StatusCode.cs" />
+    <Compile Remove="IDataExtendChecker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NPOI" Version="2.5.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Abstractions" Version="1.1.3.33" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Agebull.EntityModel.BusinessLogic.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Agebull.EntityModel.BusinessLogic.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
+  </ItemGroup>
+</Project>

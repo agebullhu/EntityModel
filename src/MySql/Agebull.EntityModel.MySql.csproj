@@ -6,13 +6,12 @@
   <PropertyGroup>
     <Description>数据实体Mysql版本</Description>
     <AssemblyTitle>Agebull.EntityModel.MySql</AssemblyTitle>
-    <Version>4.0.1.9</Version>
+    <Version>5.0.4.22</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>Agebull.EntityModel.MySql</AssemblyName>
     <PackageId>Agebull.EntityModel.MySql</PackageId>
     <PackageTags>Agebull.EntityModel.MySql</PackageTags>
-
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/agebullhu/EntityModel</RepositoryUrl>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
@@ -36,31 +35,44 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BusinessLogic\**" />
+    <Compile Remove="DataState\**" />
+    <Compile Remove="DataTrigger\**" />
+    <Compile Remove="DataUpdateTrigger\**" />
     <Compile Remove="Excel\**" />
     <Compile Remove="Interface\**" />
     <Compile Remove="SQLite\**" />
+    <Compile Remove="Table\**" />
     <EmbeddedResource Remove="BusinessLogic\**" />
+    <EmbeddedResource Remove="DataState\**" />
+    <EmbeddedResource Remove="DataTrigger\**" />
+    <EmbeddedResource Remove="DataUpdateTrigger\**" />
     <EmbeddedResource Remove="Excel\**" />
     <EmbeddedResource Remove="Interface\**" />
     <EmbeddedResource Remove="SQLite\**" />
+    <EmbeddedResource Remove="Table\**" />
     <None Remove="BusinessLogic\**" />
+    <None Remove="DataState\**" />
+    <None Remove="DataTrigger\**" />
+    <None Remove="DataUpdateTrigger\**" />
     <None Remove="Excel\**" />
     <None Remove="Interface\**" />
     <None Remove="SQLite\**" />
+    <None Remove="Table\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DataState\HitoryTable.cs" />
     <Compile Remove="DataStateTable.cs" />
-    <Compile Remove="Table\CacheTable.cs" />
-    <Compile Remove="Table\MySqlTable.Extend.cs" />
+    <Compile Remove="MysqlExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Agebull.EntityModel.MySql.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EntityModel\Agebull.EntityModel.Core.csproj" />
+    <ProjectReference Include="..\DataAccess\Agebull.EntityModel.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <PackageReference Include="MySqlConnector" Version="1.2.1" />
   </ItemGroup>
 
 </Project>

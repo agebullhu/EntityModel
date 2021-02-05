@@ -1,0 +1,1207 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZeroTeam.MessageMVC.ModelApi</name>
+    </assembly>
+    <members>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiController`3">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Business">
+            <summary>
+                业务逻辑对象
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Unique(System.String,System.String,`1)">
+            <summary>
+                检查值的唯一性
+            </summary>
+            <param name="field">检查的字段</param>
+            <param name="value">检查的值</param>
+            <param name="id">应排除的ID，即不检查自身</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.List(`0)">
+            <summary>
+                列表数据
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.QueryFirst(`0)">
+            <summary>
+                单条数据查询
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Details(Agebull.EntityModel.Vue.IdArgument{`1})">
+            <summary>
+                单条详细数据
+            </summary>
+            <param name="arg">查询参数</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.AddNew(`0)">
+            <summary>
+                新增数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Update(`0)">
+            <summary>
+                更新数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Delete(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                删除多条数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Export(`0)">
+            <summary>
+                导出到Excel
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Import(System.Byte[])">
+            <summary>
+                从Excep导入
+            </summary>
+            <remarks>
+            参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetQueryFilter">
+            <summary>
+                读取查询条件
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetCustomFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetQueryFilter(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                读取查询条件
+            </summary>
+            <param name="filter">筛选器</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.ReadFormData(`0,ZeroTeam.MessageMVC.ModelApi.FormConvert)">
+            <summary>
+                读取Form传过来的数据
+            </summary>
+            <param name="entity">实体</param>
+            <param name="convert">转化器</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Convert(System.String)">
+            <summary>
+            转换方法
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiController`2">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`2.Convert(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.AuditDeny(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                审核不通过
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.Pullback(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                拉回已提交的审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.SubmitAudit(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.Validate(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                校验审核数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.AuditPass(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                审核通过
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.UnAudit(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                重新审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.BackAudit(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                退回(审核)
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnSubmitAudit">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnBackAudit">
+            <summary>
+                退回审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnUnAudit">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnAuditPass">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnPullback">
+            <summary>
+                拉回
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.OnAuditDeny">
+            <summary>
+                审核
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiControllerForAudit`2">
+            <summary>
+                审核支持API页面的基类
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3">
+            <summary>
+                支持数据状态的启用禁用方法的页面的基类
+            </summary>
+            <typeparam name="TData">数据对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
+            <typeparam name="TBusinessLogic">业务对象</typeparam>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.Reset(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                重置数据状态
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.Discard(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                废弃数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.Disable(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                禁用数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.Enable(Agebull.EntityModel.Vue.IdsArgument{`1})">
+            <summary>
+                启用数据
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.OnReset">
+            <summary>
+                恢复对象
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.OnDiscard">
+            <summary>
+                废弃对象
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.OnEnable">
+            <summary>
+                启用对象
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.OnDisable">
+            <summary>
+                禁用对象
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`2">
+            <summary>
+                自动实现基本增删改查API页面的基类
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiControllerForDataState`2.Convert(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.FormConvert">
+            <summary>
+                FORM对象转化辅助类
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.FormConvert.IsUpdata">
+            <summary>
+                是否更新状态
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.FormConvert.Failed">
+            <summary>
+                是否发生解析错误
+            </summary>
+        </member>
+        <member name="F:ZeroTeam.MessageMVC.ModelApi.FormConvert._messages">
+            <summary>
+                字段
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.AddMessage(System.String,System.String)">
+            <summary>
+            设置错误字段
+            </summary>
+            <param name="field"></param>
+            <param name="msg"></param>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.FormConvert.Message">
+            <summary>
+                是否发生解析错误
+            </summary>
+        </member>
+        <member name="F:ZeroTeam.MessageMVC.ModelApi.FormConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},System.Nullable{``0}@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.String@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetEnum``1(System.String,``0@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetEnum``1(System.String,System.Nullable{``0}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Byte@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Byte}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.SByte@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.SByte}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Int16@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Int16}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.UInt16@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt16}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Boolean@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Boolean}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Int32@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Int32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.UInt32@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Int64@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.UInt64@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.UInt64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Single@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Single}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Double@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Double}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.DateTime@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.DateTime}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Decimal@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Decimal}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Guid@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Nullable{System.Guid}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetValue(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGetIDs(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+            字段值转换
+            </summary>
+            <param name="field">名称</param>
+            <param name="value">字段名称</param>
+            <returns>是否接收值</returns>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.ModelApiController">
+            <summary>
+            ZeroApi控制器基类
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ModelApiController.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.ModelApiController.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ModelApiController.SetFailed(System.String)">
+            <summary>
+                设置当前操作失败
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert">
+            <summary>
+                参数解析器
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.ContainsArgument(System.String)">
+            <summary>
+                当前请求是否包含这个参数
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>是否包含这个参数</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.SetArgument(System.String,System.String)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.SetArgument``1(System.String,``0)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.SetArgument(System.String,System.Object)">
+            <summary>
+                设置替代参数
+            </summary>
+            <param name="name">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetArgValue(System.String)">
+            <summary>
+                获取参数
+            </summary>
+            <param name="name">参数名</param>
+            <returns>参数值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.Get(System.String)">
+            <summary>
+                获取参数
+            </summary>
+            <param name="name">参数名</param>
+            <returns>参数值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetString(System.String)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetNullable``1(System.String,System.Func{System.String,``0},System.Nullable{``0})">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="def">默认值</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetArg``1(System.String,System.Func{System.String,``0},``0)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="def">默认值</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetBool(System.String)">
+            <summary>
+                读参数(泛型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>参数为空或不存在,返回不成功,其它情况视convert返回值自行控制</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetInt(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetDouble(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetSingle(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetGuid(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetByte(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetIntArray(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetInt(System.String,System.Int32)">
+            <summary>
+                获取参数(int类型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>int类型,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetIntAny(System.String[])">
+            <summary>
+                获取参数(数字),模糊名称读取
+            </summary>
+            <param name="names">多个名称</param>
+            <returns>名称解析到的第一个不为0的数字,如果有名称存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetNullableDate(System.String)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetDate(System.String)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>日期类型,为空则为DateTime.MinValue,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetDate(System.String,System.DateTime)">
+            <summary>
+                获取参数(日期类型)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def"></param>
+            <returns>日期类型,为空则为空,如果存在且不能转为日期类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetBool(System.String,System.Boolean)">
+            <summary>
+                获取参数bool类型
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetDecimal(System.String)">
+            <summary>
+                获取参数(decimal型数据)
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>decimal型数据,如果未读取值则为-1,如果存在且不能转为decimal类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetDecimal(System.String,System.Decimal)">
+            <summary>
+                获取参数(decimal型数据),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>decimal型数据,如果存在且不能转为decimal类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetLong(System.String,System.Int64)">
+            <summary>
+                获取参数(long型数据),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="def">默认值</param>
+            <returns>long型数据,如果存在且不能转为long类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetLongArray(System.String)">
+            <summary>
+                获取参数int类型
+            </summary>
+            <param name="name">参数名称</param>
+            <returns>int类型,为空则为0,如果存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.GetLongAny(System.String[])">
+            <summary>
+                获取参数(数字),模糊名称读取
+            </summary>
+            <param name="names">多个名称</param>
+            <returns>名称解析到的第一个不为0的数字,如果有名称存在且不能转为int类型将出现异常</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetValue(System.String,System.String@)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="val"></param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.String@,System.Boolean)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="val">结果值</param>
+            <param name="trim">是否清除首尾空白</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},System.Nullable{``0}@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@,System.Boolean@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <param name="hase">参数是否存在</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``0}},``0@,System.Boolean@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <param name="hase">参数是否存在</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
+            <summary>
+                读参数(泛型),如果参数为空或不存在,用默认值填充
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert">转换方法</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Nullable{System.Boolean}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Boolean@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Guid@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.DateTime@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetEnum``1(System.String,``0@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Int32@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Decimal@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Single@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Double@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Int16@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetId(System.String,System.Int64@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="jsonName">参数名</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetId(System.Int64@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetId``2(System.Func{System.String,System.ValueTuple{System.Boolean,``1}},``1@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="value">参数值</param>
+            <param name="convert">转换器</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetId``2(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``1}},``1@)">
+            <summary>
+                读主键参数
+            </summary>
+            <param name="jsonName">参数名</param>
+            <param name="value">参数值</param>
+            <param name="convert">转换器</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Int64@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.String[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="value">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Int32[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Int64[]@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGet(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetIDs(System.String,System.Collections.Generic.List{System.Int64}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.RequestArgumentConvert.TryGetIDs``1(System.String,System.Func{System.String,System.ValueTuple{System.Boolean,``0}},System.Collections.Generic.List{``0}@)">
+            <summary>
+                试图读参数
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="convert"></param>
+            <param name="values">参数值</param>
+            <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.BusinessExceptionMiddleware">
+            <summary>
+            日志处理中间件
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessExceptionMiddleware.Processor">
+            <summary>
+            当前处理器
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Level">
+            <summary>
+            层级
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#Scope">
+            <summary>
+            消息中间件的处理范围
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.BusinessExceptionMiddleware.ZeroTeam#MessageMVC#Messages#IMessageMiddleware#OnGlobalException(ZeroTeam.MessageMVC.Services.IService,ZeroTeam.MessageMVC.Messages.IInlineMessage,System.Exception,System.Object)">
+            <summary>
+            异常处理
+            </summary>
+            <param name="service">当前服务</param>
+            <param name="message">当前消息</param>
+            <param name="exception"></param>
+            <param name="tag">扩展信息</param>
+            <returns></returns>
+        </member>
+        <member name="T:ZeroTeam.MessageMVC.ModelApi.BusinessContext">
+            <summary>
+            业务上下文
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.BusinessContext.#ctor">
+            <summary>
+                最后一个的操作消息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LoginUser">
+            <summary>
+                当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LastMessage">
+            <summary>
+                最后一个的操作消息
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LastState">
+            <summary>
+                最后操作的操作状态
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.UserId">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.NickName">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.Queue">
+            <summary>
+                正在排队
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.Success">
+            <summary>
+                成功
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.ArgumentError">
+            <summary>
+                参数错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.BusinessError">
+            <summary>
+                发生处理业务错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.BusinessException">
+            <summary>
+                发生未处理业务异常
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.UnhandleException">
+            <summary>
+                发生未处理系统异常
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.NetworkError">
+            <summary>
+                网络错误
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.TimeOut">
+            <summary>
+                执行超时
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.DenyAccess">
+            <summary>
+                拒绝访问
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.TokenUnknow">
+            <summary>
+                未知的令牌
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.TokenTimeOut">
+            <summary>
+                令牌过期
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.NoReady">
+            <summary>
+                系统未就绪
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.Ignore">
+            <summary>
+                异常中止
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.ReTry">
+            <summary>
+                重试
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.NoFind">
+            <summary>
+                方法不存在
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.Unavailable">
+            <summary>
+                服务不可用
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.Unknow">
+            <summary>
+                未知结果
+            </summary>
+        </member>
+    </members>
+</doc>

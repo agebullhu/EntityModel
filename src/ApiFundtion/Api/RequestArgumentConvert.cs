@@ -7,7 +7,7 @@ using ZeroTeam.MessageMVC.Context;
 
 #endregion
 
-namespace Agebull.MicroZero.ZeroApis
+namespace ZeroTeam.MessageMVC.ModelApi
 {
     /// <summary>
     ///     参数解析器
@@ -19,7 +19,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     参数
         /// </summary>
-        static Dictionary<string, string> Arguments => GlobalContext.Current.Message.Dictionary;
+        static Dictionary<string, string> Arguments => GlobalContext.Current.Message.ExtensionDictionary;
 
         #endregion
 
@@ -99,7 +99,7 @@ namespace Agebull.MicroZero.ZeroApis
         public static string GetString(string name)
         {
             Arguments.TryGetValue(name, out var value);
-            return value;
+            return value?.Trim();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Agebull.MicroZero.ZeroApis
                 return def;
             if (string.IsNullOrWhiteSpace(value))
                 return def;
-            return convert(value);
+            return convert(value.Trim());
         }
 
         /// <summary>
@@ -365,19 +365,15 @@ namespace Agebull.MicroZero.ZeroApis
         /// </summary>
         /// <param name="name">参数名称</param>
         /// <param name="val">结果值</param>
-        /// <param name="trim">是否清除首尾空白</param>
         /// <returns>文本</returns>
-        public static bool TryGet(string name, out string val, bool trim = true)
+        public static bool TryGet(string name, out string val)
         {
-            if (!Arguments.TryGetValue(name, out var value))
+            if (!Arguments.TryGetValue(name, out var value) || string.IsNullOrWhiteSpace(value))
             {
                 val = null;
                 return false;
             }
-            if (trim && value != null)
-                val = value.Trim();
-            else
-                val = value;
+            val = value.Trim();
             return true;
         }
 
@@ -392,7 +388,8 @@ namespace Agebull.MicroZero.ZeroApis
         public static bool TryGet<T>(string name, Func<string, T> convert, out T? value)
             where T : struct
         {
-            if (!TryGet(name, out string str))
+            var hase = Arguments.TryGetValue(name, out var str);
+            if (!hase)
             {
                 value = null;
                 return false;
@@ -407,73 +404,6 @@ namespace Agebull.MicroZero.ZeroApis
                 }
                 value = convert(str);
                 return true;
-            }
-            catch
-            {
-                value = default;
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="convert">转换方法</param>
-        /// <param name="value">参数值</param>
-        /// <param name="hase">参数是否存在</param>
-        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        internal static bool TryGet<T>(string name, Func<string, T> convert, out T value, out bool hase)
-        {
-            hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
-            {
-                value = default;
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return false;
-            }
-            try
-            {
-                value = convert(str.Trim());
-                return true;
-            }
-            catch
-            {
-                value = default;
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///     读参数(泛型),如果参数为空或不存在,用默认值填充
-        /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <param name="convert">转换方法</param>
-        /// <param name="value">参数值</param>
-        /// <param name="hase">参数是否存在</param>
-        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        internal static bool TryGet<T>(string name, Func<string, (bool state, T value)> convert, out T value, out bool hase)
-        {
-            hase = Arguments.TryGetValue(name, out var str);
-            if (!hase)
-            {
-                value = default;
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                value = default;
-                return false;
-            }
-            try
-            {
-                var re = convert(str.Trim());
-                value = re.value;
-                return re.state;
             }
             catch
             {
@@ -517,7 +447,7 @@ namespace Agebull.MicroZero.ZeroApis
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public static bool TryGet(string name, out bool? value)
         {
-            if (!TryGet(name, out string str))
+            if (!Arguments.TryGetValue(name, out var str))
             {
                 value = false;
                 return false;
@@ -787,18 +717,22 @@ namespace Agebull.MicroZero.ZeroApis
         /// <summary>
         ///     读主键参数
         /// </summary>
+        /// <param name="jsonName">参数名</param>
         /// <param name="value">参数值</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
-        public static bool TryGetId<TData>(out long value)
-           where TData : EntityModel.Common.EditDataObject, new()
+        public static bool TryGetId(string jsonName, out long value)
         {
-            if (TryGet("id", out value))
-                return true;
-            var data = new TData();
-            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
-            if (TryGet(pri.JsonName, out value))
-                return true;
-            return TryGet(pri.Name, out value);
+            return TryGet("id", out value) || TryGet(jsonName, out value);
+        }
+
+        /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="value">参数值</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetId(out long value)
+        {
+            return TryGet("id", out value);
         }
 
         /// <summary>
@@ -808,29 +742,39 @@ namespace Agebull.MicroZero.ZeroApis
         /// <param name="convert">转换器</param>
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public static bool TryGetId<TData, TPrimaryKey>(Func<string, (bool state, TPrimaryKey key)> convert, out TPrimaryKey value)
-           where TData : EntityModel.Common.EditDataObject, new()
+           where TData : class, new()
         {
             if (TryGetValue("id", out var str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
-            var data = new TData();
-            var pri = data.__Struct.Properties.Values.First(p => p.Name == data.__Struct.PrimaryKey);
+            value = default;
+            return false;
+        }
 
-            if (TryGetValue(pri.JsonName, out str))
+        /// <summary>
+        ///     读主键参数
+        /// </summary>
+        /// <param name="jsonName">参数名</param>
+        /// <param name="value">参数值</param>
+        /// <param name="convert">转换器</param>
+        /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
+        public static bool TryGetId<TData, TPrimaryKey>(string jsonName, Func<string, (bool state, TPrimaryKey key)> convert, out TPrimaryKey value)
+           where TData : class, new()
+        {
+            if (TryGetValue("id", out var str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
-
-            if (TryGetValue(pri.Name, out str))
+            if (TryGetValue(jsonName, out str))
             {
-                var re = convert(str);
-                value = re.key;
-                return re.state;
+                var (state, key) = convert(str);
+                value = key;
+                return state;
             }
             value = default;
             return false;

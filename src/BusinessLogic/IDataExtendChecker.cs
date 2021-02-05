@@ -40,7 +40,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="condition"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        bool PrepareQuery(IDataTable dataTable, ref string condition, ref DbParameter[] args);
+        bool PrepareQuery(IDataAccess dataTable, ref string condition, ref DbParameter[] args);
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="condition"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        internal static bool PrepareQuery<T>(IDataTable dataTable, ref string condition, ref DbParameter[] args)
+        internal static bool PrepareQuery<T>(IDataAccess dataTable, ref string condition, ref DbParameter[] args)
         {
             var type = typeof(T);
             foreach (var creaters in Checker)

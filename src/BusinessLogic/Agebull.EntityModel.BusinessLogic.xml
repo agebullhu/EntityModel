@@ -4,370 +4,380 @@
         <name>Agebull.EntityModel.BusinessLogic</name>
     </assembly>
     <members>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessCommandType">
-            <summary>
-            逻辑内部命令类型
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.SetState">
-            <summary>
-            无原因修改状态
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.AddNew">
-            <summary>
-            新增
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Update">
-            <summary>
-            更新
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Enable">
-            <summary>
-            启用
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Disable">
-            <summary>
-            禁用
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Discard">
-            <summary>
-            废弃
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Delete">
-            <summary>
-            删除
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Reset">
-            <summary>
-            重置
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Lock">
-            <summary>
-            锁定
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Unlock">
-            <summary>
-            解锁
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Submit">
-            <summary>
-            提交
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Pullback">
-            <summary>
-            拉回
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Back">
-            <summary>
-            退
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Pass">
-            <summary>
-            通过
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.Deny">
-            <summary>
-            否决
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.ReAudit">
-            <summary>
-            重新编辑
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessCommandType.End">
-            <summary>
-            结束
-            </summary>
-        </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3">
-            <summary>
-            业务逻辑对象基类
-            </summary>
-            <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TPrimaryKey">主键类型</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
-        </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.EntityType">
-            <summary>
-                实体类型
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.Agebull#EntityModel#BusinessLogic#IBusinessLogicBase{TData,TPrimaryKey}#Access">
-            <summary>
-            数据访问对象
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.Access">
-            <summary>
-                数据访问对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.CreateAccess">
-            <summary>
-                数据访问对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.#ctor">
-            <summary>
-            构造
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.BaseQueryCondition">
-            <summary>
-                基本查询条件(SQL表述方式)
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.DoByIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Boolean},System.Action)">
-            <summary>
-                执行ID组合字串的操作（来自页面的,号组合的ID）
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.LoopIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Boolean},System.Action)">
-            <summary>
-                执行ID组合字串的操作（来自页面的,号组合的ID）
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.DoByIds(System.Collections.Generic.IEnumerable{`1},System.Func{`0,System.Boolean},System.Action)">
-            <summary>
-                执行ID组合字串的操作（来自页面的,号组合的ID）
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.LoopIdsToData(System.Collections.Generic.IEnumerable{`1},System.Func{`0,System.Boolean},System.Action)">
-            <summary>
-                执行ID组合字串的操作（来自页面的,号组合的ID）
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.FirstOrDefault(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-                载入当前操作的数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.Details(`1)">
-            <summary>
-                载入当前操作的数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.DetailAsync(`1)">
-            <summary>
-                载入当前操作的数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.OnDetailsLoaded(`0,System.Boolean)">
-            <summary>
-                详细数据载入
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`3.CreateData">
-            <summary>
-                新增一条带默认值的数据
-            </summary>
-        </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2">
             <summary>
             业务逻辑对象基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.ServiceProvider">
+            <summary>
+            依赖对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Access">
+            <summary>
+                数据访问对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.CreateAccess">
+            <summary>
+                数据访问对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Context">
+            <summary>
+            上下文
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.DoByIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Threading.Tasks.Task{System.Boolean}},System.Func{System.Threading.Tasks.Task})">
+            <summary>
+                执行ID组合字串的操作（来自页面的,号组合的ID）
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.LoopIds(System.Collections.Generic.IEnumerable{`1},System.Func{`1,System.Threading.Tasks.Task{System.Boolean}},System.Func{System.Threading.Tasks.Task})">
+            <summary>
+                执行ID组合字串的操作（来自页面的,号组合的ID）
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.LoopIdsToData(System.Collections.Generic.IEnumerable{`1},System.Func{`0,System.Threading.Tasks.Task{System.Boolean}},System.Func{System.Threading.Tasks.Task})">
+            <summary>
+                执行ID组合字串的操作（来自页面的,号组合的ID）
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Details(Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                载入当前操作的数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Details(`1)">
+            <summary>
+                载入当前操作的数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnDetailsLoaded(`0,System.Boolean)">
+            <summary>
+                详细数据载入
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.CreateData">
+            <summary>
+                新增一条带默认值的数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PageData(ZeroTeam.MessageMVC.ZeroApis.PageArgument,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                分页读取
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                取得列表数据
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnListLoaded(System.Collections.Generic.IList{`0})">
+            <summary>
+                数据载入的处理
+            </summary>
+            <param name="datas"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Export(System.String,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+            导出到Excel
+            </summary>
+            <param name="title"></param>
+            <param name="filter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Import(System.Byte[])">
+            <summary>
+            导出到Excel
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.CanSave(`0,System.Boolean)">
+            <summary>
+                是否可以执行保存操作
+            </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PrepareSave(`0,System.Boolean)">
+            <summary>
+                保存前的操作
+            </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Save(`0)">
+            <summary>
+                新增
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.AddNew(`0)">
+            <summary>
+                新增
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Update(`0)">
+            <summary>
+                更新对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.PrepareSaveByUser(`0,System.Boolean)">
+            <summary>
+                被用户编辑的数据的保存前操作
+            </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.SavedByUser(`0,System.Boolean)">
+            <summary>
+                被用户编辑的数据的保存前操作
+            </summary>
+            <param name="data">数据</param>
+            <param name="isAdd">是否为新增</param>
+            <returns>如果为否将阻止后续操作</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Delete(System.Collections.Generic.IEnumerable{`1})">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.Delete(`1)">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.DeleteInner(`1)">
+            <summary>
+                删除对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.DoDelete(`1)">
+            <summary>
+                删除对象操作
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`2.OnCommandSuccess(`0,`1,Agebull.EntityModel.Common.DataOperatorType)">
+            <summary>
+                内部命令执行完成后的处理
+            </summary>
+            <param name="data">数据</param>
+            <param name="id">数据主键</param>
+            <param name="cmd">命令</param>
+        </member>
+        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicBase`1">
+            <summary>
+            业务逻辑对象基类
+            </summary>
+            <typeparam name="TData">数据对象</typeparam>
+        </member>
+        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2">
             <summary>
                 基于审核扩展的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.CancelValidate">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.CancelValidate">
             <summary>
                 取消校验(审核时有效)
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.UnAuditMessageLock">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.UnAuditMessageLock">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.UnAuditMessageNoSubmit">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.UnAuditMessageNoSubmit">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.SubmitMessage">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SubmitMessage">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.BackMessage">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.BackMessage">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditMessageReDo">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditMessageReDo">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditMessage">
+        <member name="P:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditMessage">
             <summary>
             提示语
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Submit(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Submit(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量提交
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Back(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Back(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量退回
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditPass(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPass(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Pullback(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Pullback(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量拉回
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditDeny(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditDeny(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量否决
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.UnAudit(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.UnAudit(System.Collections.Generic.IEnumerable{`1})">
             <summary>
                 批量反审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Validate(System.Collections.Generic.IEnumerable{`1},System.Action{Agebull.EntityModel.Common.ValidateResult})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Validate(System.Collections.Generic.IEnumerable{`1},System.Action{Agebull.EntityModel.Common.ValidateResult})">
             <summary>
                 批量数据校验
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Validate(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Validate(`1)">
             <summary>
                 数据正确性校验
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditPass(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPass(`1)">
             <summary>
                 审核通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditDeny(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditDeny(`1)">
             <summary>
                 审核不通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.UnAudit(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.UnAudit(`1)">
             <summary>
                 反审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Submit(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Submit(`1)">
             <summary>
                 提交审核
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Back(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Back(`1)">
             <summary>
                 退回编辑
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.PrepareDelete(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Pullback(`1)">
+            <summary>
+                拉回编辑
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoDelete(`1)">
             <summary>
                 删除对象前置处理
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Reset(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Reset(`1)">
             <summary>
                 禁用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Disable(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Disable(`1)">
             <summary>
                 禁用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Discard(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Discard(`1)">
             <summary>
                 弃用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.Enable(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.Enable(`1)">
             <summary>
                 启用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.SaveAuditData(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPassInner(`0)">
             <summary>
                 审核通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditPassInner(`0)">
-            <summary>
-                审核通过
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditDenyInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditDenyInner(`0)">
             <summary>
                 审核不通过
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.PullbackInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.PullbackInner(`0)">
             <summary>
                 拉回
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditInner(`0,System.Boolean)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditInner(`0,System.Boolean)">
             <summary>
                 审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.UnAuditInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.UnAuditInner(`0)">
             <summary>
                 反审核
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.BackInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.BackInner(`0)">
             <summary>
                 退回编辑
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.SubmitInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SubmitInner(`0)">
             <summary>
                 提交审核
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.SetAuditState(`0,Agebull.EntityModel.Common.AuditStateType,Agebull.EntityModel.Common.DataStateType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SetAuditState(`0,Agebull.EntityModel.Common.AuditStateType,Agebull.EntityModel.Common.DataStateType)">
             <summary>
                 设置审核状态
             </summary>
@@ -375,49 +385,34 @@
             <param name="audit"></param>
             <param name="state"></param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.OnAuditStateChanged(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnAuditStateChanged(`0)">
             <summary>
                 设置审核状态
             </summary>
             <param name="data"></param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.CanAuditPass(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.CanAuditPass(`0)">
             <summary>
                 能否通过审核)的判断
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.CanDoAuditAction(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.CanDoAuditAction(`0)">
             <summary>
                 能否进行审核的判断
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoValidateInner(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoValidateInner(`0)">
             <summary>
                 数据正确性校验
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoValidateInner(`0,System.Action{Agebull.EntityModel.Common.ValidateResult})">
-            <summary>
-                数据正确性校验
-            </summary>
-            <param name="data"></param>
-            <param name="putError"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.ValidateInner(`0)">
-            <summary>
-                数据正确性校验
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.ValidateInner(`0,System.Action{Agebull.EntityModel.Common.ValidateResult})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.DoValidateInner(`0,System.Action{Agebull.EntityModel.Common.ValidateResult})">
             <summary>
                 数据正确性校验
             </summary>
@@ -425,528 +420,1639 @@
             <param name="putError"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.CanUnAudit(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ValidateInner(`0)">
+            <summary>
+                数据正确性校验
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ValidateInner(`0,System.Action{Agebull.EntityModel.Common.ValidateResult})">
+            <summary>
+                数据正确性校验
+            </summary>
+            <param name="data"></param>
+            <param name="putError"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.CanUnAudit(`0)">
             <summary>
                 能否进行反审核的判断
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.AuditPrepare(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.AuditPrepare(`0)">
             <summary>
                 审核通过前的准备
             </summary>
             <param name="data"></param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoUnAudit(`0)">
-            <summary>
-                执行反审核的扩展流程
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.OnUnAudited(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnUnAudited(`0)">
             <summary>
                 执行反审核完成后
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoSubmit(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnSubmit(`0)">
             <summary>
                 提交审核
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoBack(`0)">
-            <summary>
-                退回重做
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.OnBacked(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnBacked(`0)">
             <summary>
                 退回完成
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.ValidateExtend(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ValidateExtend(`0)">
             <summary>
                 扩展数据校验
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.OnAuditDenyed(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnAuditDenyed(`0)">
             <summary>
                 执行审核的扩展流程
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoAuditDeny(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.OnAuditPassed(`0)">
             <summary>
                 执行审核的扩展流程
             </summary>
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.DoAuditPass(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.ResetStateFileSqlCode(`0)">
             <summary>
-                执行审核的扩展流程
+                重置状态的SQL语句
             </summary>
-            <param name="data"></param>
-            <returns></returns>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`3.OnAuditPassed(`0)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2.SaveAuditData(`0)">
             <summary>
-                执行审核的扩展流程
+                审核通过
             </summary>
-            <param name="data"></param>
-            <returns></returns>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`2">
+        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByAudit`1">
             <summary>
                 基于审核扩展的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
-        </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3">
-            <summary>
-            基于数据状态的业务逻辑基类
-            </summary>
-            <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
-            <typeparam name="TPrimaryKey">主键类型</typeparam>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.CanSave(`0,System.Boolean)">
-            <summary>
-                是否可以执行保存操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.PrepareDelete(`1)">
-            <summary>
-                删除对象前置处理
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.OnDeleted(`1)">
-            <summary>
-                删除对象后置处理
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.DoDelete(`1)">
-            <summary>
-                删除对象操作
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.LastSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.unityStateChanged">
-            <summary>
-            是否统一处理状态变化
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.OnStateChanged(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-            </summary>
-            <param name="data">数据</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.OnStateChanged(`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                内部命令执行完成后的处理
-            </summary>
-            <param name="id">数据</param>
-            <param name="cmd">命令</param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.DoStateChanged(`0)">
-            <summary>
-                状态改变后的统一处理(unityStateChanged不设置为true时不会产生作用--基于性能的考虑)
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.Reset(`1)">
-            <summary>
-                重置数据状态
-            </summary>
-            <param name="id"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.Enable(`1)">
-            <summary>
-                启用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.Disable(`1)">
-            <summary>
-                禁用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.Discard(`1)">
-            <summary>
-                弃用对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`3.SetDataState(`1,Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-                修改状态
-            </summary>
         </member>
         <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2">
             <summary>
             基于数据状态的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
-        </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.IDataExtendChecker">
-            <summary>
-                数据扩展检查器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareAddnew``1(``0)">
-            <summary>
-            新增前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareUpdate``1(``0)">
-            <summary>
-            更新前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareDelete``2(System.Collections.Generic.IEnumerable{``1})">
-            <summary>
-            删除前检查
-            </summary>
-            <param name="ids"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.IDataExtendChecker.PrepareQuery(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
-            <summary>
-            查询前检查
-            </summary>
-            <param name="dataTable"></param>
-            <param name="condition"></param>
-            <param name="args"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.DataExtendChecker">
-            <summary>
-                数据扩展检查器
-            </summary>
-        </member>
-        <member name="F:Agebull.EntityModel.BusinessLogic.DataExtendChecker.ExtendCheckers.Dictionary">
-            <summary>
-            检查器集合
-            </summary>
-        </member>
-        <member name="P:Agebull.EntityModel.BusinessLogic.DataExtendChecker.ExtendCheckers.Convert">
-            <summary>
-            转换器
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.Regist``2">
-            <summary>
-            注册检查器
-            </summary>
-            <typeparam name="TDataExtendChecker">检查器本身</typeparam>
-            <typeparam name="TTargetType">检查的目标类型</typeparam>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareAddnew``1(``0)">
-            <summary>
-            新增前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareUpdate``1(``0)">
-            <summary>
-            更新前检查
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareDelete``2(``1[])">
-            <summary>
-            删除前检查
-            </summary>
-            <param name="ids"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.DataExtendChecker.PrepareQuery``1(Agebull.EntityModel.Common.IDataTable,System.String@,System.Data.Common.DbParameter[]@)">
-            <summary>
-            查询前检查
-            </summary>
-            <param name="dataTable"></param>
-            <param name="condition"></param>
-            <param name="args"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3">
-            <summary>
-            支持界面操作的业务逻辑对象基类
-            </summary>
-            <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
             <typeparam name="TPrimaryKey">主键类型</typeparam>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,System.String,System.Boolean,Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                取得列表数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageData(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                取得列表数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnListLoaded(System.Collections.Generic.IList{`0})">
-            <summary>
-                数据载入的处理
-            </summary>
-            <param name="datas"></param>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageDataAsync(System.Int32,System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageDataAsync(System.Int32,System.Int32,Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-                分页读取
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PageDataAsync(System.Int32,System.Int32,System.String,System.Boolean,System.String,System.Data.Common.DbParameter[])">
-            <summary>
-                取得列表数据
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Export(System.String,Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-            导出到Excel
-            </summary>
-            <param name="sheetName"></param>
-            <param name="filter"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.ExportAsync(System.String,Agebull.EntityModel.Common.LambdaItem{`0})">
-            <summary>
-            导出到Excel
-            </summary>
-            <param name="sheetName"></param>
-            <param name="filter"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.CanSave(`0,System.Boolean)">
-            <summary>
-                是否可以执行保存操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PrepareSave(`0,System.Boolean)">
-            <summary>
-                保存前的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.LastSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PrepareSaveByUser(`0,System.Boolean)">
-            <summary>
-                被用户编辑的数据的保存前操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.LastSavedByUser(`0,System.Boolean)">
-            <summary>
-                被用户编辑的数据的保存前操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnSaving(`0,System.Boolean)">
-            <summary>
-                保存前的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnSaved(`0,System.Boolean)">
-            <summary>
-                保存完成后的操作
-            </summary>
-            <param name="data">数据</param>
-            <param name="isAdd">是否为新增</param>
-            <returns>如果为否将阻止后续操作</returns>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Save(`0)">
-            <summary>
-                新增
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.AddNew(`0)">
-            <summary>
-                新增
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Update(`0)">
-            <summary>
-                更新对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Saved(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
-            <summary>
-                更新对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.SaveAsync(`0)">
-            <summary>
-                新增
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.AddNewAsync(`0)">
-            <summary>
-                新增
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.UpdateAsync(`0)">
-            <summary>
-                更新对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Delete(System.Collections.Generic.IEnumerable{`1})">
-            <summary>
-                删除对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.Delete(`1)">
-            <summary>
-                删除对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DeleteInner(`1)">
-            <summary>
-                删除对象
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DoDelete(`1)">
-            <summary>
-                删除对象操作
-            </summary>
-        </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.PrepareDelete(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.DoDelete(`1)">
             <summary>
                 删除对象前置处理
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnDeleted(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Reset(`1)">
             <summary>
-                删除对象后置处理
+                重置数据状态
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Enable(`1)">
+            <summary>
+                启用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DeleteAsync(System.Collections.Generic.IEnumerable{`1})">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Disable(`1)">
             <summary>
-                删除对象
+                禁用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DeleteAsync(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.Discard(`1)">
             <summary>
-                删除对象
+                弃用对象
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DeleteAsyncInner(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetDataState(`1,Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
-                删除对象
+                修改状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.DoDeleteAsync(`1)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,`1)">
             <summary>
-                删除对象操作
+            修改状态
             </summary>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnInnerCommand(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.SetState(Agebull.EntityModel.Common.DataStateType,System.Boolean,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
-                内部命令执行完成后的处理
+            修改状态
             </summary>
-            <param name="data">数据</param>
-            <param name="cmd">命令</param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnStateChanged(`1,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.ResetState(`1)">
             <summary>
-                内部命令执行完成后的处理
+            重置状态
             </summary>
-            <param name="id">数据</param>
-            <param name="cmd">命令</param>
         </member>
-        <member name="M:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`3.OnStateChanged(`0,Agebull.EntityModel.BusinessLogic.BusinessCommandType)">
+        <member name="M:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`2.ResetState(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
-                状态改变后的统一处理
+            重置状态
             </summary>
-            <param name="data">数据</param>
-            <param name="cmd">命令</param>
         </member>
-        <member name="T:Agebull.EntityModel.BusinessLogic.UiBusinessLogicBase`2">
+        <member name="T:Agebull.EntityModel.BusinessLogic.BusinessLogicByStateData`1">
             <summary>
-            支持界面操作的业务逻辑对象基类
+            基于数据状态的业务逻辑基类
             </summary>
             <typeparam name="TData">数据对象</typeparam>
-            <typeparam name="TAccess">数据访问对象</typeparam>
+        </member>
+        <member name="T:Agebull.EntityModel.BusinessLogic.IBusinessContext">
+            <summary>
+            业务上下文
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.LastMessage">
+            <summary>
+                最后一个的操作消息
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.LastState">
+            <summary>
+                最后操作的操作状态
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.UserId">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.NickName">
+            <summary>
+            当前登录用户
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.IsFailed">
+            <summary>
+                是否操作失败
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.Success">
+            <summary>
+                成功
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.ArgumentError">
+            <summary>
+                参数错误
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.BusinessError">
+            <summary>
+                发生处理业务错误
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.BusinessException">
+            <summary>
+                发生未处理业务异常
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.UnhandleException">
+            <summary>
+                发生未处理系统异常
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.NetworkError">
+            <summary>
+                网络错误
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.TimeOut">
+            <summary>
+                执行超时
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.DenyAccess">
+            <summary>
+                拒绝访问
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.TokenUnknow">
+            <summary>
+                未知的令牌
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.TokenTimeOut">
+            <summary>
+                令牌过期
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.NoReady">
+            <summary>
+                系统未就绪
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.Ignore">
+            <summary>
+                异常中止
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.ReTry">
+            <summary>
+                重试
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.NoFind">
+            <summary>
+                方法不存在
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.Unavailable">
+            <summary>
+                服务不可用
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.Unknow">
+            <summary>
+                未知结果
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.DataItem">
+            <summary>
+            简单的数据节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Id">
+            <summary>
+            ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.Text">
+            <summary>
+            名称
+            </summary>
+            <example>名称</example>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgumentEx">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Vue.IdArgumentEx.ToArgument(System.Int64)">
+            <summary>
+            到参数
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Vue.IdArgumentEx.ToArgument``1(``0)">
+            <summary>
+            到参数
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgument">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.IdArgument.Id">
+            <summary>
+            主键
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdsArgument`1">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.IdsArgument`1.Selects">
+            <summary>
+            选择的主键，用逗号连接
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.IdArgument`1">
+            <summary>
+            ID参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.IdArgument`1.Id">
+            <summary>
+            主键
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.TreeNode">
+            <summary>
+            树节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Id">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Label">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Tag">
+            <summary>
+            扩展标签
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Description">
+            <summary>
+            说明
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.IsLeaf">
+            <summary>
+            是否有子级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.TreeNode.Children">
+            <summary>
+            子级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Excel.ExcelExporter`2">
+            <summary>
+                Excel导出类
+            </summary>
+            <typeparam name="TData">数据类型</typeparam>
+            <typeparam name="TPrimaryKey">主键类型</typeparam>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.DataQuery">
+            <summary>
+                数据访问对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelExporter`2.Book">
+            <summary>
+            工作簿对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(System.String,System.String)">
+            <summary>
+                导出Excel
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(Agebull.EntityModel.Common.LambdaItem{`0},System.String,System.String)">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="lambda">查询条件</param>
+            <param name="name"></param>
+            <param name="path"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcelAsync(Agebull.EntityModel.Common.LambdaItem{`0},System.String)">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="lambda">查询条件</param>
+            <param name="name"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet,Agebull.EntityModel.Common.LambdaItem{`0})">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="sheet">导入所在的工作表</param>
+            <param name="lambda">查询条件</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="lambda">查询条件</param>
+            <param name="name"></param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="sheet">导入所在的工作表</param>
+            <param name="lambda">查询条件</param>
+            <returns>数据</returns>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelExporter`2.OnDataLoad">
+            <summary>
+            数据载入的处理
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.ExportExcel(NPOI.SS.UserModel.ISheet)">
+            <summary>
+                导出Excel
+            </summary>
+            <param name="sheet">导入所在的工作表</param>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.WriteToSheet(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
+            <summary>
+            写入数据到工作表
+            </summary>
+            <param name="sheet"></param>
+            <param name="datas"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelExporter`2.WriteToSheetByConfig(NPOI.SS.UserModel.ISheet,System.Collections.Generic.List{`0})">
+            <summary>
+            写入数据到工作表
+            </summary>
+            <param name="sheet"></param>
+            <param name="datas"></param>
+        </member>
+        <member name="T:Agebull.EntityModel.Excel.ExcelHelper">
+            <summary>
+                报表(Excel)帮助类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SafeGetRow(NPOI.SS.UserModel.ISheet,System.Int32)">
+            <summary>
+                安全得到行
+            </summary>
+            <param name="sheet"></param>
+            <param name="line"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SafeGetRow(NPOI.SS.UserModel.ISheet,System.Int32,System.Int16)">
+            <summary>
+                安全得到行
+            </summary>
+            <param name="sheet"></param>
+            <param name="line"></param>
+            <param name="height"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SafeGetRow(NPOI.SS.UserModel.ISheet,System.Int32,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                安全得到行
+            </summary>
+            <param name="sheet"></param>
+            <param name="line"></param>
+            <param name="initAction"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SafeGetRow(NPOI.SS.UserModel.ISheet,System.Int32,System.Int16,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                安全得到行
+            </summary>
+            <param name="sheet"></param>
+            <param name="line"></param>
+            <param name="height"></param>
+            <param name="initAction"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SafeGetCell(NPOI.SS.UserModel.IRow,System.Int32)">
+            <summary>
+                安全取单元格
+            </summary>
+            <param name="row"></param>
+            <param name="col"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.String,System.Int32)">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.Int32,System.String,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.Merge(NPOI.SS.UserModel.ISheet,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+                合并单元格
+            </summary>
+            <param name="sheet">工作表</param>
+            <param name="scol">开始列（包含）</param>
+            <param name="ecol">结束列（包含）</param>
+            <param name="srow">开始行（包含）</param>
+            <param name="erow">结束行（包含）</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.Merge(NPOI.SS.UserModel.ISheet,System.Int32,System.Int32,System.Int32,System.Int32,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+                合并单元格
+            </summary>
+            <param name="sheet">工作表</param>
+            <param name="srow">开始行（包含）</param>
+            <param name="erow">结束行（包含）</param>
+            <param name="scol">开始列（包含）</param>
+            <param name="ecol">结束列（包含）</param>
+            <param name="style">样式</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellStyle(NPOI.SS.UserModel.IRow,System.Int32,System.Int32,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+                设置单元格样式
+            </summary>
+            <param name="row">行对象</param>
+            <param name="scol">开始列（包含）</param>
+            <param name="ecol">结束列（包含）</param>
+            <param name="style">样式</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellStyle(NPOI.SS.UserModel.IRow,System.Int32,System.Int32,System.Collections.Generic.List{NPOI.SS.UserModel.ICellStyle})">
+            <summary>
+                设置单元格样式
+            </summary>
+            <param name="row">行对象</param>
+            <param name="scol">开始列（包含）</param>
+            <param name="ecol">结束列（包含）</param>
+            <param name="styles">样式数组（与列号对应使用）</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellStyle(NPOI.SS.UserModel.IRow,System.Int32,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+                设置单元格样式
+            </summary>
+            <param name="row">行对象</param>
+            <param name="col">列</param>
+            <param name="style">样式数组（与列号对应使用）</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.DateTime,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格日期值
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelHelper.ExcelBaseDate">
+            <summary>
+            Excel的基本日期(差两天)
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetDateCellValue(NPOI.SS.UserModel.IRow,System.DateTime,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格日期值
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.String,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellMoney(NPOI.SS.UserModel.IRow,System.Decimal,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellMoney2(NPOI.SS.UserModel.IRow,System.Decimal,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetNumberValue(NPOI.SS.UserModel.IRow,System.Int32,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.Int32,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue(NPOI.SS.UserModel.IRow,System.Decimal,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue``1(NPOI.SS.UserModel.IRow,``0,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.SetCellValue``1(NPOI.SS.UserModel.IRow,System.String,``0,System.Int32,NPOI.SS.UserModel.ICellStyle,System.Action{NPOI.SS.UserModel.IRow})">
+            <summary>
+                设置单元格内容
+            </summary>
+            <param name="format"></param>
+            <param name="val"></param>
+            <param name="row"></param>
+            <param name="col"></param>
+            <param name="style"></param>
+            <param name="prepare"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelHelper.CopyStyle(NPOI.SS.UserModel.ISheet,System.Int32,System.Collections.Generic.List{NPOI.SS.UserModel.ICellStyle})">
+            <summary>
+                复制格式
+            </summary>
+            <param name="sheet"></param>
+            <param name="styles"></param>
+            <param name="line"></param>
+        </member>
+        <member name="T:Agebull.EntityModel.Excel.ExcelImporter`1">
+            <summary>
+                Excel导入类
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.DataAccess">
+            <summary>
+            数据访问对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.Prepare(System.Byte[])">
+            <summary>
+                生成工作溥
+            </summary>
+            <param name="buffer">文件内容</param>
+            <returns>导入数量</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.Prepare(NPOI.SS.UserModel.ISheet)">
+            <summary>
+                准备导入Excel
+            </summary>
+            <param name="sheet">导入所在的工作表</param>
+            <returns>导入数量</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.ToStream">
+            <summary>
+                导出Excel
+            </summary>
+            <returns>数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.ImportExcel">
+            <summary>
+                导入Excel
+            </summary>
+            <returns>导入数量</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.ImportExcel(System.Func{`0,System.Int32,System.Threading.Tasks.Task{System.String}})">
+            <summary>
+                导入Excel
+            </summary>
+            <param name="action">读到数据时的处理回调</param>
+            <returns>导入数量</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.CheckFieldMaps">
+            <summary>
+                分析得出列号与字段的对应图
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelImporter`1.ColumnFields">
+            <summary>
+                分析出的字段名称(列号对应的字段)
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelImporter`1.ColumnFields2">
+            <summary>
+                分析出的字段名称(字段对应的列号)
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.FieldMap">
+            <summary>
+                内部字段与Excel列的对照表
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.MaxColumn">
+            <summary>
+                最大列
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.Book">
+            <summary>
+            工作簿对象
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelImporter`1.Sheet">
+            <summary>
+                当前导入的工作表
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.System#IDisposable#Dispose">
+            <summary>
+            清理资源
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.Write(`0,System.Int32)">
+            <summary>
+                写入读取的数据
+            </summary>
+            <param name="data"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.CreateEntity(NPOI.SS.UserModel.IRow)">
+            <summary>
+                构造并初始化数据对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.Initiate">
+            <summary>
+                初始化
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.SetValue(`0,System.Int32,System.String,NPOI.SS.UserModel.IRow)">
+            <summary>
+                设置字段值
+            </summary>
+            <param name="data">数据类对象</param>
+            <param name="column">列号</param>
+            <param name="value">读取出的文本值</param>
+            <param name="row">当前行</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.ReadRow(System.Int32,`0@,NPOI.SS.UserModel.IRow@)">
+            <summary>
+                读取一条数据
+            </summary>
+            <param name="line"></param>
+            <param name="entity"></param>
+            <param name="row"></param>
+            <returns>是否成功读取</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.ReadRowFields(NPOI.SS.UserModel.IRow,`0)">
+            <summary>
+                读取一行的各个字段
+            </summary>
+            <param name="row"></param>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.GetCellValue(NPOI.SS.UserModel.IRow,System.Int32,NPOI.SS.UserModel.ICell@,System.String@)">
+            <summary>
+                取一个单元格的值
+            </summary>
+            <param name="row"></param>
+            <param name="column"></param>
+            <param name="cell"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelImporter`1._drawingPatriarch">
+            <summary>
+                批注生成对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.WriteCellState(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+                通过批注写入单元格的导入状态
+            </summary>
+            <param name="line">行号</param>
+            <param name="col">列号</param>
+            <param name="message">状态消息</param>
+            <param name="isError">是否错误(否则显示为警告)</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.WriteCellState(NPOI.SS.UserModel.IRow,System.Int32,System.String,System.Boolean)">
+            <summary>
+                通过批注写入单元格的导入状态
+            </summary>
+            <param name="row">行</param>
+            <param name="col">列号</param>
+            <param name="message">状态消息</param>
+            <param name="isError">是否错误(否则显示为警告)</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.WriteRowState(System.Int32,System.Boolean,System.String)">
+            <summary>
+                写入行的导入状态
+            </summary>
+            <param name="line">行号</param>
+            <param name="succeed">是否错误(否则显示为警告)</param>
+            <param name="message">状态消息</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.WriteRowState(NPOI.SS.UserModel.IRow,System.Boolean,System.String)">
+            <summary>
+                写入行的导入状态
+            </summary>
+            <param name="row">行</param>
+            <param name="succeed">是否错误(否则显示为警告)</param>
+            <param name="message">状态消息</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelImporter`1.GetNumericValue(NPOI.SS.UserModel.ICell,System.Double)">
+            <summary>
+                得数字类型的值(日期或数字)
+            </summary>
+            <param name="cell">单元格</param>
+            <param name="vl">要取的值</param>
+            <returns>数字类型的值(日期或数字)</returns>
+        </member>
+        <member name="T:Agebull.EntityModel.Excel.ExcelReportBase`1">
+            <summary>
+                Excel报表生成的基类
+            </summary>
+            <typeparam name="TData">数据类型</typeparam>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelReportBase`1.Matrix">
+            <summary>
+                行高与列宽(第一个数组为列宽,第一个数组为行高)
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Excel.ExcelReportBase`1.Styles">
+            <summary>
+                可用的样式列表
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelReportBase`1.Workbook">
+            <summary>
+                工作簿
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Excel.ExcelReportBase`1.Sheet">
+            <summary>
+                当前工作簿
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelReportBase`1.SaveToBytes">
+            <summary>
+                把工作簿写到二进制流
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Excel.ExcelReportBase`1.ReadStyles(NPOI.SS.UserModel.ISheet,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+                读样式模板
+            </summary>
+            <param name="sheet">Sheet对象</param>
+            <param name="sl">行起始序号</param>
+            <param name="el">总行数</param>
+            <param name="sc">列起始序号</param>
+            <param name="ec">总列数</param>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.AuditStateType">
+            <summary>
+                审核状态类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.None">
+            <summary>
+                草稿
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Again">
+            <summary>
+                重新处理
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Submit">
+            <summary>
+                提交审核
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Deny">
+            <summary>
+                审核不通过
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.Pass">
+            <summary>
+                审核通过
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.End">
+            <summary>
+                结束
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.AuditStateType.State">
+            <summary>
+            不正确的状态
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.AuditStateTypeHelper">
+            <summary>
+            审核状态扩展类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToCaption(Agebull.EntityModel.Common.AuditStateType)">
+            <summary>
+                到中文名称
+            </summary>
+            <param name="state">审核状态类型</param>
+            <returns>中文名称</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.ToChiness(Agebull.EntityModel.Common.AuditStateType)">
+            <summary>
+                到中文名称
+            </summary>
+            <param name="state">审核状态类型</param>
+            <returns>中文名称</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAudit(Agebull.EntityModel.Common.IAuditData)">
+            <summary>
+                是否可以审核
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.AuditStateTypeHelper.CanAgainAudit(Agebull.EntityModel.Common.IAuditData)">
+            <summary>
+                是否可以反审核
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.DataStateType">
+            <summary>
+                数据状态
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.None">
+            <summary>
+                草稿
+            </summary>
+            <remarks>
+             当使用启用禁用状态逻辑时,此数据不应使用。非严格定义时,作为启用状态数据使用
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Enable">
+            <summary>
+                启用
+            </summary>
+            <remarks>
+             此数据任何时间均可使用
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Disable">
+            <summary>
+                禁用
+            </summary>
+            <remarks>
+             此数据任何时间均不应使用
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Orther">
+            <summary>
+                第三方锁定
+            </summary>
+            <remarks>
+             用于框架内部,调用者可忽略
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Lock">
+            <summary>
+                锁定
+            </summary>
+            <remarks>
+             用于框架内部,调用者可忽略
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Discard">
+            <summary>
+                废弃
+            </summary>
+            <remarks>
+             数据实际用途与删除状态相同,但用户可见
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.Delete">
+            <summary>
+                删除
+            </summary>
+            <remarks>
+             数据实际处于删除状态,用户不可见
+            </remarks>
+        </member>
+        <member name="F:Agebull.EntityModel.Common.DataStateType.State">
+            <summary>
+                错误状态
+            </summary>
+            <remarks>
+             用于框架内部,调用者可忽略
+            </remarks>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.DataStateHelper">
+            <summary>
+                数据状态扩展类
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataStateHelper.IsDeleted(Agebull.EntityModel.Common.IStateData)">
+            <summary>
+                是否为删除数据
+            </summary>
+            <param name="data">数据</param>
+            <returns>是否为删除数据</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataStateHelper.ToCaption(Agebull.EntityModel.Common.DataStateType)">
+            <summary>
+                数据状态枚举类型
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IAuditData">
+            <summary>
+                表示这条数据支持审核
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IAuditData.AuditState">
+            <summary>
+                审核状态
+            </summary>
+            <value>AuditStateType</value>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IAuditData.AuditorId">
+            <summary>
+                审核人
+            </summary>
+            <value>string</value>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IAuditData.Auditor">
+            <summary>
+                审核人
+            </summary>
+            <value>string</value>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IAuditData.AuditDate">
+            <summary>
+                审核日期
+            </summary>
+            <value>DateTime</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IDataObject">
+            <summary>
+                表明是一个数据对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataObject.CopyValue(Agebull.EntityModel.Common.IDataObject)">
+            <summary>
+                复制值
+            </summary>
+            <param name="source">复制的源字段</param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataObject.GetValue(System.String)">
+            <summary>
+                得到字段的值
+            </summary>
+            <param name="field"> 字段的名字 </param>
+            <returns> 字段的值 </returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IDataObject.SetValue(System.String,System.Object)">
+            <summary>
+                配置字段的值
+            </summary>
+            <param name="field"> 字段的名字 </param>
+            <param name="value"> 字段的值 </param>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IEditObject">
+            <summary>
+                编辑对象
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.AcceptChanged">
+            <summary>
+                接受修改
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.RejectChanged">
+            <summary>
+            设置为未修改
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IEditObject.IsModified">
+            <summary>
+                是否修改
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IEditObject.IsDelete">
+            <summary>
+                是否已删除
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IEditObject.IsNew">
+            <summary>
+                是否新增
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.FieldIsModified(System.Int32)">
+            <summary>
+                是否修改
+            </summary>
+            <param name="propertyIndex"> 字段的序号 </param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.SetUnModify(System.Int32)">
+            <summary>
+                设置为非改变
+            </summary>
+            <param name="propertyIndex"> 字段的序号 </param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.SetModify(System.Int32)">
+            <summary>
+                设置为改变
+            </summary>
+            <param name="propertyIndex"> 字段的序号 </param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.IEditObject.LaterPeriodByModify">
+            <summary>
+                属性修改的后期处理(保存后)
+            </summary>
+            <remarks>
+                对当前对象的属性的更改,请自行保存,否则将丢失
+            </remarks>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IGlobalKey">
+            <summary>
+                表示有全局唯一标识的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IGlobalKey.Key">
+            <summary>
+                数字标识
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IIdentityData`1">
+            <summary>
+                表示有唯一数字标识的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IIdentityData`1.Id">
+            <summary>
+                数字标识
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IIdentityData">
+            <summary>
+                表示有唯一数字标识的数据
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ISnowFlakeId">
+            <summary>
+                表示使用雪花码的非自增主键数据
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ITitle">
+            <summary>
+                表示有标题的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.ITitle.Title">
+            <summary>
+                标题
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IUnionUniqueEntity">
+            <summary>
+                表示有唯一数字标识的数据
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IUnionUniqueEntity.UniqueValue">
+            <summary>
+                组合后的唯一值
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IInnerTree`1">
+            <summary>
+                表示这条数据支持内联层级
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IInnerTree`1.ParentId">
+            <summary>
+                上级
+            </summary>
+            <value>string</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IInnerTree">
+            <summary>
+                表示这条数据支持内联层级
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ILogicDeleteData">
+            <summary>
+                表示这条数据支持逻辑删除
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.ISqlCondition">
+            <summary>
+                表示可以提供SQL的查询条件
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.ISqlCondition.GetSqlCondition">
+            <summary>
+                取得SQL的查询条件
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Common.IStateData">
+            <summary>
+                表示这条数据支持数据状态
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.IStateData.DataState">
+            <summary>
+                数据状态
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.Interfaces.IVersionData">
+            <summary>
+                表示这条数据记录修改版本号
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Interfaces.IVersionData.DataVersion">
+            <summary>
+                数据版本
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Interfaces.IAuthorData">
+            <summary>
+                表示这条数据记录修改历史
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Interfaces.IAuthorData.AuthorId">
+            <summary>
+                作者
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="P:Agebull.EntityModel.Interfaces.IAuthorData.AddDate">
+            <summary>
+                新增日期
+            </summary>
+            <value>DateTime</value>
+        </member>
+        <member name="T:Agebull.EntityModel.Interfaces.IHistoryData">
+            <summary>
+                表示这条数据记录修改历史
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Interfaces.IHistoryData.LastReviserId">
+            <summary>
+                最后修改者
+            </summary>
+            <value>int</value>
+        </member>
+        <member name="P:Agebull.EntityModel.Interfaces.IHistoryData.LastModifyDate">
+            <summary>
+                最后修改日期
+            </summary>
+            <value>DateTime</value>
+        </member>
+        <member name="T:Agebull.Common.IdEncoder">
+            <summary>
+            ID编码器
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.IdEncoder.Encoding(System.Int64)">
+            <summary>
+            将一个52位整型数专为36进制编码的字符串
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.IdEncoder.Decoding(System.String)">
+            <summary>
+            将上述方法得到的36进制编码专为对应的52位整型数
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.IIdGenerator">
+            <summary>
+            随机ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.IIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.NewID">
+            <summary>
+            生成ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.IIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            获取一批Id
+            </summary>
+            <typeparam name="T">实体类型</typeparam>
+            <param name="count">Id数量</param>
+            <returns>ID集合</returns>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.IIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.SmallFlakeIdGenerator">
+            <summary>
+            ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakeIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.NewID">
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakeIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            生成一批ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakeIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
+        </member>
+        <member name="T:Agebull.Common.SmallFlakes`1">
+            <summary>
+            模仿Twitter的SnowFlakes算法，根据开源代码更改的适用于本框架的生成一个根据时间递增，带有机器号和一个本地计数器的生成52位整型数的分布式Id生成器
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:Agebull.Common.SmallFlakes`1._counter">
+            <summary>
+            总共52位，额外一位用来标记紧急客户端生成的顺序Id
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.MachineName">
+            <summary>
+            机器名称
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.WorkerId">
+            <summary>
+            工作ID
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SmallFlakes`1.Identifier">
+            <summary>
+            机器识别号，处于生成的Id中端位置，一个不长于10位的整型数
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SmallFlakes`1.Oxidize">
+            <summary>
+            获取一个新Id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.SnowFlake">
+            <summary>  
+            动态生产有规律的ID  
+            </summary>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.Instance">
+            <summary>
+            单例
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlake.NewId">
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor">
+            <summary>
+            构造
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor(System.Int64)">
+            <summary>
+            构造
+            </summary>
+            <param name="machineId"></param>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.#ctor(System.Int64,System.Int64)">
+            <summary>
+            构造
+            </summary>
+            <param name="machineId"></param>
+            <param name="dataCenterId"></param>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetTimestamp">
+            <summary>  
+            生成当前时间戳  
+            </summary>  
+            <returns>毫秒</returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetNextTimestamp(System.Int64)">
+            <summary>  
+            获取下一微秒时间戳  
+            </summary>  
+            <param name="lastTimestamp"></param>  
+            <returns></returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetSerialId">
+            <summary>  
+            获取长整形的ID  
+            </summary>  
+            <returns></returns>  
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetSerialString(System.Int64)">
+            <summary>
+            解读时间戳部分
+            </summary>
+            <param name="serialId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.Common.SnowFlake.GetTime(System.Int64)">
+            <summary>
+            UNIX时间戳到日期
+            </summary>
+            <param name="timeStamp"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Agebull.Common.SnowFlakeIdGenerator">
+            <summary>
+            ID生成
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlakeIdGenerator.GetId``1">
+            <summary>
+            生成ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.NewID">
+            <inheritdoc />
+            <summary>
+            快捷使用的方法
+            </summary>
+        </member>
+        <member name="M:Agebull.Common.SnowFlakeIdGenerator.GetSomeIds``1(System.Int32)">
+            <summary>
+            生成一批ID
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.OwnerId">
+            <summary>
+            所有者标识
+            </summary>
+        </member>
+        <member name="P:Agebull.Common.SnowFlakeIdGenerator.OrgId">
+            <summary>
+            组织标识
+            </summary>
+        </member>
+        <member name="T:Hpc.Project.ImportSkuCsv.CSVConvert">
+            <summary>
+                CSV文件转换对象
+            </summary>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.Export``1(Agebull.EntityModel.Common.DataAccess{``0},System.Collections.Generic.IList{``0})">
+            <summary>
+                导出
+            </summary>
+            <param name="access"></param>
+            <param name="datas"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.Import``1(System.String,System.Action{``0,System.String,System.String})">
+            <summary>
+                导入数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="setValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.Import``1(System.String,System.Action{``0,System.String,System.String},System.Action{``0})">
+            <summary>
+                导入数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="csv">CSV内容</param>
+            <param name="setValue">列读入自定义处理</param>
+            <param name="rowEnd">行结束时的处理方法</param>
+            <returns></returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.Split(System.String)">
+            <summary>
+                CSV内容分解
+            </summary>
+            <param name="values">CSV内容</param>
+            <returns>分解后的分行列的文本</returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.ImportFile(System.String,System.Action{System.Int32,System.Collections.Generic.Dictionary{System.String,System.String}})">
+            <summary>
+                导入文件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.ImportFile(System.String,System.Action{System.Collections.Generic.List{System.String},System.Boolean,System.Int32})">
+            <summary>
+                导入文件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Hpc.Project.ImportSkuCsv.CSVConvert.Split(System.String,System.Action{System.Collections.Generic.List{System.String},System.Boolean,System.Int32})">
+            <summary>
+            CSV内容分解
+            </summary>
+            <param name="values">CSV内容</param>
+            <param name="action">处理方法，第一个参数为解析出的行数组，第一个参数指是否为第一行即标题行</param>
+            <returns>解析到的行数</returns>
+        </member>
+        <member name="T:HY.GameApi.Model.PropertyChangingEventArgsEx">
+            <summary>
+                System.ComponentModel.INotifyPropertyChanging.PropertyChanged 事件提供数据。
+            </summary>
+        </member>
+        <member name="M:HY.GameApi.Model.PropertyChangingEventArgsEx.#ctor(System.String,System.Object,System.Object)">
+            <summary>
+                构造
+            </summary>
+            <param name="propertyIndex">属性名称</param>
+            <param name="oldValue">旧值</param>
+            <param name="newValue">新值</param>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.OldValue">
+            <summary>
+                原始的属性
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.NewValue">
+            <summary>
+                更改的属性
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.ValueIsChaged">
+            <summary>
+                新值是否在处理过程中修改
+            </summary>
+        </member>
+        <member name="P:HY.GameApi.Model.PropertyChangingEventArgsEx.Arrest">
+            <summary>
+                修改必须被阻止
+            </summary>
         </member>
     </members>
 </doc>

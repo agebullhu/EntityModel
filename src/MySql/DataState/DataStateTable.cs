@@ -23,7 +23,7 @@ namespace Agebull.EntityModel.MySql
     /// </summary>
     /// <typeparam name="TData">实体</typeparam>
     /// <typeparam name="TMySqlDataBase">所在的数据库对象,可通过Ioc自动构造</typeparam>
-    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>, IStateDataTable<TData>
+    public abstract class DataStateTable<TData, TMySqlDataBase> : MySqlTable<TData, TMySqlDataBase>, IDataAccessByStateData<TData>
         where TData : EditDataObject, IStateData, IIdentityData<long>, new()
         where TMySqlDataBase : MySqlDataBase
     {
