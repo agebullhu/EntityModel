@@ -9,7 +9,6 @@
 #region “˝”√
 
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.DataEvents;
 using Agebull.EntityModel.Excel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -490,7 +489,7 @@ namespace Agebull.EntityModel.BusinessLogic
         /// <param name="cmd">√¸¡Ó</param>
         protected virtual async Task OnCommandSuccess(TData data, TPrimaryKey id, DataOperatorType cmd)
         {
-            if (!Access.Provider.Option.CanRaiseEvent)
+            if (!Access.Provider.Option.CanRaiseEvent || Access.Provider.Injection == null)
                 return;
             using var levelScope = Access.InjectionScope(InjectionLevel.NotCondition);
 

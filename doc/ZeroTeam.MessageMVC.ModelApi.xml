@@ -73,7 +73,7 @@
                 删除多条数据
             </summary>
         </member>
-        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Export(`0)">
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Export(`0,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
             <summary>
                 导出到Excel
             </summary>
@@ -89,6 +89,12 @@
             <remarks>
             参数中可传递实体字段具体的查询条件,所有的条件按AND组合查询
             </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetFieldsFilter">
+            <summary>
+            读取字段过滤器
+            </summary>
             <returns></returns>
         </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.GetListData(Agebull.EntityModel.Common.LambdaItem{`0})">
@@ -291,9 +297,9 @@
                 是否发生解析错误
             </summary>
         </member>
-        <member name="F:ZeroTeam.MessageMVC.ModelApi.FormConvert._messages">
+        <member name="F:ZeroTeam.MessageMVC.ModelApi.FormConvert.Messages">
             <summary>
-                字段
+                参数
             </summary>
         </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.AddMessage(System.String,System.String)">
@@ -307,6 +313,19 @@
             <summary>
                 是否发生解析错误
             </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.FormConvert.Arguments">
+            <summary>
+                参数
+            </summary>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGet(System.String,System.String@)">
+            <summary>
+                获取参数(文本)
+            </summary>
+            <param name="name">参数名称</param>
+            <param name="val">结果值</param>
+            <returns>文本</returns>
         </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.FormConvert.TryGet``1(System.String,System.Func{System.String,``0},``0@)">
             <summary>
@@ -1027,7 +1046,7 @@
                 最后一个的操作消息
             </summary>
         </member>
-        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.LoginUser">
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.User">
             <summary>
                 当前登录用户
             </summary>
@@ -1055,6 +1074,11 @@
         <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.UserId">
             <summary>
             当前登录用户
+            </summary>
+        </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.OrganizationId">
+            <summary>
+            当前登录用户所在组织
             </summary>
         </member>
         <member name="P:ZeroTeam.MessageMVC.ModelApi.BusinessContext.NickName">
@@ -1175,11 +1199,6 @@
         <member name="T:ZeroTeam.MessageMVC.Tools.AutoRegister">
             <summary>
               组件注册
-            </summary>
-        </member>
-        <member name="M:ZeroTeam.MessageMVC.Tools.AutoRegister.ZeroTeam#MessageMVC#AddIn#IAutoRegister#AutoRegist(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-            <summary>
-            注册
             </summary>
         </member>
     </members>

@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -109,13 +110,13 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool IsNull(this string field) => string.IsNullOrEmpty(field);
+        public static bool IsNull(this string field) => string.IsNullOrWhiteSpace(field);
 
         /// <summary>
         /// 用于SQL中的文本字段比较
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public static bool IsNotNull(this string field) => !string.IsNullOrEmpty(field);
+        public static bool IsNotNull(this string field) => !string.IsNullOrWhiteSpace(field);
     }
 }

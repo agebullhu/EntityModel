@@ -20,7 +20,7 @@ namespace Agebull.EntityModel.Common
         /// <summary>
         ///     生成命令
         /// </summary>
-        DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args=null);
+        DbCommand CreateCommand(string sql, IEnumerable<DbParameter> args = null);
 
         #region 事务
 

@@ -549,7 +549,7 @@ namespace Agebull.EntityModel.MySql
                     : GetValue<string>(expression);
             if (!_option.PropertyMap.TryGetValue(field, out var pro))
                 throw new ArgumentOutOfRangeException($"属性{field}不是一个表字段");
-            
+
             return $"`{pro.TableName}`.`{pro.FieldName}`";
         }
 

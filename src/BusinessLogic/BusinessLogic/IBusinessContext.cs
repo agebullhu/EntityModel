@@ -1,10 +1,20 @@
-﻿namespace Agebull.EntityModel.BusinessLogic
+﻿using ZeroTeam.MessageMVC.Context;
+
+namespace Agebull.EntityModel.BusinessLogic
 {
     /// <summary>
     /// 业务上下文
     /// </summary>
     public interface IBusinessContext
     {
+        /// <summary>
+        ///  当前登录用户
+        /// </summary>
+        IUser User
+        {
+            get;
+        }
+
         /// <summary>
         ///     最后一个的操作消息
         /// </summary>

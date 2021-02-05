@@ -94,11 +94,34 @@ namespace Agebull.EntityModel.Common
             propertyName = newName;
             tableName = newTable;
             fieldName = newField;
+            JsonName = newName;
             dbReadWrite = readWrite;
-            property =propertyFeatrue;
+            property = propertyFeatrue;
             propertyDefault = @default;
         }
 
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="default"></param>
+        /// <param name="idx"></param>
+        /// <param name="newName"></param>
+        /// <param name="newTable"></param>
+        /// <param name="newField"></param>
+        /// <param name="newJson"></param>
+        /// <param name="readWrite"></param>
+        /// <param name="propertyFeatrue"></param>
+        public EntityProperty(PropertyDefault @default, int idx, string newName, string newTable, string newField, string newJson, ReadWriteFeatrue readWrite, PropertyFeatrue propertyFeatrue)
+        {
+            Index = idx;
+            propertyName = newName;
+            tableName = newTable;
+            fieldName = newField;
+            JsonName = newJson;
+            dbReadWrite = readWrite;
+            property = propertyFeatrue;
+            propertyDefault = @default;
+        }
         /// <summary>
         /// 序号
         /// </summary>

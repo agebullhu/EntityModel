@@ -9,7 +9,6 @@
 #region ÒýÓÃ
 
 using Agebull.EntityModel.Common;
-using Agebull.EntityModel.DataEvents;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;

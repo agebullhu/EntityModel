@@ -14,19 +14,19 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// </summary>
         public BusinessContext()
         {
-            LoginUser = GlobalContext.User;
-            Status  = new ContextStatus();
+            User = GlobalContext.User;
+            Status = new ContextStatus();
         }
 
         /// <summary>
         ///     当前登录用户
         /// </summary>
-        public IUser LoginUser { get; }
+        public IUser User { get; }
 
         /// <summary>
         /// 状态
         /// </summary>
-        public ContextStatus Status { get; } 
+        public ContextStatus Status { get; }
 
         /// <summary>
         ///     最后一个的操作消息
@@ -54,12 +54,17 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        public string UserId => LoginUser?.UserId;
+        public string UserId => User?.UserId;
+
+        /// <summary>
+        /// 当前登录用户所在组织
+        /// </summary>
+        public string OrganizationId => User?.OrganizationId;
 
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        public string NickName => LoginUser?.NickName;
+        public string NickName => User?.NickName;
 
         /// <summary>
         ///     正在排队

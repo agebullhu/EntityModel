@@ -575,6 +575,11 @@
             业务上下文
             </summary>
         </member>
+        <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.User">
+            <summary>
+             当前登录用户
+            </summary>
+        </member>
         <member name="P:Agebull.EntityModel.BusinessLogic.IBusinessContext.LastMessage">
             <summary>
                 最后一个的操作消息
@@ -691,7 +696,36 @@
             </summary>
             <example>1</example>
         </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem.ParentId">
+            <summary>
+            上级ID
+            </summary>
+            <example>1</example>
+        </member>
         <member name="P:Agebull.EntityModel.Vue.DataItem.Text">
+            <summary>
+            名称
+            </summary>
+            <example>名称</example>
+        </member>
+        <member name="T:Agebull.EntityModel.Vue.DataItem`1">
+            <summary>
+            简单的数据节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem`1.Id">
+            <summary>
+            ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem`1.ParentId">
+            <summary>
+            上级ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Agebull.EntityModel.Vue.DataItem`1.Text">
             <summary>
             名称
             </summary>

@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Agebull.EntityModel.Common;
 using System.Threading.Tasks;
-using Agebull.EntityModel.Common;
-using Newtonsoft.Json;
 
 namespace Agebull.EntityModel.DataEvents
 {
@@ -18,7 +16,7 @@ namespace Agebull.EntityModel.DataEvents
         /// <summary>
         /// 实体名称
         /// </summary>
-        string[] EntityNames { get;}
+        string[] EntityNames { get; }
 
         /// <summary>
         /// 数据事件处理

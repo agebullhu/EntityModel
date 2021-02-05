@@ -35,9 +35,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public bool Failed { get; set; }
 
         /// <summary>
-        ///     字段
+        ///     参数
         /// </summary>
-        private readonly Dictionary<string, string> _messages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        readonly Dictionary<string, string> Messages = new Dictionary<string, string>();
+
 
         /// <summary>
         /// 设置错误字段
@@ -46,10 +47,10 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <param name="msg"></param>
         private void AddMessage(string field, string msg)
         {
-            if (_messages.TryGetValue(field, out var val))
-                _messages[field] = $"{val};{msg}";
+            if (Messages.TryGetValue(field, out var val))
+                Messages[field] = $"{val};{msg}";
             else
-                _messages.Add(field, msg);
+                Messages.Add(field, msg);
         }
 
 
@@ -61,7 +62,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             get
             {
                 StringBuilder msg = new StringBuilder();
-                foreach (var kv in _messages)
+                foreach (var kv in Messages)
                 {
                     msg.AppendLine($"{kv.Key} : {kv.Value}");
                 }
@@ -74,6 +75,29 @@ namespace ZeroTeam.MessageMVC.ModelApi
         #region 基本操作
 
         /// <summary>
+        ///     参数
+        /// </summary>
+        Dictionary<string, string> Arguments => GlobalContext.Current.Message.ExtensionDictionary;
+
+
+        /// <summary>
+        ///     获取参数(文本)
+        /// </summary>
+        /// <param name="name">参数名称</param>
+        /// <param name="val">结果值</param>
+        /// <returns>文本</returns>
+        bool TryGet(string name, out string val)
+        {
+            if (!Arguments.TryGetValue(name, out var value))
+            {
+                val = null;
+                return false;
+            }
+            val = string.IsNullOrWhiteSpace(value) ? null : value?.Trim();
+            return true;
+        }
+
+        /// <summary>
         ///     读参数(泛型),如果参数为空或不存在,用默认值填充
         /// </summary>
         /// <param name="name">参数名称</param>
@@ -82,7 +106,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>如果参数存在且可转换为对应类型，则返回True</returns>
         public bool TryGet<T>(string name, Func<string, T> convert, out T value)
         {
-            if (!RequestArgumentConvert.TryGet(name, out string str))
+            if (!TryGet(name, out string str))
             {
                 value = default;
                 return false;
@@ -112,10 +136,15 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public bool TryGetNullable<T>(string name, Func<string, T> convert, out T? value)
             where T : struct
         {
-            if (!RequestArgumentConvert.TryGet(name, out string str))
+            if (!TryGet(name, out string str))
             {
                 value = default;
                 return false;
+            }
+            if(str == null)
+            {
+                value = null;
+                return true;
             }
             try
             {
@@ -143,7 +172,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out string value)
         {
-            return RequestArgumentConvert.TryGet(field, out value);
+            return TryGet(field, out value);
         }
 
         /// <summary>
@@ -516,7 +545,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<int> value)
         {
-            if (!RequestArgumentConvert.TryGet(field, out string str))
+            if (!TryGet(field, out string str))
             {
                 value = default;
                 return false;
@@ -545,7 +574,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns>是否接收值</returns>
         public bool TryGetValue(string field, out List<long> value)
         {
-            if (!RequestArgumentConvert.TryGet(field, out string str))
+            if (!TryGet(field, out string str))
             {
                 value = default;
                 return false;

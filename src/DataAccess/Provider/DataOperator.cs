@@ -6,12 +6,6 @@
 // // 修改:2016-06-16
 // // *****************************************************/
 
-
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Threading.Tasks;
-
 namespace Agebull.EntityModel.Common
 {
     /// <summary>

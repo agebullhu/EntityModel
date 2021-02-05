@@ -35,7 +35,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns></returns>
         Task IMessageMiddleware.OnGlobalException(IService service, IInlineMessage message, Exception exception, object tag)
         {
-            DependencyRun.Logger.Exception(exception);
+            ScopeRuner.ScopeLogger.Exception(exception);
             FlowTracer.MonitorInfomation(() => $"发生未处理异常.{exception.Message}");
 
             CheckException(message, exception);

@@ -32,7 +32,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>Agebull.EntityModel数据事件支持</PackageReleaseNotes>
-    <Version>5.0.4.22</Version>
+    <Version>5.0.4.20</Version>
     <RootNamespace />
   </PropertyGroup>
 
@@ -45,7 +45,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroTeam.MessageMVC.Core" Version="1.1.4.38" />
+    <PackageReference Include="ZeroTeam.MessageMVC.Core" Version="1.1.4.35" />
   </ItemGroup>
 
   <ItemGroup>

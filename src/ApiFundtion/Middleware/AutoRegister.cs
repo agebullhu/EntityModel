@@ -1,7 +1,7 @@
 ﻿using Agebull.EntityModel.BusinessLogic;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.AddIn;
 using ZeroTeam.MessageMVC.Messages;
 using ZeroTeam.MessageMVC.ModelApi;
@@ -15,14 +15,10 @@ namespace ZeroTeam.MessageMVC.Tools
     [ExportMetadata("Symbol", '%')]
     public sealed class AutoRegister : IAutoRegister
     {
-        /// <summary>
-        /// 注册
-        /// </summary>
-        Task<bool> IAutoRegister.AutoRegist(IServiceCollection services)
+        void IAutoRegister.AutoRegist(IServiceCollection services,ILogger logger)
         {
-            services.AddScoped<IBusinessContext , BusinessContext> ();
+            services.AddScoped<IBusinessContext, BusinessContext>();
             services.AddTransient<IMessageMiddleware, BusinessExceptionMiddleware>();
-            return Task.FromResult(false);
         }
     }
 }

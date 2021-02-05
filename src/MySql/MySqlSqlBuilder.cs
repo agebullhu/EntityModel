@@ -56,7 +56,7 @@ namespace Agebull.EntityModel.MySql
             {
                 if (pro.TableName == Option.WriteTableName &&
                     pro.DbReadWrite.HasFlag(readWrite) &&
-                    pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field) )
+                    pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Property | PropertyFeatrue.Field))
                     action(pro);
             }
         }
@@ -150,7 +150,7 @@ namespace Agebull.EntityModel.MySql
             {
                 values.Append("\nSELECT @@IDENTITY;");
             }
-            return (fields.ToString(),values.ToString());
+            return (fields.ToString(), values.ToString());
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Agebull.EntityModel.MySql
             fields.Append($"INSERT INTO `{Option.WriteTableName}`(");
             var values = new StringBuilder();
             values.Append("VALUES(");
-            if(string.IsNullOrWhiteSpace(Provider.Option.InsertFieldCode))
+            if (string.IsNullOrWhiteSpace(Provider.Option.InsertFieldCode))
             {
                 fields.Append(Provider.Option.InsertFieldCode);
                 values.Append(Provider.Option.InsertValueCode);
@@ -358,7 +358,7 @@ namespace Agebull.EntityModel.MySql
         /// <returns>载入字段值的SQL语句</returns>
         string ISqlBuilder.CreateFullLoadSql(string fields, string condition, string orderSql, string limit)
         {
-            return CreateLoadSql( fields,  condition,  orderSql,  limit);
+            return CreateLoadSql(fields, condition, orderSql, limit);
         }
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace Agebull.EntityModel.MySql
             var pro = Option.PropertyMap[field];
             return CreateLoadSql($"`{pro.TableName}`.`{pro.FieldName}`", condition, orderSql, limit);
         }
-        
+
         #endregion
 
         #region 注入
@@ -511,7 +511,7 @@ namespace Agebull.EntityModel.MySql
             if (fields == null || fields.Length == 0)
                 return null;
             var code = new StringBuilder();
-            foreach(var field in fields)
+            foreach (var field in fields)
             {
                 var pro = Option.PropertyMap[field];
                 code.Append($"`{pro.TableName}`.`{pro.FieldName}`");

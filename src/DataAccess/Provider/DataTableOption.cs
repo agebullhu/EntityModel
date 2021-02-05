@@ -90,9 +90,11 @@ namespace Agebull.EntityModel.Common
             {
                 if (!pro.PropertyFeatrue.HasFlag(PropertyFeatrue.Field))
                     continue;
-                if(pro.TableName == null)
+                if (pro.TableName == null)
                     pro.TableName = DataStruct.ReadTableName;
                 PropertyMap[pro.FieldName] = PropertyMap[pro.PropertyName] = pro;
+                if (pro.JsonName.IsNotNull())
+                    PropertyMap[pro.JsonName] = pro;
             }
 
             if (!PropertyMap.ContainsKey(ID))
@@ -108,7 +110,7 @@ namespace Agebull.EntityModel.Common
             }
             else
             {
-                var (fields,values) = SqlBuilder.BuilderInsertSqlCode();
+                var (fields, values) = SqlBuilder.BuilderInsertSqlCode();
                 InsertFieldCode ??= fields;
                 InsertValueCode ??= values;
                 DeleteSqlCode ??= SqlBuilder.BuilderDeleteSqlCode();

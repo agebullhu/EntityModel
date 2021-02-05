@@ -13,10 +13,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using ZeroTeam.MessageMVC.ZeroApis;
 
@@ -316,6 +314,17 @@ namespace Agebull.EntityModel.Common
         public Task<List<TEntity>> AllAsync()
         {
             return LoadData(null, null, null);
+        }
+
+        /// <summary>
+        ///     读取数据
+        /// </summary>
+        /// <param name="fields">限制读取的字段</param>
+        /// <returns>数据</returns>
+        public async Task<List<TEntity>> AllAsync(params string[] fields)
+        {
+            using var scope = Select(fields);
+            return await LoadData(null, null, null);
         }
 
         /// <summary>
@@ -624,7 +633,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<(bool hase, TValue max)> MinAsyn<TValue>(string field, string condition, params DbParameter[] args)
         {
-            return CollectInnerAsync<TValue>("Min",field, condition, args);
+            return CollectInnerAsync<TValue>("Min", field, condition, args);
         }
 
         /// <summary>
@@ -697,7 +706,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public Task<(bool hase, TValue max)> MaxAsyn<TValue>(string field)
         {
-            return CollectInnerAsync<TValue>("Max",field, null, null);
+            return CollectInnerAsync<TValue>("Max", field, null, null);
         }
         /// <summary>
         ///     汇总
@@ -787,7 +796,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         public async Task<decimal> SumAsync(string field, string condition, params DbParameter[] args)
         {
-            var (_, value) = await CollectInnerAsync("Sum",field, condition, args);
+            var (_, value) = await CollectInnerAsync("Sum", field, condition, args);
             return Convert.ToDecimal(value);
         }
 
@@ -1362,6 +1371,50 @@ namespace Agebull.EntityModel.Common
             }
             return values;
         }
+        #endregion
+
+        #region 简单读
+
+        /// <summary>
+        ///     读取一个字段
+        /// </summary>
+        /// <param name="fieldExpression">字段</param>
+        /// <param name="lambda">条件</param>
+        /// <returns>内容</returns>
+        public async Task<TField> ReadValueAsync<TField>(Expression<Func<TEntity, TField>> fieldExpression, Expression<Func<TEntity, bool>> lambda)
+        {
+            var field = GetPropertyName(fieldExpression);
+            var convert = SqlBuilder.Compile(lambda);
+            var sql = SqlBuilder.CreateSingleLoadSql(field, convert.ConditionSql, null, "1");
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            var (hase, value) = await DataBase.ExecuteScalarAsync(sql, convert.Parameters);
+            return !hase ? default : value == null ? default : (TField)value;
+        }
+
+        /// <summary>
+        ///     读取一个字段
+        /// </summary>
+        /// <param name="field">字段</param>
+        /// <param name="key">主键</param>
+        /// <returns>内容</returns>
+        public Task<TField> ReadValueAsync<TField, TKey>(Expression<Func<TEntity, TField>> field, TKey key)
+        {
+            return ReadValueAsync<TField>(GetPropertyName(field),
+                SqlBuilder.Condition(Option.PrimaryProperty),
+                ParameterCreater.CreateParameter(Option.PrimaryProperty, key));
+        }
+
+        /// <summary>
+        ///     读取多个值
+        /// </summary>
+        public async Task<TField> ReadValueAsync<TField>(string field, string condition, params DbParameter[] args)
+        {
+            var sql = SqlBuilder.CreateSingleLoadSql(field, condition, null, "1");
+            await using var connectionScope = await DataBase.CreateConnectionScope();
+            var (hase, value) = await DataBase.ExecuteScalarAsync(sql, args);
+            return !hase ? default : value == null ? default : (TField)value;
+        }
+
         #endregion
 
         #region 数据读取

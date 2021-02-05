@@ -2,10 +2,10 @@
 using Agebull.EntityModel.BusinessLogic;
 using Agebull.EntityModel.Common;
 using Agebull.EntityModel.Vue;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZeroTeam.MessageMVC.Context;
 using ZeroTeam.MessageMVC.ZeroApis;
 
 #pragma warning disable IDE0060 // 删除未使用的参数
@@ -92,6 +92,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult<ApiPageData<TData>>> List(TData args)
         {
             var filter = GetQueryFilter();
+            using var scope = GetFieldsFilter();
             var data = await GetListData(filter);
             return IsFailed
                 ? ApiResultHelper.State<ApiPageData<TData>>(Business.Context.LastState, Business.Context.LastMessage)
@@ -106,6 +107,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult<TData>> QueryFirst(TData args)
         {
             var filter = GetQueryFilter();
+            using var scope = GetFieldsFilter();
             var data = await Business.Details(filter);
             return IsFailed
                     ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
@@ -122,6 +124,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         {
             if (!RequestArgumentConvert.TryGetId<TData, TPrimaryKey>(Convert, out TPrimaryKey id))
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
+            using var scope = GetFieldsFilter();
             var data = await Business.Details(id);
             return IsFailed
                     ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
@@ -160,19 +163,18 @@ namespace ZeroTeam.MessageMVC.ModelApi
         public async Task<IApiResult<TData>> Update(TData arg)
         {
             if (!RequestArgumentConvert.TryGet("id", out string id))
-                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "id必传");
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]无效");
             var key = Convert(id).Item2;
-            var data = Business.Access.Option.UpdateByMidified
-                ? new TData { Id = key}
-                : await Business.Access.LoadByPrimaryKeyAsync(key);
-
+            var data = await Business.Access.LoadByPrimaryKeyAsync(key);
+            if (data == null)
+                return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]无效");
             var convert = new FormConvert();
             if (data is IEditStatus status && status.EditStatusRecorder != null)
             {
                 status.EditStatusRecorder.IsExist = true;
                 status.EditStatusRecorder.IsFromClient = true;
             }
-            
+
             await ReadFormData(data, convert);
             if (convert.Failed)
             {
@@ -209,10 +211,13 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <returns></returns>
         [Route("export/xlsx")]
         [ApiOption(ApiOption.Public | ApiOption.DictionaryArgument)]
-        public async Task<IApiResult> Export(TData args)
+        public async Task<IApiResult> Export(TData args, [FromServices] IHttpContextAccessor accessor)
         {
             var filter = GetQueryFilter();
             var res = await Business.Export(Business.Access.Option.DataStruct.Caption, filter);
+            //accessor.HttpContext.Response.ContentType = res.mime;
+            //await accessor.HttpContext.Response.Body.WriteAsync(res.bytes);
+
             return ApiResultHelper.Succees(res);
         }
 
@@ -240,6 +245,25 @@ namespace ZeroTeam.MessageMVC.ModelApi
 
         #endregion
 
+        #region 读取字段过滤器
+
+        /// <summary>
+        /// 读取字段过滤器
+        /// </summary>
+        /// <returns></returns>
+        IDisposable GetFieldsFilter()
+        {
+            var scope = new AgentScope();
+            if (RequestArgumentConvert.TryGet("_fields_", out string fields) && fields.IsNotNull())
+            {
+                scope.Client = Business.Access.Select(fields.Split(','));
+            }
+            return scope;
+        }
+
+
+        #endregion
+
         #region 列表读取支持
 
         /// <summary>
@@ -251,6 +275,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             var size = RequestArgumentConvert.GetInt("_size_", 20);
             RequestArgumentConvert.TryGet("_sort_", out string sort);
             var desc = RequestArgumentConvert.TryGet("_order_", out string order) && (order?.ToLower() == "true" || order?.ToLower() == "desc");
+
             return Business.PageData(page, size, sort, desc, lambda);
         }
 

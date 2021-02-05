@@ -85,7 +85,7 @@ namespace Agebull.EntityModel.Common
         /// </summary>
         /// <param name="orderField"></param>
         /// <param name="asc"></param>
-        public void OrderBy(string orderField, bool asc=true)
+        public void OrderBy(string orderField, bool asc = true)
         {
             DynamicOption.OrderbyFields = Query.SqlBuilder.OrderCode(orderField, asc);
         }

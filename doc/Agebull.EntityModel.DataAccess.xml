@@ -4,6 +4,16 @@
         <name>Agebull.EntityModel.DataAccess</name>
     </assembly>
     <members>
+        <member name="T:Agebull.EntityModel.Common.AgentScope">
+            <summary>
+            委托析构
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.Common.AgentScope.Client">
+            <summary>
+            设置代为析构的对象
+            </summary>
+        </member>
         <member name="T:Agebull.EntityModel.Common.DataAccess`1">
             <summary>
                 Sql实体访问类
@@ -637,6 +647,13 @@
             </summary>
             <returns>数据</returns>
         </member>
+        <member name="M:Agebull.EntityModel.Common.DataQuery`1.AllAsync(System.String[])">
+            <summary>
+                读取数据
+            </summary>
+            <param name="fields">限制读取的字段</param>
+            <returns>数据</returns>
+        </member>
         <member name="M:Agebull.EntityModel.Common.DataQuery`1.AllAsync(System.String,System.Data.Common.DbParameter[])">
             <summary>
                 读取数据
@@ -1157,6 +1174,27 @@
                 读取多个值
             </summary>
         </member>
+        <member name="M:Agebull.EntityModel.Common.DataQuery`1.ReadValueAsync``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="fieldExpression">字段</param>
+            <param name="lambda">条件</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataQuery`1.ReadValueAsync``2(System.Linq.Expressions.Expression{System.Func{`0,``0}},``1)">
+            <summary>
+                读取一个字段
+            </summary>
+            <param name="field">字段</param>
+            <param name="key">主键</param>
+            <returns>内容</returns>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.DataQuery`1.ReadValueAsync``1(System.String,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+                读取多个值
+            </summary>
+        </member>
         <member name="M:Agebull.EntityModel.Common.DataQuery`1.LoadByPrimaryKeyAsync(System.Object)">
             <summary>
                 主键读取
@@ -1385,6 +1423,19 @@
             <param name="newName"></param>
             <param name="newTable"></param>
             <param name="newField"></param>
+            <param name="readWrite"></param>
+            <param name="propertyFeatrue"></param>
+        </member>
+        <member name="M:Agebull.EntityModel.Common.EntityProperty.#ctor(Agebull.EntityModel.Common.PropertyDefault,System.Int32,System.String,System.String,System.String,System.String,Agebull.EntityModel.Common.ReadWriteFeatrue,Agebull.EntityModel.Common.PropertyFeatrue)">
+            <summary>
+            构造
+            </summary>
+            <param name="default"></param>
+            <param name="idx"></param>
+            <param name="newName"></param>
+            <param name="newTable"></param>
+            <param name="newField"></param>
+            <param name="newJson"></param>
             <param name="readWrite"></param>
             <param name="propertyFeatrue"></param>
         </member>
@@ -3440,6 +3491,96 @@
             文本
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Agebull.EntityModel.DataEvents.ConditionParameter">
+            <summary>
+            参数节点
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.ConditionParameter.Name">
+            <summary>
+            条件
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.ConditionParameter.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.ConditionParameter.Value">
+            <summary>
+            内容
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.DataEvents.EntityEventArgument">
+            <summary>
+            数据事件参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.EntityEventArgument.EventType">
+            <summary>
+            事件类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.EntityEventArgument.OperatorType">
+            <summary>
+            操作类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.EntityEventArgument.ValueType">
+            <summary>
+            值类型
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.EntityEventArgument.Value">
+            <summary>
+            值文本
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.DataEvents.EntityEventValueType">
+            <summary>
+                数据事件内容类型
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.DataEvents.EntityEventValueType.None">
+            <summary>
+                无
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.DataEvents.EntityEventValueType.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.DataEvents.EntityEventValueType.Entity">
+            <summary>
+            实体
+            </summary>
+        </member>
+        <member name="F:Agebull.EntityModel.DataEvents.EntityEventValueType.CustomSQL">
+            <summary>
+            自定义SQL操作
+            </summary>
+        </member>
+        <member name="T:Agebull.EntityModel.DataEvents.MulitCondition">
+            <summary>
+            查询参数
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.MulitCondition.SQL">
+            <summary>
+            SQL语句
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.MulitCondition.Condition">
+            <summary>
+            条件
+            </summary>
+        </member>
+        <member name="P:Agebull.EntityModel.DataEvents.MulitCondition.Parameters">
+            <summary>
+            参数
+            </summary>
         </member>
         <member name="T:ZeroTeam.MessageMVC.ZeroApis.PageArgument">
             <summary>

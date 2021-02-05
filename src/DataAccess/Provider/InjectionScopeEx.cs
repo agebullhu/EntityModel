@@ -42,5 +42,5 @@ namespace Agebull.EntityModel.Common
             }
         }
     }
-    
+
 }
