@@ -21,10 +21,20 @@ namespace ZeroTeam.MessageMVC.ModelApi
         #region Business.Context
 
         /// <summary>
+        ///     业务逻辑对象
+        /// </summary>
+        protected TBusinessLogic Business { get; }
+
+        /// <summary>
         /// 构造
         /// </summary>
         protected ApiController()
         {
+            Business = new TBusinessLogic
+            {
+                Context = DependencyHelper.GetService<IBusinessContext>(),
+                ServiceProvider = DependencyHelper.ServiceProvider
+            };
             Business.Context.LastState = OperatorStatusCode.Success;
         }
 
@@ -42,20 +52,46 @@ namespace ZeroTeam.MessageMVC.ModelApi
             Business.Context.LastState = OperatorStatusCode.BusinessError;
             Business.Context.LastMessage = message;
         }
-        #endregion
-
-        #region 基础变量
-
-        private TBusinessLogic _business;
+        /// <summary>
+        /// 根据上下文状态返回
+        /// </summary>
+        /// <returns></returns>
+        protected IApiResult ContextStatusResult()
+        {
+            return ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage);
+        }
 
         /// <summary>
-        ///     业务逻辑对象
+        /// 根据上下文状态返回
         /// </summary>
-        protected TBusinessLogic Business => _business ??= new TBusinessLogic
+        /// <returns></returns>
+        protected IApiResult<T> ContextStatusResult<T>()
         {
-            Context = new BusinessContext(),
-            ServiceProvider = DependencyHelper.ServiceProvider
-        };
+            return ApiResultHelper.State<T>(Business.Context.LastState, Business.Context.LastMessage);
+        }
+
+        /// <summary>
+        /// 根据上下文状态返回
+        /// </summary>
+        /// <returns></returns>
+        protected IApiResult ContextResult()
+        {
+            return Business.Context.LastState != OperatorStatusCode.Success
+                ? ApiResultHelper.State(Business.Context.LastState, Business.Context.LastMessage)
+                : ApiResultHelper.Succees();
+        }
+
+
+        /// <summary>
+        /// 根据上下文状态返回
+        /// </summary>
+        /// <returns></returns>
+        protected IApiResult<T> ContextResult<T>(T value)
+        {
+            return Business.Context.LastState != OperatorStatusCode.Success
+                ? ApiResultHelper.State<T>(Business.Context.LastState, Business.Context.LastMessage)
+                : ApiResultHelper.Succees(value);
+        }
 
         #endregion
 
@@ -94,9 +130,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             var filter = GetQueryFilter();
             using var scope = GetFieldsFilter();
             var data = await GetListData(filter);
-            return IsFailed
-                ? ApiResultHelper.State<ApiPageData<TData>>(Business.Context.LastState, Business.Context.LastMessage)
-                : ApiResultHelper.Succees(data);
+            return ContextResult(data);
         }
 
         /// <summary>
@@ -109,9 +143,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             var filter = GetQueryFilter();
             using var scope = GetFieldsFilter();
             var data = await Business.Details(filter);
-            return IsFailed
-                    ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
-                    : ApiResultHelper.Succees(data);
+            return ContextResult(data);
         }
 
         /// <summary>
@@ -126,9 +158,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
                 return ApiResultHelper.State<TData>(OperatorStatusCode.ArgumentError, "参数[id]不是有效的主键");
             using var scope = GetFieldsFilter();
             var data = await Business.Details(id);
-            return IsFailed
-                    ? ApiResultHelper.State<TData>(Business.Context.LastState, Business.Context.LastMessage)
-                    : ApiResultHelper.Succees(data);
+            return ContextResult(data);
         }
 
         /// <summary>

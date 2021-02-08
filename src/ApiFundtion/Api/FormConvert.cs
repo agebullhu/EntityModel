@@ -22,6 +22,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
     /// </summary>
     public class FormConvert
     {
+
         #region 基本属性
 
         /// <summary>

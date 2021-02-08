@@ -9,6 +9,11 @@
                 自动实现基本增删改查API页面的基类
             </summary>
         </member>
+        <member name="P:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Business">
+            <summary>
+                业务逻辑对象
+            </summary>
+        </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.#ctor">
             <summary>
             构造
@@ -25,10 +30,29 @@
             </summary>
             <param name="message"></param>
         </member>
-        <member name="P:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Business">
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.ContextStatusResult">
             <summary>
-                业务逻辑对象
+            根据上下文状态返回
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.ContextStatusResult``1">
+            <summary>
+            根据上下文状态返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.ContextResult">
+            <summary>
+            根据上下文状态返回
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.ContextResult``1(``0)">
+            <summary>
+            根据上下文状态返回
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:ZeroTeam.MessageMVC.ModelApi.ApiController`3.Unique(System.String,System.String,`1)">
             <summary>
