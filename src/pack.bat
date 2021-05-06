@@ -7,6 +7,7 @@ set /p debug="(Debug)Y/N >"
 
 
 if "%debug%" == "y" set type="Debug"
+if "%debug%" == "Y" set type="Debug"
 
 
 echo pack to %type%

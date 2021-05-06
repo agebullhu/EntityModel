@@ -1,10 +1,10 @@
-// // /*****************************************************
-// // (c)2016-2016 Copy right www.gboxt.com
-// // 作者:
-// // 工程:Agebull.DataModel
-// // 建立:2016-06-12
-// // 修改:2016-06-16
-// // *****************************************************/
+/*****************************************************
+(c)2016-2021 by ZeroTeam
+作者: 胡天水
+工程: Agebull.EntityModel.Core Agebull.EntityModel.Core
+建立: 忘了日期
+修改: -
+*****************************************************/
 
 #region 引用
 
@@ -40,6 +40,7 @@ namespace Agebull.EntityModel.Common
         }
 
         #endregion
+
         #region 实体更新
 
         /// <summary>
@@ -82,25 +83,24 @@ namespace Agebull.EntityModel.Common
         private async Task<bool> InsertInnerAsync(TEntity entity)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            if (Provider.Injection != null)
-                await Provider.Injection.BeforeSave(entity, DataOperatorType.Insert);
+            await Provider.Injection?.BeforeSave(entity, DataOperatorType.Insert);
             {
                 var sql = SqlBuilder.CreateInsertSqlCode();
                 await using var cmd = connectionScope.CreateCommand(sql);
 
                 DataOperator.SetEntityParameter(cmd, entity);
                 DataBase.TraceSql(cmd);
-                if (!Option.IsIdentity)
-                {
-                    if (await cmd.ExecuteNonQueryAsync() == 0)
-                        return false;
-                }
-                else
+                if (Option.IsIdentity)
                 {
                     var key = await cmd.ExecuteScalarAsync();
                     if (key == DBNull.Value || key == null)
                         return false;
                     Provider.EntityOperator.SetValue(entity, Option.PrimaryProperty, key);
+                }
+                else
+                {
+                    if (await cmd.ExecuteNonQueryAsync() == 0)
+                        return false;
                 }
             }
             await DataOperator.AfterSave(this, entity, DataOperatorType.Insert);

@@ -281,7 +281,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// 读取字段过滤器
         /// </summary>
         /// <returns></returns>
-        IDisposable GetFieldsFilter()
+        protected IDisposable GetFieldsFilter()
         {
             var scope = new AgentScope();
             if (RequestArgumentConvert.TryGet("_fields_", out string fields) && fields.IsNotNull())
@@ -304,7 +304,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
             var page = RequestArgumentConvert.GetInt("_page_", 1);
             var size = RequestArgumentConvert.GetInt("_size_", 20);
             RequestArgumentConvert.TryGet("_sort_", out string sort);
-            var desc = RequestArgumentConvert.TryGet("_order_", out string order) && (order?.ToLower() == "true" || order?.ToLower() == "desc");
+            var desc = RequestArgumentConvert.TryGet("_order_", out string order) && (order.IsMe("true") || order.IsMe("desc"));
 
             return Business.PageData(page, size, sort, desc, lambda);
         }
@@ -316,7 +316,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
         /// <summary>
         ///     读取查询条件
         /// </summary>
-        LambdaItem<TData> GetQueryFilter()
+        protected LambdaItem<TData> GetQueryFilter()
         {
             //if (RequestArgumentConvert.TryGet("_value_", out string value) && !string.IsNullOrEmpty(value))
             //{

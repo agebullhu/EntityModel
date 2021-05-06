@@ -11,7 +11,7 @@
     <Description>ZeroTeam.MessageMVC之实体操作Api基础</Description>
     <AssemblyTitle>ZeroTeam.MessageMVC.ModelApi</AssemblyTitle>
 
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName></AssemblyName>
     <PackageId>ZeroTeam.MessageMVC.ModelApi</PackageId>
@@ -32,7 +32,7 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Copyright />
     <PackageReleaseNotes>ZeroApi模型支持</PackageReleaseNotes>
-    <Version>5.0.5.11</Version>
+    <Version>5.0.6.14</Version>
     <RootNamespace />
   </PropertyGroup>
 

@@ -7,7 +7,7 @@ namespace ZeroTeam.MessageMVC.ModelApi
     /// <summary>
     /// 业务上下文
     /// </summary>
-    internal class BusinessContext : IBusinessContext
+    public class BusinessContext : IBusinessContext
     {
         /// <summary>
         ///     最后一个的操作消息

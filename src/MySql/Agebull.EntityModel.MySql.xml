@@ -425,6 +425,59 @@
             </summary>
             <param name="csharpType"> </param>
         </member>
+        <member name="T:Agebull.EntityModel.MySql.ParameterEx">
+            <summary>
+            扩展
+            </summary>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter(System.String,System.String)">
+            <summary>
+            转为Mysql参数（空白会转为Null值）
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter(System.DateTime,System.String)">
+            <summary>
+            转为Mysql参数（DateTime.MinValue会转为Null值）
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter(System.Boolean,System.String)">
+            <summary>
+            转为Mysql参数
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter(System.Nullable{System.Boolean},System.String)">
+            <summary>
+            转为Mysql参数
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter``1(System.Nullable{``0},System.String)">
+            <summary>
+            转为Mysql参数
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Agebull.EntityModel.MySql.ParameterEx.ToDbParameter(System.Object,System.String)">
+            <summary>
+            转为Mysql参数
+            </summary>
+            <param name="val"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
         <member name="T:Agebull.EntityModel.MySql.PredicateConvert">
             <summary>
                 用于MySql的Lambda表达式解析器(仅支持查询条件)
