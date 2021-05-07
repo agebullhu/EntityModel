@@ -83,7 +83,8 @@ namespace Agebull.EntityModel.Common
         private async Task<bool> InsertInnerAsync(TEntity entity)
         {
             await using var connectionScope = await DataBase.CreateConnectionScope();
-            await Provider.Injection?.BeforeSave(entity, DataOperatorType.Insert);
+            if (Provider.Injection != null)
+                await Provider.Injection.BeforeSave(entity, DataOperatorType.Insert);
             {
                 var sql = SqlBuilder.CreateInsertSqlCode();
                 await using var cmd = connectionScope.CreateCommand(sql);
